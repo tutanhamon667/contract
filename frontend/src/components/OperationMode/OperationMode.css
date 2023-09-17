@@ -1,0 +1,30 @@
+.operation-mode {
+  min-height: 423px;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+}
+
+.operation-mode__button {
+  width: 295px;
+  height: 53px;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  color: #606060;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  border: none;
+}
+
+.operation-mode__button_projects {
+  margin-right: 20px;
+}
+
+.operation-mode__button_action {
+  background: #e0e0e0;
+}

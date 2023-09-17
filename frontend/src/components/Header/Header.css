@@ -6,8 +6,8 @@
 
 .header__container {
   margin: auto;
-  padding-top: 20px;
-  max-width: 1440px;
+  padding: 20px 100px 0;
+  max-width: 1540px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
