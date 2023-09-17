@@ -1,0 +1,41 @@
+.start-work {
+  min-height: 423px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.start-work__title {
+  margin: 0;
+  padding: 0;
+  color: #606060;
+  text-align: center;
+  font-family: Inter;
+  font-size: 50px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.start-work__buttons-container {
+  margin-top: 48px;
+}
+
+.start-work__button {
+  width: 295px;
+  height: 53px;
+  border-radius: 10px;
+  border: 1px solid #606060;
+  color: #606060;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  background-color: transparent;
+}
+
+.start-work__button_freelance {
+    margin-right: 20px;
+}
