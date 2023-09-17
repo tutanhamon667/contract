@@ -7,7 +7,7 @@
 }
 
 .header-auth__singup-button {
-  color: #FFF;
+  color: #fff;
   font-family: Inter;
   font-size: 20px;
   font-style: normal;
@@ -36,11 +36,11 @@
   cursor: pointer;
   overflow: hidden;
   color: #606060;
-font-family: Inter;
-font-size: 20px;
-font-style: normal;
-font-weight: 400;
-line-height: normal;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .header-auth__entry-button:hover {
