@@ -16,7 +16,7 @@ function OperationMode() {
             ? `operation-mode__button operation-mode__button_projects operation-mode__button_action`
             : `operation-mode__button operation-mode__button_projects`
         }
-        onClick={handleOperationMode}
+        onClick={() => setOperationMode(true)}
       >
         Список проектов
       </button>
@@ -26,7 +26,7 @@ function OperationMode() {
             ? `operation-mode__button operation-mode__button_freelance`
             : `operation-mode__button operation-mode__button_freelance operation-mode__button_action`
         }
-        onClick={handleOperationMode}
+        onClick={() => setOperationMode(false)}
       >
         Фрилансеры
       </button>
