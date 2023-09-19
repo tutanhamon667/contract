@@ -9,7 +9,6 @@ const Auth = () => {
         <div className={styles.register}>
           <form className={styles.register__form}>
             <div className={styles.register__statusInputs}>
-              {" "}
               <label>
                 <input
                   className={styles.register__statusInput}
@@ -31,6 +30,10 @@ const Auth = () => {
                 />
                 Я фрилансер
               </label>
+            </div>
+            <div className={styles.register__nameInputs}>
+            <input className={styles.register__nameInput} type="text" />
+            <input className={styles.register__nameInput} type="text" />
             </div>
           </form>
         </div>
