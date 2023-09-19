@@ -1,0 +1,35 @@
+.wrapper {
+ margin: 48px auto 0; 
+ max-width: 565px;
+}
+
+.title {
+    color: #606060;
+    text-align: center;
+    font-family: 'Inter';
+    font-size: 40px;
+    font-weight: 600;
+    margin: 0 0 40px;
+}
+
+
+
+.register{
+
+}
+
+
+.register__form{
+
+}
+
+
+.register__statusInputs{
+display: flex;
+justify-content: space-between;
+}
+
+
+.register__statusInput{
+
+}

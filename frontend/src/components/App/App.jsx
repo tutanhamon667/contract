@@ -3,7 +3,7 @@ import Main from "../Main/Main";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Layout from "../../Layout/Layout";
 import NotFound from "../../pages/NotFound/NotFound";
-import Auth from "../../pages/Auth";
+import Auth from "../../pages/Auth/Auth";
 // import { ProtectedRoute } from "../../services/PotectedRouter";
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           {/* Тут будут защищенные роуты */}
           {/* <Route element={<ProtectedRoute />}></Route> */}
-          <Route path="/signin" element={<Auth />} />
+          <Route path="/signup" element={<Auth />} />
           <Route path="/" element={<Main />} />
           <Route path="*" element={<NotFound />} />
         </Route>
