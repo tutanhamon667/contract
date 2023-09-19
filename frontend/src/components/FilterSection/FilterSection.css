@@ -24,13 +24,13 @@
 }
 
 .filters-checkbox__item {
+    
   color: #585858;
   font-family: Inter;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  margin-left: 15px;
 }
 
 .filters-checkbox {
@@ -48,8 +48,8 @@
 .filters-checkbox + label::before {
   content: "";
   display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: 23px;
+  height: 23px;
   flex-shrink: 0;
   flex-grow: 0;
   border: 1px solid #adb5bd;
