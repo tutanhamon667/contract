@@ -1,0 +1,6 @@
+
+.freelance-order {
+    display: grid;
+    grid-template-columns: calc(70% - 40px) 1fr;
+    gap: 20px;
+}

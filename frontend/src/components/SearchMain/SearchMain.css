@@ -1,0 +1,29 @@
+.search {
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+.search__container {
+  padding: 0px 24px;
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+}
+
+.search__button {
+  background-color: transparent;
+  border: none;
+}
+
+.search__input {
+  margin-left: 20px;
+  border: none;
+  box-sizing: border-box;
+  width: 100%;
+  color: #888;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
