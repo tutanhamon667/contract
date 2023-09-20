@@ -5,9 +5,13 @@ import LinkBar from "../../LinkBar/LinkBar";
 import "./RegisterForm.css";
 
 const RegisterForm = () => {
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+  };
   return (
     <div className="register">
-      <form className="register__form">
+      <form className="register__form" onSubmit={handleSubmit}>
         <div className="register__statusNameContainer">
           <div className="register__statusNameLeft">
             <label className="register__radioButtonLabel">
@@ -41,7 +45,10 @@ const RegisterForm = () => {
         <InputAuth placeholder="Пароль" marginTop={20} width={610}/>
         <InputAuth placeholder="Повторите пароль" marginTop={20} width={610}/>
         <LinkBar/>
-        <Button text='Создать аккаунт'/>
+        <Button text='Создать аккаунт' width={399} type="submit"/>
+        <div>
+          <p></p>
+        </div>
       </form>
     </div>
   );

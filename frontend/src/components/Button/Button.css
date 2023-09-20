@@ -1,3 +1,51 @@
 .button {
-    min-height: 53px;
+    border: none;
+    height: 53px;
+    background-color: #93A0FF;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.buttonInherit {
+    height: 53px;
+    border: 1px solid #606060;
+    background-color: #EEF0FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.buttonActHov {
+    opacity: 1;
+    transition: all 0.1s ease-in-out;
+}
+.buttonActHov:hover {
+    opacity: 0.9;
+}
+.buttonActHov:active {
+    opacity: 0.8;
+}
+
+
+
+
+.button__text {
+    color: #FFF;
+    font-family: 'Inter';
+    font-size: 20px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.button__textBlack {
+    color: #606060;
+    font-family: 'Inter';
+    font-size: 20px;
+    font-weight: 400;
+    text-align: center;
 }
