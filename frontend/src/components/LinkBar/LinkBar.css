@@ -1,5 +1,5 @@
 .linkBar {
-  margin-top: 28px;
+  margin: 28px 0 32px;
   min-width: 308px;
   min-height: 100px;
   display: flex;
