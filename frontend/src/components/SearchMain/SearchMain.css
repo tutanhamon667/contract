@@ -27,3 +27,10 @@
   font-weight: 400;
   line-height: normal;
 }
+
+.search__search-image {
+  background-image: url(../../images/magnifyingGlass.svg);
+  background-position: center;
+  width: 25px;
+  height: 25px;
+}

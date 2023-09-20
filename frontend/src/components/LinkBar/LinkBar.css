@@ -38,3 +38,31 @@
 .linkBar__item:last-child {
   margin-right: 0;
 }
+
+.linkBar__item__vk{
+  background-image: url(../../images/vk.svg);
+  background-position: center;
+  width: 46px;
+  height: 46px;
+}
+
+.linkBar__item__google{
+  background-image: url(../../images/google.svg);
+  background-position: center;
+  width: 46px;
+  height: 46px;
+}
+
+.linkBar__item__github{
+  background-image: url(../../images/github.svg);
+  background-position: center;
+  width: 46px;
+  height: 46px;
+}
+
+.linkBar__item__yandex{
+  background-image: url(../../images/yandex.svg);
+  background-position: center;
+  width: 46px;
+  height: 46px;
+}
