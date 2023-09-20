@@ -15,6 +15,7 @@ const Auth = () => {
                     className="register__radioButton"
                     id="customer"
                     type="radio"
+                    name="role"
                   />
                   <span className="register__radioButtonFake"></span>
                   <span className="register__radioButtonText">Я заказчик</span>
@@ -28,6 +29,7 @@ const Auth = () => {
                     className="register__radioButton"
                     id="freelancer"
                     type="radio"
+                    name="role"
                   />
                   <span className="register__radioButtonFake"></span>
                   <span className="register__radioButtonText">Я фрилансер</span>
