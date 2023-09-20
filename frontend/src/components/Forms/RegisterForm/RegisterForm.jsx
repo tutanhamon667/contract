@@ -1,5 +1,6 @@
 import React from "react";
 import InputAuth from "../../InputAuth/InputAuth";
+import LinkBar from "../../LinkBar/LinkBar";
 import "./RegisterForm.css";
 
 const RegisterForm = () => {
@@ -38,7 +39,7 @@ const RegisterForm = () => {
         <InputAuth placeholder="e-mail" marginTop={20} width={610}/>
         <InputAuth placeholder="Пароль" marginTop={20} width={610}/>
         <InputAuth placeholder="Повторите пароль" marginTop={20} width={610}/>
-
+        <LinkBar/>
       </form>
     </div>
   );
