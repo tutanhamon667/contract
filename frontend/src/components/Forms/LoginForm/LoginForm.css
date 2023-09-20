@@ -22,7 +22,11 @@
   font-weight: 400;
   text-decoration-line: underline;
   text-underline-offset: 4px;
-  margin-top: 24px
+  margin-top: 24px;
+  transition: all 0.2s ease-in-out;
+}
+.login__forgotLink:hover{
+  opacity: 0.8;
 }
 
 .login__footerLinkContainer {
@@ -43,4 +47,8 @@
   text-decoration: underline;
   cursor: pointer;
   color: #585858;
+  transition: all 0.2s ease-in-out;
+}
+.login__footerLink:hover {
+ opacity: 0.8;
 }

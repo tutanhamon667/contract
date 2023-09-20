@@ -86,4 +86,8 @@
   text-decoration: underline;
   cursor: pointer;
   color: #585858;
+  transition: all 0.2s ease-in-out;
 }
+.register__footerLink:hover {
+  opacity: 0.8;
+ }
