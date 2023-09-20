@@ -21,11 +21,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout authenticated={authenticated} />}>
           {/* Тут будут защищенные роуты */}
           {/* <Route element={<ProtectedRoute />}></Route> */}
-          <Route path="/signup" element={<Auth />} />
-          <Route path="/" element={<Main />} />
+          <Route index element={<Main />} />
+          <Route path="signin" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
