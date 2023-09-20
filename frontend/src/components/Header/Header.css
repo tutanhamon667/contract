@@ -23,3 +23,7 @@
   height: 42.5px;
   cursor: pointer;
 }
+
+.header__userInfo {
+  display: flex;
+}
