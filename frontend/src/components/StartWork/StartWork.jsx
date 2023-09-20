@@ -1,5 +1,7 @@
 import "./StartWork.css";
 import React from "react";
+import Button from "../Button/Button";
+import { Link } from "react-router-dom";
 
 function StartWork() {
   return (
@@ -8,8 +10,14 @@ function StartWork() {
         Творчество и профессионализм в одном месте!
       </h1>
       <div className="start-work__buttons-container">
-        <button className="start-work__button start-work__button_freelance">Стать фрилансером</button>
-        <button className="start-work__button start-work__button_order">Создать заказ</button>
+        {/* <button className="start-work__button start-work__button_freelance">Стать фрилансером</button> */}
+        <Link to='*'>
+          <Button text="Стать фрилансером" width={295} inheritTheme />
+        </Link>
+        <Link to='*'>
+        <Button text="Создать заказ" width={295} inheritTheme />
+        </Link>
+        {/* <button className="start-work__button start-work__button_order">Создать заказ</button> */}
       </div>
     </section>
   );

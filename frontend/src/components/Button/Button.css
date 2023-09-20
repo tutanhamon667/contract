@@ -7,7 +7,6 @@
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    cursor: pointer;
 }
 
 .buttonInherit {
@@ -23,12 +22,13 @@
 .buttonActHov {
     opacity: 1;
     transition: all 0.1s ease-in-out;
+    cursor: pointer;
 }
 .buttonActHov:hover {
-    opacity: 0.9;
+    opacity: 0.85;
 }
 .buttonActHov:active {
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
 
