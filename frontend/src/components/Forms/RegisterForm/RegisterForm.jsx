@@ -38,6 +38,7 @@ const RegisterForm = () => {
         <InputAuth placeholder="e-mail" marginTop={20} width={610}/>
         <InputAuth placeholder="Пароль" marginTop={20} width={610}/>
         <InputAuth placeholder="Повторите пароль" marginTop={20} width={610}/>
+
       </form>
     </div>
   );
