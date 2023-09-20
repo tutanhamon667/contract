@@ -7,8 +7,8 @@ import styles from "./Layout.module.css";
 export default function Layout() {
   return (
     <div className={styles.wrapper}>
-      <main>
       <Header />
+      <main>
       <div className={styles.outlet}>
         <Outlet />
       </div>
@@ -17,3 +17,5 @@ export default function Layout() {
     </div>
   );
 }
+
+// Перекинул Header над main
