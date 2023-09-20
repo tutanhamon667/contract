@@ -1,35 +1,83 @@
 .wrapper {
- margin: 48px auto 0; 
- max-width: 565px;
+  margin: 0 auto;
+  width: 100%;
+}
+.register__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 48px;
 }
 
 .title {
-    color: #606060;
-    text-align: center;
-    font-family: 'Inter';
-    font-size: 40px;
-    font-weight: 600;
-    margin: 0 0 40px;
+  color: #606060;
+  text-align: center;
+  font-family: "Inter";
+  font-size: 40px;
+  font-weight: 600;
+  margin: 0 0 40px;
 }
 
-
-
-.register{
-
+.register {
+  max-width: 612px;
 }
 
-
-.register__form{
-
+.register__form {
 }
 
-
-.register__statusInputs{
-display: flex;
-justify-content: space-between;
+.register__statusNameContainer {
+  display: flex;
 }
 
+.register__statusNameLeft {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+}
 
-.register__statusInput{
+.register__statusNameRight {
+  display: flex;
+  flex-direction: column;
+}
 
+.register__radioButtonLabel {
+  display: flex;
+}
+
+.register__radioButton {
+  display: none;
+}
+.register__radioButton:checked + .register__radioButtonFake::before {
+  opacity: 1;
+}
+
+.register__radioButtonFake {
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  position: relative;
+}
+.register__radioButtonFake::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-color: #93a0ff;
+  border-radius: 50%;
+  opacity: 0;
+  transition: 0.2s;
+}
+
+.register__radioButtonText {
+  color: #585858;
+  font-family: "Inter";
+  font-size: 20px;
+  font-weight: 400;
+  margin-left: 15px;
 }

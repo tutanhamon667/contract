@@ -3,46 +3,43 @@ import "./Auth.css";
 
 const Auth = () => {
   return (
-    <>
-      <div className="wrapper">
+    <div className="wrapper">
+      <div className="register__container">
         <h1 className="title">Регистрация</h1>
         <div className="register">
           <form className="register__form">
             <div className="register__statusNameContainer">
               <div className="register__statusNameLeft">
-                <label>
+                <label className="register__radioButtonLabel">
                   <input
-                    className="register__statusInput"
+                    className="register__radioButton"
+                    id="customer"
                     type="radio"
-                    name="options"
-                    value="customer"
-                    // checked={selectedOption === 'option1'}
-                    // onChange={handleOptionChange}
                   />
-                  Я заказчик
-                </label>
+                  <span className="register__radioButtonFake"></span>
+                  <span className="register__radioButtonText">Я заказчик</span>
+                  </label>
                 <input className="register__nameInput" type="text" />
               </div>
 
               <div className="register__statusNameRight">
-                <label>
+              <label className="register__radioButtonLabel">
                   <input
+                    className="register__radioButton"
+                    id="freelancer"
                     type="radio"
-                    name="options"
-                    value="freelancer"
-                    // checked={selectedOption === 'option2'}
-                    // onChange={handleOptionChange}
                   />
-                  Я фрилансер
-                </label>
+                  <span className="register__radioButtonFake"></span>
+                  <span className="register__radioButtonText">Я фрилансер</span>
+                  </label>
+
+                <input className="register__nameInput" type="text" />
               </div>
             </div>
-
-            <input className="register__nameInput" type="text" />
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
