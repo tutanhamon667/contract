@@ -25,7 +25,7 @@ function App() {
           {/* Тут будут защищенные роуты */}
           {/* <Route element={<ProtectedRoute />}></Route> */}
           <Route index element={<Main />} />
-          <Route path="signin" element={<Auth />} />
+          <Route path="signup" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
