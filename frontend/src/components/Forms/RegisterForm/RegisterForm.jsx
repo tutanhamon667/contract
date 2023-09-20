@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Button from "../../Button/Button";
 import InputAuth from "../../InputAuth/InputAuth";
 import LinkBar from "../../LinkBar/LinkBar";
@@ -46,8 +47,9 @@ const RegisterForm = () => {
         <InputAuth placeholder="Повторите пароль" marginTop={20} width={610}/>
         <LinkBar/>
         <Button text='Создать аккаунт' width={399} type="submit"/>
-        <div>
-          <p></p>
+        <div className="register__footerLinkContainer">
+          <p className="register__footerLinkDescription">Уже есть аккаунт</p>
+          <Link className="register__footerLink" to='/signin'>войти</Link>
         </div>
       </form>
     </div>
