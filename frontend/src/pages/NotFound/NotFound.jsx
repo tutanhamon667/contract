@@ -1,16 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import styles from './NotFound.module.css'
+import './NotFound.css'
 
 
 const NotFound = () => {
   return (
-    <div className={styles.page}>
-      <h1 className={styles.title}>
+    <div className="page">
+      <h1 className="title">
         Такой страницы не существует
       </h1>
       <Link
-        className={styles.backLink}
+        className="backLink"
         to="/"
       >
         Вернуться на главную
