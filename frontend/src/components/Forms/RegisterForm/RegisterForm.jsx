@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../../Button/Button";
 import InputAuth from "../../InputAuth/InputAuth";
 import LinkBar from "../../LinkBar/LinkBar";
 import "./RegisterForm.css";
@@ -40,6 +41,7 @@ const RegisterForm = () => {
         <InputAuth placeholder="Пароль" marginTop={20} width={610}/>
         <InputAuth placeholder="Повторите пароль" marginTop={20} width={610}/>
         <LinkBar/>
+        <Button text='Создать аккаунт'/>
       </form>
     </div>
   );
