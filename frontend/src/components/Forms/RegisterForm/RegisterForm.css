@@ -41,6 +41,7 @@
     background-color: #ffffff;
     border-radius: 6px;
     position: relative;
+    cursor: pointer;
   }
   .register__radioButtonFake::before {
     content: "";
