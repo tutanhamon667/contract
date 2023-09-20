@@ -24,8 +24,8 @@ function App() {
         <Route path="/" element={<Layout authenticated={authenticated} />}>
           {/* Тут будут защищенные роуты */}
           {/* <Route element={<ProtectedRoute />}></Route> */}
-          <Route path="/signin" element={<Auth />} />
-          <Route path="/" element={<Main />} />
+          <Route index element={<Main />} />
+          <Route path="signin" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
