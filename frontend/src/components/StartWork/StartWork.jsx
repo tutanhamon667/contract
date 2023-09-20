@@ -11,10 +11,10 @@ function StartWork() {
       </h1>
       <div className="start-work__buttons-container">
         {/* <button className="start-work__button start-work__button_freelance">Стать фрилансером</button> */}
-        <Link to='*'>
+        <Link to='signin'>
           <Button text="Стать фрилансером" width={295} inheritTheme />
         </Link>
-        <Link to='*'>
+        <Link to='signin'>
         <Button text="Создать заказ" width={295} inheritTheme />
         </Link>
         {/* <button className="start-work__button start-work__button_order">Создать заказ</button> */}
