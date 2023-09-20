@@ -30,16 +30,6 @@ bower_components
 # node-waf configuration
 .lock-wscript
 
-# IDEs and editors
-.vscode
-.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
 # Logs
 logs
 *.log
@@ -80,11 +70,6 @@ yarn-error.log*
 
 # Lerna
 lerna-debug.log
-
-# System files
-.DS_Store
-Thumbs.db
-desktop.ini
 
 # Testing
 /coverage
