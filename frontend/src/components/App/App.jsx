@@ -5,6 +5,7 @@ import Layout from "../../layout/Layout";
 import NotFound from "../../pages/NotFound/NotFound";
 import Register from "../../pages/Register/Register";
 import Login from "../../pages/Login/Login";
+import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 // import { ProtectedRoute } from "../../services/PotectedRouter";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route index element={<Main />} />
           <Route path="signup" element={<Register />} />
           <Route path="signin" element={<Login />} />
+          <Route path="forgot-password" element={<ForgotPass />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

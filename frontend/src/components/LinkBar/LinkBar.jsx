@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import yandexIcon from "../../images/yandex.svg";
 import "./LinkBar.css";
 
 const LinkBar = () => {
