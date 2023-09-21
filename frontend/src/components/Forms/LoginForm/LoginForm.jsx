@@ -15,7 +15,7 @@ const LoginForm = () => {
             <div className="login__inputContainer">
             <InputAuth placeholder="e-mail" marginTop={20} width={610}/>
             <InputAuth placeholder="Пароль" marginTop={20} width={610}/>
-            <Link className="login__forgotLink">Забыл пароль</Link>
+            <Link className="login__forgotLink" to='/forgot-password'>Забыл пароль</Link>
             </div>
             <LinkBar/>
             <Button text='Создать аккаунт' width={399} type="submit"/>
