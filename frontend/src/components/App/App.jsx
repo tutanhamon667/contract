@@ -9,7 +9,7 @@ import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 // import { ProtectedRoute } from "../../services/PotectedRouter";
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(true);
+  const [authenticated, setAuthenticated] = React.useState(false);
 
   const logIn = () => {
     // Тут должна быть логика по авторизации(получение/проверка/запись токена и тд)
