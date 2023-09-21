@@ -21,7 +21,7 @@ const RegisterForm = () => {
                 id="customer"
                 type="radio"
                 name="role"
-                checked
+                defaultChecked
               />
               <span className="register__radioButtonFake"></span>
               <span className="register__radioButtonText">Я заказчик</span>
