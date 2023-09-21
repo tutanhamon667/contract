@@ -1,5 +1,6 @@
 import "./FilterSection.css";
 import React from "react";
+import Button from "../Button/Button";
 
 function FilterSection() {
   return (
@@ -58,7 +59,10 @@ function FilterSection() {
           <label htmlFor="budget-item4" className="filters-checkbox__item">Фильтр 4</label>
         </div>
       </div>
-
+      <div className="filters-buttons">
+      <Button text="Применить фильтр" width={295}/>
+      <Button text="Очистить фильтры" width={295} inheritTheme/>
+      </div>
     </section>
   );
 }
