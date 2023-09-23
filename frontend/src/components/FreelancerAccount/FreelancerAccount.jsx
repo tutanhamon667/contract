@@ -4,13 +4,17 @@ import useFormAndValidation from "../hooks/useFormAndValidation";
 import { CurrentUser } from "../../context/context"
 
 export default function FreelancerAccount({ updateUser }) {
+  // открывает форму редактирования имейла
   const [updateEmail, setUpdateEmail] = useState(false);
+  // открывает форму редактирования пароля
   const [updatePassword, setUpdatePassword] = useState(false);
   const user = useContext(CurrentUser);
-  const { values, handleChange, setValues } = useFormAndValidation();
+  // кастомный хук для валидации формы
+  const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
 
   function handleSubmitEmail(e) {
     e.preventDefault()
+    if (!isValid) return
     updateUser(values)
     setValues({ ...values, email: '' })
   }
@@ -38,14 +42,18 @@ export default function FreelancerAccount({ updateUser }) {
             noValidate
             onSubmit={handleSubmitEmail}
           >
-            <label>Введите новый email:</label>
+            <label for="email">Введите новый email:</label>
             <input
               type="email"
               autoComplete="off"
+              id="email"
               name="email"
               onInput={handleChange}
               value={values.email || ''}
             /> <br />
+            <span>
+              {!isValid && errors.email}
+            </span> <br />
             <button type="submit">Сохранить</button>
             <button
               type="button"
@@ -77,7 +85,11 @@ export default function FreelancerAccount({ updateUser }) {
           />
           <label>Показать пароль</label><br />
           <button>Сохранить</button>
-          <button>Отменить</button>
+          <button
+            type="button"
+            onClick={() => setUpdatePassword(false)}>
+            Отменить
+          </button>
         </form>
       )}
       <p>----------------------------</p>
