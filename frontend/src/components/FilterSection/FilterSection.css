@@ -1,4 +1,5 @@
 .filters {
+  max-width: 295px;
 }
 
 .filters-conteiner {
@@ -24,7 +25,6 @@
 }
 
 .filters-checkbox__item {
-    
   color: #585858;
   font-family: Inter;
   font-size: 20px;
@@ -60,11 +60,18 @@
   background-size: 50% 50%;
 }
 
-    /* стили для чекбокса, находящегося в состоянии checked */
-    .filters-checkbox:checked+label::before {
-        border: none;
-        background-image: url(../../images/group182.svg);
-        background-size: cover;
-        width: 26px;
-        height: 26px;
-      }
+/* стили для чекбокса, находящегося в состоянии checked */
+.filters-checkbox:checked + label::before {
+  border: none;
+  background-image: url(../../images/group182.svg);
+  background-size: cover;
+  width: 26px;
+  height: 26px;
+}
+
+.filters-buttons {
+  min-height: 118px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

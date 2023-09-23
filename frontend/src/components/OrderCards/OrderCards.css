@@ -1,0 +1,113 @@
+.orderCards {
+  margin: 20px 0 0;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 32px 28px;
+}
+
+.orderCard__header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.orderCard__title {
+  margin: 0;
+  color: #606060;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.orderCard__direction {
+  margin: 8px 0 0;
+  color: #a8a8a8;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.orderCard__price {
+  margin: 0;
+  color: #606060;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.orderCard__description {
+  margin: 12px 0 0;
+  color: #606060;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.orderCard__tag-container {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.orderCard__tag {
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid #606060;
+  color: #888;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.orderCard__client {
+  margin: 20px 0 8px;
+  color: #a8a8a8;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.full-stars {
+}
+.full-stars .rating-group {
+  display: inline-flex;
+}
+.full-stars input {
+  position: absolute;
+  left: -9999px;
+}
+.full-stars label {
+  margin: 0;
+  cursor: pointer;
+}
+.full-stars label svg {
+  margin: 2px;
+  width: 17.647px;
+  height: 17.647px;
+  fill: #337ab7;
+  transition: fill 0.3s;
+}
+.full-stars input:checked ~ label svg {
+  fill: #fdfdfd;
+}
+.full-stars .rating-group:hover label svg {
+  fill: #337ab7;
+}
+.full-stars .rating-group input:hover ~ label svg {
+  fill: #ffffff;
+}

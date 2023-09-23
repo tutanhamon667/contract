@@ -1,6 +1,5 @@
 import "./SearchMain.css";
 import React from "react";
-import searchBtn from "../../images/magnifyingGlass.svg"
 
 function SearchMain() {
   return (
@@ -8,11 +7,7 @@ function SearchMain() {
       <form className="search__form">
         <div className="search__container">
           <button type="submit" className="search__button">
-            <img
-              className="search__search-image"
-              src={searchBtn}
-              alt="кнопка поиска"
-            />
+            <div className="search__search-image"></div>
           </button>
           <input
             className="search__input"

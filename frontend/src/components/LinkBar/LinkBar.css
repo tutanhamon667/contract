@@ -1,5 +1,5 @@
 .linkBar {
-  margin-top: 28px;
+  margin: 28px 0 32px;
   min-width: 308px;
   min-height: 100px;
   display: flex;
@@ -25,7 +25,7 @@
   margin-right: 40px;
   height: 47px;
   box-sizing: border-box;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.1s ease-in-out;
 }
 .linkBar__item:hover {
     opacity: 0.8;
@@ -37,4 +37,32 @@
 
 .linkBar__item:last-child {
   margin-right: 0;
+}
+
+.linkBar__item__vk{
+  background-image: url(../../images/vk.svg);
+  background-position: center;
+  width: 46px;
+  height: 46px;
+}
+
+.linkBar__item__google{
+  background-image: url(../../images/google.svg);
+  background-position: center;
+  width: 46px;
+  height: 46px;
+}
+
+.linkBar__item__github{
+  background-image: url(../../images/github.svg);
+  background-position: center;
+  width: 46px;
+  height: 46px;
+}
+
+.linkBar__item__yandex{
+  background-image: url(../../images/yandex.svg);
+  background-position: center;
+  width: 46px;
+  height: 46px;
 }

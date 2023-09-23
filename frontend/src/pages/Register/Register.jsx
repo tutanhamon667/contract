@@ -1,8 +1,8 @@
 import React from "react";
 import RegisterForm from "../../components/Forms/RegisterForm/RegisterForm";
-import "./Auth.css";
+import "./Register.css";
 
-const Auth = () => {
+const Register = () => {
   return (
     <div className="wrapper">
       <div className="container">
@@ -13,4 +13,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default Register;

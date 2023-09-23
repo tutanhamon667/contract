@@ -1,9 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import vkIcon from "../../images/vk.svg";
-import googleIcon from "../../images/google.svg";
-import githubIcon from "../../images/github.svg";
-import yandexIcon from "../../images/yandex.svg";
 import "./LinkBar.css";
 
 const LinkBar = () => {
@@ -12,16 +8,16 @@ const LinkBar = () => {
       <p className="linkBar__text">или</p>
       <nav className="linkBar__menu">
         <Link className="linkBar__item" to="#">
-          <img src={vkIcon} alt="Vk" />
+          <div className="linkBar__item__vk" />
         </Link>
         <Link className="linkBar__item" to="#">
-          <img src={googleIcon} alt="Google" />
+          <div className="linkBar__item__google" />
         </Link>
         <Link className="linkBar__item" to="#">
-          <img src={githubIcon} alt="GitHub" />
+          <div className="linkBar__item__github" />
         </Link>
         <Link className="linkBar__item" to="#">
-          <img src={yandexIcon} alt="Yandex" />
+          <div className="linkBar__item__yandex" />
         </Link>
       </nav>
     </div>

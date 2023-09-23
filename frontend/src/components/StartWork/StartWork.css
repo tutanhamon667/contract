@@ -20,6 +20,8 @@
 
 .start-work__buttons-container {
   margin-top: 48px;
+  display: flex;
+  gap: 20px;
 }
 
 .start-work__button {

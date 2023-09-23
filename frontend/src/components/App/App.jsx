@@ -3,13 +3,15 @@ import Main from "../Main/Main";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Layout from "../../layout/Layout";
 import NotFound from "../../pages/NotFound/NotFound";
-import Auth from "../../pages/Auth/Auth";
+import Register from "../../pages/Register/Register";
+import Login from "../../pages/Login/Login";
+import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 // import { ProtectedRoute } from "../../services/PotectedRouter";
 import FreelancerAccount from "../FreelancerAccount/FreelancerAccount";
 import { CurrentUser } from "../../context/context"
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(true);
+  const [authenticated, setAuthenticated] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({
     id: "1",
     firstName: "Иван",
@@ -42,8 +44,10 @@ function App() {
             {/* Тут будут защищенные роуты */}
             {/* <Route element={<ProtectedRoute />}></Route> */}
             <Route index element={<Main />} />
+            <Route path="signup" element={<Register />} />
+            <Route path="signin" element={<Login />} />
+            <Route path="forgot-password" element={<ForgotPass />} />
             <Route path="freelancer/:freelancerId" element={<FreelancerAccount updateUser={updateUser} />} />
-            <Route path="signup" element={<Auth />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
