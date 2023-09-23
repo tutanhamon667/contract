@@ -6,9 +6,8 @@ import userIcon from "../../images/user-icon.svg";
 import { CurrentUser } from "../../context/context"
 
 function Header({ authenticated }) {
-  // условные данные пользователя
-  // при изменении id в userName, меняется отображение в FreelancerAccount
   const user = useContext(CurrentUser);
+  
   function giveOutNameInHeader(user) {
     return `${user.firstName} ${user.lastName.slice(0, 1)}.`
   }

@@ -13,7 +13,7 @@ import { CurrentUser } from "../../context/context"
 function App() {
   const [authenticated, setAuthenticated] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({
-    id: "1",
+    id: "5",
     firstName: "Иван",
     lastName: "Петров",
     email: "email@mail.ru",
