@@ -1,17 +1,16 @@
 import "../Header/Header.css";
-import React from "react";
-import { Link } from "react-router-dom"
+import {React, useContext} from "react";
+import { Link } from "react-router-dom";
 import HeaderAuth from "../HeaderAuth/HeaderAuth";
-import userIcon from "../../images/user-icon.svg"
+import userIcon from "../../images/user-icon.svg";
+import { CurrentUser } from "../../context/context"
 
-function Header({authenticated}) {
+function Header({ authenticated }) {
   // условные данные пользователя
-  const userName = {
-    firstName: "Иван",
-    lastName: "Петров"
-  }
-  function giveOutNameInHeader(userName) {
-    return `${userName.firstName} ${userName.lastName.slice(0,1)}.`
+  // при изменении id в userName, меняется отображение в FreelancerAccount
+  const user = useContext(CurrentUser);
+  function giveOutNameInHeader(user) {
+    return `${user.firstName} ${user.lastName.slice(0, 1)}.`
   }
 
   return (
@@ -21,13 +20,13 @@ function Header({authenticated}) {
           <button className="header__logo"></button>
         </Link>
         {authenticated ? (
-          <Link to="*">
+          <Link to={`/freelancer/${user.id}`}>
             <div className="header__userInfo">
-              <img src={userIcon} alt="" />
-              <p>{giveOutNameInHeader(userName)}</p>
+              <img src={userIcon} alt="user" />
+              <p>{giveOutNameInHeader(user)}</p>
             </div>
           </Link>
-          ) : (<HeaderAuth />)
+        ) : (<HeaderAuth />)
         }
       </div>
     </header>
