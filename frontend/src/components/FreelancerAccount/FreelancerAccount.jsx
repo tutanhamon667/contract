@@ -42,10 +42,10 @@ export default function FreelancerAccount({ updateUser }) {
             noValidate
             onSubmit={handleSubmitEmail}
           >
-            <label for="email">Введите новый email:</label>
+            <label htmlFor="email">Введите новый email:</label>
             <input
               type="email"
-              autoComplete="off"
+              autoComplete="email"
               id="email"
               name="email"
               onInput={handleChange}
@@ -75,11 +75,11 @@ export default function FreelancerAccount({ updateUser }) {
       {updatePassword && (
         <form>
           <label>Текущий пароль</label>
-          <input type="password" /><br />
+          <input type="password" autoComplete="current-password" /><br />
           <label>Новый пароль</label>
-          <input type="password" /><br />
+          <input type="password" autoComplete="new-password" /><br />
           <label>Подтвердите новый пароль</label>
-          <input type="password" /><br />
+          <input type="password" autoComplete="new-password" /><br />
           <input
             type="radio"
           />
@@ -100,7 +100,7 @@ export default function FreelancerAccount({ updateUser }) {
 
 /*
 Личный кабинет фрилансера имеется следующий вид:
--Сбоку блок с следующими элементами:
+-Сбоку блок со следующими элементами:
   -Информация;
   -Кошелёк;
   -Пароль и безопасность;
@@ -129,7 +129,7 @@ export default function FreelancerAccount({ updateUser }) {
 При смене пароля не производится выход из аккаунта."
 ---------------------------------
 "Данный блок состоит из:
-Списка активных подписок с возможностью удаления подписки. При нажатии открывается 
-главная страница (фрилансер) с выбранными в данной подписке фильтрами(выдача происходит по новизне)"
+Списка активных подписок с возможностью удаления подписки. При нажатии открывается
+главная страница (фрилансер) с выбранными в данной подписке фильтрами (выдача происходит по новизне)"
 
 */

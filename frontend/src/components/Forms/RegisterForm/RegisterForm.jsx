@@ -26,7 +26,7 @@ const RegisterForm = () => {
               <span className="register__radioButtonFake"></span>
               <span className="register__radioButtonText">Я заказчик</span>
             </label>
-            <InputAuth placeholder="Имя" marginTop={20} />
+            <InputAuth placeholder="Имя" marginTop={20} type="text" autocomplete="given-name" />
           </div>
 
           <div className="register__statusNameRight">
@@ -40,17 +40,17 @@ const RegisterForm = () => {
               <span className="register__radioButtonFake"></span>
               <span className="register__radioButtonText">Я фрилансер</span>
             </label>
-            <InputAuth placeholder="Фамилия" marginTop={20} />
+            <InputAuth placeholder="Фамилия" marginTop={20} type="text" autocomplete="family-name" />
           </div>
         </div>
-        <InputAuth placeholder="e-mail" marginTop={20} width={610}/>
-        <InputAuth placeholder="Пароль" marginTop={20} width={610}/>
-        <InputAuth placeholder="Повторите пароль" marginTop={20} width={610}/>
-        <LinkBar/>
-        <Button text='Создать аккаунт' width={399} type="submit"/>
+        <InputAuth placeholder="Эл. почта" marginTop={20} width={610} type="email" autocomplete="email" />
+        <InputAuth placeholder="Пароль" marginTop={20} width={610} type="password" autocomplete="new-password" />
+        <InputAuth placeholder="Повторите пароль" marginTop={20} width={610} type="password" autocomplete="new-password" />
+        <LinkBar />
+        <Button text='Создать аккаунт' width={399} type="submit" />
         <div className="register__footerLinkContainer">
-          <p className="register__footerLinkDescription">Уже есть аккаунт</p>
-          <Link className="register__footerLink" to='/signin'>войти</Link>
+          <p className="register__footerLinkDescription">Уже есть аккаунт?</p>
+          <Link className="register__footerLink" to='/signin'>Войти</Link>
         </div>
       </form>
     </div>
