@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from .models import Stack, WorkerProfile
 from .permissions import IsUser
 from .serializers import (NewEmailSerializer, SetPasswordSerializer,
-                          UserCreateSerializer, UserViewSerialiser, WorkerProfileSerializer)
+                          UserCreateSerializer, UserViewSerialiser,
+                          WorkerProfileSerializer)
 
 User = get_user_model()
 
@@ -40,7 +41,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED
-            )
+        )
 
     @action(url_path='new_email', methods=['post'], detail=False,
             permission_classes=(IsUser,))
@@ -52,7 +53,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.data,
             status=status.HTTP_200_OK
-            )
+        )
 
     @action(url_path='new_password', methods=['post'], detail=False,
             permission_classes=(IsUser,))
@@ -77,4 +78,3 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK)
-        
