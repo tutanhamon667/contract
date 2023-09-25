@@ -6,6 +6,8 @@ from .usermanager import UserManager
 
 
 class Member(PermissionsMixin, AbstractBaseUser):
+    username = None
+
     email = models.EmailField(
         verbose_name='email address',
         max_length=254,
@@ -54,7 +56,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
         return self.is_admin
 
 
-class Skil(models.Model):
+class Stack(models.Model):
     name = models.CharField(
         verbose_name='Необходимый навык',
         max_length=50,
@@ -90,8 +92,8 @@ class Activity(models.Model):
             message='Используйте допустимые символы!'
         )]
     )
-    skils = models.ManyToManyField(
-        Skil,
+    stacks = models.ManyToManyField(
+        Stack,
         blank=True,
         verbose_name='Необходимый навык'
     )
@@ -103,7 +105,12 @@ class Activity(models.Model):
         return self.name
 
 
-class Profile(models.Model):
+class WorkerProfile(models.Model):
+    user = models.OneToOneField(
+        Member,
+        on_delete=models.PROTECT
+    )
+
     photo = models.ImageField(
         upload_to='bio/images/',
         null=True,
@@ -114,10 +121,12 @@ class Profile(models.Model):
 #    contacts
     activity = models.ManyToManyField(
         Activity,
+        blank=True,
         verbose_name='Специализация'
     )
-    skil = models.ManyToManyField(
-        Skil,
+    stacks = models.ManyToManyField(
+        Stack,
+        blank=True,
         verbose_name='Навык'
     )
     payrate = models.IntegerField(
@@ -137,15 +146,4 @@ class Profile(models.Model):
     web = models.URLField(
         blank=True,
         verbose_name='Личный сайт'
-    )
-
-
-class Worker(models.Model):
-    user = models.ForeignKey(
-        Member,
-        on_delete=models.PROTECT,
-    )
-    profile = models.OneToOneField(
-        Profile,
-        on_delete=models.PROTECT
     )
