@@ -1,13 +1,14 @@
 import React from "react";
 import "./InputAuth.css";
 
-const InputAuth = ({ placeholder, width, value, onChange, marginTop }) => {
+const InputAuth = ({ placeholder, type, autocomplete, width, value, onChange, marginTop }) => {
   return (
     <div className="inputContainer">
       <input
         className="input"
-        type="text"
         placeholder={placeholder}
+        type={type}
+        autoComplete={autocomplete}
         style={{width, marginTop}}
       />
     </div>

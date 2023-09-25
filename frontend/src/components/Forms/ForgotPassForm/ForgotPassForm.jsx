@@ -15,7 +15,7 @@ const ForgotPassForm = () => {
             Введите адрес электронной почты, который вы использовали при
             регистрации, и мы вышлем вам инструкции по сбросу пароля.
           </p>
-          <InputAuth placeholder="e-mail" marginTop={20} width={610} />
+          <InputAuth placeholder="Эл. почта" type="email" autoComplete="email" marginTop={20} width={610} />
         </div>
         <Button text="Отправить" width={399} type="submit" />
       </form>
