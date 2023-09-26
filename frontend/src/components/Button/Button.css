@@ -21,19 +21,25 @@
     cursor: pointer;
     height: 53px;
     border: 1px solid #606060;
-    background-color: #EEF0FF;
+    background-color: inherit;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
     transition: all 0.2s ease-in-out;
 }
+
+.buttonWhite{
+    background-color: #FFFFFF;
+    border: none;
+}
+
 .buttonInherit:hover {
-    opacity: 0.7;
+    opacity: 0.8;
 
 }
 .buttonInherit:active {
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
 

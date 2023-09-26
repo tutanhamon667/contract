@@ -7,6 +7,7 @@ import "./RegisterForm.css";
 
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [role, setRole] = React.useState("customer");
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -18,46 +19,43 @@ const RegisterForm = () => {
   return (
     <form className="register" onSubmit={handleSubmit}>
       <div className="register__form">
-        <div className="register__statusNameContainer">
-          <div className="register__statusNameLeft">
-            <label className="register__radioButtonLabel">
-              <input
-                className="register__radioButton"
-                id="customer"
-                type="radio"
-                name="role"
-                defaultChecked
-              />
-              <span className="register__radioButtonFake"></span>
-              <span className="register__radioButtonText">Я заказчик</span>
-            </label>
-            <InputAuth
-              placeholder="Имя"
-              marginTop={20}
-              type="text"
-              autocomplete="given-name"
-            />
-          </div>
-
-          <div className="register__statusNameRight">
-            <label className="register__radioButtonLabel">
-              <input
-                className="register__radioButton"
-                id="freelancer"
-                type="radio"
-                name="role"
-              />
-              <span className="register__radioButtonFake"></span>
-              <span className="register__radioButtonText">Я фрилансер</span>
-            </label>
-            <InputAuth
-              placeholder="Фамилия"
-              marginTop={20}
-              type="text"
-              autocomplete="family-name"
-            />
-          </div>
+        <div className="register__formRoleContainer">
+          <Button
+            text="Я заказчик"
+            width={295}
+            height={46}
+            type="submit"
+            inheritTheme
+            white={role === "freelancer" ? true : false}
+            onClick={() => setRole("customer")}
+          />
+          <Button
+            text="Я фрилансер"
+            width={295}
+            height={46}
+            type="submit"
+            inheritTheme
+            white={role === "customer" ? true : false}
+            onClick={() => setRole("freelancer")}
+          />
         </div>
+        <InputAuth
+          placeholder="Имя"
+          marginTop={20}
+          width={610}
+          height={46}
+          type="text"
+          autocomplete="given-name"
+        />
+
+        <InputAuth
+          placeholder="Фамилия"
+          marginTop={20}
+          width={610}
+          height={46}
+          type="text"
+          autocomplete="family-name"
+        />
         <InputAuth
           placeholder="Эл. почта"
           marginTop={20}
@@ -67,9 +65,10 @@ const RegisterForm = () => {
         />
         <InputAuth
           placeholder="Пароль"
-          pass= {togglePasswordVisibility}
+          pass={togglePasswordVisibility}
           marginTop={20}
           width={610}
+          height={46}
           type={showPassword ? "text" : "password"}
           autocomplete="new-password"
         />
@@ -77,6 +76,7 @@ const RegisterForm = () => {
           placeholder="Повторите пароль"
           marginTop={20}
           width={610}
+          height={46}
           type={showPassword ? "text" : "password"}
           autocomplete="new-password"
         />
