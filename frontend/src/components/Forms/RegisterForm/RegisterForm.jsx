@@ -40,7 +40,7 @@ const RegisterForm = () => {
             height={46}
             type="button"
             inheritTheme
-            white={role === "freelancer" ? true : false}
+            white={role === "customer" ? true : false}
             onClick={() => setRole("customer")}
           />
           <Button
@@ -49,7 +49,7 @@ const RegisterForm = () => {
             height={46}
             type="button"
             inheritTheme
-            white={role === "customer" ? true : false}
+            white={role === "freelancer" ? true : false}
             onClick={() => setRole("freelancer")}
           />
         </div>
