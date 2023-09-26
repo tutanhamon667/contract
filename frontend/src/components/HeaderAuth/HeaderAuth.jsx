@@ -15,8 +15,8 @@ function HeaderAuth() {
       )}
       {location.pathname !== "/signin" && (
         <Link to="/signin">
-          <button className="header-auth__entry-button" type="button">
-            Войти
+          <button className={`${location.pathname === "/signup" ? "header-auth__singup-button" : "header-auth__entry-button"}`} type="button">
+            {location.pathname === "/signup" ? "Вход" : "Войти"}
           </button>
         </Link>
       )}

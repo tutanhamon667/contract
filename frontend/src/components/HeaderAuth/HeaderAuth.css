@@ -43,6 +43,10 @@
   line-height: normal;
 }
 
+.header-auth__entry-button_signin{
+
+}
+
 .header-auth__entry-button:hover {
   transition: 1s ease-in;
   opacity: 0.6;
