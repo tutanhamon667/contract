@@ -18,8 +18,16 @@ const RegisterForm = () => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
+    console.log(values);
     if (isValid) {
-      setValues({ ...values, email: "" });
+      setValues({
+        ...values,
+        email: "",
+        firstName: "",
+        lastName: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
     }
   };
   return (
@@ -54,7 +62,7 @@ const RegisterForm = () => {
           name="firstName"
           autocomplete="given-name"
           onChange={handleChange}
-          value={values.firstName || ''}
+          value={values.firstName || ""}
         />
         <InputAuth
           placeholder="Фамилия"
@@ -65,7 +73,7 @@ const RegisterForm = () => {
           name="lastName"
           autocomplete="family-name"
           onChange={handleChange}
-          value={values.lastName || ''}
+          value={values.lastName || ""}
         />
         <InputAuth
           placeholder="Эл. почта"
@@ -75,7 +83,7 @@ const RegisterForm = () => {
           name="email"
           autocomplete="email"
           onChange={handleChange}
-          value={values.email || ''}
+          value={values.email || ""}
           error={errors.email}
           errorMessage={errors.email}
         />
@@ -89,7 +97,7 @@ const RegisterForm = () => {
           autocomplete="new-password"
           name="newPassword"
           onChange={handleChange}
-          value={values.newPassword || ''}
+          value={values.newPassword || ""}
         />
         <InputAuth
           placeholder="Повторите пароль"
@@ -101,7 +109,7 @@ const RegisterForm = () => {
           autocomplete="new-password"
           name="confirmNewPassword"
           onChange={handleChange}
-          value={values.confirmNewPassword || ''}
+          value={values.confirmNewPassword || ""}
         />
         {/* <LinkBar /> */}
         <Button text="Создать аккаунт" width={399} type="submit" />

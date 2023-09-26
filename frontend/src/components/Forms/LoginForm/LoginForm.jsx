@@ -1,19 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Button from "../../Button/Button";
+import useFormAndValidation from "../../hooks/useFormAndValidation";
 import InputAuth from "../../InputAuth/InputAuth";
-import LinkBar from "../../LinkBar/LinkBar";
+// import LinkBar from "../../LinkBar/LinkBar";
 import "./LoginForm.css";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
-
+  const { values, errors, isValid, handleChange, setValues } =
+    useFormAndValidation();
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
+    console.log(values);
+    if (isValid) {
+      setValues({ ...values, email: "", password: ""});
+    }
   };
 
   return (
@@ -27,6 +33,11 @@ const LoginForm = () => {
             marginTop={20}
             width={610}
             height={46}
+            name="email"
+            onChange={handleChange}
+            value={values.email || ""}
+            error={errors.email}
+            errorMessage={errors.email}
           />
           <InputAuth
             placeholder="Пароль"
@@ -36,6 +47,9 @@ const LoginForm = () => {
             width={610}
             height={46}
             pass={togglePasswordVisibility}
+            name="password"
+            onChange={handleChange}
+            value={values.password || ''}
           />
           <Link className="login__forgotLink" to="/forgot-password">
             Забыл пароль
