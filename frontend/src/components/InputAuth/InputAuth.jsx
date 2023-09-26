@@ -10,6 +10,7 @@ const InputAuth = ({
   value,
   onChange,
   marginTop,
+  marginBottom,
   pass,
 }) => {
   return (
@@ -18,7 +19,7 @@ const InputAuth = ({
         className="input"
         placeholder={placeholder}
         autoComplete={autocomplete}
-        style={{ width, height, marginTop }}
+        style={{ width, height, marginTop, marginBottom }}
         value={value}
         onChange={onChange}
         type={type}

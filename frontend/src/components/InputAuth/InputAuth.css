@@ -32,8 +32,9 @@
   position: absolute;
   width: 24px;
   height: 24px;
-  opacity: 0.3;
-  top: 50%;
+  opacity: 0.15;
+  top: 46%;
   left: 93%;
+  transform: translate();
   cursor: pointer;
 }

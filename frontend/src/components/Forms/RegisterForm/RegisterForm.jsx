@@ -75,12 +75,13 @@ const RegisterForm = () => {
         <InputAuth
           placeholder="Повторите пароль"
           marginTop={20}
+          marginBottom={60}
           width={610}
           height={46}
           type={showPassword ? "text" : "password"}
           autocomplete="new-password"
         />
-        <LinkBar />
+        {/* <LinkBar /> */}
         <Button text="Создать аккаунт" width={399} type="submit" />
         <div className="register__footerLinkContainer">
           <p className="register__footerLinkDescription">Уже есть аккаунт?</p>
