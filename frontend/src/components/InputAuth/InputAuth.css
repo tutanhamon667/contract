@@ -1,5 +1,5 @@
 .inputContainer {
-    
+  position: relative;
 }
 
 .input {
@@ -24,4 +24,16 @@
 
 .input::placeholder {
   color: #b5b5b5;
+}
+
+.input__showPass {
+  background-image: url(../../images/showPass.svg);
+  background-position: center;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  opacity: 0.3;
+  top: 50%;
+  left: 93%;
+  cursor: pointer;
 }
