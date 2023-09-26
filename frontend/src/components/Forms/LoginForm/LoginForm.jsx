@@ -26,6 +26,7 @@ const LoginForm = () => {
             autocomplete="email"
             marginTop={20}
             width={610}
+            height={46}
           />
           <InputAuth
             placeholder="Пароль"
@@ -33,14 +34,15 @@ const LoginForm = () => {
             autocomplete="current-password"
             marginTop={20}
             width={610}
+            height={46}
             pass={togglePasswordVisibility}
           />
           <Link className="login__forgotLink" to="/forgot-password">
             Забыл пароль
           </Link>
         </div>
-        <LinkBar />
-        <Button text="Создать аккаунт" width={399} type="submit" />
+        {/* <LinkBar /> */}
+        <Button text="Войти" width={399} type="submit" />
         <div className="login__footerLinkContainer">
           <p className="login__footerLinkDescription">Нет аккаунта?</p>
           <Link className="login__footerLink" to="/signup">

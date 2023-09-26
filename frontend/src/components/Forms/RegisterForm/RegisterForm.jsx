@@ -24,7 +24,7 @@ const RegisterForm = () => {
             text="Я заказчик"
             width={295}
             height={46}
-            type="submit"
+            type="button"
             inheritTheme
             white={role === "freelancer" ? true : false}
             onClick={() => setRole("customer")}
@@ -33,7 +33,7 @@ const RegisterForm = () => {
             text="Я фрилансер"
             width={295}
             height={46}
-            type="submit"
+            type="button"
             inheritTheme
             white={role === "customer" ? true : false}
             onClick={() => setRole("freelancer")}

@@ -22,7 +22,7 @@
   font-weight: 400;
   text-decoration-line: underline;
   text-underline-offset: 4px;
-  margin-top: 24px;
+  margin: 24px 0 60px;
   transition: all 0.2s ease-in-out;
 }
 .login__forgotLink:hover{
