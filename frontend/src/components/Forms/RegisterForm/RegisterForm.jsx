@@ -1,13 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Button from "../../Button/Button";
+import useFormAndValidation from "../../hooks/useFormAndValidation";
 import InputAuth from "../../InputAuth/InputAuth";
-import LinkBar from "../../LinkBar/LinkBar";
+// import LinkBar from "../../LinkBar/LinkBar";
 import "./RegisterForm.css";
 
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [role, setRole] = React.useState("customer");
+  const { values, errors, isValid, handleChange, setValues } =
+    useFormAndValidation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -15,6 +18,9 @@ const RegisterForm = () => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
+    if (isValid) {
+      setValues({ ...values, email: "" });
+    }
   };
   return (
     <form className="register" onSubmit={handleSubmit}>
@@ -45,23 +51,33 @@ const RegisterForm = () => {
           width={610}
           height={46}
           type="text"
+          name="firstName"
           autocomplete="given-name"
+          onChange={handleChange}
+          value={values.firstName || ''}
         />
-
         <InputAuth
           placeholder="Фамилия"
           marginTop={20}
           width={610}
           height={46}
           type="text"
+          name="lastName"
           autocomplete="family-name"
+          onChange={handleChange}
+          value={values.lastName || ''}
         />
         <InputAuth
           placeholder="Эл. почта"
           marginTop={20}
           width={610}
           type="email"
+          name="email"
           autocomplete="email"
+          onChange={handleChange}
+          value={values.email || ''}
+          error={errors.email}
+          errorMessage={errors.email}
         />
         <InputAuth
           placeholder="Пароль"
@@ -71,6 +87,9 @@ const RegisterForm = () => {
           height={46}
           type={showPassword ? "text" : "password"}
           autocomplete="new-password"
+          name="newPassword"
+          onChange={handleChange}
+          value={values.newPassword || ''}
         />
         <InputAuth
           placeholder="Повторите пароль"
@@ -80,6 +99,9 @@ const RegisterForm = () => {
           height={46}
           type={showPassword ? "text" : "password"}
           autocomplete="new-password"
+          name="confirmNewPassword"
+          onChange={handleChange}
+          value={values.confirmNewPassword || ''}
         />
         {/* <LinkBar /> */}
         <Button text="Создать аккаунт" width={399} type="submit" />

@@ -38,3 +38,14 @@
   transform: translate();
   cursor: pointer;
 }
+
+.input__error {
+  border: 1px solid rgb(207, 24, 24);
+}
+
+.input__errorText{
+  color: rgb(207, 24, 24);
+  position: absolute;
+  left: 2%;
+  top: 100%;
+}
