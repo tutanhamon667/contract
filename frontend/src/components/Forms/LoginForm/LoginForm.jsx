@@ -50,13 +50,15 @@ const LoginForm = () => {
             name="password"
             onChange={handleChange}
             value={values.password || ''}
+            error={errors.password}
+            errorMessage={errors.password}
           />
           <Link className="login__forgotLink" to="/forgot-password">
             Забыл пароль
           </Link>
         </div>
         {/* <LinkBar /> */}
-        <Button text="Войти" width={399} type="submit" />
+        <Button text="Войти" width={399} type="submit"/>
         <div className="login__footerLinkContainer">
           <p className="login__footerLinkDescription">Нет аккаунта?</p>
           <Link className="login__footerLink" to="/signup">

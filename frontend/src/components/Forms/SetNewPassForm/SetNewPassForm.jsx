@@ -40,6 +40,8 @@ const SetNewPassForm = () => {
             name="password"
             onChange={handleChange}
             value={values.password || ""}
+            error={errors.password}
+            errorMessage={errors.password}
           />
           <InputAuth
             placeholder="Повторите пароль"
