@@ -85,6 +85,10 @@ export default function useFormAndValidation() {
         setErrors({ ...errors, [name]: "Введите фамилию" });
         setIsValid(false);
       }
+      if (value.length > 80) {
+        setErrors({ ...errors, [name]: "Фамилия не длиннее 80 символов" });
+        setIsValid(false);
+      }
     }
   }
 
