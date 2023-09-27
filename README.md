@@ -1,6 +1,33 @@
 # freelancing-platform-project
 
+
 Парамонов М.С.
+
+Установить интерпритатор языка python. В проекте применена версия 3.10.11  
+https://www.python.org/downloads/
+
+
+Запуск проекта  
+В корне проекта (там, где находятся файлы README.md и setup.cfg) выполнить команды
+~~~
+pythom -m venv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
+~~~
+
+Перейти в папку backend и установить зависимости
+~~~
+cd backend/
+pip install -r requirements.txt
+~~~
+Выполнить миграции
+~~~
+python manage.py makemigrations users
+pythoт manage.py migrate
+~~~
+Запустить проект  
+python manage.py runserver
+
 end-points модели Member
 
 регистрация нового пользователя (доступно любому пользователю)  
