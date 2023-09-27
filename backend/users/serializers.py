@@ -24,6 +24,16 @@ class SetPasswordSerializer(djoser_serializers.SetPasswordRetypeSerializer):
     pass
 
 
+class SendEmailResetSerializer(djoser_serializers.SendEmailResetSerializer):
+    pass
+
+
+class PasswordResetConfirmSerializer(
+    djoser_serializers.PasswordResetConfirmRetypeSerializer
+):
+    pass
+
+
 class UserViewSerialiser(serializers.ModelSerializer):
     class Meta:
         model = User

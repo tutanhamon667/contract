@@ -145,6 +145,9 @@ DJOSER = {
     'SET_PASSWORD_RETYPE': 'True',
     'SET_USERNAME_RETYPE': 'True',
     'PASSWORD_RESET_CONFIRM_RETYPE': 'True',
+    'PASSWORD_RESET_CONFIRM_URL': 'api/v1/users/reset_password_confirm/{uid}/{token}/',
+
+    'EMAIL': {'password_reset': 'djoser.email.PasswordResetEmail'},
 
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.AllowAny'],
@@ -155,7 +158,21 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create_password_retype': 'users.serializers.UserCreateSerializer',
         'set_password_retype': 'users.serializers.SetPasswordSerializer',
-        'set_username_retype': 'users.serializers.NewEmailSerializer'
+        'set_username_retype': 'users.serializers.NewEmailSerializer',
+        'password_reset': 'users.serializers.SendEmailResetSerializer',
+        'password_reset_confirm_retype': 'users.serializers.PasswordResetConfirmSerializer'
 
     }
 }
+
+
+# Настройка email
+EMAIl_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'maxim-s-paramonov@yandex.ru'
+EMAIL_HOST_PASSWORD = 'meyhtgbnekrqmotp'
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

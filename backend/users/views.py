@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from djoser.views import UserViewSet as djoser_view
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Stack, WorkerProfile
 from .permissions import IsUser
-from .serializers import (NewEmailSerializer, SetPasswordSerializer,
+from .serializers import (NewEmailSerializer, PasswordResetConfirmSerializer,
+                          SendEmailResetSerializer, SetPasswordSerializer,
                           UserCreateSerializer, UserViewSerialiser,
                           WorkerProfileSerializer)
 
@@ -16,6 +18,7 @@ User = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('last_name')
     http_method_names = ['get', 'post']
+    token_generator = djoser_view.token_generator
 
     def get_serializer_class(self):
         if self.action == 'reg_in':
@@ -24,6 +27,10 @@ class UserViewSet(viewsets.ModelViewSet):
             return NewEmailSerializer
         if self.action == 'new_password':
             return SetPasswordSerializer
+        if self.action == 'reset_password':
+            return SendEmailResetSerializer
+        if self.action == 'reset_password_confirm':
+            return PasswordResetConfirmSerializer
         if self.action == 'profile':
             return WorkerProfileSerializer
         return UserViewSerialiser
@@ -62,6 +69,16 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.request.user.set_password(serializer.data["new_password"])
         self.request.user.save()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(url_path='reset_password', methods=['post'], detail=False)
+    def reset_password(self, request, *args, **kwargs):
+        djoser_view.reset_password(self, request, *args, **kwargs)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(url_path='reset_password_confirm', methods=['post'], detail=False)
+    def reset_password_confirm(self, request, *args, **kwargs):
+        djoser_view.reset_password_confirm(self, request, *args, **kwargs)
         return Response(status=status.HTTP_200_OK)
 
     @action(url_path='profile', methods=['get', 'post'], detail=True)
