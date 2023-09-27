@@ -5,18 +5,22 @@ import InputAuth from "../../InputAuth/InputAuth";
 import "./ForgotPassForm.css";
 
 const ForgotPassForm = ({ func }) => {
-  const { values, errors, isValid, handleChange, setValues } =
+  const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.log(values);
+    if (!values.email) {
+      setErrors({ ...errors, email: "Заполните поле" });
+      return
+    }
     if (isValid) {
+      console.log(values);
       setValues({
         ...values,
         email: "",
       });
+      func();
     }
-    func();
   };
   return (
     <form className="forgotPass" onSubmit={handleSubmit}>

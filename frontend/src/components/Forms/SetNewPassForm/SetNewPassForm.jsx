@@ -17,7 +17,7 @@ const SetNewPassForm = () => {
       if (!values.confirmPassword) {
         setErrors({ ...errors, confirmPassword: "Заполните поле" });
       }
-    if (isValid && values.password && !values.confirmPassword) {
+    if (isValid && values.password && values.confirmPassword) {
       setValues({
         ...values,
         password: "",
