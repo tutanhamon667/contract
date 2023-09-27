@@ -1,5 +1,4 @@
 import React from "react";
-import { isDisabled } from "../../../utils/isDisabled";
 import Button from "../../Button/Button";
 import useFormAndValidation from "../../hooks/useFormAndValidation";
 import InputAuth from "../../InputAuth/InputAuth";
@@ -7,17 +6,25 @@ import "./SetNewPassForm.css";
 
 const SetNewPassForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
-  const { values, errors, isValid, handleChange, setValues,setErrors } =
+  const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.log(values);
-    if (isValid) {
+    if (!values.password) {
+        setErrors({ ...errors, password: "Заполните поле" });
+      }
+  
+      if (!values.confirmPassword) {
+        setErrors({ ...errors, confirmPassword: "Заполните поле" });
+      }
+    if (isValid && values.password && !values.confirmPassword) {
       setValues({
         ...values,
         password: "",
         confirmPassword: "",
       });
+    console.log(values);
+
     }
   };
   const togglePasswordVisibility = () => {
@@ -64,9 +71,9 @@ const SetNewPassForm = () => {
           text="Продолжить"
           width={399}
           type="submit"
-          disabled={
-            !values.password || !values.confirmPassword || isDisabled(errors)
-          }
+        //   disabled={
+        //     !values.password || !values.confirmPassword || isDisabled(errors)
+        //   }
         />
       </div>
     </form>

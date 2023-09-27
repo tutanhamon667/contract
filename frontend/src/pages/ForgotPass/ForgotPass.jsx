@@ -4,7 +4,6 @@ import SetNewPassForm from "../../components/Forms/SetNewPassForm/SetNewPassForm
 
 const ForgotPass = () => {
   const [isConfirmed, setIsConfirmed] = React.useState(false);
-console.log(isConfirmed);
   return (
     <div className="wrapper">
       <div className="container">

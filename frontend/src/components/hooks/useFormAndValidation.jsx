@@ -70,5 +70,6 @@ export default function useFormAndValidation() {
     isValid,
     handleChange,
     setValues,
+    setErrors
   };
 }
