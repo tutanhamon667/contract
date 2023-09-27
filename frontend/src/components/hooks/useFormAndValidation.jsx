@@ -21,15 +21,21 @@ export default function useFormAndValidation() {
     }
 
     if (name === "password") {
-      if (value.length < 5) {
+      if (value.length < 6) {
         setErrors({
           ...errors,
-          [name]: "Пароль должен содержать не менее 5 символов",
+          [name]: "Пароль должен содержать не менее 6 символов",
+        });
+        setIsValid(false);
+      } else if (value.length > 20) {
+        setErrors({
+          ...errors,
+          [name]: "Пароль не должен быть длиннее 20 символов",
         });
         setIsValid(false);
       } else {
         const isLatinAndDigitsOnly = /^[a-zA-Z0-9]+$/.test(value);
-    
+
         if (!isLatinAndDigitsOnly) {
           setErrors({
             ...errors,
@@ -38,7 +44,7 @@ export default function useFormAndValidation() {
           setIsValid(false);
         } else {
           const hasDigit = /\d/.test(value);
-    
+
           if (!hasDigit) {
             setErrors({
               ...errors,
@@ -68,6 +74,10 @@ export default function useFormAndValidation() {
         setErrors({ ...errors, [name]: "Введите имя" });
         setIsValid(false);
       }
+      if (value.length > 80) {
+        setErrors({ ...errors, [name]: "Имя не длиннее 80 символов" });
+        setIsValid(false);
+      }
     }
 
     if (name === "lastName") {
@@ -84,6 +94,6 @@ export default function useFormAndValidation() {
     isValid,
     handleChange,
     setValues,
-    setErrors
+    setErrors,
   };
 }
