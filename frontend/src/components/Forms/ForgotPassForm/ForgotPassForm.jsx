@@ -4,7 +4,7 @@ import useFormAndValidation from "../../hooks/useFormAndValidation";
 import InputAuth from "../../InputAuth/InputAuth";
 import "./ForgotPassForm.css";
 
-const ForgotPassForm = () => {
+const ForgotPassForm = ({ func }) => {
   const { values, errors, isValid, handleChange, setValues } =
     useFormAndValidation();
   const handleSubmit = (evt) => {
@@ -16,10 +16,11 @@ const ForgotPassForm = () => {
         email: "",
       });
     }
+    func();
   };
   return (
-    <div className="forgotPass">
-      <form className="forgotPass__form" onSubmit={handleSubmit}>
+    <form className="forgotPass" onSubmit={handleSubmit}>
+      <div className="forgotPass__form">
         <div className="forgotPass__inputContainer">
           <p className="forgotPass__text">
             Введите адрес электронной почты, который вы использовали при
@@ -40,8 +41,8 @@ const ForgotPassForm = () => {
           />
         </div>
         <Button text="Отправить" width={399} type="submit" />
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 
