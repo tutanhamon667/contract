@@ -10,27 +10,29 @@ const SetNewPassForm = () => {
     useFormAndValidation();
   const handleSubmit = (evt) => {
     evt.preventDefault();
+    let newErrors = {};
+
     if (!values.password) {
-        setErrors({ ...errors, password: "Заполните поле" });
-      }
-  
-      if (!values.confirmPassword) {
-        setErrors({ ...errors, confirmPassword: "Заполните поле" });
-      }
+      newErrors = { ...newErrors, password: "Заполните поле" };
+    }
+
+    if (!values.confirmPassword) {
+      newErrors = { ...newErrors, confirmPassword: "Заполните поле" };
+    }
+
+    setErrors({ ...errors, ...newErrors });
     if (isValid && values.password && values.confirmPassword) {
       setValues({
         ...values,
         password: "",
         confirmPassword: "",
       });
-    console.log(values);
-
+      console.log(values);
     }
   };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
 
   return (
     <form className="setNewPass" onSubmit={handleSubmit}>
@@ -71,9 +73,9 @@ const SetNewPassForm = () => {
           text="Продолжить"
           width={399}
           type="submit"
-        //   disabled={
-        //     !values.password || !values.confirmPassword || isDisabled(errors)
-        //   }
+          //   disabled={
+          //     !values.password || !values.confirmPassword || isDisabled(errors)
+          //   }
         />
       </div>
     </form>
