@@ -28,20 +28,38 @@ export default function useFormAndValidation() {
         });
         setIsValid(false);
       } else {
-        const hasLetter = /[a-zA-Z]/.test(value);
-        const hasDigit = /\d/.test(value);
-
-        if (!hasLetter || !hasDigit) {
+        const isLatinAndDigitsOnly = /^[a-zA-Z0-9]+$/.test(value);
+    
+        if (!isLatinAndDigitsOnly) {
           setErrors({
             ...errors,
-            [name]:
-              "Пароль должен содержать как минимум одну букву и одну цифру",
+            [name]: "Пароль должен содержать только латинские буквы и цифры",
           });
           setIsValid(false);
         } else {
-          setErrors({ ...errors, [name]: "" });
-          setIsValid(true);
+          const hasDigit = /\d/.test(value);
+    
+          if (!hasDigit) {
+            setErrors({
+              ...errors,
+              [name]: "Пароль должен содержать хотя бы одну цифру",
+            });
+            setIsValid(false);
+          } else {
+            setErrors({ ...errors, [name]: "" });
+            setIsValid(true);
+          }
         }
+      }
+    }
+
+    if (name === "confirmPassword") {
+      if (value !== values.password) {
+        setErrors({ ...errors, [name]: "Пароли не совпадают" });
+        setIsValid(false);
+      } else {
+        setErrors({ ...errors, [name]: "" });
+        setIsValid(true);
       }
     }
   }
