@@ -15,7 +15,7 @@ export default function useFormAndValidation() {
     if (name === "email") {
       const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
       if (!emailRegex.test(value)) {
-        setErrors({ ...errors, [name]: "Введите корректный email адрес" });
+        setErrors({ ...errors, [name]: "Введите корректную эл. почту" });
         setIsValid(false);
       }
     }

@@ -10,7 +10,7 @@ const ForgotPassForm = ({ func }) => {
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (!values.email) {
-      setErrors({ ...errors, email: "Заполните поле" });
+      setErrors({ ...errors, email: "Введите эл. почту" });
       return
     }
     if (isValid) {

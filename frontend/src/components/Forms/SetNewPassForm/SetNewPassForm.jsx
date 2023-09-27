@@ -13,11 +13,11 @@ const SetNewPassForm = () => {
     let newErrors = {};
 
     if (!values.password) {
-      newErrors = { ...newErrors, password: "Заполните поле" };
+      newErrors = { ...newErrors, password: "Введите пароль" };
     }
 
     if (!values.confirmPassword) {
-      newErrors = { ...newErrors, confirmPassword: "Заполните поле" };
+      newErrors = { ...newErrors, confirmPassword: "Повторите пароль" };
     }
 
     setErrors({ ...errors, ...newErrors });
