@@ -1,5 +1,8 @@
 # freelancing-platform-project
 
+# [Ссылка на просмотр фронта](https://freelancing-platform-practicum.github.io/freelancing-platform-project/)
+
+
 Запуск Backend (временный - до настройки docker):
 
 
@@ -46,3 +49,4 @@ python3 manage.py runserver
 ```
 http://127.0.0.1:8000/api/v1/
 ```
+
