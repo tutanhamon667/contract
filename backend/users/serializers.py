@@ -13,7 +13,28 @@ User = get_user_model()
 class UserCreateSerializer(
         djoser_serializers.UserCreatePasswordRetypeSerializer
 ):
-    pass
+    is_customer = serializers.BooleanField(default=False)
+    is_worker = serializers.BooleanField(default=False)
+
+    class Meta(djoser_serializers.UserCreatePasswordRetypeSerializer.Meta):
+        fields = (
+            'is_customer',
+            'is_worker',
+            'email',
+            'first_name',
+            'last_name',
+            'password',
+        )
+
+    def validate(self, data):
+        print(data)
+        is_customer = data.get('is_customer')
+        is_worker = data.get('is_worker')
+        if is_customer == is_worker:
+            raise serializers.ValidationError(
+                'Нужно выбрать "Фрилансер" или "Заказчик'
+            )
+        return super().validate(data)
 
 
 class NewEmailSerializer(djoser_serializers.SetUsernameRetypeSerializer):

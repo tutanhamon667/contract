@@ -1,15 +1,19 @@
+import os
 from datetime import timedelta
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4g)(nb2-*a5fhu0hbxlguev@bh%'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -141,7 +145,7 @@ SIMPLE_JWT = {
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
-    # 'USER_CREATE_PASSWORD_RETYPE': 'True',
+    'USER_CREATE_PASSWORD_RETYPE': 'True',
     'SET_PASSWORD_RETYPE': 'True',
     'SET_USERNAME_RETYPE': 'True',
     'PASSWORD_RESET_CONFIRM_RETYPE': 'True',
@@ -171,7 +175,7 @@ EMAIl_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'maxim-s-paramonov@yandex.ru'
-EMAIL_HOST_PASSWORD = 'meyhtgbnekrqmotp'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 SERVER_EMAIL = EMAIL_HOST_USER

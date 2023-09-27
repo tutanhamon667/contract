@@ -39,11 +39,6 @@ class UserViewSet(viewsets.ModelViewSet):
     def reg_in(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if serializer.validated_data.get('is_customer') == \
-                serializer.validated_data.get('is_worker'):
-            raise serializers.ValidationError(
-                'Нужно выбрать "Фрилансер" или "Заказчик'
-            )
         serializer.save()
         return Response(
             serializer.data,
