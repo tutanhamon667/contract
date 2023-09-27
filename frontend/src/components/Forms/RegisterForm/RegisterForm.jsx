@@ -9,7 +9,7 @@ import "./RegisterForm.css";
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [role, setRole] = React.useState("customer");
-  const { values, errors, isValid, handleChange, setValues } =
+  const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
 
   const togglePasswordVisibility = () => {
@@ -18,15 +18,47 @@ const RegisterForm = () => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.log(values);
-    if (isValid) {
+
+    let newErrors = {};
+
+    if (!values.email) {
+      newErrors = { ...newErrors, email: "Введите эл. почту" };
+    }
+
+    if (!values.password) {
+      newErrors = { ...newErrors, password: "Введите пароль" };
+    }
+    if (!values.confirmPassword) {
+      newErrors = { ...newErrors, confirmPassword: "Повторите пароль" };
+    }
+
+    if (!values.firstName) {
+      newErrors = { ...newErrors, firstName: "Введите имя" };
+    }
+
+    if (!values.lastName) {
+      newErrors = { ...newErrors, lastName: "Введите фамилию" };
+    }
+
+    setErrors({ ...errors, ...newErrors });
+
+    if (
+      isValid &&
+      values.email &&
+      values.password &&
+      values.confirmPassword &&
+      values.firstName &&
+      values.lastName
+    ) {
+      console.log(values);
       setValues({
         ...values,
         email: "",
         firstName: "",
         lastName: "",
-        newPassword: "",
-        confirmNewPassword: "",
+        password: "",
+        confirmPassword: "",
+        role: role
       });
     }
   };
@@ -63,6 +95,8 @@ const RegisterForm = () => {
           autocomplete="given-name"
           onChange={handleChange}
           value={values.firstName || ""}
+          error={errors.firstName}
+          errorMessage={errors.firstName}
         />
         <InputAuth
           placeholder="Фамилия"
@@ -74,6 +108,8 @@ const RegisterForm = () => {
           autocomplete="family-name"
           onChange={handleChange}
           value={values.lastName || ""}
+          error={errors.lastName}
+          errorMessage={errors.lastName}
         />
         <InputAuth
           placeholder="Эл. почта"
@@ -95,22 +131,26 @@ const RegisterForm = () => {
           height={46}
           type={showPassword ? "text" : "password"}
           autocomplete="new-password"
-          name="newPassword"
+          name="password"
           onChange={handleChange}
-          value={values.newPassword || ""}
+          value={values.password || ""}
+          error={errors.password}
+          errorMessage={errors.password}
         />
         <InputAuth
           placeholder="Повторите пароль"
           marginTop={20}
-          marginBottom={60}
           width={610}
           height={46}
           type={showPassword ? "text" : "password"}
           autocomplete="new-password"
-          name="confirmNewPassword"
+          name="confirmPassword"
           onChange={handleChange}
-          value={values.confirmNewPassword || ""}
+          value={values.confirmPassword || ""}
+          error={errors.confirmPassword}
+          errorMessage={errors.confirmPassword}
         />
+        <div style={{marginBottom:60}}/>
         {/* <LinkBar /> */}
         <Button text="Создать аккаунт" width={399} type="submit" />
         <div className="register__footerLinkContainer">

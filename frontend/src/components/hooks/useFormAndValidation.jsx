@@ -62,6 +62,20 @@ export default function useFormAndValidation() {
         setIsValid(true);
       }
     }
+
+    if (name === "firstName") {
+      if (value.length < 1) {
+        setErrors({ ...errors, [name]: "Введите имя" });
+        setIsValid(false);
+      }
+    }
+
+    if (name === "lastName") {
+      if (value.length < 1) {
+        setErrors({ ...errors, [name]: "Введите фамилию" });
+        setIsValid(false);
+      }
+    }
   }
 
   return {

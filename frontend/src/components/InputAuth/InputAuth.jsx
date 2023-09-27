@@ -10,7 +10,6 @@ const InputAuth = ({
   value,
   onChange,
   marginTop,
-  marginBottom,
   pass,
   name,
   error,
@@ -22,7 +21,7 @@ const InputAuth = ({
         className={`input ${error && "input__error"}`}
         placeholder={placeholder}
         autoComplete={autocomplete}
-        style={{ width, height, marginTop, marginBottom }}
+        style={{ width, height, marginTop }}
         value={value}
         onChange={onChange}
         type={type}
