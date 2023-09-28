@@ -148,9 +148,27 @@
   cursor: pointer;
 }
 
-.form-profile__specialization {
+.form-profile__list {
   color: #292D32;
   font-family: Inter;
   font-size: 20px;
   font-weight: 400;
+}
+
+.form-profile__list-default {
+  color: #B5B5B5;
+}
+
+.form-profile__list-title {
+  padding: 12px 20px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.form-profile__rate-input {
+  width: 30%;
+  background-image: url(../../images/ruble.svg);
+  background-repeat: no-repeat;
+  background-position: 83% center;
+  background-size: 23px 23px;
 }

@@ -3,6 +3,7 @@ import { React, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import useFormAndValidation from "../hooks/useFormAndValidation";
 import { CurrentUser } from "../../context/context"
+import TagsInput from "../TagsInput/TagsInput";
 
 export default function FreelancerAccount({ updateUser }) {
   // открывает форму редактирования имейла
@@ -13,16 +14,20 @@ export default function FreelancerAccount({ updateUser }) {
   // кастомный хук для валидации формы
   const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
 
-  function handleSubmitEmail(e) {
-    e.preventDefault()
-    if (!isValid) return
-    updateUser(values)
-    setValues({ ...values, email: '' })
-  }
+  // function handleSubmitEmail(e) {
+  //   e.preventDefault()
+  //   if (!isValid) return
+  //   updateUser(values)
+  //   setValues({ ...values, email: '' })
+  // }
 
-  function closeEmailChange() {
-    setUpdateEmail(false)
-    setValues({ ...values, email: '' })
+  // function closeEmailChange() {
+  //   setUpdateEmail(false)
+  //   setValues({ ...values, email: '' })
+  // }
+
+  function handleSubmit(e) {
+    e.preventDefault()
   }
 
   return (
@@ -46,7 +51,7 @@ export default function FreelancerAccount({ updateUser }) {
 
       <div className="accountF__form-container">
 
-        <form className="form-profile">
+        <form className="form-profile" onSubmit={handleSubmit}>
 
           <div className="form-profile__top-container">
             <h2 className="accountF__title">Информация об аккаунте</h2>
@@ -88,39 +93,40 @@ export default function FreelancerAccount({ updateUser }) {
 
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" for="specialization">Специализация</label>
-            <select name="specialization" id="specialization" size="1" placeholder="Выберите из списка" className="form-profile__specialization">
-              <option value="design" className="form-profile__specialization">Дизайн</option>
-              <option value="development" className="form-profile__specialization">Разработка</option>
-              <option value="testing" className="form-profile__specialization">Тестирование</option>
-              <option value="administration" className="form-profile__specialization">Администрирование</option>
-              <option value="marketing" className="form-profile__specialization">Маркетинг</option>
-              <option value="content" className="form-profile__specialization">Контент</option>
-              <option value="other" className="form-profile__specialization">Разное</option>
+            <select name="specialization" id="specialization" size="1" placeholder="Выберите из списка" className="form-profile__list form-profile__list-title form-profile__list-default">
+              <option value="" className="form-profile__list form-profile__list-default">Выберите из списка</option>
+              <option value="design" className="form-profile__list">Дизайн</option>
+              <option value="development" className="form-profile__list">Разработка</option>
+              <option value="testing" className="form-profile__list">Тестирование</option>
+              <option value="administration" className="form-profile__list">Администрирование</option>
+              <option value="marketing" className="form-profile__list">Маркетинг</option>
+              <option value="content" className="form-profile__list">Контент</option>
+              <option value="other" className="form-profile__list">Разное</option>
             </select>
           </div>
 
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" for="skills">Навыки</label>
-            <ul>
-              <input type="text" name="skills" id="skills" className="form-profile__input" />
-            </ul>
+            <TagsInput />
           </div>
 
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" for="workingRate">Ставка в час</label>
-            <input type="number" name="workingRate" id="workingRate" className="form-profile__input" />
+            <input type="number" name="workingRate" id="workingRate" placeholder="150" className="form-profile__input form-profile__rate-input" />
           </div>
 
           <div className="form-profile__input-container">
             <h2 className="accountF__subtitle">Образование</h2>
             <input type="text" name="education" id="education" className="form-profile__input" />
-            <input type="date" name="beginningOfStudies" id="beginningOfStudies" className="form-profile__input" />
-            <input type="date" name="endOfStudies" id="endOfStudies" className="form-profile__input" />
-            <select name="degree" id="degree" className="form-profile__specialization">
-              <option value="bachelor" className="form-profile__specialization">Студент</option>
-              <option value="bachelor" className="form-profile__specialization">Бакалавр</option>
-              <option value="specialist" className="form-profile__specialization">Специалист</option>
-              <option value="master" className="form-profile__specialization">Магистр</option>
+            <div>
+              <input type="date" name="beginningOfStudies" id="beginningOfStudies" placeholder="Начало учёбы" className="form-profile__input" />
+              <input type="date" name="endOfStudies" id="endOfStudies" placeholder="Окончание учёбы" className="form-profile__input" />
+            </div>
+            <select name="degree" id="degree" className="form-profile__list">
+              <option value="bachelor" className="form-profile__list">Студент</option>
+              <option value="bachelor" className="form-profile__list">Бакалавр</option>
+              <option value="specialist" className="form-profile__list">Специалист</option>
+              <option value="master" className="form-profile__list">Магистр</option>
             </select>
             <input type="text" name="faculty" id="faculty" className="form-profile__input" />
           </div>
