@@ -7,9 +7,25 @@ import Register from "../../pages/Register/Register";
 import Login from "../../pages/Login/Login";
 import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 // import { ProtectedRoute } from "../../services/PotectedRouter";
+import FreelancerAccount from "../FreelancerAccount/FreelancerAccount";
+import { CurrentUser } from "../../context/context"
 
 function App() {
   const [authenticated, setAuthenticated] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState({
+    id: "5",
+    firstName: "Иван",
+    lastName: "Петров",
+    email: "email@mail.ru",
+    password: "topSecret"
+  });
+
+  function updateUser(userEmail) {
+    setCurrentUser({
+      ...currentUser,
+      email: userEmail.email
+    })
+  }
 
   const logIn = () => {
     // Тут должна быть логика по авторизации(получение/проверка/запись токена и тд)
@@ -22,17 +38,20 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout authenticated={authenticated} />}>
-          {/* Тут будут защищенные роуты */}
-          {/* <Route element={<ProtectedRoute />}></Route> */}
-          <Route index element={<Main />} />
-          <Route path="signup" element={<Register />} />
-          <Route path="signin" element={<Login />} />
-          <Route path="forgot-password" element={<ForgotPass />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
+      <CurrentUser.Provider value={currentUser}>
+        <Routes>
+          <Route path="/" element={<Layout authenticated={authenticated} />}>
+            {/* Тут будут защищенные роуты */}
+            {/* <Route element={<ProtectedRoute />}></Route> */}
+            <Route index element={<Main />} />
+            <Route path="signup" element={<Register />} />
+            <Route path="signin" element={<Login />} />
+            <Route path="forgot-password" element={<ForgotPass />} />
+            <Route path="freelancer/:freelancerId" element={<FreelancerAccount updateUser={updateUser} />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </CurrentUser.Provider>
     </BrowserRouter>
   );
 }

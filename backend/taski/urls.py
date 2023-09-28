@@ -6,4 +6,5 @@ urlpatterns = [
     # path('auth/', include('djoser.urls')),
     path('api/v1/', include('users.urls')),
     # path('api/', include('tasks.urls'))
+    path('api/', include('api.urls')),
 ]

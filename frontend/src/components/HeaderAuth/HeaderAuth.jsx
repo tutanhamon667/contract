@@ -13,13 +13,22 @@ function HeaderAuth() {
           </button>
         </Link>
       )}
-      {location.pathname !== "/signin" && (
-        <Link to="/signin">
-          <button className="header-auth__entry-button" type="button">
-            Войти
-          </button>
-        </Link>
-      )}
+
+      {location.pathname !== "/signin" &&
+        location.pathname !== "/forgot-password" && (
+          <Link to="/signin">
+            <button
+              className={`${
+                location.pathname === "/signup"
+                  ? "header-auth__singup-button"
+                  : "header-auth__entry-button"
+              }`}
+              type="button"
+            >
+              {location.pathname === "/signup" ? "Вход" : "Войти"}
+            </button>
+          </Link>
+        )}
     </div>
   );
 }

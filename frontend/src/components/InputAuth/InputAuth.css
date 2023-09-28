@@ -1,5 +1,5 @@
 .inputContainer {
-    
+  position: relative;
 }
 
 .input {
@@ -24,4 +24,28 @@
 
 .input::placeholder {
   color: #b5b5b5;
+}
+
+.input__showPass {
+  background-image: url(../../images/showPass.svg);
+  background-position: center;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  opacity: 0.15;
+  top: 46%;
+  left: 93%;
+  transform: translate();
+  cursor: pointer;
+}
+
+.input__error {
+  border: 1px solid rgb(207, 24, 24);
+}
+
+.input__errorText{
+  color: rgb(207, 24, 24);
+  position: absolute;
+  left: 4%;
+  top: 100%;
 }

@@ -2,9 +2,13 @@ import "./SearchMain.css";
 import React from "react";
 
 function SearchMain() {
+  function handleFormSubmit(evt) {
+    evt.preventDefault();
+  }
+
   return (
     <section className="search">
-      <form className="search__form">
+      <form className="search__form" onSubmit={handleFormSubmit}>
         <div className="search__container">
           <button type="submit" className="search__button">
             <div className="search__search-image"></div>
