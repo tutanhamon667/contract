@@ -1,7 +1,9 @@
 import "../FreelancerAccount/FreelancerAccount.css";
 import { React, useState, useContext } from "react";
+import { Link } from 'react-router-dom';
 import useFormAndValidation from "../hooks/useFormAndValidation";
 import { CurrentUser } from "../../context/context"
+import TagsInput from "../TagsInput/TagsInput";
 
 export default function FreelancerAccount({ updateUser }) {
   // открывает форму редактирования имейла
@@ -12,19 +14,183 @@ export default function FreelancerAccount({ updateUser }) {
   // кастомный хук для валидации формы
   const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
 
-  function handleSubmitEmail(e) {
-    e.preventDefault()
-    if (!isValid) return
-    updateUser(values)
-    setValues({ ...values, email: '' })
-  }
+  // function handleSubmitEmail(e) {
+  //   e.preventDefault()
+  //   if (!isValid) return
+  //   updateUser(values)
+  //   setValues({ ...values, email: '' })
+  // }
 
-  function closeEmailChange() {
-    setUpdateEmail(false)
-    setValues({ ...values, email: '' })
+  // function closeEmailChange() {
+  //   setUpdateEmail(false)
+  //   setValues({ ...values, email: '' })
+  // }
+
+  function handleSubmit(e) {
+    e.preventDefault()
   }
 
   return (
+    <div className="accountF">
+
+      <div className="accountF_left-column">
+
+        <div className="accountF__short-info">
+          <div className="account__avatar"></div>
+          <h2 className="accountF__title">Имя&nbsp;Фамилия</h2>
+          <p className="accountF__specialty">специальность</p>
+        </div>
+
+        <div className="accountF__setting-container">
+          <Link className="accountF__setting">Настройки</Link>
+          <div className="accountF__separate-line"></div>
+          <Link className="accountF__title">Информация</Link>
+        </div>
+
+      </div>
+
+      <div className="accountF__form-container">
+
+        <form className="form-profile" onSubmit={handleSubmit}>
+
+          <div className="form-profile__top-container">
+            <h2 className="accountF__title">Информация об аккаунте</h2>
+            <button className="accountF__subtitle form-profile__cansel">Отмена</button>
+            <button type="submit" className="accountF__subtitle form-profile__save">Сохранить</button>
+            {/* <button className="accountF__subtitle">Редактировать</button> */}
+          </div>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="email">Электронная почта</label>
+            <input type="email" name="email" id="email" placeholder="Эл. почта" className="form-profile__input" />
+            <div>
+              <input type="checkbox" name="notifyOfNewOrders" id="notifyOfNewOrders" />
+              <label className="accountF__subtitle form-profile__notify" for="notifyOfNewOrders">Уведомлять о новых заказах</label>
+            </div>
+          </div>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="phone">Номер телефона</label>
+            <input
+              type="tel"
+              name="phone"
+              id="phone"
+              maxlength="12"
+              placeholder="+7 000 000 00 00"
+              className="form-profile__input"
+            />
+          </div>
+
+          <div className="accountF__separate-line"></div>
+
+          <h2 className="accountF__title">Информация о профиле</h2>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="firstName">Имя Фамилия</label>
+            <input type="text" name="firstName" id="firstName" placeholder="Имя" className="form-profile__input" />
+            <input type="text" name="lastName" id="lastName" placeholder="Фамилия" className="form-profile__input" />
+          </div>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="specialization">Специализация</label>
+            <select name="specialization" id="specialization" size="1" placeholder="Выберите из списка" className="form-profile__specialization">
+              <option value="design" className="form-profile__specialization">Дизайн</option>
+              <option value="development" className="form-profile__specialization">Разработка</option>
+              <option value="testing" className="form-profile__specialization">Тестирование</option>
+              <option value="administration" className="form-profile__specialization">Администрирование</option>
+              <option value="marketing" className="form-profile__specialization">Маркетинг</option>
+              <option value="content" className="form-profile__specialization">Контент</option>
+              <option value="other" className="form-profile__specialization">Разное</option>
+            </select>
+          </div>
+          
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="skills">Навыки</label>
+            <TagsInput />
+          </div>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="workingRate">Ставка в час</label>
+            <input type="number" name="workingRate" id="workingRate" className="form-profile__input" />
+          </div>
+
+          <div className="form-profile__input-container">
+            <h2 className="accountF__subtitle">Образование</h2>
+            <input type="text" name="education" id="education" className="form-profile__input" />
+            <input type="date" name="beginningOfStudies" id="beginningOfStudies" className="form-profile__input" />
+            <input type="date" name="endOfStudies" id="endOfStudies" className="form-profile__input" />
+            <select name="degree" id="degree" className="form-profile__specialization">
+              <option value="bachelor" className="form-profile__specialization">Студент</option>
+              <option value="bachelor" className="form-profile__specialization">Бакалавр</option>
+              <option value="specialist" className="form-profile__specialization">Специалист</option>
+              <option value="master" className="form-profile__specialization">Магистр</option>
+            </select>
+            <input type="text" name="faculty" id="faculty" className="form-profile__input" />
+          </div>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="aboutMe">О себе</label>
+            <textarea name="aboutMe" id="aboutMe" cols="30" rows="10" className="form-profile__input"></textarea>
+          </div>
+
+          <div className="accountF__separate-line"></div>
+
+          <h2 className="accountF__title">Контакты</h2>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="emailForContacts">Электронная почта</label>
+            <input type="emailForContacts" name="emailForContacts" id="email" className="form-profile__input" />
+            <div>
+              <input type="checkbox" name="preferredEmail" id="preferredEmail" />
+              <label className="accountF__subtitle" for="preferredEmail">Предпочтительный вид связи</label>
+            </div>
+          </div>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="telegram">Телеграм</label>
+            <input type="text" name="telegram" id="telegram" className="form-profile__input" />
+            <div>
+              <input type="checkbox" name="preferredTelegram" id="preferredTelegram" />
+              <label className="accountF__subtitle" for="preferredTelegram">Предпочтительный вид связи</label>
+            </div>
+          </div>
+
+          <button type="button" className="form-profile__add-communication-type">
+            Добавить другой вид связи +
+          </button>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" for="portfolioLink">Ссылка на портфолио</label>
+            <input type="url" name="portfolioLink" id="portfolioLink" className="form-profile__input" />
+            <button className="accountF__subtitle">Добавить</button>
+          </div>
+
+          <div className="accountF__separate-line"></div>
+
+          <div className="form-profile__input-container">
+            <h2 className="accountF__title">Портфолио</h2>
+            <div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div>
+                <input type="file" name="" id="" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button className="accountF__title">Отмена</button>
+            <button type="submit" className="accountF__title">Сохранить</button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  )
+}
+/*
     <div className="freelance-account">
       <h2>Account of freelancer</h2>
       <h3>Привет, {user.firstName} {user.lastName}!</h3>
@@ -95,8 +261,7 @@ export default function FreelancerAccount({ updateUser }) {
       <p>----------------------------</p>
       <h3>Список подписок</h3>
     </div>
-  )
-}
+    */
 
 /*
 Личный кабинет фрилансера имеется следующий вид:
