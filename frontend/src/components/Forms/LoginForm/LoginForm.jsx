@@ -8,7 +8,7 @@ import "./LoginForm.css";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
-  const { values, errors, isValid, handleChange, setValues } =
+  const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -16,8 +16,22 @@ const LoginForm = () => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.log(values);
-    if (isValid) {
+
+    let newErrors = {};
+
+    if (!values.email) {
+      newErrors = { ...newErrors, email: "Введите эл. почту" };
+    }
+
+    if (!values.password) {
+      newErrors = { ...newErrors, password: "Введите пароль" };
+    }
+
+    setErrors({ ...errors, ...newErrors });
+
+    
+    if (isValid && values.email && values.password) {
+      console.log(values);
       setValues({ ...values, email: "", password: ""});
     }
   };
@@ -50,13 +64,15 @@ const LoginForm = () => {
             name="password"
             onChange={handleChange}
             value={values.password || ''}
+            error={errors.password}
+            errorMessage={errors.password}
           />
           <Link className="login__forgotLink" to="/forgot-password">
             Забыл пароль
           </Link>
         </div>
         {/* <LinkBar /> */}
-        <Button text="Войти" width={399} type="submit" />
+        <Button text="Войти" width={399} type="submit"/>
         <div className="login__footerLinkContainer">
           <p className="login__footerLinkDescription">Нет аккаунта?</p>
           <Link className="login__footerLink" to="/signup">

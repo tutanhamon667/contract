@@ -11,7 +11,7 @@ import FreelancerAccount from "../FreelancerAccount/FreelancerAccount";
 import { CurrentUser } from "../../context/context"
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(false);
+  const [authenticated, setAuthenticated] = React.useState(true);
   const [currentUser, setCurrentUser] = React.useState({
     id: "5",
     firstName: "Иван",
