@@ -1,11 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 
-
-JOB_STATUSES = (
-    ('Сбор заявок', 'Сбор заявок'),
-    ('Сбор заявок завершен', 'Сбор заявок завершен')
-)
 
 User = get_user_model()
 
@@ -105,6 +101,7 @@ class Job(models.Model):
     - Файлы
     - Заказчик (не отображется)
     - Дата создания (отображается при получении отдельного экземпляра)
+    - Миниатюры файлов при просмотре заказа - thumbnail
     TODO:
     добавить валидацию полей (точно бюджет, дэдлайн, файлы)
     """
@@ -124,15 +121,17 @@ class Job(models.Model):
         Stack,
         related_name='jobs',
         verbose_name='Стек технологий',
-        help_text='Укажите стек технологий'
+        help_text='Укажите стек технологий',
+        through='StackJob'
     )
     description = models.TextField(
         verbose_name='Описание',
     )
-    budget = models.DecimalField(
-        max_digits=10, decimal_places=2,
+    budget = models.PositiveIntegerField(
         blank=True, null=True,
+        help_text='Укажите сумму в рублях',
         verbose_name='Бюджет',
+        validators=[MinValueValidator(0)],
     )
     ask_budget = models.BooleanField(
         default=False,
@@ -149,9 +148,10 @@ class Job(models.Model):
         blank=True, null=True,
         verbose_name='Файлы к заданию',
     )
-    status = models.CharField(
-        max_length=20, choices=JOB_STATUSES,
-        verbose_name='Статус задания',
+    thumbnail = models.ImageField(
+        upload_to='orders/thumbnails/',
+        blank=True,
+        verbose_name='Миниатюра',
     )
     pub_date = models.DateField(auto_now_add=True)
 
@@ -168,6 +168,29 @@ class Job(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class StackJob(models.Model):
+    """Стэк технологий в заказе."""
+    job = models.ForeignKey(
+        Job,
+        verbose_name='Задание',
+        related_name='job',
+        on_delete=models.CASCADE,
+    )
+    stack = models.ForeignKey(
+        Stack,
+        on_delete=models.CASCADE,
+        related_name='stack',
+        verbose_name='Стэк'
+    )
+
+    class Meta:
+        verbose_name = 'Стэк технологий'
+        verbose_name_plural = 'Стэк технологий'
+
+    def __str__(self):
+        return f"{self.job.title} - {self.stack.name}"
 
 
 class Response(models.Model):

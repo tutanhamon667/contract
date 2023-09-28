@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'users',
     'api',
     'orders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -193,3 +194,10 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# SWAGGER
+SWAGGER_SETTINGS = {
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
+    # 'DEFAULT_INFO': 'taski.urls.swagger_info',
+}
