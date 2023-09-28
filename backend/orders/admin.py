@@ -45,8 +45,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('title', 'client', 'status', 'pub_date')
-    list_filter = ('category', 'stack', 'status', 'pub_date')
+    list_display = ('title', 'client', 'pub_date')
+    list_filter = ('category', 'stack', 'pub_date')
     search_fields = ('title', 'description', 'client__user__username')
     filter_horizontal = ('stack',)
     empty_value_display = '-пусто-'

@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'users',
     'api',
     'orders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -134,4 +135,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 7,
+}
+
+# SWAGGER
+SWAGGER_SETTINGS = {
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
+    # 'DEFAULT_INFO': 'taski.urls.swagger_info',
 }

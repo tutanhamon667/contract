@@ -3,7 +3,7 @@ from django_filters import rest_framework as filters
 from orders.models import Category, Job
 
 
-class JobsFilter(filters.FilterSet):
+class JobFilter(filters.FilterSet):
     min_budget = filters.NumberFilter(
         field_name='budget', lookup_expr='gte', label='от'
     )
