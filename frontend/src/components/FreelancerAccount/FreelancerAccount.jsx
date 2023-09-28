@@ -3,6 +3,7 @@ import { React, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import useFormAndValidation from "../hooks/useFormAndValidation";
 import { CurrentUser } from "../../context/context"
+import TagsInput from "../TagsInput/TagsInput";
 
 export default function FreelancerAccount({ updateUser }) {
   // открывает форму редактирования имейла
@@ -13,16 +14,20 @@ export default function FreelancerAccount({ updateUser }) {
   // кастомный хук для валидации формы
   const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
 
-  function handleSubmitEmail(e) {
-    e.preventDefault()
-    if (!isValid) return
-    updateUser(values)
-    setValues({ ...values, email: '' })
-  }
+  // function handleSubmitEmail(e) {
+  //   e.preventDefault()
+  //   if (!isValid) return
+  //   updateUser(values)
+  //   setValues({ ...values, email: '' })
+  // }
 
-  function closeEmailChange() {
-    setUpdateEmail(false)
-    setValues({ ...values, email: '' })
+  // function closeEmailChange() {
+  //   setUpdateEmail(false)
+  //   setValues({ ...values, email: '' })
+  // }
+
+  function handleSubmit(e) {
+    e.preventDefault()
   }
 
   return (
@@ -46,7 +51,7 @@ export default function FreelancerAccount({ updateUser }) {
 
       <div className="accountF__form-container">
 
-        <form className="form-profile">
+        <form className="form-profile" onSubmit={handleSubmit}>
 
           <div className="form-profile__top-container">
             <h2 className="accountF__title">Информация об аккаунте</h2>
@@ -98,12 +103,10 @@ export default function FreelancerAccount({ updateUser }) {
               <option value="other" className="form-profile__specialization">Разное</option>
             </select>
           </div>
-
+          
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" for="skills">Навыки</label>
-            <ul>
-              <input type="text" name="skills" id="skills" className="form-profile__input" />
-            </ul>
+            <TagsInput />
           </div>
 
           <div className="form-profile__input-container">
