@@ -3,13 +3,12 @@ import {React, useContext} from "react";
 import { Link } from "react-router-dom";
 import HeaderAuth from "../HeaderAuth/HeaderAuth";
 import userIcon from "../../images/user-icon.svg";
-import { CurrentUser } from "../../context/context"
+import { Context } from "../../context/context"
 
-function Header({ authenticated }) {
-  const user = useContext(CurrentUser);
-  
-  function giveOutNameInHeader(user) {
-    return `${user.firstName} ${user.lastName.slice(0, 1)}.`
+function Header() {
+  const {currentUser, authenticated} = useContext(Context);
+  function giveOutNameInHeader(currentUser) {
+    return `${currentUser.firstName} ${currentUser.lastName.slice(0, 1)}.`
   }
 
   return (
@@ -19,10 +18,10 @@ function Header({ authenticated }) {
           <button className="header__logo"></button>
         </Link>
         {authenticated ? (
-          <Link to={`/freelancer/${user.id}`}>
+          <Link to={`/freelancer/${currentUser.id}`}>
             <div className="header__userInfo">
               <img src={userIcon} alt="user" />
-              <p>{giveOutNameInHeader(user)}</p>
+              <p>{giveOutNameInHeader(currentUser)}</p>
             </div>
           </Link>
         ) : (<HeaderAuth />)

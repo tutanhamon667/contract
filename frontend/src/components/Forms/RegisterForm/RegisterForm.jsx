@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
+import { Context } from "../../../context/context";
 import Button from "../../Button/Button";
 import useFormAndValidation from "../../hooks/useFormAndValidation";
 import InputAuth from "../../InputAuth/InputAuth";
@@ -7,6 +8,8 @@ import InputAuth from "../../InputAuth/InputAuth";
 import "./RegisterForm.css";
 
 const RegisterForm = () => {
+  const {logIn, authenticated} = React.useContext(Context);
+  const location = useLocation();
   const [showPassword, setShowPassword] = React.useState(false);
   const [role, setRole] = React.useState("customer");
   const { values, errors, isValid, handleChange, setValues, setErrors } =
@@ -60,6 +63,7 @@ const RegisterForm = () => {
         confirmPassword: "",
         role: role
       });
+      logIn();
     }
   };
   return (

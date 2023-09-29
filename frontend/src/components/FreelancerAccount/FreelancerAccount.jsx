@@ -2,15 +2,15 @@ import "../FreelancerAccount/FreelancerAccount.css";
 import { React, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import useFormAndValidation from "../hooks/useFormAndValidation";
-import { CurrentUser } from "../../context/context"
+import { Context } from "../../context/context"
 import TagsInput from "../TagsInput/TagsInput";
 
-export default function FreelancerAccount({ updateUser }) {
+export default function FreelancerAccount() {
   // открывает форму редактирования имейла
   const [updateEmail, setUpdateEmail] = useState(false);
   // открывает форму редактирования пароля
   const [updatePassword, setUpdatePassword] = useState(false);
-  const user = useContext(CurrentUser);
+  const {updateUser, currentUser} = useContext(Context);
   // кастомный хук для валидации формы
   const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
 
