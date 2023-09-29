@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from djoser.views import UserViewSet as djoser_view
+from djoser.views import UserViewSet as DjoserView
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -18,7 +18,7 @@ User = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('last_name')
     http_method_names = ['get', 'post']
-    token_generator = djoser_view.token_generator
+    token_generator = DjoserView.token_generator
 
     def get_serializer_class(self):
         if self.action == 'reg_in':
@@ -68,12 +68,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(url_path='reset_password', methods=['post'], detail=False)
     def reset_password(self, request, *args, **kwargs):
-        djoser_view.reset_password(self, request, *args, **kwargs)
+        DjoserView.reset_password(self, request, *args, **kwargs)
         return Response(status=status.HTTP_200_OK)
 
     @action(url_path='reset_password_confirm', methods=['post'], detail=False)
     def reset_password_confirm(self, request, *args, **kwargs):
-        djoser_view.reset_password_confirm(self, request, *args, **kwargs)
+        DjoserView.reset_password_confirm(self, request, *args, **kwargs)
         return Response(status=status.HTTP_200_OK)
 
     @action(url_path='profile', methods=['get', 'post'], detail=True)
@@ -90,3 +90,4 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
