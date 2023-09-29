@@ -118,7 +118,6 @@ class WorkerProfile(models.Model):
         blank=True,
         verbose_name='Фото'
     )
-#    contacts
     activity = models.ManyToManyField(
         Activity,
         blank=True,
@@ -138,12 +137,25 @@ class WorkerProfile(models.Model):
         blank=True,
         verbose_name='О себе'
     )
+    job_example = models.FileField(
+        blank=True,
+        verbose_name='Примеры работ/портфолио'
+    )
     diploma = models.FileField(
         blank=True,
         verbose_name='Дипломы, сертификаты, грамоты'
     )
-    # education
+    education = models.CharField(blank=False,
+                                 max_length=150,
+                                 verbose_name='Факультет',)
     web = models.URLField(
         blank=True,
         verbose_name='Личный сайт'
     )
+
+
+class Contacts(models.Model):
+    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
+    type = models.Choices()
+    contact = models.CharField(max_length=150,
+                               verbose_name='Контакт')

@@ -90,3 +90,10 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK)
+
+
+class FreelancerViewSet(viewsets.ModelViewSet):
+    queryset = WorkerProfile.objects.all().order_by('last_name')
+    http_method_names = ["get", "post", "delete"]
+    serializer_class = WorkerProfileSerializer
+    permission_classes = [AllowAny, ]
