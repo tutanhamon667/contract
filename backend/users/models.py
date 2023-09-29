@@ -5,6 +5,14 @@ from django.db import models
 from .usermanager import UserManager
 
 
+CONTACT_TYPE = [
+    ('Phone number','Phone number'),
+    ('Email', 'Email'),
+    ('Telegram', 'Telegram'),
+    ('Other', 'Other')
+]
+
+
 class Member(PermissionsMixin, AbstractBaseUser):
     username = None
 
@@ -158,6 +166,7 @@ class WorkerProfile(models.Model):
 
 class Contacts(models.Model):
     freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
-    type = models.Choices()
+    type = models.CharField(choices=CONTACT_TYPE,
+                            max_length=150,)
     contact = models.CharField(max_length=150,
                                verbose_name='Контакт')

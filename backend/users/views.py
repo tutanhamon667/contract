@@ -4,6 +4,7 @@ from djoser.views import UserViewSet as djoser_view
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from .models import Stack, WorkerProfile
 from .permissions import IsUser
@@ -93,7 +94,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class FreelancerViewSet(viewsets.ModelViewSet):
-    queryset = WorkerProfile.objects.all().order_by('last_name')
+    queryset = WorkerProfile.objects.all()
     http_method_names = ["get", "post", "delete"]
     serializer_class = WorkerProfileSerializer
     permission_classes = [AllowAny, ]

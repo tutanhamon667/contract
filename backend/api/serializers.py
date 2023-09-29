@@ -1,4 +1,4 @@
-from django.test import Client
+from orders.models import Client
 from rest_framework import serializers
 
 from orders.models import Freelancer, Job, Stack

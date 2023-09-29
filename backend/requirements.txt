@@ -33,3 +33,4 @@ typing_extensions==4.8.0
 tzdata==2023.3
 urllib3==2.0.5
 views-py==2.0.0
+drf-yasg==1.21.7
