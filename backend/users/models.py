@@ -138,10 +138,12 @@ class WorkerProfile(models.Model):
         verbose_name='О себе'
     )
     job_example = models.FileField(
+        upload_to="examples/",
         blank=True,
         verbose_name='Примеры работ/портфолио'
     )
     diploma = models.FileField(
+        upload_to="diplomas/",
         blank=True,
         verbose_name='Дипломы, сертификаты, грамоты'
     )
