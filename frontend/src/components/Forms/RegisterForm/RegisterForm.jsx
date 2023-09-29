@@ -11,7 +11,7 @@ const RegisterForm = () => {
   const {logIn, authenticated} = React.useContext(Context);
   const location = useLocation();
   const [showPassword, setShowPassword] = React.useState(false);
-  const [role, setRole] = React.useState("customer");
+  const [role, setRole] = React.useState("is_customer");
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
 
@@ -49,19 +49,19 @@ const RegisterForm = () => {
       isValid &&
       values.email &&
       values.password &&
-      values.confirmPassword &&
-      values.firstName &&
-      values.lastName
+      values.re_password &&
+      values.first_name &&
+      values.last_name
     ) {
       console.log(values);
       setValues({
         ...values,
         email: "",
-        firstName: "",
-        lastName: "",
+        first_name: "",
+        last_name: "",
         password: "",
-        confirmPassword: "",
-        role: role
+        re_password: "",
+        role
       });
       logIn();
     }
@@ -76,8 +76,8 @@ const RegisterForm = () => {
             height={46}
             type="button"
             inheritTheme
-            white={role === "customer" ? true : false}
-            onClick={() => setRole("customer")}
+            white={role === "is_customer" ? true : false}
+            onClick={() => setRole("is_customer")}
           />
           <Button
             text="Я фрилансер"
@@ -85,8 +85,8 @@ const RegisterForm = () => {
             height={46}
             type="button"
             inheritTheme
-            white={role === "freelancer" ? true : false}
-            onClick={() => setRole("freelancer")}
+            white={role === "is_worker" ? true : false}
+            onClick={() => setRole("is_worker")}
           />
         </div>
         <InputAuth
@@ -95,12 +95,12 @@ const RegisterForm = () => {
           width={610}
           height={46}
           type="text"
-          name="firstName"
+          name="first_name"
           autocomplete="given-name"
           onChange={handleChange}
-          value={values.firstName || ""}
-          error={errors.firstName}
-          errorMessage={errors.firstName}
+          value={values.first_name || ""}
+          error={errors.first_name}
+          errorMessage={errors.first_name}
         />
         <InputAuth
           placeholder="Фамилия"
@@ -108,12 +108,12 @@ const RegisterForm = () => {
           width={610}
           height={46}
           type="text"
-          name="lastName"
+          name="last_name"
           autocomplete="family-name"
           onChange={handleChange}
-          value={values.lastName || ""}
-          error={errors.lastName}
-          errorMessage={errors.lastName}
+          value={values.last_name || ""}
+          error={errors.last_name}
+          errorMessage={errors.last_name}
         />
         <InputAuth
           placeholder="Эл. почта"
@@ -148,11 +148,11 @@ const RegisterForm = () => {
           height={46}
           type={showPassword ? "text" : "password"}
           autocomplete="new-password"
-          name="confirmPassword"
+          name="re_password"
           onChange={handleChange}
-          value={values.confirmPassword || ""}
-          error={errors.confirmPassword}
-          errorMessage={errors.confirmPassword}
+          value={values.re_password || ""}
+          error={errors.re_password}
+          errorMessage={errors.re_password}
         />
         <div style={{marginBottom:60}}/>
         {/* <LinkBar /> */}

@@ -25,7 +25,7 @@ const SetNewPassForm = () => {
       setValues({
         ...values,
         password: "",
-        confirmPassword: "",
+        re_password: "",
       });
       console.log(values);
     }
@@ -62,20 +62,17 @@ const SetNewPassForm = () => {
             marginTop={20}
             width={610}
             height={46}
-            name="confirmPassword"
+            name="re_password"
             onChange={handleChange}
-            value={values.confirmPassword || ""}
-            error={errors.confirmPassword}
-            errorMessage={errors.confirmPassword}
+            value={values.re_password || ""}
+            error={errors.re_password}
+            errorMessage={errors.re_password}
           />
         </div>
         <Button
           text="Продолжить"
           width={399}
           type="submit"
-          //   disabled={
-          //     !values.password || !values.confirmPassword || isDisabled(errors)
-          //   }
         />
       </div>
     </form>

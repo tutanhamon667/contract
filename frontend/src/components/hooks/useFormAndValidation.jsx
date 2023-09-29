@@ -59,7 +59,7 @@ export default function useFormAndValidation() {
       }
     }
 
-    if (name === "confirmPassword") {
+    if (name === "re_password") {
       if (value !== values.password) {
         setErrors({ ...errors, [name]: "Пароли не совпадают" });
         setIsValid(false);
@@ -69,7 +69,7 @@ export default function useFormAndValidation() {
       }
     }
 
-    if (name === "firstName") {
+    if (name === "first_name") {
       if (value.length < 1) {
         setErrors({ ...errors, [name]: "Введите имя" });
         setIsValid(false);
@@ -80,7 +80,7 @@ export default function useFormAndValidation() {
       }
     }
 
-    if (name === "lastName") {
+    if (name === "last_name") {
       if (value.length < 1) {
         setErrors({ ...errors, [name]: "Введите фамилию" });
         setIsValid(false);
