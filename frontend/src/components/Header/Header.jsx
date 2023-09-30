@@ -8,7 +8,7 @@ import { Context } from "../../context/context"
 function Header() {
   const {currentUser, authenticated} = useContext(Context);
   function giveOutNameInHeader(currentUser) {
-    return `${currentUser.firstName} ${currentUser.lastName.slice(0, 1)}.`
+    return `${currentUser.first_name} ${currentUser.last_name.slice(0, 1)}.`
   }
 
   return (

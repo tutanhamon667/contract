@@ -33,16 +33,16 @@ const RegisterForm = () => {
     if (!values.password) {
       newErrors = { ...newErrors, password: "Введите пароль" };
     }
-    if (!values.confirmPassword) {
-      newErrors = { ...newErrors, confirmPassword: "Повторите пароль" };
+    if (!values.re_password) {
+      newErrors = { ...newErrors, re_password: "Повторите пароль" };
     }
 
-    if (!values.firstName) {
-      newErrors = { ...newErrors, firstName: "Введите имя" };
+    if (!values.first_name) {
+      newErrors = { ...newErrors, first_name: "Введите имя" };
     }
 
-    if (!values.lastName) {
-      newErrors = { ...newErrors, lastName: "Введите фамилию" };
+    if (!values.last_name) {
+      newErrors = { ...newErrors, last_name: "Введите фамилию" };
     }
 
     setErrors({ ...errors, ...newErrors });
@@ -65,9 +65,11 @@ const RegisterForm = () => {
         re_password: "",
         role
       });
+
       logIn();
     }
   };
+
   return (
     <form className="register" onSubmit={handleSubmit}>
       <div className="register__form">
@@ -98,7 +100,7 @@ const RegisterForm = () => {
           height={46}
           type="text"
           name="first_name"
-          autocomplete="given-name"
+          autoComplete="given-name"
           onChange={handleChange}
           value={values.first_name || ""}
           error={errors.first_name}
@@ -111,7 +113,7 @@ const RegisterForm = () => {
           height={46}
           type="text"
           name="last_name"
-          autocomplete="family-name"
+          autoComplete="family-name"
           onChange={handleChange}
           value={values.last_name || ""}
           error={errors.last_name}
@@ -123,7 +125,7 @@ const RegisterForm = () => {
           width={610}
           type="email"
           name="email"
-          autocomplete="email"
+          autoComplete="email"
           onChange={handleChange}
           value={values.email || ""}
           error={errors.email}
@@ -136,7 +138,7 @@ const RegisterForm = () => {
           width={610}
           height={46}
           type={showPassword ? "text" : "password"}
-          autocomplete="new-password"
+          autoComplete="new-password"
           name="password"
           onChange={handleChange}
           value={values.password || ""}
@@ -149,7 +151,7 @@ const RegisterForm = () => {
           width={610}
           height={46}
           type={showPassword ? "text" : "password"}
-          autocomplete="new-password"
+          autoComplete="new-password"
           name="re_password"
           onChange={handleChange}
           value={values.re_password || ""}

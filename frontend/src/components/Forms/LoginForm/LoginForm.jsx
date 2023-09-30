@@ -45,7 +45,7 @@ const LoginForm = () => {
           <InputText
             placeholder="Эл. почта"
             type="email"
-            autocomplete="email"
+            autoComplete="email"
             marginTop={20}
             width={610}
             height={46}
@@ -58,7 +58,7 @@ const LoginForm = () => {
           <InputText
             placeholder="Пароль"
             type={showPassword ? "text" : "password"}
-            autocomplete="current-password"
+            autoComplete="current-password"
             marginTop={20}
             width={610}
             height={46}
