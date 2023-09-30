@@ -7,6 +7,7 @@ import NotFound from "../../pages/NotFound/NotFound";
 import Register from "../../pages/Register/Register";
 import Login from "../../pages/Login/Login";
 import ForgotPass from "../../pages/ForgotPass/ForgotPass";
+import { SignOut } from "../SignOut/SignOut";
 import { ProtectedRoute } from "../../services/PotectedRouter";
 import FreelancerAccount from "../FreelancerAccount/FreelancerAccount";
 import "./App.css";
@@ -41,15 +42,13 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout/>}>
             <Route element={<ProtectedRoute/>}>
-            <Route path="freelancer/:freelancerId" element={<FreelancerAccount />} />
-              <Route path="freelancer/:freelancerId" element={<FreelancerAccount />} />
               <Route path="freelancer/:freelancerId" element={<FreelancerAccount />} />
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
             <Route path="signin" element={<Login />} />
             <Route path="forgot-password" element={<ForgotPass />} />
-           
+            <Route path="signout" element={<SignOut />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
