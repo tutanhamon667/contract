@@ -193,7 +193,7 @@ export default function FreelancerAccount() {
 /*
     <div className="freelance-account">
       <h2>Account of freelancer</h2>
-      <h3>Привет, {user.firstName} {user.lastName}!</h3>
+      <h3>Привет, {user.first_name} {user.last_name}!</h3>
       <p>----------------------------</p>
       <h3>{user.email}</h3>
       <button

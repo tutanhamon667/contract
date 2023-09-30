@@ -16,12 +16,12 @@ const SetNewPassForm = () => {
       newErrors = { ...newErrors, password: "Введите пароль" };
     }
 
-    if (!values.confirmPassword) {
-      newErrors = { ...newErrors, confirmPassword: "Повторите пароль" };
+    if (!values.re_password) {
+      newErrors = { ...newErrors, re_password: "Повторите пароль" };
     }
 
     setErrors({ ...errors, ...newErrors });
-    if (isValid && values.password && values.confirmPassword) {
+    if (isValid && values.password && values.re_password) {
       setValues({
         ...values,
         password: "",
@@ -44,7 +44,7 @@ const SetNewPassForm = () => {
           <InputText
             placeholder="Новый пароль"
             type={showPassword ? "text" : "password"}
-            autocomplete="new-password"
+            autoComplete="new-password"
             marginTop={20}
             width={610}
             height={46}
@@ -58,7 +58,7 @@ const SetNewPassForm = () => {
           <InputText
             placeholder="Повторите пароль"
             type={showPassword ? "text" : "password"}
-            autocomplete="new-password"
+            autoComplete="new-password"
             marginTop={20}
             width={610}
             height={46}

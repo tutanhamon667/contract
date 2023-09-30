@@ -15,6 +15,22 @@ const InputText = ({
   error,
   errorMessage
 }) => {
+const InputText = (
+  {
+    type,
+    placeholder,
+    autoComplete,
+    width,
+    height,
+    value,
+    onChange,
+    marginTop,
+    pass,
+    name,
+    error,
+    errorMessage
+  }
+) => {
   return (
     <div className="inputContainer">
       <input
@@ -22,6 +38,7 @@ const InputText = ({
         placeholder={placeholder}
         autoComplete={autocomplete}
         style={{ width, height, marginTop }}
+        autoComplete={autoComplete}
         value={value}
         onChange={onChange}
         type={type}

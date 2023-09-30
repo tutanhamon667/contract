@@ -18,6 +18,8 @@ function App() {
     id: "5",
     firstName: "Иван",
     lastName: "Петров",
+    first_name: "Иван",
+    last_name: "Петров",
     email: "email@mail.ru",
     password: "topSecret"
   });
