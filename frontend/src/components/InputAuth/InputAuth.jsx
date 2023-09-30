@@ -18,7 +18,7 @@ const InputAuth = ({
   return (
     <div className="inputContainer">
       <input
-        className={`input ${error && "input__error"}`}
+        className={`input${error ? " input__error" : ""}`}
         placeholder={placeholder}
         autoComplete={autocomplete}
         style={{ width, height, marginTop }}
@@ -26,8 +26,7 @@ const InputAuth = ({
         onChange={onChange}
         type={type}
         name={name}
-        error={error}
-        />
+      />
       {pass && <div className="input__showPass" onClick={pass} />}
       <span className="input__errorText">{errorMessage}</span>
     </div>
