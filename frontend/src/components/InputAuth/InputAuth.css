@@ -3,49 +3,50 @@
 }
 
 .input {
-  font-family: "Inter", Arial, sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  width: 295px;
-  padding: 12px 24px;
-  align-items: center;
-  border: none;
-  border-radius: 10px;
-  background: #fff;
   box-sizing: border-box;
+  width: 400px;
+  padding: 19px;
+  border: 1px solid #C6C6C6;
+  border-radius: 12px;
+  color: #3F3F3F;
+  background: #fff;
+  font-size: 16px;
+  line-height: 1.25;
   transition: all 0.2s ease-in-out;
+}
+
+.input:hover {
+  box-shadow: 2px 2px 0 0 #C6C6C6;
 }
 
 .input:focus {
   outline: none;
-  box-shadow: 0px 1px 1px 0px rgba(202, 200, 200, 0.985),
-    0px 1px 1px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 2px 2px 0 0 #C6C6C6;
 }
 
 .input::placeholder {
-  color: #b5b5b5;
+  color: #7B7B7B;
 }
 
 .input__showPass {
-  background-image: url(../../images/showPass.svg);
-  background-position: center;
   position: absolute;
-  width: 24px;
-  height: 24px;
-  opacity: 0.15;
   top: 46%;
   left: 93%;
-  transform: translate();
+  width: 24px;
+  height: 24px;
+  background-image: url(../../images/showPass.svg);
+  background-position: center;
+  opacity: 0.15;
   cursor: pointer;
 }
 
 .input__error {
-  border: 1px solid rgb(207, 24, 24);
+  border: 1px solid #CF1818;
 }
 
 .input__errorText{
-  color: rgb(207, 24, 24);
   position: absolute;
-  left: 4%;
   top: 100%;
+  left: 4%;
+  color: #CF1818;
 }
