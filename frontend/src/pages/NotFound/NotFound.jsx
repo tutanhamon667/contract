@@ -15,7 +15,7 @@ const NotFound = () => {
         className="backLink"
         to="/"
       >
-        <Button text='На главную' width={295} height={53} inheritTheme/>
+        <Button text='На главную' width={295} height={53} buttonSecondary />
       </Link>
     </div>
   );

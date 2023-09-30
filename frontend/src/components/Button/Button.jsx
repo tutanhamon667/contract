@@ -1,10 +1,10 @@
 import React from "react";
 import "./Button.css";
 
-const Button = ({ text, width, height, marginTop, marginBottom, inheritTheme, type, onClick, white, disabled }) => {
+const Button = ({ text, width, height, marginTop, marginBottom, buttonSecondary, type, onClick, disabled }) => {
   return (
     <button
-      className={`buttonActHov ${inheritTheme ? "buttonInherit" : "button"} ${white && "buttonWhite"}`}
+      className={`button${buttonSecondary ? " buttonSecondary" : ""}`}
       style={{
         width,
         height,
@@ -15,7 +15,7 @@ const Button = ({ text, width, height, marginTop, marginBottom, inheritTheme, ty
       onClick={onClick}
       disabled={disabled}
     >
-      <p className={`${inheritTheme ? "button__textBlack" : "button__text"}`}>
+      <p className={`button__text${buttonSecondary ? " buttonSecondary__text" : ""}`}>
         {text}
       </p>
     </button>

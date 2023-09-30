@@ -61,7 +61,7 @@ function FilterSection() {
       </div>
       <div className="filters-buttons">
       <Button text="Применить фильтр" width={295}/>
-      <Button text="Очистить фильтры" width={295} inheritTheme/>
+      <Button text="Очистить фильтры" width={295} buttonSecondary />
       </div>
     </section>
   );

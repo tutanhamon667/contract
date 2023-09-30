@@ -32,6 +32,7 @@ function App() {
   const logIn = () => {
     setAuthenticated(true);
   };
+
   const logOut = () => {
     setAuthenticated(false);
   };
