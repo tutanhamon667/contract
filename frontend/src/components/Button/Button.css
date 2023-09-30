@@ -1,62 +1,51 @@
 .button {
-    border: none;
-    cursor: pointer;
-    height: 53px;
-    background-color: #93A0FF;
-    color: #FFFFFF;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    transition: all 0.2s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  height: 52px;
+  padding: 6px 28px;
+  border: none;
+  border-radius: 12px;
+  background-color: #3F3F3F;
+  line-height: 1.5;
+  transition: all .3s ease-in-out;
+  cursor: pointer;
 }
-.button:hover{
-    opacity: 0.94;
+
+.button:hover {
+  box-shadow: 4px 4px 0 0 #C6C6C6;
 }
+
 .button:active {
-    opacity: 0.7;
+  background-color: #EEE;
 }
 
-.buttonInherit {
-    cursor: pointer;
-    height: 53px;
-    border: 1px solid #606060;
-    background-color: inherit;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    transition: all 0.2s ease-in-out;
+.button:disabled {
+  background-color: #B3B3B3;
+  cursor: default;
 }
 
-.buttonWhite{
-    background-color: #FFFFFF;
-    border: none;
+.button:disabled:hover {
+  box-shadow: none;
 }
 
-.buttonInherit:hover {
-    opacity: 0.8;
-
+.buttonSecondary {
+  border: 1px solid #C6C6C6;
+  background-color: #F2F1EE;
 }
-.buttonInherit:active {
-    opacity: 0.6;
-}
-
-
-
 
 .button__text {
-    color: #FFF;
-    font-family: 'Inter';
-    font-size: 20px;
-    font-weight: 400;
-    text-align: center;
+  margin: 0;
+  color: #FFF;
+  font-size: 16px;
+  text-align: center;
 }
 
-.button__textBlack {
-    color: #606060;
-    font-family: 'Inter';
-    font-size: 20px;
-    font-weight: 400;
-    text-align: center;
+.button:active + .button__text {
+  color: #3F3F3F;
+}
+
+.buttonSecondary__text {
+  color: #3F3F3F;
 }

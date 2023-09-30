@@ -77,7 +77,7 @@ const RegisterForm = () => {
             width={295}
             height={46}
             type="button"
-            inheritTheme
+            buttonSecondary
             white={role === "is_customer"}
             onClick={() => setRole("is_customer")}
           />
@@ -86,7 +86,7 @@ const RegisterForm = () => {
             width={295}
             height={46}
             type="button"
-            inheritTheme
+            buttonSecondary
             white={role === "is_worker"}
             onClick={() => setRole("is_worker")}
           />
