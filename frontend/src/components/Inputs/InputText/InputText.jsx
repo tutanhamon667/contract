@@ -1,20 +1,6 @@
 import React from "react";
 import "./InputText.css";
 
-const InputText = ({
-  placeholder,
-  type,
-  autocomplete,
-  width,
-  height,
-  value,
-  onChange,
-  marginTop,
-  pass,
-  name,
-  error,
-  errorMessage
-}) => {
 const InputText = (
   {
     type,
@@ -31,17 +17,21 @@ const InputText = (
     errorMessage
   }
 ) => {
+  const InputType = type === 'textarea' ? 'textarea' : 'input';
+  const inputStyle = type === 'textarea'
+    ? {width, height, marginTop, resize: 'none'}
+    : {width, height, marginTop};
+
   return (
     <div className="inputContainer">
-      <input
-        className={`input${error ? " input__error" : ""}`}
+      <InputType
+        className={`input${error ? ' input__error' : ''}`}
+        type={type !== 'textarea' ? type : ''}
         placeholder={placeholder}
-        autoComplete={autocomplete}
-        style={{ width, height, marginTop }}
         autoComplete={autoComplete}
+        style={inputStyle}
         value={value}
         onChange={onChange}
-        type={type}
         name={name}
       />
       {pass && <div className="input__showPass" onClick={pass} />}

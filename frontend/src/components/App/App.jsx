@@ -10,14 +10,13 @@ import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 import { SignOut } from "../SignOut/SignOut";
 import { ProtectedRoute } from "../../services/PotectedRouter";
 import FreelancerAccount from "../FreelancerAccount/FreelancerAccount";
+import { FreelancerCompleteForm } from "../Forms/FreelancerCompleteForm/FreelancerCompleteForm";
 import "./App.css";
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(false);
+  const [authenticated, setAuthenticated] = React.useState(true);
   const [currentUser, setCurrentUser] = React.useState({
     id: "5",
-    firstName: "Иван",
-    lastName: "Петров",
     first_name: "Иван",
     last_name: "Петров",
     email: "email@mail.ru",
@@ -43,9 +42,10 @@ function App() {
     <BrowserRouter>
       <Context.Provider value={{currentUser, authenticated, updateUser, logIn, logOut}}>
         <Routes>
-          <Route path="/" element={<Layout/>}>
-            <Route element={<ProtectedRoute/>}>
+          <Route path="/" element={<Layout />}>
+            <Route element={<ProtectedRoute />}>
               <Route path="freelancer/:freelancerId" element={<FreelancerAccount />} />
+              <Route path="freelancer/:freelancerId/complete" element={<FreelancerCompleteForm />} />
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
