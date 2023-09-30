@@ -1,7 +1,7 @@
-import './TagsInput.css'
+import './InputTags.css'
 import { useState } from 'react'
 
-function TagsInput() {
+function InputTags({ name, onChange }) {
   const [tags, setTags] = useState([])
 
   function handleKeyDown(e) {
@@ -10,10 +10,12 @@ function TagsInput() {
     if (!value.trim()) return
     setTags([...tags, value])
     e.target.value = ''
+    // onChange(tags);
+    e.preventDefault();
   }
 
   function removeTag(index) {
-    setTags(tags.filter((el, i) => i !== index))
+    setTags(tags.filter((el, i) => i !== index));
   }
 
   return (
@@ -25,6 +27,7 @@ function TagsInput() {
         </div>
       ))}
       <input
+        name={name}
         type="text"
         onKeyDown={handleKeyDown}
         className="tags-input"
@@ -34,4 +37,4 @@ function TagsInput() {
   )
 }
 
-export default TagsInput
+export default InputTags

@@ -42,7 +42,7 @@
   text-align: center;
 }
 
-.button:active + .button__text {
+.button:active > .button__text {
   color: #3F3F3F;
 }
 

@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import useFormAndValidation from "../../hooks/useFormAndValidation";
 import { Context } from "../../context/context"
-import TagsInput from "../TagsInput/TagsInput";
+import InputTags from "../Inputs/InputTags/InputTags";
 import "../FreelancerAccount/FreelancerAccount.css";
 
 export default function FreelancerAccount() {
@@ -106,7 +106,7 @@ export default function FreelancerAccount() {
 
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" htmlFor="skills">Навыки</label>
-            <TagsInput />
+            <InputTags />
           </div>
 
           <div className="form-profile__input-container">
