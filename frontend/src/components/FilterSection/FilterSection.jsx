@@ -5,8 +5,8 @@ import Button from "../Button/Button";
 function FilterSection() {
   return (
     <section className="filters">
-      <div className="filters-conteiner filters-conteiner__freelance">
-        <h2 className="filters-conteiner__title">Выбрать фильтр</h2>
+      <div className="filters-container filters-conteiner__freelance">
+        <h2 className="filters-container__title">Выбрать фильтр</h2>
         <div>
           <input type="checkbox" id="freelance-item1" name="freelance-item1" className="filters-checkbox" value="freelance-item1" />
           <label htmlFor="freelance-item1" className="filters-checkbox__item">Фильтр 1</label>
@@ -40,8 +40,8 @@ function FilterSection() {
           <label htmlFor="freelance-item8" className="filters-checkbox__item">Фильтр 8</label>
         </div>
       </div>
-      <div className="filters-conteiner filters-conteiner__budget">
-      <h2 className="filters-conteiner__title">Бюджет</h2>
+      <div className="filters-container filters-container__budget">
+      <h2 className="filters-container__title">Бюджет</h2>
         <div>
           <input type="checkbox" id="budget-item1" name="budget-item1" className="filters-checkbox" />
           <label htmlFor="budget-item1" className="filters-checkbox__item">Фильтр 1</label>

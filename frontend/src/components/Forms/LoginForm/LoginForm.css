@@ -16,7 +16,6 @@
 
 .login__forgotLink {
   color: #585858;
-  font-family: "Inter";
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
@@ -34,7 +33,6 @@
   display: flex;
   align-items: center;
   color: #585858;
-  font-family: "Inter";
   font-size: 20px;
   font-style: normal;
   font-weight: 400;

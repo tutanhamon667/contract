@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "../../Button/Button";
-import useFormAndValidation from "../../hooks/useFormAndValidation";
-import InputAuth from "../../InputAuth/InputAuth";
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
+import InputText from "../../Inputs/InputText/InputText";
 import "./ForgotPassForm.css";
 
 const ForgotPassForm = ({ func }) => {
@@ -30,7 +30,7 @@ const ForgotPassForm = ({ func }) => {
             Введите адрес электронной почты, который вы использовали при
             регистрации, и мы вышлем вам инструкции по сбросу пароля.
           </p>
-          <InputAuth
+          <InputText
             placeholder="Эл. почта"
             type="email"
             autoComplete="email"

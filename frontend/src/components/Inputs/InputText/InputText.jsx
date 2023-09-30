@@ -1,7 +1,7 @@
 import React from "react";
-import "./InputAuth.css";
+import "./InputText.css";
 
-const InputAuth = ({
+const InputText = ({
   placeholder,
   type,
   autocomplete,
@@ -33,4 +33,4 @@ const InputAuth = ({
   );
 };
 
-export default InputAuth;
+export default InputText;

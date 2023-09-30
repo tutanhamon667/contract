@@ -4,7 +4,7 @@
 }
 
 .search__container {
-  padding: 0px 24px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   min-height: 64px;
@@ -21,7 +21,6 @@
   box-sizing: border-box;
   width: 100%;
   color: #888;
-  font-family: Inter;
   font-size: 18px;
   font-style: normal;
   font-weight: 400;

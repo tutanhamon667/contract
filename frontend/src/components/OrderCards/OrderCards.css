@@ -14,7 +14,6 @@
 .orderCard__title {
   margin: 0;
   color: #606060;
-  font-family: Inter;
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
@@ -24,7 +23,6 @@
 .orderCard__direction {
   margin: 8px 0 0;
   color: #a8a8a8;
-  font-family: Inter;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -34,7 +32,6 @@
 .orderCard__price {
   margin: 0;
   color: #606060;
-  font-family: Inter;
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
@@ -44,7 +41,6 @@
 .orderCard__description {
   margin: 12px 0 0;
   color: #606060;
-  font-family: Inter;
   font-size: 18px;
   font-style: normal;
   font-weight: 400;
@@ -65,7 +61,6 @@
   border-radius: 10px;
   border: 1px solid #606060;
   color: #888;
-  font-family: Inter;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -75,7 +70,6 @@
 .orderCard__client {
   margin: 20px 0 8px;
   color: #a8a8a8;
-  font-family: Inter;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;

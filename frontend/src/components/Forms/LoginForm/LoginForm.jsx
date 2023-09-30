@@ -2,8 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/context";
 import Button from "../../Button/Button";
-import useFormAndValidation from "../../hooks/useFormAndValidation";
-import InputAuth from "../../InputAuth/InputAuth";
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
+import InputText from "../../Inputs/InputText/InputText";
 // import LinkBar from "../../LinkBar/LinkBar";
 import "./LoginForm.css";
 
@@ -42,7 +42,7 @@ const LoginForm = () => {
     <form className="login" onSubmit={handleSubmit}>
       <div className="login__form">
         <div className="login__inputContainer">
-          <InputAuth
+          <InputText
             placeholder="Эл. почта"
             type="email"
             autocomplete="email"
@@ -55,7 +55,7 @@ const LoginForm = () => {
             error={errors.email}
             errorMessage={errors.email}
           />
-          <InputAuth
+          <InputText
             placeholder="Пароль"
             type={showPassword ? "text" : "password"}
             autocomplete="current-password"

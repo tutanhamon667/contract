@@ -1,19 +1,21 @@
 import React from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Context } from "../../../context/context";
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import Button from "../../Button/Button";
-import useFormAndValidation from "../../hooks/useFormAndValidation";
-import InputAuth from "../../InputAuth/InputAuth";
+import InputText from "../../Inputs/InputText/InputText";
 // import LinkBar from "../../LinkBar/LinkBar";
 import "./RegisterForm.css";
 
 const RegisterForm = () => {
-  const {logIn, authenticated} = React.useContext(Context);
-  const location = useLocation();
+  // const { logIn, authenticated } = React.useContext(Context);
+  const { logIn } = React.useContext(Context);
+  // const location = useLocation();
   const [showPassword, setShowPassword] = React.useState(false);
   const [role, setRole] = React.useState("is_customer");
-  const { values, errors, isValid, handleChange, setValues, setErrors } =
-    useFormAndValidation();
+  const {
+    values, errors, isValid, handleChange, setValues, setErrors
+  } = useFormAndValidation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -76,7 +78,7 @@ const RegisterForm = () => {
             height={46}
             type="button"
             inheritTheme
-            white={role === "is_customer" ? true : false}
+            white={role === "is_customer"}
             onClick={() => setRole("is_customer")}
           />
           <Button
@@ -85,11 +87,11 @@ const RegisterForm = () => {
             height={46}
             type="button"
             inheritTheme
-            white={role === "is_worker" ? true : false}
+            white={role === "is_worker"}
             onClick={() => setRole("is_worker")}
           />
         </div>
-        <InputAuth
+        <InputText
           placeholder="Имя"
           marginTop={20}
           width={610}
@@ -102,7 +104,7 @@ const RegisterForm = () => {
           error={errors.first_name}
           errorMessage={errors.first_name}
         />
-        <InputAuth
+        <InputText
           placeholder="Фамилия"
           marginTop={20}
           width={610}
@@ -115,7 +117,7 @@ const RegisterForm = () => {
           error={errors.last_name}
           errorMessage={errors.last_name}
         />
-        <InputAuth
+        <InputText
           placeholder="Эл. почта"
           marginTop={20}
           width={610}
@@ -127,7 +129,7 @@ const RegisterForm = () => {
           error={errors.email}
           errorMessage={errors.email}
         />
-        <InputAuth
+        <InputText
           placeholder="Пароль"
           pass={togglePasswordVisibility}
           marginTop={20}
@@ -141,7 +143,7 @@ const RegisterForm = () => {
           error={errors.password}
           errorMessage={errors.password}
         />
-        <InputAuth
+        <InputText
           placeholder="Повторите пароль"
           marginTop={20}
           width={610}

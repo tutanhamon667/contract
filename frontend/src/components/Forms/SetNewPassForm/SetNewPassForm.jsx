@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "../../Button/Button";
-import useFormAndValidation from "../../hooks/useFormAndValidation";
-import InputAuth from "../../InputAuth/InputAuth";
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
+import InputText from "../../Inputs/InputText/InputText";
 import "./SetNewPassForm.css";
 
 const SetNewPassForm = () => {
@@ -41,7 +41,7 @@ const SetNewPassForm = () => {
           <p className="setNewPass__text">
             Придумайте новый пароль для восстановления доступа к аккаунту.
           </p>
-          <InputAuth
+          <InputText
             placeholder="Новый пароль"
             type={showPassword ? "text" : "password"}
             autocomplete="new-password"
@@ -55,7 +55,7 @@ const SetNewPassForm = () => {
             error={errors.password}
             errorMessage={errors.password}
           />
-          <InputAuth
+          <InputText
             placeholder="Повторите пароль"
             type={showPassword ? "text" : "password"}
             autocomplete="new-password"

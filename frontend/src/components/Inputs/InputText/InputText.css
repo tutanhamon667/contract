@@ -12,7 +12,11 @@
   background: #fff;
   font-size: 16px;
   line-height: 1.25;
-  transition: all 0.2s ease-in-out;
+  transition: all .3s ease-in-out;
+}
+
+.input::placeholder {
+  color: #7B7B7B;
 }
 
 .input:hover {
@@ -24,19 +28,15 @@
   box-shadow: 2px 2px 0 0 #C6C6C6;
 }
 
-.input::placeholder {
-  color: #7B7B7B;
-}
-
 .input__showPass {
   position: absolute;
   top: 46%;
   left: 93%;
   width: 24px;
   height: 24px;
-  background-image: url(../../images/showPass.svg);
+  background-image: url(../../../images/showPass.svg);
   background-position: center;
-  opacity: 0.15;
+  opacity: .15;
   cursor: pointer;
 }
 
@@ -44,7 +44,7 @@
   border: 1px solid #CF1818;
 }
 
-.input__errorText{
+.input__errorText {
   position: absolute;
   top: 100%;
   left: 4%;

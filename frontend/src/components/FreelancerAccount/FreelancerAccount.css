@@ -13,7 +13,6 @@
 /* текст для заголовков */
 .accountF__title {
   color: #606060;
-  font-family: Inter;
   font-size: 20px;
   font-weight: 600;
   margin: 0;
@@ -22,7 +21,6 @@
 /* основной текст */
 .accountF__subtitle {
   color: #292D32;
-  font-family: Inter;
   font-size: 18px;
   font-weight: 400;
   margin: 0;
@@ -30,7 +28,6 @@
 
 .accountF__specialty {
   color: #606060;
-  font-family: Inter;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -74,7 +71,6 @@
 
 .accountF__setting {
   color: #606060;
-  font-family: Inter;
   font-size: 25px;
   font-style: normal;
   font-weight: 600;
@@ -113,7 +109,6 @@
 
 .form-profile__input {
   color: #292D32;
-  font-family: Inter;
   font-size: 20px;
   font-weight: 400;
   padding: 12px 20px;
@@ -150,7 +145,6 @@
 
 .form-profile__specialization {
   color: #292D32;
-  font-family: Inter;
   font-size: 20px;
   font-weight: 400;
 }

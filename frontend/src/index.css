@@ -1,10 +1,2 @@
 @import url(./vendor/normalize.css);
 @import url(./vendor/fonts/inter.css);
-
-#root {
-    background: #EEF0FF;
-    min-height: 100vh;
-}
-a{
-    text-decoration: none;
-}
