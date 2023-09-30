@@ -2,6 +2,7 @@
   display: flex;
   column-gap: 20px;
   padding: 40px 100px 205px 100px;
+  background-color: #F2F1EE;
 }
 
 .accountF_left-column {
@@ -12,7 +13,7 @@
 
 /* текст для заголовков */
 .accountF__title {
-  color: #606060;
+  color: #3F3F3F;
   font-family: Inter;
   font-size: 20px;
   font-weight: 600;
@@ -21,9 +22,9 @@
 
 /* основной текст */
 .accountF__subtitle {
-  color: #292D32;
+  color: #3F3F3F;
   font-family: Inter;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   margin: 0;
 }
@@ -37,6 +38,10 @@
   margin: 0;
 }
 
+.accountF__separate-line {
+  height: 1px;
+  background: #EEF0FF;
+}
 
 /* Блок краткой инф-ии о пользователе */
 
@@ -49,16 +54,17 @@
   /* justify-content: center; */
   background-color: white;
   border-radius: 10px;
+  border: 1px solid #C6C6C6;
 }
 
 .account__avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-image: url(../../images/edit-avatar.svg);
+  background-image: url(../../images/profile-circle.svg);
   background-repeat: no-repeat;
   background-position: center center;
-  background-color: #EEF0FF;;
+  background-color: #3F3F3F;;
 }
 
 /* блок настроек и инф-ии */
@@ -66,24 +72,20 @@
 .accountF__setting-container {
   display: flex;
   flex-direction: column;
-  row-gap: 32px;
+  row-gap: 20px;
   background-color: white;
-  padding: 40px;
+  padding: 24px;
   border-radius: 10px;
+  border: 1px solid #C6C6C6;
 }
 
 .accountF__setting {
   color: #606060;
   font-family: Inter;
-  font-size: 25px;
-  font-style: normal;
+  font-size: 20px;
   font-weight: 600;
 }
 
-.accountF__separate-line {
-  height: 6px;
-  background: #EEF0FF;
-}
 
 /* Форма */
 
@@ -92,12 +94,13 @@
   background: #FFF;
   padding: 40px;
   width: 100%;
+  border: 1px solid #C6C6C6;
 }
 
 .form-profile {
   display: flex;
   flex-direction: column;
-  row-gap: 32px;
+  row-gap: 24px;
 }
 
 .form-profile__top-container {
@@ -108,17 +111,17 @@
 .form-profile__input-container {
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
+  row-gap: 12px;
 }
 
 .form-profile__input {
-  color: #292D32;
+  color: #3F3F3F;
   font-family: Inter;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 400;
-  padding: 12px 20px;
-  border-radius: 10px;
-  border: 1px solid #292D32;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid #C6C6C6;
 }
 
 .form-profile__cansel {
@@ -128,6 +131,7 @@
   border: none;
   background-color: white;
   cursor: pointer;
+  font-size: 18px;
 }
 
 .form-profile__save {
@@ -135,17 +139,16 @@
   border: none;
   background-color: white;
   cursor: pointer;
+  font-size: 18px;
+  color: #3F3F3F
 }
 
 .form-profile__notify {
   padding-left: 12px;
 }
 
-.form-profile__add-communication-type {
-  color: #93A0FF;;
-  border: none;
-  background-color: white;
-  cursor: pointer;
+.form-profile__add-communication {
+  align-self: flex-start;
 }
 
 .form-profile__list {
@@ -171,4 +174,27 @@
   background-repeat: no-repeat;
   background-position: 83% center;
   background-size: 23px 23px;
+}
+
+.form-profile__portfolio-container {
+  display: flex;
+  column-gap: 20px;
+}
+
+.form-profile__portfolio-item {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  background: #C9C9C9;
+}
+
+.form-profile__portfolio-item__close {
+  border: none;
+  background-color: #C9C9C9;
+  cursor: pointer;
+  background-image: url(../../images/close-circle.svg);
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  width: 20px;
+  height: 20px;
 }
