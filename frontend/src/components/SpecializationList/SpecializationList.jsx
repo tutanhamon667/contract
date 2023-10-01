@@ -15,9 +15,11 @@ const options = [
 export default function SpecializationList() {
   const [value, setValue] = useState([]);
   const [isOpen, setIsopen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(1);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [isEditMode, setIsEditMode] = useState(true);
 
   function selectOption(option) {
+    if (!isEditMode) return
     if (value.includes(option)) {
       setValue(value.filter(o => o !== option))
     } else {
@@ -29,10 +31,15 @@ export default function SpecializationList() {
     return value.includes(option)
   }
 
+  function exposeList() {
+    if (!isEditMode) return
+    setIsopen(prev => !prev)
+  }
+
   return (
     <div
       tabIndex={0}
-      onClick={() => setIsopen(prev => !prev)}
+      onClick={exposeList}
       onBlur={() => setIsopen(false)}
       className="list__container"
     >
@@ -43,7 +50,7 @@ export default function SpecializationList() {
             key={v.value}
             onClick={e => { e.stopPropagation(); selectOption(v) }}>
             {v.label}
-            <div className="list__item-close"></div>
+            {isEditMode && <span className="list__item-close"></span>}
           </div>
         ))}
       </div>
