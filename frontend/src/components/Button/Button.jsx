@@ -1,21 +1,46 @@
 import React from "react";
 import "./Button.css";
 
-const Button = ({ text, width, height, marginTop, marginBottom, buttonSecondary, type, onClick, disabled }) => {
+const Button = ({
+  text,
+  width,
+  height,
+  marginTop,
+  marginBottom,
+  buttonSecondary,
+  buttonWhite,
+  type,
+  onClick,
+  disabled,
+  fontWeight,
+  fontSize,
+  color,
+  border
+}) => {
   return (
     <button
-      className={`button${buttonSecondary ? " buttonSecondary" : ""}`}
+      className={`button${buttonSecondary ? " buttonSecondary" : ""} ${
+        buttonWhite&&"buttonWhite"
+      }`}
       style={{
         width,
         height,
         marginTop,
-        marginBottom
+        marginBottom,
+        fontWeight,
+        fontSize,
+        color,
+        border
       }}
       type={type}
       onClick={onClick}
       disabled={disabled}
     >
-      <p className={`button__text${buttonSecondary ? " buttonSecondary__text" : ""}`}>
+      <p
+        className={`button__text${
+          buttonSecondary ? " buttonSecondary__text" : ""
+        }`}
+      >
         {text}
       </p>
     </button>

@@ -8,14 +8,14 @@ import InputText from "../../Inputs/InputText/InputText";
 import "./RegisterForm.css";
 
 const RegisterForm = () => {
-  // const { logIn, authenticated } = React.useContext(Context);
   const { logIn } = React.useContext(Context);
-  // const location = useLocation();
   const [showPassword, setShowPassword] = React.useState(false);
-  const [role, setRole] = React.useState("is_customer");
-  const {
-    values, errors, isValid, handleChange, setValues, setErrors
-  } = useFormAndValidation();
+  const [role, setRole] = React.useState({
+    is_customer: true,
+    is_is_worker: false,
+  });
+  const { values, errors, isValid, handleChange, setValues, setErrors } =
+    useFormAndValidation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -63,7 +63,6 @@ const RegisterForm = () => {
         last_name: "",
         password: "",
         re_password: "",
-        role
       });
 
       logIn();
@@ -76,26 +75,32 @@ const RegisterForm = () => {
         <div className="register__formRoleContainer">
           <Button
             text="Я заказчик"
-            width={295}
-            height={46}
+            width={200}
+            height={52}
             type="button"
-            buttonSecondary={role === "is_customer"}
-            onClick={() => setRole("is_customer")}
+            buttonSecondary
+            border="none"
+            buttonWhite={role.is_customer ? true : false}
+            onClick={() => setRole({is_customer: true,
+              is_is_worker: false})}
           />
           <Button
             text="Я фрилансер"
-            width={295}
-            height={46}
+            width={200}
+            height={52}
             type="button"
-            buttonSecondary={role === "is_worker"}
-            onClick={() => setRole("is_worker")}
+            buttonSecondary
+            border="none"
+            buttonWhite={role.is_customer ? false : true}
+            onClick={() => setRole({is_customer: false,
+              is_is_worker: true})}
           />
         </div>
         <InputText
           placeholder="Имя"
           marginTop={20}
-          width={610}
-          height={46}
+          width={400}
+          height={60}
           type="text"
           name="first_name"
           autoComplete="given-name"
@@ -107,8 +112,8 @@ const RegisterForm = () => {
         <InputText
           placeholder="Фамилия"
           marginTop={20}
-          width={610}
-          height={46}
+          width={400}
+          height={60}
           type="text"
           name="last_name"
           autoComplete="family-name"
@@ -120,7 +125,7 @@ const RegisterForm = () => {
         <InputText
           placeholder="Эл. почта"
           marginTop={20}
-          width={610}
+          width={400}
           type="email"
           name="email"
           autoComplete="email"
@@ -133,8 +138,8 @@ const RegisterForm = () => {
           placeholder="Пароль"
           pass={togglePasswordVisibility}
           marginTop={20}
-          width={610}
-          height={46}
+          width={400}
+          height={60}
           type={showPassword ? "text" : "password"}
           autoComplete="new-password"
           name="password"
@@ -146,8 +151,8 @@ const RegisterForm = () => {
         <InputText
           placeholder="Повторите пароль"
           marginTop={20}
-          width={610}
-          height={46}
+          width={400}
+          height={60}
           type={showPassword ? "text" : "password"}
           autoComplete="new-password"
           name="re_password"
@@ -156,9 +161,9 @@ const RegisterForm = () => {
           error={errors.re_password}
           errorMessage={errors.re_password}
         />
-        <div style={{marginBottom:60}}/>
+        <div style={{ marginBottom: 60 }} />
         {/* <LinkBar /> */}
-        <Button text="Создать аккаунт" width={399} type="submit" />
+        <Button text="Создать аккаунт" width={400} height={52} type="submit" />
         <div className="register__footerLinkContainer">
           <p className="register__footerLinkDescription">Уже есть аккаунт?</p>
           <Link className="register__footerLink" to="/signin">
