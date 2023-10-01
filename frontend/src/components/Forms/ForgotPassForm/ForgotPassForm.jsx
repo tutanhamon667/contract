@@ -35,8 +35,8 @@ const ForgotPassForm = ({ func }) => {
             type="email"
             autoComplete="email"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             name="email"
             onChange={handleChange}
             value={values.email || ""}
@@ -44,7 +44,7 @@ const ForgotPassForm = ({ func }) => {
             errorMessage={errors.email}
           />
         </div>
-        <Button text="Отправить" width={399} type="submit" />
+        <Button text="Отправить" width={400} height={52} type="submit" />
       </div>
     </form>
   );

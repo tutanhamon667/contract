@@ -11,9 +11,10 @@
 }
 
 .title {
-  color: #606060;
+  color: #3F3F3F;
   text-align: center;
-  font-size: 40px;
+  font-size: 36px;
+  line-height: 44px;
   font-weight: 600;
   margin: 0 0 40px;
 }
