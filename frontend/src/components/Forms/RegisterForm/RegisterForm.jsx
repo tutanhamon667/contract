@@ -33,7 +33,7 @@ const RegisterForm = () => {
   };
 
   React.useEffect(() => {
-    setValues(prevValues => ({
+    setValues((prevValues) => ({
       ...prevValues,
       is_customer: role.is_customer,
       is_worker: role.is_worker,
