@@ -15,13 +15,13 @@ const Button = ({
   fontWeight,
   fontSize,
   border,
-  opacity
+  opacity,
 }) => {
   return (
     <button
       className={`button${buttonSecondary ? " buttonSecondary" : ""} ${
-        buttonWhite&&"buttonWhite"
-      }`}
+        buttonWhite && "buttonWhite"
+      } ${disabled && "buttonDisabled"}`}
       style={{
         width,
         height,
@@ -30,7 +30,7 @@ const Button = ({
         fontWeight,
         fontSize,
         border,
-        opacity
+        opacity,
       }}
       type={type}
       onClick={onClick}

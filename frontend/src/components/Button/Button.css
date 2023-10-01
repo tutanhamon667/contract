@@ -54,3 +54,8 @@
   background-color: #FFF;
 }
 
+.buttonDisabled{
+  background-color: #B3B3B3;
+  color: #3F3F3F;
+}
+

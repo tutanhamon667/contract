@@ -10,6 +10,7 @@ import "./RegisterForm.css";
 const RegisterForm = () => {
   const { logIn } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [buttonClicked, setButtonClicked] = React.useState(false);
   const [role, setRole] = React.useState({
     is_customer: true,
     is_worker: false,
@@ -88,7 +89,9 @@ const RegisterForm = () => {
 
       logIn();
     }
+    setButtonClicked(true);
   };
+
   return (
     <form className="register" onSubmit={handleSubmit}>
       <div className="register__form">
@@ -188,7 +191,18 @@ const RegisterForm = () => {
         />
         <div style={{ marginBottom: 60 }} />
         {/* <LinkBar /> */}
-        <Button text="Создать аккаунт" width={400} type="submit" />
+        <Button
+          text="Создать аккаунт"
+          width={400}
+          type="submit"
+          disabled={(!isValid ||
+            !values.email ||
+            !values.password ||
+            !values.re_password ||
+            !values.first_name ||
+            !values.last_name) &&
+          buttonClicked}
+        />
         <div className="register__footerLinkContainer">
           <p className="register__footerLinkDescription">Уже есть аккаунт?</p>
           <Link className="register__footerLink" to="/signin">
