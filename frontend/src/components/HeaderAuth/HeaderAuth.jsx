@@ -4,11 +4,22 @@ import "./HeaderAuth.css";
 
 function HeaderAuth() {
   const location = useLocation();
+  const locationAuth =
+    location.pathname === "/signup" ||
+    location.pathname === "/signin" ||
+    location.pathname === "/forgot-password"
+      ? true
+      : false;
   return (
     <div className="header-auth">
       {location.pathname !== "/signup" && (
         <Link to="/signup">
-          <button className="header-auth__singup-button" type="button">
+          <button
+            className={`header-auth__signup-button ${
+              locationAuth && "header-auth__authState"
+            }`}
+            type="button"
+          >
             Регистрация
           </button>
         </Link>
@@ -20,9 +31,9 @@ function HeaderAuth() {
             <button
               className={`${
                 location.pathname === "/signup"
-                  ? "header-auth__singup-button"
+                  ? "header-auth__signup-button"
                   : "header-auth__entry-button"
-              }`}
+              } ${locationAuth && "header-auth__authState"}`}
               type="button"
             >
               {location.pathname === "/signup" ? "Вход" : "Войти"}

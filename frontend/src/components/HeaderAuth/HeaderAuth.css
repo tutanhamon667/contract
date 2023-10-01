@@ -6,12 +6,10 @@
   justify-content: flex-end;
 }
 
-.header-auth__singup-button {
+.header-auth__signup-button {
   color: #3F3F3F;
   font-size: 20px;
   font-weight: 400;
-  text-decoration: underline;
-  text-underline-offset: 4px;
   line-height: 2;
   cursor: pointer;
   background-color: transparent;
@@ -19,9 +17,9 @@
   border: none;
 }
 
-.header-auth__singup-button:hover {
-  transition: 1s ease-in;
-  opacity: 0.5;
+.header-auth__signup-button:hover {
+  transition: all 0.2s ease-in-out;
+  opacity: 0.8;
 }
 
 .header-auth__entry-button {
@@ -46,6 +44,11 @@
 }
 
 .header-auth__entry-button:hover {
-  transition: 1s ease-in;
-  opacity: 0.6;
+  transition: all 0.2s ease-in-out;
+  opacity: 0.8;
+}
+
+.header-auth__authState {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
