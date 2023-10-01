@@ -79,8 +79,7 @@ const RegisterForm = () => {
             width={295}
             height={46}
             type="button"
-            buttonSecondary
-            white={role === "is_customer"}
+            buttonSecondary={role === "is_customer"}
             onClick={() => setRole("is_customer")}
           />
           <Button
@@ -88,8 +87,7 @@ const RegisterForm = () => {
             width={295}
             height={46}
             type="button"
-            buttonSecondary
-            white={role === "is_worker"}
+            buttonSecondary={role === "is_worker"}
             onClick={() => setRole("is_worker")}
           />
         </div>
