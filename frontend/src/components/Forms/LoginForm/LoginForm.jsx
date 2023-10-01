@@ -10,6 +10,7 @@ import "./LoginForm.css";
 const LoginForm = () => {
   const { logIn } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [buttonClicked, setButtonClicked] = React.useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const togglePasswordVisibility = () => {
@@ -36,6 +37,7 @@ const LoginForm = () => {
       setValues({ ...values, email: "", password: "" });
       logIn();
     }
+    setButtonClicked(true);
   };
 
   return (
@@ -74,11 +76,18 @@ const LoginForm = () => {
           </Link>
         </div>
         {/* <LinkBar /> */}
-        <Button text="Войти" width={400} type="submit" />
+        <Button
+          text="Войти"
+          width={400}
+          type="submit"
+          disabled={
+            (!isValid || !values.email || !values.password) && buttonClicked
+          }
+        />
         <div className="login__footerLinkContainer">
           <p className="login__footerLinkDescription">Нет аккаунта?</p>
           <Link className="login__footerLink" to="/signup">
-          Зарегистрируйтесь
+            Зарегистрируйтесь
           </Link>
         </div>
       </div>

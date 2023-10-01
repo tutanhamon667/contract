@@ -6,6 +6,7 @@ import "./SetNewPassForm.css";
 
 const SetNewPassForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [buttonClicked, setButtonClicked] = React.useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const handleSubmit = (evt) => {
@@ -29,6 +30,7 @@ const SetNewPassForm = () => {
       });
       console.log(values);
     }
+    setButtonClicked(true);
   };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -73,6 +75,10 @@ const SetNewPassForm = () => {
           text="Продолжить"
           width={400}
           type="submit"
+          disabled={
+            (!isValid || !values.password || !values.re_password) &&
+            buttonClicked
+          }
         />
       </div>
     </form>
