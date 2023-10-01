@@ -14,8 +14,8 @@ const Button = ({
   disabled,
   fontWeight,
   fontSize,
-  color,
-  border
+  border,
+  opacity
 }) => {
   return (
     <button
@@ -29,8 +29,8 @@ const Button = ({
         marginBottom,
         fontWeight,
         fontSize,
-        color,
-        border
+        border,
+        opacity
       }}
       type={type}
       onClick={onClick}

@@ -12,7 +12,7 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [role, setRole] = React.useState({
     is_customer: true,
-    is_is_worker: false,
+    is_worker: false,
   });
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
@@ -20,6 +20,25 @@ const RegisterForm = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  const toggleRole = (isCustomer) => {
+    setRole({
+      is_customer: isCustomer,
+      is_worker: !isCustomer,
+    });
+    setValues({
+      ...values,
+      is_customer: role.is_customer,
+      is_worker: role.is_worker,
+    });
+  };
+
+  React.useEffect(() => {
+    setValues(prevValues => ({
+      ...prevValues,
+      is_customer: role.is_customer,
+      is_worker: role.is_worker,
+    }));
+  }, [role.is_customer, role.is_worker, setValues]);
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -63,12 +82,13 @@ const RegisterForm = () => {
         last_name: "",
         password: "",
         re_password: "",
+        is_customer: role.is_customer,
+        is_worker: role.is_worker,
       });
 
       logIn();
     }
   };
-
   return (
     <form className="register" onSubmit={handleSubmit}>
       <div className="register__form">
@@ -80,9 +100,11 @@ const RegisterForm = () => {
             type="button"
             buttonSecondary
             border="none"
+            fontSize={20}
+            fontWeight={600}
+            opacity={role.is_worker && 0.7}
             buttonWhite={role.is_customer ? true : false}
-            onClick={() => setRole({is_customer: true,
-              is_is_worker: false})}
+            onClick={() => toggleRole(true)}
           />
           <Button
             text="Я фрилансер"
@@ -91,9 +113,12 @@ const RegisterForm = () => {
             type="button"
             buttonSecondary
             border="none"
+            fontSize={20}
+            fontWeight={600}
+            opacity={role.is_customer && 0.7}
+            color={role.is_customer && "#7B7B7B"}
             buttonWhite={role.is_customer ? false : true}
-            onClick={() => setRole({is_customer: false,
-              is_is_worker: true})}
+            onClick={() => toggleRole(false)}
           />
         </div>
         <InputText
