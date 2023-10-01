@@ -1,5 +1,33 @@
 .content {
-    margin:0 auto 80px;
-    padding: 0 100px;
-    max-width: 1540px;
+  margin: 0 auto 80px;
+  max-width: 1540px;
+}
+
+.content__image {
+  background-image: url("../../images/eb513a3daf746e324e0acdc7e046a8ef.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.content__order-container {
+  border-radius: 60px;
+  padding: 0 100px;
+}
+
+.content__border {
+  height: 60px;
+  border-top-left-radius: 60px;
+  border-top-right-radius: 60px;
+  background: #F2F1EE;
+}
+
+.content__image-decorate {
+  height: 30px;
+  margin-top: 158px;
+  margin-bottom: 40px;
+  border-top: solid 1px  #fff ;
+  border-bottom: solid 1px  #fff ;
+  background-image: url(../../images/12.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
 }

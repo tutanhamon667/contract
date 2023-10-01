@@ -1,6 +1,5 @@
 .header {
   height: 80px;
-  background-color: #93A0FF;
 }
 
 .header__container {
@@ -14,13 +13,14 @@
 }
 
 .header__logo {
-  background-image: url(../../images/group98.svg);
+  background-image: url(../../images/new-logo.svg);
   background-position: center;
   border: none;
   border-radius: 5px;
-  width: 85px;
-  height: 42.5px;
+  width: 96px;
+  height: 32px;
   cursor: pointer;
+  background-color: transparent;
 }
 
 .header__userInfo {
