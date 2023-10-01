@@ -46,8 +46,8 @@ const SetNewPassForm = () => {
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             pass={togglePasswordVisibility}
             name="password"
             onChange={handleChange}
@@ -60,8 +60,8 @@ const SetNewPassForm = () => {
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             name="re_password"
             onChange={handleChange}
             value={values.re_password || ""}
@@ -71,7 +71,7 @@ const SetNewPassForm = () => {
         </div>
         <Button
           text="Продолжить"
-          width={399}
+          width={400}
           type="submit"
         />
       </div>

@@ -74,7 +74,7 @@ const LoginForm = () => {
           </Link>
         </div>
         {/* <LinkBar /> */}
-        <Button text="Войти" width={399} type="submit" />
+        <Button text="Войти" width={400} type="submit" />
         <div className="login__footerLinkContainer">
           <p className="login__footerLinkDescription">Нет аккаунта?</p>
           <Link className="login__footerLink" to="/signup">

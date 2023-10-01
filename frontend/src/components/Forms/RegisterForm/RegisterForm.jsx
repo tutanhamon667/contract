@@ -188,7 +188,7 @@ const RegisterForm = () => {
         />
         <div style={{ marginBottom: 60 }} />
         {/* <LinkBar /> */}
-        <Button text="Создать аккаунт" width={400} height={52} type="submit" />
+        <Button text="Создать аккаунт" width={400} type="submit" />
         <div className="register__footerLinkContainer">
           <p className="register__footerLinkDescription">Уже есть аккаунт?</p>
           <Link className="register__footerLink" to="/signin">

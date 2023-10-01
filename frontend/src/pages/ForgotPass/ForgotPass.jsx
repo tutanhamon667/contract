@@ -5,7 +5,7 @@ import SetNewPassForm from "../../components/Forms/SetNewPassForm/SetNewPassForm
 import { Context } from "../../context/context";
 
 const ForgotPass = () => {
-  const {authenticated} = React.useContext(Context);
+  const { authenticated } = React.useContext(Context);
   const location = useLocation();
   const [isConfirmed, setIsConfirmed] = React.useState(false);
 
@@ -15,8 +15,14 @@ const ForgotPass = () => {
   return (
     <div className="wrapper">
       <div className="container">
-        {!isConfirmed && <h1 className="title">Забыли пароль?</h1>}
-        {!isConfirmed ? <ForgotPassForm func={()=>setIsConfirmed(true)}/> : <SetNewPassForm/>} 
+        <h1 className="title">
+          {isConfirmed ? "Новый пароль" : "Забыли пароль?"}
+        </h1>
+        {!isConfirmed ? (
+          <ForgotPassForm func={() => setIsConfirmed(true)} />
+        ) : (
+          <SetNewPassForm />
+        )}
       </div>
     </div>
   );
