@@ -1,0 +1,24 @@
+.tags {
+  border: 1px solid #C6C6C6;
+  padding: 12px 24px;
+  border-radius: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  box-sizing: border-box;
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.tag__input {
+  width: 100%;
+  border: none;
+  outline: none;
+  color: #292D32;
+  font-family: Inter;
+  font-size: 20px;
+  font-weight: 400;
+}

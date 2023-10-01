@@ -2,8 +2,11 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import useFormAndValidation from "../../hooks/useFormAndValidation";
 import { Context } from "../../context/context"
-import InputTags from "../Inputs/InputTags/InputTags";
+// import InputTags from "../Inputs/InputTags/InputTags";
 import "../FreelancerAccount/FreelancerAccount.css";
+// import { CurrentUser } from "../../context/context"
+import TagsInput from "../TagsInput/TagsInput";
+import SpecializationList from "../SpecializationList/SpecializationList";
 
 export default function FreelancerAccount() {
   // открывает форму редактирования имейла
@@ -37,14 +40,14 @@ export default function FreelancerAccount() {
 
         <div className="accountF__short-info">
           <div className="account__avatar"></div>
-          <h2 className="accountF__title">Имя&nbsp;Фамилия</h2>
-          <p className="accountF__specialty">специальность</p>
+          <h2 className="accountF__title">Александр&nbsp;Бирюков</h2>
+          <p className="accountF__specialty">Фрилансер</p>
         </div>
 
         <div className="accountF__setting-container">
           <Link className="accountF__setting" to="#">Настройки</Link>
           <div className="accountF__separate-line"></div>
-          <Link className="accountF__title" to="#">Информация</Link>
+          <Link className="accountF__subtitle">Информация</Link>
         </div>
 
       </div>
@@ -61,71 +64,84 @@ export default function FreelancerAccount() {
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="email">Электронная почта</label>
-            <input type="email" name="email" id="email" placeholder="Эл. почта" className="form-profile__input" />
-            <div>
-              <input type="checkbox" name="notifyOfNewOrders" id="notifyOfNewOrders" />
-              <label className="accountF__subtitle form-profile__notify" htmlFor="notifyOfNewOrders">Уведомлять о новых заказах</label>
-            </div>
-          </div>
-
-          <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="phone">Номер телефона</label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="birukov@gmail.com"
+              className="form-profile__input"
+            />
             <input
               type="tel"
               name="phone"
               id="phone"
-              maxLength="12"
-              placeholder="+7 000 000 00 00"
+              maxlength="12"
+              placeholder="+7"
               className="form-profile__input"
             />
           </div>
+
 
           <div className="accountF__separate-line"></div>
 
           <h2 className="accountF__title">Информация о профиле</h2>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="firstName">Имя Фамилия</label>
-            <input type="text" name="firstName" id="firstName" placeholder="Имя" className="form-profile__input" />
-            <input type="text" name="lastName" id="lastName" placeholder="Фамилия" className="form-profile__input" />
+            <label
+              className="accountF__subtitle"
+              for="firstName">
+              Имя Фамилия
+            </label>
+            <input
+              type="text"
+              name="firstName"
+              id="firstName"
+              placeholder="Александр"
+              className="form-profile__input"
+            />
+            <input
+              type="text"
+              name="lastName"
+              id="lastName"
+              placeholder="Бирюков"
+              className="form-profile__input"
+            />
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="specialization">Специализация</label>
-            <select name="specialization" id="specialization" size="1" placeholder="Выберите из списка" className="form-profile__specialization">
-              <option value="design" className="form-profile__specialization">Дизайн</option>
-              <option value="development" className="form-profile__specialization">Разработка</option>
-              <option value="testing" className="form-profile__specialization">Тестирование</option>
-              <option value="administration" className="form-profile__specialization">Администрирование</option>
-              <option value="marketing" className="form-profile__specialization">Маркетинг</option>
-              <option value="content" className="form-profile__specialization">Контент</option>
-              <option value="other" className="form-profile__specialization">Разное</option>
-            </select>
+            <h2 className="accountF__subtitle">Специализация</h2>
+            <SpecializationList />
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="skills">Навыки</label>
-            <InputTags />
+            <h2 className="accountF__subtitle" for="skills">Навыки</h2>
+            <TagsInput />
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="workingRate">Ставка в час</label>
-            <input type="number" name="workingRate" id="workingRate" className="form-profile__input" />
+            <label className="accountF__subtitle" for="workingRate">Ставка в час</label>
+            <input type="number" name="workingRate" id="workingRate" placeholder="150" className="form-profile__input form-profile__rate-input" />
           </div>
 
           <div className="form-profile__input-container">
             <h2 className="accountF__subtitle">Образование</h2>
-            <input type="text" name="education" id="education" className="form-profile__input" />
-            <input type="date" name="beginningOfStudies" id="beginningOfStudies" className="form-profile__input" />
-            <input type="date" name="endOfStudies" id="endOfStudies" className="form-profile__input" />
-            <select name="degree" id="degree" className="form-profile__specialization">
-              <option value="bachelor" className="form-profile__specialization">Студент</option>
-              <option value="bachelor" className="form-profile__specialization">Бакалавр</option>
-              <option value="specialist" className="form-profile__specialization">Специалист</option>
-              <option value="master" className="form-profile__specialization">Магистр</option>
+            <input type="text" name="education" id="education" className="form-profile__input" placeholder="Университет" />
+            <div>
+              <input type="date" name="beginningOfStudies" id="beginningOfStudies" placeholder="Начало учёбы" className="form-profile__input" />
+              <input type="date" name="endOfStudies" id="endOfStudies" placeholder="Окончание учёбы" className="form-profile__input" />
+            </div>
+            <select
+              name="degree"
+              id="degree"
+              className="form-profile__list form-profile__list-title"
+            >
+              <option value="" className="form-profile__list form-profile__list-default">Степень</option>
+              <option value="bachelor" className="form-profile__list">Студент</option>
+              <option value="bachelor" className="form-profile__list">Бакалавр</option>
+              <option value="specialist" className="form-profile__list">Специалист</option>
+              <option value="master" className="form-profile__list">Магистр</option>
             </select>
-            <input type="text" name="faculty" id="faculty" className="form-profile__input" />
+            <input type="text" name="faculty" id="faculty" className="form-profile__input" placeholder="Факультет" />
           </div>
 
           <div className="form-profile__input-container">
@@ -138,41 +154,43 @@ export default function FreelancerAccount() {
           <h2 className="accountF__title">Контакты</h2>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="emailForContacts">Электронная почта</label>
-            <input type="emailForContacts" name="emailForContacts" id="email" className="form-profile__input" />
+            <label className="accountF__subtitle" for="emailForContacts">Электронная почта</label>
+            <input type="emailForContacts" name="emailForContacts" id="email" className="form-profile__input" placeholder="Эл.почта" />
             <div>
               <input type="checkbox" name="preferredEmail" id="preferredEmail" />
-              <label className="accountF__subtitle" htmlFor="preferredEmail">Предпочтительный вид связи</label>
+              <label className="accountF__subtitle form-profile__notify" for="preferredEmail">Предпочтительный вид связи</label>
             </div>
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="telegram">Телеграм</label>
-            <input type="text" name="telegram" id="telegram" className="form-profile__input" />
+            <label className="accountF__subtitle" for="telegram">Телеграм</label>
+            <input type="text" name="telegram" id="telegram" className="form-profile__input" placeholder="Телеграм" />
             <div>
               <input type="checkbox" name="preferredTelegram" id="preferredTelegram" />
-              <label className="accountF__subtitle" htmlFor="preferredTelegram">Предпочтительный вид связи</label>
+              <label className="accountF__subtitle form-profile__notify" for="preferredTelegram">Предпочтительный вид связи</label>
             </div>
           </div>
 
-          <button type="button" className="form-profile__add-communication-type">
+          <button type="button" className="accountF__subtitle form-profile__save form-profile__add-communication">
             Добавить другой вид связи +
           </button>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="portfolioLink">Ссылка на портфолио</label>
-            <input type="url" name="portfolioLink" id="portfolioLink" className="form-profile__input" />
-            <button className="accountF__subtitle">Добавить</button>
+            <label className="accountF__subtitle" for="portfolioLink">Ссылка на портфолио</label>
+            <input type="url" name="portfolioLink" id="portfolioLink" className="form-profile__input" placeholder="https://myportfolio.ru/" />
+            <button className="accountF__subtitle form-profile__save form-profile__add-communication">Добавить +</button>
           </div>
 
           <div className="accountF__separate-line"></div>
 
           <div className="form-profile__input-container">
             <h2 className="accountF__title">Портфолио</h2>
-            <div>
-              <div></div>
-              <div></div>
-              <div></div>
+            <div className="form-profile__portfolio-container">
+              <div className="form-profile__portfolio-item">
+                <button type="button" className="form-profile__portfolio-item__close"></button>
+              </div>
+              <div className="form-profile__portfolio-item"></div>
+              <div className="form-profile__portfolio-item"></div>
               <div>
                 <input type="file" name="" id="" />
               </div>
