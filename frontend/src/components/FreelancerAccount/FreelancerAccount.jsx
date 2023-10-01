@@ -112,7 +112,7 @@ export default function FreelancerAccount({ updateUser }) {
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" for="skills">Навыки</label>
+            <h2 className="accountF__subtitle" for="skills">Навыки</h2>
             <TagsInput />
           </div>
 

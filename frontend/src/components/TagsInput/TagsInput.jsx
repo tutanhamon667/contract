@@ -1,8 +1,10 @@
 import './TagsInput.css'
+import '../SpecializationList/SpecializationList.css'
 import { useState } from 'react'
 
 function TagsInput() {
-  const [tags, setTags] = useState([])
+  const [tags, setTags] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(true);
 
   function handleKeyDown(e) {
     if (e.key !== 'Enter') return
@@ -13,23 +15,29 @@ function TagsInput() {
   }
 
   function removeTag(index) {
+    if (!isEditMode) return
     setTags(tags.filter((el, i) => i !== index))
   }
 
   return (
-    <div className="tags-input-container">
+    <div className="tags">
+      {isEditMode && (
+        <input
+          type="text"
+          onKeyDown={handleKeyDown}
+          className="tag__input"
+          placeholder="Начните вводить"
+        />
+      )}
       {tags.map((tag, index) => (
-        <div className="tag-item" key={index}>
-          <span className="text">{tag}</span>
-          <span className="close" onClick={() => removeTag(index)}>&times;</span>
+        <div
+          className="list__title"
+          key={index}
+          onClick={() => removeTag(index)}>
+          {tag}
+          {isEditMode && <span className="list__item-close"></span>}
         </div>
       ))}
-      <input
-        type="text"
-        onKeyDown={handleKeyDown}
-        className="tags-input"
-        placeholder="Теги"
-      />
     </div>
   )
 }
