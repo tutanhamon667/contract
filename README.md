@@ -47,7 +47,7 @@ python manage.py runserver
 
 - http://127.0.0.1:8000/swagger/
 
-- Ссылка на просмотре документации онлайн (не всегда содержит последние изменения):
+- Ссылка на просмотр документации онлайн (не всегда содержит последние изменения):
 https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/freelancing-platform-practicum/freelancing-platform-project/develop/backend/docs/redoc_orders.yml&nocors
 
 #### Эндпоинты модели Member
