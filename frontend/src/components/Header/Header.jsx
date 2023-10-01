@@ -14,8 +14,9 @@ function Header() {
   return (
     <header className="header">
       <div className="header__container">
-        <Link to="/">
-          <button className="header__logo"></button>
+        <Link className="header__logo" to="/">
+            <span>{'{'}</span>
+            <span>таски</span>
         </Link>
         {authenticated ? (
           <Link to={`/freelancer/${currentUser.id}`}>

@@ -1,12 +1,17 @@
 .header {
-  height: 80px;
-  background-color: #93A0FF;
+  height: 52px;
+  background-color: inherit;
+  font-family: 'Roboto Mono';
+  font-size: 24px;
+  font-weight: 400;
+  margin-top: 16px;
 }
 
 .header__container {
-  margin: auto;
-  padding: 20px 100px 0;
-  max-width: 1540px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 100px;
+  max-width: 1240px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -14,12 +19,13 @@
 }
 
 .header__logo {
-  background-image: url(../../images/group98.svg);
-  background-position: center;
+  max-width: 98px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  color: #3F3F3F;
   border: none;
   border-radius: 5px;
-  width: 85px;
-  height: 42.5px;
   cursor: pointer;
 }
 
