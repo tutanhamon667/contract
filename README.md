@@ -1,12 +1,15 @@
-# freelancing-platform-project
+# Платформа для фрилансеров и поиска заказов для IT специалиста [freelancing-platform-project]
 
-Установить интерпретатор языка Python.
-В проекте используется версия 3.10.11.
-https://www.python.org/downloads/
+## Бэкенд
 
-## Запуск бэкенд-сервера
+### Окружение
 
-В корне проекта (там, где находятся файлы `README.md` и `setup.cfg`), нужно создать и активировать виртуальное окружение:
+- [Python 3.10.11 и новее](https://www.python.org/downloads/)
+
+### Запуск бэкенд-сервера
+
+В корне проекта (там, где находятся файлы `README.md` и `setup.cfg`),
+нужно создать и активировать виртуальное окружение:
 
 ```sh
 python -m venv venv
@@ -23,7 +26,6 @@ pip install -r requirements.txt
 
 Выполнить миграции:
 
-<!-- python manage.py makemigrations users -->
 ```sh
 python manage.py makemigrations
 python manage.py migrate
@@ -35,7 +37,20 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-end-points модели Member
+### Примеры запросов
+
+Получить список основных эндпоинтов: http://127.0.0.1:8000/api/v1/
+
+### Документация
+
+- http://127.0.0.1:8000/redoc/
+
+- http://127.0.0.1:8000/swagger/
+
+- Ссылка на просмотре документации онлайн (не всегда содержит последние изменения):
+https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/freelancing-platform-practicum/freelancing-platform-project/develop/backend/docs/redoc_orders.yml&nocors
+
+#### Эндпоинты модели Member
 
 регистрация нового пользователя (доступно любому пользователю)  
 /api/v1/users/reg_in/  
@@ -94,12 +109,12 @@ JSON схема передаваемых данных
 }
 ```
 
-Сброс пароля с использованием email происходит в 2 этапа:  
+Сброс пароля с использованием email происходит в 2 этапа:
 
 1. Отправка письма на зарегистрированный электронный адрес
-/api/v1/users/reset_password/  
-POST
-JSON схема передаваемых данных
+   /api/v1/users/reset_password/  
+   POST
+   JSON схема передаваемых данных
 
 ```jsom
 {
@@ -108,11 +123,11 @@ JSON схема передаваемых данных
 ```
 
 2. Пользователь получает на свой электронный адрес письмо, в теле которого есть ссылка в формате  
-имя_сайта/api/v1/users/reset_password_confirm/{uid}/{token}/  
-после нажатия на эту ссылку пользователь попадает на страницу установки нового пароля  
-api/v1/users/reset_password_confirm/  
-POST  
-JSON схема передаваемых данных
+   имя_сайта/api/v1/users/reset_password_confirm/{uid}/{token}/  
+   после нажатия на эту ссылку пользователь попадает на страницу установки нового пароля  
+   api/v1/users/reset_password_confirm/  
+   POST  
+   JSON схема передаваемых данных
 
 ```jsom
 {
@@ -123,17 +138,28 @@ JSON схема передаваемых данных
 }
 ```
 
-### Примеры запросов:
+## Фронтенд
 
-Получить список основных эндпоинтов:
+### Окружение
 
-http://127.0.0.1:8000/api/v1/
+- [Node.js 18 (LTS) и новее](https://nodejs.org/en/download)
 
-### Документация доступна по ссылкам:
+### Запуск фронтенд-сервера
 
-http://127.0.0.1:8000/redoc/
+Перейти в директорию `frontend` и установить зависимости:
 
-http://127.0.0.1:8000/swagger/
+```sh
+cd frontend
+npm install
+```
 
+Запустить фронтенд-сервер:
 
-# [Ссылка на просмотр фронта](https://freelancing-platform-practicum.github.io/freelancing-platform-project/)
+```sh
+npm start
+```
+
+- Фронтенд-сервер запустится по адресу http://localhost:3000
+
+- Ссылка на просмотр фронта, загруженного на GitHub Pages (не всегда содержит последние изменения):
+https://freelancing-platform-practicum.github.io/freelancing-platform-project/

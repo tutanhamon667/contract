@@ -41,12 +41,16 @@
 }
 
 .input__error {
-  border: 1px solid #CF1818;
+  border: 1px solid #EB5757;
 }
 
 .input__errorText {
   position: absolute;
+  /* так по макету, но сейчас пока не хватает места */
+  /*top: calc(100% + 4px);*/
   top: 100%;
-  left: 4%;
-  color: #CF1818;
+  left: 0;
+  color: #EB5757;
+  font-size: 12px;
+  line-height: 1;
 }

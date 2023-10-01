@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export default function useFormAndValidation() {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(true);
+
+  const emailRegEx = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+  const nameRegEx = /^[a-zA-Zа-яА-Я\u0621-\u064A\-_@.]{1,80}$/; // \u0621-\u064A — это арабские буквы
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -13,8 +16,7 @@ export default function useFormAndValidation() {
     setIsValid(e.target.closest("form").checkValidity());
 
     if (name === "email") {
-      const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
-      if (!emailRegex.test(value)) {
+      if (!emailRegEx.test(value)) {
         setErrors({ ...errors, [name]: "Введите корректную эл. почту" });
         setIsValid(false);
       }
@@ -73,9 +75,11 @@ export default function useFormAndValidation() {
       if (value.length < 1) {
         setErrors({ ...errors, [name]: "Введите имя" });
         setIsValid(false);
-      }
-      if (value.length > 80) {
-        setErrors({ ...errors, [name]: "Имя не длиннее 80 символов" });
+      } else if (!nameRegEx.test(value)) {
+        setErrors({
+          ...errors,
+          [name]: 'Имя не длиннее 80 символов, состоит только из латиницы, кириллицы, арабицы, "-", "_", "@", "."'
+        });
         setIsValid(false);
       }
     }
@@ -84,9 +88,11 @@ export default function useFormAndValidation() {
       if (value.length < 1) {
         setErrors({ ...errors, [name]: "Введите фамилию" });
         setIsValid(false);
-      }
-      if (value.length > 80) {
-        setErrors({ ...errors, [name]: "Фамилия не длиннее 80 символов" });
+      } else if (!nameRegEx.test(value)) {
+        setErrors({
+          ...errors,
+          [name]: 'Фамилия не длиннее 80 символов, состоит только из латиницы, кириллицы, арабицы, "-", "_", "@", "."'
+        });
         setIsValid(false);
       }
     }

@@ -14,7 +14,8 @@ import { FreelancerCompleteForm } from "../Forms/FreelancerCompleteForm/Freelanc
 import "./App.css";
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(true);
+  // const [authenticated, setAuthenticated] = React.useState(true);
+  const [authenticated, setAuthenticated] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({
     id: "5",
     first_name: "Иван",

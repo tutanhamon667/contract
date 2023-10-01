@@ -1,15 +1,15 @@
-import './InputTags.css'
-import { useState } from 'react'
+import { useState } from "react";
+import "./InputTags.css";
 
 function InputTags({ name, onChange }) {
-  const [tags, setTags] = useState([])
+  const [tags, setTags] = useState([]);
 
   function handleKeyDown(e) {
-    if (e.key !== 'Enter') return
-    const value = e.target.value
-    if (!value.trim()) return
-    setTags([...tags, value])
-    e.target.value = ''
+    if (e.key !== 'Enter') return;
+    const value = e.target.value;
+    if (!value.trim()) return;
+    setTags([...tags, value]);
+    e.target.value = '';
     // onChange(tags);
     e.preventDefault();
   }
@@ -34,7 +34,7 @@ function InputTags({ name, onChange }) {
         placeholder="Теги"
       />
     </div>
-  )
+  );
 }
 
-export default InputTags
+export default InputTags;

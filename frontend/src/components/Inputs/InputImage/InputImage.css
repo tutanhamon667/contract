@@ -37,3 +37,16 @@
 .input-image__image:hover {
   background-color: #7B7B7B;
 }
+
+.input-image__error {
+  border: 1px solid #EB5757;
+}
+
+.input-image__error-text {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 24%;
+  color: #EB5757;
+  font-size: 12px;
+  line-height: 1;
+}
