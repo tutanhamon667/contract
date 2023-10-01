@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import useFormAndValidation from "../hooks/useFormAndValidation";
 import { CurrentUser } from "../../context/context"
 import TagsInput from "../TagsInput/TagsInput";
+import SpecializationList from "../SpecializationList/SpecializationList";
 
 export default function FreelancerAccount({ updateUser }) {
   // открывает форму редактирования имейла
@@ -105,25 +106,7 @@ export default function FreelancerAccount({ updateUser }) {
             />
           </div>
 
-          <div className="form-profile__input-container">
-            <label className="accountF__subtitle" for="specialization">Специализация</label>
-            <select
-              name="specialization"
-              id="specialization"
-              size="1"
-              placeholder="Выберите из списка"
-              className="form-profile__list form-profile__list-title"
-            >
-              <option value="" className="form-profile__list form-profile__list-default">Выберите из списка</option>
-              <option value="design" className="form-profile__list">Дизайн</option>
-              <option value="development" className="form-profile__list">Разработка</option>
-              <option value="testing" className="form-profile__list">Тестирование</option>
-              <option value="administration" className="form-profile__list">Администрирование</option>
-              <option value="marketing" className="form-profile__list">Маркетинг</option>
-              <option value="content" className="form-profile__list">Контент</option>
-              <option value="other" className="form-profile__list">Разное</option>
-            </select>
-          </div>
+          <SpecializationList />
 
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" for="skills">Навыки</label>
