@@ -1,60 +1,71 @@
 .list__container {
   position: relative;
-  width: 20em;
-  min-height: 1.5em;
-  border: .05em solid #777;
+  width: 100%;
+  font-family: Inter;
+  min-height: 45px;
   display: flex;
   align-items: center;
-  gap: .5em;
-  padding: .5em;
-  border-radius: .25em;
-  outline: none;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  border: 1px solid #C6C6C6;
+  border-radius: 12px;
+  color: #3F3F3F;
+  font-size: 16px;
+  font-weight: 400;
+  background-image: url(../../images/arrow-down.svg);
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+  background-position: 98% center;
 }
 
-.list__container:focus {
-  border-color: aqua;
+.list__preview {
+  color: #7B7B7B;
+  display: none;
+}
+
+.list__preview_show {
+  display: block;
 }
 
 .list__value {
-  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: 30px;
+  gap: 8px;
 }
 
-.list__clear {
-  background: none;
-  color: #777;
-  border: none;
-  outline: none;
+.list__title {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid #C6C6C6;
+  padding: 8px 16px;
+  column-gap: 8px;
   cursor: pointer;
-  padding: 0;
-  font-size: 1.25em;
 }
 
-.list__clear:focus,
-.list__clear:hover {
-  color: #333;
-}
-
-.list__caret {
-  translate: 0 25%;
-  border: .25em solid transparent;
-  border-top-color: #777;
+.list__item-close {
+  width: 12px;
+  height: 12px;
+  background-image: url(../../images/close-button.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
 .list__options {
+  border: 1px solid #C6C6C6;
+  border-radius: 12px;
   position: absolute;
   margin: 0;
-  padding: 0;
+  padding: 14px 0;
   list-style: none;
-  max-height: 15em;
-  overflow-y: auto;
-  border: .05em solid #777;
-  border-radius: .25em;
   width: 100%;
   left: 0;
-  top: calc(100% + .25em);
+  top: calc(100% + 12px);
   background-color: white;
   z-index: 100;
   display: none;
+  box-sizing: border-box;
 }
 
 .list__options_show {
@@ -62,15 +73,29 @@
 }
 
 .list__option {
-  padding: .25em .5em;
+  padding: 8px 0;
   cursor: pointer;
-}
-
-.list__option-selected {
-  background-color: cornflowerblue;
+  display: flex;
+  column-gap: 16px;
+  padding-left: 24px;
+  align-items: center;
 }
 
 .list__option-highlighted {
-  background-color: aqua;
-  color: blue;
+  background-color: #F2F1EE;
+}
+
+.list__checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 1px solid #C6C6C6;
+}
+
+.list__checkbox-highlighted {
+  background-color: #3F3F3F;
+  background-image: url(../../images/check.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  border: none;
 }

@@ -106,7 +106,10 @@ export default function FreelancerAccount({ updateUser }) {
             />
           </div>
 
-          <SpecializationList />
+          <div className="form-profile__input-container">
+            <h2 className="accountF__subtitle">Специализация</h2>
+            <SpecializationList />
+          </div>
 
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" for="skills">Навыки</label>
