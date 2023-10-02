@@ -1,6 +1,7 @@
 .search {
   border-radius: 10px;
   background-color: #fff;
+  border: 1px solid var(--border-gray, #C6C6C6);
 }
 
 .search__container {
