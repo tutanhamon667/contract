@@ -44,11 +44,17 @@
   line-height: normal;
 }
 
-.header-auth__entry-button_signin {
-
+.header-auth__white {
+color:#fff
 }
 
 .header-auth__entry-button:hover {
-  transition: 1s ease-in;
-  opacity: 0.6;
+  transition: all 0.2s ease-in-out;
+  opacity: 0.8;
+}
+
+.header-auth__authState {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: #3F3F3F;
 }

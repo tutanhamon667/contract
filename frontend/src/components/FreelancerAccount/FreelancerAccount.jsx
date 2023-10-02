@@ -2,11 +2,11 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import useFormAndValidation from "../../hooks/useFormAndValidation";
 import { Context } from "../../context/context"
-// import InputTags from "../Inputs/InputTags/InputTags";
+// import { CurrentUser } from "../../context/context";
+import InputTags from "../Inputs/InputTags/InputTags";
+// import InputTagsOld from "../Inputs/InputTagsOld/InputTagsOld";
+import InputSpecializationList from "../Inputs/InputSpecializationList/InputSpecializationList";
 import "../FreelancerAccount/FreelancerAccount.css";
-// import { CurrentUser } from "../../context/context"
-import TagsInput from "../TagsInput/TagsInput";
-import SpecializationList from "../SpecializationList/SpecializationList";
 
 export default function FreelancerAccount() {
   // открывает форму редактирования имейла
@@ -47,7 +47,7 @@ export default function FreelancerAccount() {
         <div className="accountF__setting-container">
           <Link className="accountF__setting" to="#">Настройки</Link>
           <div className="accountF__separate-line"></div>
-          <Link className="accountF__subtitle">Информация</Link>
+          <Link className="accountF__subtitle" to="#">Информация</Link>
         </div>
 
       </div>
@@ -75,7 +75,7 @@ export default function FreelancerAccount() {
               type="tel"
               name="phone"
               id="phone"
-              maxlength="12"
+              maxLength="12"
               placeholder="+7"
               className="form-profile__input"
             />
@@ -89,7 +89,7 @@ export default function FreelancerAccount() {
           <div className="form-profile__input-container">
             <label
               className="accountF__subtitle"
-              for="firstName">
+              htmlFor="firstName">
               Имя Фамилия
             </label>
             <input
@@ -110,16 +110,16 @@ export default function FreelancerAccount() {
 
           <div className="form-profile__input-container">
             <h2 className="accountF__subtitle">Специализация</h2>
-            <SpecializationList />
+            <InputSpecializationList />
           </div>
 
           <div className="form-profile__input-container">
-            <h2 className="accountF__subtitle" for="skills">Навыки</h2>
-            <TagsInput />
+            <h2 className="accountF__subtitle">Навыки</h2>
+            <InputTags />
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" for="workingRate">Ставка в час</label>
+            <label className="accountF__subtitle" htmlFor="workingRate">Ставка в час</label>
             <input type="number" name="workingRate" id="workingRate" placeholder="150" className="form-profile__input form-profile__rate-input" />
           </div>
 
@@ -154,20 +154,20 @@ export default function FreelancerAccount() {
           <h2 className="accountF__title">Контакты</h2>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" for="emailForContacts">Электронная почта</label>
+            <label className="accountF__subtitle" htmlFor="emailForContacts">Электронная почта</label>
             <input type="emailForContacts" name="emailForContacts" id="email" className="form-profile__input" placeholder="Эл.почта" />
             <div>
               <input type="checkbox" name="preferredEmail" id="preferredEmail" />
-              <label className="accountF__subtitle form-profile__notify" for="preferredEmail">Предпочтительный вид связи</label>
+              <label className="accountF__subtitle form-profile__notify" htmlFor="preferredEmail">Предпочтительный вид связи</label>
             </div>
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" for="telegram">Телеграм</label>
+            <label className="accountF__subtitle" htmlFor="telegram">Телеграм</label>
             <input type="text" name="telegram" id="telegram" className="form-profile__input" placeholder="Телеграм" />
             <div>
               <input type="checkbox" name="preferredTelegram" id="preferredTelegram" />
-              <label className="accountF__subtitle form-profile__notify" for="preferredTelegram">Предпочтительный вид связи</label>
+              <label className="accountF__subtitle form-profile__notify" htmlFor="preferredTelegram">Предпочтительный вид связи</label>
             </div>
           </div>
 
@@ -176,7 +176,7 @@ export default function FreelancerAccount() {
           </button>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" for="portfolioLink">Ссылка на портфолио</label>
+            <label className="accountF__subtitle" htmlFor="portfolioLink">Ссылка на портфолио</label>
             <input type="url" name="portfolioLink" id="portfolioLink" className="form-profile__input" placeholder="https://myportfolio.ru/" />
             <button className="accountF__subtitle form-profile__save form-profile__add-communication">Добавить +</button>
           </div>

@@ -17,7 +17,7 @@ function HeaderAuth() {
       )}
 
       {location.pathname !== "/signin" &&
-        location.pathname !== "/forgot-password" && (
+        location.pathname !== "/forgot-password" && location.pathname !== "/reset-password" && (
           <Link to="/signin">
             <button
               className={`${location.pathname === "/signup"

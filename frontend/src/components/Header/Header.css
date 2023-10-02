@@ -27,6 +27,24 @@
   width: 96px;
   height: 32px;
   cursor: pointer;
+  background-color: transparent;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.header__logoBlack {
+  background-image: url(../../images/logo-black.svg);
+  background-position: center;
+  border: none;
+  border-radius: 5px;
+  width: 96px;
+  height: 32px;
+  cursor: pointer;
+  background-color: transparent;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
 }
 
 .header__logo-black {
