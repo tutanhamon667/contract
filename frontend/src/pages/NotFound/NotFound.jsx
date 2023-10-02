@@ -7,14 +7,12 @@ import './NotFound.css'
 const NotFound = () => {
   return (
     <div className="page">
-      <div className="imgErr"/>
-      <p className="titleErr">Страница не найдена.</p>
-      <span className="descriptionErr"> Попробуйте вернуться назад или перейдите на главную.</span>
-      <Link
-        className="backLink"
-        to="/"
-      >
-        <Button text='На главный экран' width={295} height={53} buttonSecondary />
+      {/*<div className="imgErr"/>*/}
+      <h1 className="titleErr">404</h1>
+      <p className="subtitleErr">Страница не найдена</p>
+      <span className="descriptionErr">Попробуйте вернуться назад или перейдите на главную.</span>
+      <Link className="backLink" to="/">
+        <Button text='На главный экран' width={289} height={52} buttonSecondary />
       </Link>
     </div>
   );
