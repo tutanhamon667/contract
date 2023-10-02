@@ -5,7 +5,7 @@ from djoser import serializers as djoser_serializers
 from rest_framework import serializers
 
 from .fields import Base64ImageField
-from .models import Activity, Member, Stack, WorkerProfile
+from .models import Activity, CustomerProfile, Member, Stack, WorkerProfile
 
 User = get_user_model()
 
@@ -63,7 +63,17 @@ class UserViewSerialiser(serializers.ModelSerializer):
 
 class WorkerProfileSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    photo = Base64ImageField(required=False)
 
     class Meta:
         model = WorkerProfile
         fields = '__all__'
+
+
+class CustomerProfileSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    photo = Base64ImageField(required=False)
+
+    class Meta:
+        model = CustomerProfile
+        fields = ('user', 'photo', 'name', 'industry', 'web')

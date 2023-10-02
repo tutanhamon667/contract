@@ -147,3 +147,32 @@ class WorkerProfile(models.Model):
         blank=True,
         verbose_name='Личный сайт'
     )
+
+
+class CustomerProfile(models.Model):
+    user = models.OneToOneField(
+        Member,
+        on_delete=models.PROTECT
+    )
+
+    photo = models.ImageField(
+        upload_to='about/images/',
+        null=True,
+        default=None,
+        blank=True,
+        verbose_name='Фото или логотип'
+    )
+
+    name = models.CharField(
+        max_length=150,
+        verbose_name='Название компании или ваше имя'
+    )
+
+    industry = models.CharField(
+        max_length=255,
+        verbose_name='Сфера деятельности')
+
+    web = models.URLField(
+        blank=True,
+        verbose_name='Личный сайт'
+    )
