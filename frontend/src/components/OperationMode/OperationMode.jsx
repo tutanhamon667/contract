@@ -18,7 +18,7 @@ function OperationMode() {
         }
         onClick={() => setOperationMode(true)}
       >
-        Список проектов
+        Tаски
       </button>
       <button
         className={

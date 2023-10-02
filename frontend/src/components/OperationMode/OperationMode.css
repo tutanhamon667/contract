@@ -1,29 +1,32 @@
 .operation-mode {
-  margin-bottom: 20px;
   display: flex;
-  justify-content: flex-start;
   flex-direction: row;
-  align-items: center;
+  margin-bottom: 12px;
 }
 
 .operation-mode__button {
-  width: 295px;
-  height: 53px;
+  width: 50%;
+  height: 52px;
   border-radius: 10px;
   background: #fff;
   cursor: pointer;
-  color: #606060;
+  color: #3f3f3f;
+  border: none;
+  font-family: Inter;
   font-size: 20px;
   font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  border: none;
+  font-weight: 600;
+  line-height: 24px; /* 120% */
 }
 
-.operation-mode__button_projects {
-  margin-right: 20px;
+.operation-mode__button_freelance {
+  background-color: #f2f1ee;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 120% */
+  color: #7B7B7B;
 }
 
 .operation-mode__button_action {
-  background: #e0e0e0;
 }
