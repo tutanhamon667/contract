@@ -14,7 +14,7 @@
 }
 
 .button:hover {
-  box-shadow: 4px 4px 0 0 #c6c6c6;
+  box-shadow: 1.5px 1.5px 0 0 #C6C6C6;
 }
 
 .button:active {
@@ -59,3 +59,13 @@
 .buttonBlack__text {
   color: #fff;
 }
+
+.buttonWhite {
+  background-color: #FFF;
+}
+
+.buttonDisabled{
+  background-color: #B3B3B3;
+  color: #3F3F3F;
+}
+

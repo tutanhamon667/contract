@@ -1,11 +1,18 @@
 .header {
   height: 80px;
+  background-color: inherit;
+  font-family: 'Roboto Mono';
+  font-size: 24px;
+  font-weight: 400;
+  margin-top: 16px;
+
 }
 
 .header__container {
-  margin: auto;
-  padding: 20px 100px 0;
-  max-width: 1540px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 100px;
+  max-width: 1240px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
