@@ -7,7 +7,8 @@ function HeaderAuth() {
   const locationAuth =
     location.pathname === "/signup" ||
     location.pathname === "/signin" ||
-    location.pathname === "/forgot-password"
+    location.pathname === "/forgot-password" ||
+    location.pathname ===  "reset-password"
       ? true
       : false;
   return (
@@ -26,7 +27,7 @@ function HeaderAuth() {
       )}
 
       {location.pathname !== "/signin" &&
-        location.pathname !== "/forgot-password" && (
+        location.pathname !== "/forgot-password" && location.pathname !== "/reset-password" && (
           <Link to="/signin">
             <button
               className={`${
