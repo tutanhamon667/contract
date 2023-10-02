@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://freelancing-platform-practicum.github.io/freelancing-platform-project/",
+  "homepage": "./",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -21,7 +21,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "env": {
+      "es2023": true
+    }
   },
   "browserslist": {
     "production": [

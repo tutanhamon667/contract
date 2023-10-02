@@ -1,7 +1,6 @@
 .list__container {
   position: relative;
   width: 100%;
-  font-family: Inter;
   font-size: 16px;
   font-weight: 400;
   min-height: 45px;
@@ -12,7 +11,7 @@
   border: 1px solid #C6C6C6;
   border-radius: 12px;
   color: #3F3F3F;
-  background-image: url(../../images/arrow-down.svg);
+  background-image: url(../../../images/arrow-down.svg);
   background-repeat: no-repeat;
   background-size: 24px 24px;
   background-position: 98% center;
@@ -47,7 +46,7 @@
 .list__item-close {
   width: 12px;
   height: 12px;
-  background-image: url(../../images/close-button.svg);
+  background-image: url(../../../images/close-button.svg);
   background-repeat: no-repeat;
   background-position: center center;
 }
@@ -73,12 +72,11 @@
 }
 
 .list__option {
-  padding: 8px 0;
-  cursor: pointer;
   display: flex;
   column-gap: 16px;
-  padding-left: 24px;
   align-items: center;
+  padding: 8px 0 0 24px;
+  cursor: pointer;
 }
 
 .list__option-highlighted {
@@ -94,7 +92,7 @@
 
 .list__checkbox-highlighted {
   background-color: #3F3F3F;
-  background-image: url(../../images/check.svg);
+  background-image: url(../../../images/check.svg);
   background-repeat: no-repeat;
   background-position: center center;
   border: none;

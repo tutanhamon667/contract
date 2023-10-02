@@ -7,7 +7,7 @@ import InputText from "../../Inputs/InputText/InputText";
 // import LinkBar from "../../LinkBar/LinkBar";
 import "./RegisterForm.css";
 
-const RegisterForm = () => {
+const RegisterForm = ({ onSubmitHandler }) => {
   const { logIn } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
   const [buttonClicked, setButtonClicked] = React.useState(false);
@@ -15,12 +15,14 @@ const RegisterForm = () => {
     is_customer: true,
     is_worker: false,
   });
-  const { values, errors, isValid, handleChange, setValues, setErrors } =
-    useFormAndValidation();
+  const {
+    values, errors, isValid, handleChange, setValues, setErrors
+  } = useFormAndValidation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
   const toggleRole = (isCustomer) => {
     setRole({
       is_customer: isCustomer,
@@ -88,6 +90,8 @@ const RegisterForm = () => {
       });
 
       logIn();
+
+      onSubmitHandler(values);
     }
     setButtonClicked(true);
   };
@@ -106,7 +110,7 @@ const RegisterForm = () => {
             fontSize={20}
             fontWeight={600}
             opacity={role.is_worker && 0.7}
-            buttonWhite={role.is_customer ? true : false}
+            buttonWhite={role.is_customer}
             onClick={() => toggleRole(true)}
           />
           <Button
@@ -120,7 +124,7 @@ const RegisterForm = () => {
             fontWeight={600}
             opacity={role.is_customer && 0.7}
             color={role.is_customer && "#7B7B7B"}
-            buttonWhite={role.is_customer ? false : true}
+            buttonWhite={!role.is_customer}
             onClick={() => toggleRole(false)}
           />
         </div>

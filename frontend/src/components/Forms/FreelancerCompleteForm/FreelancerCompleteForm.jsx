@@ -1,12 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../../context/context';
+import useFormAndValidation from '../../../hooks/useFormAndValidation';
 import InputText from '../../Inputs/InputText/InputText';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
-import Button from '../../Button/Button';
+import InputSpecializationList from '../../Inputs/InputSpecializationList/InputSpecializationList';
 import InputTags from '../../Inputs/InputTags/InputTags';
-import useFormAndValidation from '../../../hooks/useFormAndValidation';
+import Button from '../../Button/Button';
 import './FreelancerCompleteForm.css';
 
 const MAX_ATTACHED_DOCS = 8;
@@ -127,9 +128,8 @@ function FreelancerCompleteForm() {
       </div>
       <label>
         <p className="freelancer-complete-form__input-text">Специализация</p>
-        <InputText type="text" placeholder="Выберите из списка" name="activity" width={610}
-                   value={values.activity || ''} error={errors.activity} errorMessage={errors.activity}
-                   onChange={handleChange}
+        <InputSpecializationList name="activity" value={values.activity || ''} error={errors.activity}
+                                 errorMessage={errors.activity} onChange={handleChange}
         />
       </label>
       <label>
