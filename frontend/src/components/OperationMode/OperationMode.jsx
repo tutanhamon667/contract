@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import "./OperationMode.css";
 
-function OperationMode() {
-  const [operationMode, setOperationMode] = useState(true);
+function OperationMode({ operationMode, setOperationMode }) {
 
-  const handleOperationMode = () => {
-    setOperationMode(!operationMode);
-  };
+
 
   return (
     <section className="operation-mode">
