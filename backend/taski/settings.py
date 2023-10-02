@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'api',
     'orders',
     'drf_yasg',
+    'drf_extra_fields'
 ]
 
 MIDDLEWARE = [

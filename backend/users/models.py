@@ -118,7 +118,13 @@ class WorkerProfile(models.Model):
         Member,
         on_delete=models.PROTECT
     )
+    first_name = models.CharField(
+        max_length=150,
+    )
 
+    last_name = models.CharField(
+        max_length=150,
+    )
     photo = models.ImageField(
         upload_to='bio/images/',
         null=True,
@@ -145,16 +151,20 @@ class WorkerProfile(models.Model):
         blank=True,
         verbose_name='О себе'
     )
-    job_example = models.FileField(
+    job_example = models.ImageField(
         upload_to="examples/",
         blank=True,
         verbose_name='Примеры работ/портфолио'
     )
-    diploma = models.FileField(
+    diploma = models.ImageField(
         upload_to="diplomas/",
         blank=True,
         verbose_name='Дипломы, сертификаты, грамоты'
     )
+    diploma_start_year = models.IntegerField(verbose_name='Начало учебы')
+    diploma_finish_year = models.IntegerField(verbose_name='Окончание учебы')
+    degree = models.CharField(verbose_name='Научная степень', max_length=150)
+    faculty = models.CharField(verbose_name='Факультет', max_length=150)
     education = models.CharField(blank=False,
                                  max_length=150,
                                  verbose_name='Факультет',)
