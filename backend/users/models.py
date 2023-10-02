@@ -170,7 +170,8 @@ class CustomerProfile(models.Model):
 
     industry = models.CharField(
         max_length=255,
-        verbose_name='Сфера деятельности')
+        verbose_name='Сфера деятельности'
+    )
 
     web = models.URLField(
         blank=True,

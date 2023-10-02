@@ -22,8 +22,10 @@ class UserViewSet(viewsets.ModelViewSet):
     token_generator = DjoserView.token_generator
 
     def get_permissions(self):
-        if self.action == 'profile' and \
-           self.request.method in ['POST', 'PATCH']:
+        if (
+            self.action == 'profile'
+            and self.request.method in ['POST', 'PATCH']
+        ):
             return (IsUser(),)
         return super().get_permissions()
 
@@ -32,7 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user = get_object_or_404(Member, id=self.kwargs.get('pk'))
             if user.is_customer and not user.is_worker:
                 return CustomerProfile.objects.all()
-            elif user.is_worker and not user.is_customer:
+            if user.is_worker and not user.is_customer:
                 return WorkerProfile.objects.all()
         return super().get_queryset()
 
@@ -104,7 +106,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             if user.is_customer and not user.is_worker:
                 queryset = get_object_or_404(CustomerProfile, user_id=user.id)
-            elif user.is_worker and not user.is_customer:
+            if user.is_worker and not user.is_customer:
                 queryset = get_object_or_404(WorkerProfile, user_id=user.id)
             serializer = self.get_serializer(queryset)
             return Response(

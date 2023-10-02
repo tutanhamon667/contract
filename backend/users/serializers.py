@@ -27,7 +27,6 @@ class UserCreateSerializer(
         )
 
     def validate(self, data):
-        print(data)
         is_customer = data.get('is_customer')
         is_worker = data.get('is_worker')
         if is_customer == is_worker:

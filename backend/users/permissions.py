@@ -5,8 +5,9 @@ class IsUser(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user.is_authenticated:
             if view.name.lower() == 'profile':
-                if request.user.id != int(view.kwargs.get('pk')):
-                    return False
+                if request.user.id == int(view.kwargs.get('pk')):
+                    return True
+                return False
             return True
 
     def has_object_permission(self, request, view, obj):
