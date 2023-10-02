@@ -39,8 +39,8 @@
   line-height: normal;
 }
 
-.header-auth__entry-button_signin {
-
+.header-auth__white {
+color:#fff
 }
 
 .header-auth__entry-button:hover {
@@ -51,4 +51,5 @@
 .header-auth__authState {
   text-decoration: underline;
   text-underline-offset: 4px;
+  color: #3F3F3F;
 }

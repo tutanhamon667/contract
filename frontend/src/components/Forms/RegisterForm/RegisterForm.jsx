@@ -123,7 +123,6 @@ const RegisterForm = ({ onSubmitHandler }) => {
             fontSize={20}
             fontWeight={600}
             opacity={role.is_customer && 0.7}
-            color={role.is_customer && "#7B7B7B"}
             buttonWhite={!role.is_customer}
             onClick={() => toggleRole(false)}
           />

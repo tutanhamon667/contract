@@ -1,33 +1,28 @@
 import React from "react";
 import "./Button.css";
 
-const Button = (
-  {
-    text,
-    width,
-    height,
-    marginTop,
-    marginBottom,
-    buttonSecondary,
-    buttonBlack,
-    buttonWhite,
-    type,
-    onClick,
-    disabled,
-    border,
-    fontSize,
-    fontWeight,
-    opacity
-  }
-) => {
+const Button = ({
+  text,
+  width,
+  height,
+  marginTop,
+  marginBottom,
+  buttonSecondary,
+  buttonBlack,
+  buttonWhite,
+  type,
+  onClick,
+  disabled,
+  border,
+  fontSize,
+  fontWeight,
+  opacity,
+}) => {
   return (
     <button
-      className={
-        `button${buttonSecondary ? " buttonSecondary"
-          : buttonBlack ? " buttonBlack"
-            : buttonWhite ? " buttonWhite"
-              : disabled ? " buttonDisabled" : ""}`
-      }
+      className={`button${
+        buttonSecondary ? " buttonSecondary" : disabled ? " buttonDisabled" : ""
+      } ${buttonWhite && " buttonWhite"} ${buttonBlack && " buttonBlack"}`}
       style={{
         width,
         height,
@@ -36,7 +31,7 @@ const Button = (
         border,
         fontSize,
         fontWeight,
-        opacity
+        opacity,
       }}
       type={type}
       onClick={onClick}

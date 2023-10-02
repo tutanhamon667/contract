@@ -16,7 +16,7 @@ function HeaderAuth() {
       {location.pathname !== "/signup" && (
         <Link to="/signup">
           <button
-            className={`header-auth__signup-button ${
+            className={`header-auth__signup-button header-auth__white ${
               locationAuth && "header-auth__authState"
             }`}
             type="button"
