@@ -1,10 +1,11 @@
 .header {
-  height: 52px;
+  height: 80px;
   background-color: inherit;
   font-family: 'Roboto Mono';
   font-size: 24px;
   font-weight: 400;
   margin-top: 16px;
+
 }
 
 .header__container {
@@ -19,14 +20,14 @@
 }
 
 .header__logo {
-  max-width: 98px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  color: #3F3F3F;
+  background-image: url(../../images/new-logo.svg);
+  background-position: center;
   border: none;
   border-radius: 5px;
+  width: 96px;
+  height: 32px;
   cursor: pointer;
+  background-color: transparent;
 }
 
 .header__userInfo {
