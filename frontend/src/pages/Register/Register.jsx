@@ -11,6 +11,7 @@ const Register = () => {
   if (authenticated) {
     return <Navigate to={"/"} state={{ from: location }} />;
   }
+
   return (
     <div className="wrapper">
       <div className="container">

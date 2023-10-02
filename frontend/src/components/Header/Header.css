@@ -1,11 +1,8 @@
 .header {
   height: 80px;
   background-color: inherit;
-  font-family: 'Roboto Mono';
   font-size: 24px;
   font-weight: 400;
-  margin-top: 16px;
-
 }
 
 .header__container {

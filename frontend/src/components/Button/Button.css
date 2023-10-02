@@ -14,7 +14,7 @@
 }
 
 .button:hover {
-  box-shadow: 1.5px 1.5px 0 0 #C6C6C6;
+  box-shadow: 4px 4px 0 0 #C6C6C6;
 }
 
 .button:active {
@@ -30,10 +30,24 @@
   box-shadow: none;
 }
 
+.buttonDisabled{
+  background-color: #B3B3B3;
+  color: #3F3F3F;
+}
+
 .buttonSecondary {
   border: 1px solid #c6c6c6;
   background-color: #f2f1ee;
   padding: 0;
+}
+
+.buttonBlack {
+  background-color: #000;
+  border: none;
+}
+
+.buttonWhite {
+  background-color: #FFF;
 }
 
 .button__text {
@@ -51,21 +65,6 @@
   color: #3f3f3f;
 }
 
-.buttonBlack {
-  background-color: #000;
-  border: none;
-}
-
 .buttonBlack__text {
   color: #fff;
 }
-
-.buttonWhite {
-  background-color: #FFF;
-}
-
-.buttonDisabled{
-  background-color: #B3B3B3;
-  color: #3F3F3F;
-}
-

@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Roboto Mono"),
+    local("RobotoMono-Regular"),
+    url("RobotoMono-Regular.woff2") format("woff2");
+}
