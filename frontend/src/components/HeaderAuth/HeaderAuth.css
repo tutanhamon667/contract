@@ -7,16 +7,19 @@
 }
 
 .header-auth__singup-button {
-  color: #fff;
-  font-size: 20px;
+  color: #3f3f3f;
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  text-decoration: none;
+  text-decoration: underline;
   cursor: pointer;
   background-color: transparent;
-  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   border: none;
+}
+
+.header-auth__singup-button_without-underline {
+  text-decoration: none;
 }
 
 .header-auth__singup-button:hover {
@@ -25,17 +28,17 @@
 }
 
 .header-auth__entry-button {
-  margin-left: 20px;
+  margin-left: 40px;
   border: 0;
   border-radius: 10px;
-  padding: 7px 39px 8px 39px;
+  padding: 6px 28px;
   justify-content: center;
   align-items: center;
   background: #fff;
   cursor: pointer;
   overflow: hidden;
   color: #606060;
-  font-size: 20px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
