@@ -1,7 +1,6 @@
 import "./Main.css";
 import React from "react";
 import StartWork from "../StartWork/StartWork";
-import OperationMode from "../OperationMode/OperationMode";
 import FreelanceOrder from "../FreelanceOrder/FreelanceOrder";
 import { useLocation } from "react-router-dom";
 import Header from "../Header/Header";
@@ -17,7 +16,6 @@ function Main() {
         <div className="content__border"></div>
       </div>
       <div className="content__order-container">
-        <OperationMode />
         <FreelanceOrder />
       </div>
     </main>
