@@ -5,7 +5,6 @@ from djoser import serializers as djoser_serializers
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
-from .fields import Base64ImageField
 from .models import Activity, Member, Stack, WorkerProfile, Contacts
 
 User = get_user_model()

@@ -153,12 +153,14 @@ class WorkerProfile(models.Model):
     )
     job_example = models.ImageField(
         upload_to="examples/",
-        blank=True,
+        null=True,
+        default=None,
         verbose_name='Примеры работ/портфолио'
     )
     diploma = models.ImageField(
         upload_to="diplomas/",
-        blank=True,
+        null=True,
+        default=None,
         verbose_name='Дипломы, сертификаты, грамоты'
     )
     diploma_start_year = models.IntegerField(verbose_name='Начало учебы')

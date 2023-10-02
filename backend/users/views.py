@@ -5,6 +5,7 @@ from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from drf_spectacular.utils import extend_schema
 
 from .models import Stack, WorkerProfile
 from .permissions import IsUser
@@ -16,6 +17,7 @@ from .serializers import (NewEmailSerializer, PasswordResetConfirmSerializer,
 User = get_user_model()
 
 
+@extend_schema(tags=["User"])
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('last_name')
     http_method_names = ['get', 'post']
@@ -93,8 +95,10 @@ class UserViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_200_OK)
 
 
+@extend_schema(tags=["Freelancers"])
 class FreelancerViewSet(viewsets.ModelViewSet):
     queryset = WorkerProfile.objects.all()
     http_method_names = ["get", "post", "delete"]
     serializer_class = WorkerProfileSerializer
     permission_classes = [AllowAny, ]
+    
