@@ -11,6 +11,7 @@ function SignOut() {
     logOut();
     navigate('/');
   }, [logOut]);
+
   return null;
 }
 

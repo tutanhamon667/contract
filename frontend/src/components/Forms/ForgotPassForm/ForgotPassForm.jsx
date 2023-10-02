@@ -5,12 +5,14 @@ import InputText from "../../Inputs/InputText/InputText";
 import "./ForgotPassForm.css";
 
 const ForgotPassForm = ({ func }) => {
+  const [buttonClicked, setButtonClicked] = React.useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (!values.email) {
       setErrors({ ...errors, email: "Введите эл. почту" });
+      setButtonClicked(true);
       return
     }
     if (isValid) {
@@ -21,6 +23,7 @@ const ForgotPassForm = ({ func }) => {
       });
       func();
     }
+    setButtonClicked(true);
   };
   return (
     <form className="forgotPass" onSubmit={handleSubmit}>
@@ -35,8 +38,8 @@ const ForgotPassForm = ({ func }) => {
             type="email"
             autoComplete="email"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             name="email"
             onChange={handleChange}
             value={values.email || ""}
@@ -44,7 +47,13 @@ const ForgotPassForm = ({ func }) => {
             errorMessage={errors.email}
           />
         </div>
-        <Button text="Отправить" width={399} type="submit" />
+        <Button
+          text="Отправить"
+          width={400}
+          height={52}
+          type="submit"
+          disabled={(!isValid || !values.email) && buttonClicked}
+        />
       </div>
     </form>
   );

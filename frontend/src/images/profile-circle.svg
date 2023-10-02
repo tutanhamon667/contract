@@ -1,18 +1,9 @@
-<<<<<<< HEAD
 <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="vuesax/linear/profile-circle">
 <g id="profile-circle">
 <path id="Vector" d="M25.2503 26.6248C25.1045 26.604 24.917 26.604 24.7503 26.6248C21.0837 26.4998 18.167 23.4998 18.167 19.8123C18.167 16.0415 21.2087 12.979 25.0003 12.979C28.7712 12.979 31.8337 16.0415 31.8337 19.8123C31.8128 23.4998 28.917 26.4998 25.2503 26.6248Z" stroke="#F2F1EE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 <path id="Vector_2" d="M39.0413 40.375C35.333 43.7708 30.4163 45.8333 24.9997 45.8333C19.583 45.8333 14.6663 43.7708 10.958 40.375C11.1663 38.4167 12.4163 36.5 14.6455 35C20.3538 31.2083 29.6872 31.2083 35.3538 35C37.583 36.5 38.833 38.4167 39.0413 40.375Z" stroke="#F2F1EE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 <path id="Vector_3" d="M25.0003 45.8334C36.5063 45.8334 45.8337 36.506 45.8337 25.0001C45.8337 13.4941 36.5063 4.16675 25.0003 4.16675C13.4944 4.16675 4.16699 13.4941 4.16699 25.0001C4.16699 36.506 13.4944 45.8334 25.0003 45.8334Z" stroke="#F2F1EE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-=======
-<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="vuesax/linear/profile-circle">
-<g id="profile-circle">
-<path id="Vector" d="M11.1026 11.6843C11.0412 11.6756 10.9622 11.6756 10.892 11.6843C9.34819 11.6317 8.12012 10.3685 8.12012 8.81591C8.12012 7.22819 9.40082 5.93872 10.9973 5.93872C12.585 5.93872 13.8745 7.22819 13.8745 8.81591C13.8657 10.3685 12.6464 11.6317 11.1026 11.6843Z" stroke="#F2F1EE" stroke-width="1.68421" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Vector_2" d="M16.9085 17.474C15.3471 18.9038 13.277 19.7722 10.9963 19.7722C8.71556 19.7722 6.64539 18.9038 5.08398 17.474C5.1717 16.6494 5.69802 15.8424 6.63662 15.2108C9.04012 13.6143 12.9699 13.6143 15.3559 15.2108C16.2945 15.8424 16.8208 16.6494 16.9085 17.474Z" stroke="#F2F1EE" stroke-width="1.68421" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Vector_3" d="M10.9965 19.7721C15.8411 19.7721 19.7685 15.8448 19.7685 11.0002C19.7685 6.1556 15.8411 2.22827 10.9965 2.22827C6.15194 2.22827 2.22461 6.1556 2.22461 11.0002C2.22461 15.8448 6.15194 19.7721 10.9965 19.7721Z" stroke="#F2F1EE" stroke-width="1.68421" stroke-linecap="round" stroke-linejoin="round"/>
->>>>>>> account-freelancer
 </g>
 </g>
 </svg>

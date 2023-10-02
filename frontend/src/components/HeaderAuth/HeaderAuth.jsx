@@ -4,7 +4,7 @@ import "./HeaderAuth.css";
 
 function HeaderAuth() {
   const location = useLocation();
-  const regTextStyle = `header-auth__singup-button ${(location.pathname === "/") ? 'header-auth__singup-button_without-underline' : ''}`
+  const regTextStyle = `header-auth__singup-button ${(location.pathname === "/") ? 'header-auth__singup-button_main-page' : ''}`
 
   return (
     <div className="header-auth">
@@ -17,7 +17,7 @@ function HeaderAuth() {
       )}
 
       {location.pathname !== "/signin" &&
-        location.pathname !== "/forgot-password" && (
+        location.pathname !== "/forgot-password" && location.pathname !== "/reset-password" && (
           <Link to="/signin">
             <button
               className={`${location.pathname === "/signup"

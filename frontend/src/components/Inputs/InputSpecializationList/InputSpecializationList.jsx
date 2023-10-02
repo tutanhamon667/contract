@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "../FreelancerAccount/FreelancerAccount";
-import "./SpecializationList.css";
+import "../../FreelancerAccount/FreelancerAccount";
+import "./InputSpecializationList.css";
 
 const options = [
   { label: 'Дизайн', value: 1 },
@@ -12,7 +12,7 @@ const options = [
   { label: 'Разное', value: 7 },
 ]
 
-export default function SpecializationList() {
+export default function InputSpecializationList() {
   const [value, setValue] = useState([]);
   const [isOpen, setIsopen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
