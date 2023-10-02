@@ -1,26 +1,15 @@
 import React from "react";
 import "./OrderCards.css";
+import { tasks } from "../../utils/tasks";
+import { frelance } from "../../utils/frelance";
+import OrderCard from "../OrderCard/OrderCard"
 
-const OrderCards = () => {
+const OrderCards = ({ operationMode }) => {
+
   return (
     <div className="orderCards">
-      <div className="orderCard">
-        <div className="orderCard__header-container">
-          <div className="orderCard__title-container">
-            <h3 className="orderCard__title">Создать дизайн лендинга</h3>
-            <p className="orderCard__direction">UX/UI дизайнер</p>
-          </div>
-          <p className="orderCard__price">30 000 ₽</p>
-        </div>
-        <p className="orderCard__description">
-          Нужен талантливый, профессиональный графический дизайнер для проектной
-          постоянной работы, умеющий создавать уникальные и эксклюзивные
-          дизайны...
-        </p>
-        <div className="orderCard__tag-container">
-          <p className="orderCard__tag">Дизайн</p>
-        </div>
-      </div>
+      {operationMode ? <OrderCard   cards={tasks}/> : <OrderCard   cards={frelance}/> }
+
     </div>
   );
 };
