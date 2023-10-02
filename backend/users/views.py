@@ -53,7 +53,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user = get_object_or_404(Member, id=self.kwargs.get('pk'))
             if user.is_customer and not user.is_worker:
                 return CustomerProfileSerializer
-            elif user.is_worker and not user.is_customer:
+            if user.is_worker and not user.is_customer:
                 return WorkerProfileSerializer
             raise ValueError
         return UserViewSerialiser
