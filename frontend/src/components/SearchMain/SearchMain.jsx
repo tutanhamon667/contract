@@ -15,7 +15,7 @@ function SearchMain() {
           </button>
           <input
             className="search__input"
-            placeholder="Поиск проектов, приложений и всего остального"
+            placeholder="Поиск задач и проектов по навыкам, ключевым словам, технологиям..."
             minLength="2"
             maxLength="30"
             type="text"

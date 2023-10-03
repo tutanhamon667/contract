@@ -50,8 +50,8 @@
 .filters-checkbox + label::before {
   content: "";
   display: inline-block;
-  width: 23px;
-  height: 23px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   flex-grow: 0;
   border: 1px solid #adb5bd;
@@ -65,7 +65,7 @@
 /* стили для чекбокса, находящегося в состоянии checked */
 .filters-checkbox:checked + label::before {
   border: none;
-  background-image: url(../../images/group182.svg);
+  background-image: url(../../images/check1.svg);
   background-size: cover;
   width: 26px;
   height: 26px;
