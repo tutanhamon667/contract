@@ -7,15 +7,20 @@ import InputTags from "../Inputs/InputTags/InputTags";
 // import InputTagsOld from "../Inputs/InputTagsOld/InputTagsOld";
 import InputSpecializationList from "../Inputs/InputSpecializationList/InputSpecializationList";
 import "../FreelancerAccount/FreelancerAccount.css";
+import { InputDoc } from "../Inputs/InputDoc/InputDoc";
+import "../Forms/FreelancerCompleteForm/FreelancerCompleteForm.css"
 
 export default function FreelancerAccount() {
   // открывает форму редактирования имейла
   const [updateEmail, setUpdateEmail] = useState(false);
   // открывает форму редактирования пароля
   const [updatePassword, setUpdatePassword] = useState(false);
-  const {updateUser, currentUser} = useContext(Context);
+  const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
+  const { updateUser, currentUser } = useContext(Context);
   // кастомный хук для валидации формы
   const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
+
+  const MAX_ATTACHED_DOCS = 8;
 
   // function handleSubmitEmail(e) {
   //   e.preventDefault()
@@ -28,6 +33,17 @@ export default function FreelancerAccount() {
   //   setUpdateEmail(false)
   //   setValues({ ...values, email: '' })
   // }
+
+  const handleDocPortfolioChange = (event) => {
+    handleChange(event);
+    if (event.currentTarget.files[0]) {
+      setDocKeysPortfolio(prevKeys => [...prevKeys, Date.now()]);
+    }
+  };
+
+  const onDeleteDocPortfolioClick = (key) => {
+    setDocKeysPortfolio(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -119,21 +135,52 @@ export default function FreelancerAccount() {
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="workingRate">Ставка в час</label>
-            <input type="number" name="workingRate" id="workingRate" placeholder="150" className="form-profile__input form-profile__rate-input" />
+            <label
+              className="accountF__subtitle"
+              htmlFor="workingRate">
+              Ставка в час
+            </label>
+            <input
+              type="text"
+              name="workingRate"
+              id="workingRate"
+              placeholder="150"
+              className="form-profile__input form-profile__rate-input"
+            />
+          </div>
+
+          <div className="form-profile__input-container">
+            <label className="accountF__subtitle" htmlFor="aboutMe">О себе</label>
+            <textarea name="aboutMe" id="aboutMe" cols="30" rows="1" className="form-profile__input" placeholder="Расскажите о себе как о специалисте и чем вы можете быть полезны"></textarea>
           </div>
 
           <div className="form-profile__input-container">
             <h2 className="accountF__subtitle">Образование</h2>
-            <input type="text" name="education" id="education" className="form-profile__input" placeholder="Университет" />
-            <div>
-              <input type="date" name="beginningOfStudies" id="beginningOfStudies" placeholder="Начало учёбы" className="form-profile__input" />
-              <input type="date" name="endOfStudies" id="endOfStudies" placeholder="Окончание учёбы" className="form-profile__input" />
+            <input
+              type="text"
+              name="education"
+              id="education"
+              className="form-profile__input"
+              placeholder="Университет"
+            />
+            <div className="form-profile__dates">
+              <input type="month"
+                name="beginningOfStudies"
+                id="beginningOfStudies"
+                placeholder="Начало учёбы"
+                className="form-profile__input form-profile__input-dates"
+              />
+              <input type="month"
+                name="endOfStudies"
+                id="endOfStudies"
+                placeholder="Окончание учёбы"
+                className="form-profile__input form-profile__input-dates"
+              />
             </div>
             <select
               name="degree"
               id="degree"
-              className="form-profile__list form-profile__list-title"
+              className="form-profile__list"
             >
               <option value="" className="form-profile__list form-profile__list-default">Степень</option>
               <option value="bachelor" className="form-profile__list">Студент</option>
@@ -145,9 +192,18 @@ export default function FreelancerAccount() {
           </div>
 
           <div className="form-profile__input-container">
-            <label className="accountF__subtitle" htmlFor="aboutMe">О себе</label>
-            <textarea name="aboutMe" id="aboutMe" cols="30" rows="10" className="form-profile__input"></textarea>
+            <h2 className="accountF__subtitle">Сертификаты, грамоты, дипломы</h2>
+            <div className="freelancer-complete-form__input-doc-wrapper">
+              {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key) => (
+                <InputDoc key={key} name="portfolio" value={values.portfolio || ''} error={errors.portfolio}
+                  errorMessage={errors.portfolio}
+                  onChange={(event) => handleDocPortfolioChange(event, key)}
+                  onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+                />
+              ))}
+            </div>
           </div>
+
 
           <div className="accountF__separate-line"></div>
 
@@ -156,50 +212,36 @@ export default function FreelancerAccount() {
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" htmlFor="emailForContacts">Электронная почта</label>
             <input type="emailForContacts" name="emailForContacts" id="email" className="form-profile__input" placeholder="Эл.почта" />
-            <div>
-              <input type="checkbox" name="preferredEmail" id="preferredEmail" />
-              <label className="accountF__subtitle form-profile__notify" htmlFor="preferredEmail">Предпочтительный вид связи</label>
-            </div>
           </div>
 
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" htmlFor="telegram">Телеграм</label>
             <input type="text" name="telegram" id="telegram" className="form-profile__input" placeholder="Телеграм" />
-            <div>
-              <input type="checkbox" name="preferredTelegram" id="preferredTelegram" />
-              <label className="accountF__subtitle form-profile__notify" htmlFor="preferredTelegram">Предпочтительный вид связи</label>
-            </div>
           </div>
-
-          <button type="button" className="accountF__subtitle form-profile__save form-profile__add-communication">
-            Добавить другой вид связи +
-          </button>
 
           <div className="form-profile__input-container">
             <label className="accountF__subtitle" htmlFor="portfolioLink">Ссылка на портфолио</label>
             <input type="url" name="portfolioLink" id="portfolioLink" className="form-profile__input" placeholder="https://myportfolio.ru/" />
-            <button className="accountF__subtitle form-profile__save form-profile__add-communication">Добавить +</button>
           </div>
 
           <div className="accountF__separate-line"></div>
 
           <div className="form-profile__input-container">
             <h2 className="accountF__title">Портфолио</h2>
-            <div className="form-profile__portfolio-container">
-              <div className="form-profile__portfolio-item">
-                <button type="button" className="form-profile__portfolio-item__close"></button>
-              </div>
-              <div className="form-profile__portfolio-item"></div>
-              <div className="form-profile__portfolio-item"></div>
-              <div>
-                <input type="file" name="" id="" />
-              </div>
+            <div className="freelancer-complete-form__input-doc-wrapper">
+              {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key) => (
+                <InputDoc key={key} name="portfolio" value={values.portfolio || ''} error={errors.portfolio}
+                  errorMessage={errors.portfolio}
+                  onChange={(event) => handleDocPortfolioChange(event, key)}
+                  onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+                />
+              ))}
             </div>
           </div>
 
-          <div>
-            <button className="accountF__title">Отмена</button>
-            <button type="submit" className="accountF__title">Сохранить</button>
+          <div className="form-profile__submit-container">
+            <button className="form-profile__cansel-btn">Отмена</button>
+            <button type="submit" className="form-profile__cansel-btn form-profile__submit-btn">Сохранить</button>
           </div>
 
         </form>
@@ -210,14 +252,14 @@ export default function FreelancerAccount() {
 }
 /*
     <div className="freelance-account">
-      <h2>Account of freelancer</h2>
-      <h3>Привет, {user.first_name} {user.last_name}!</h3>
+    <h2>Account of freelancer</h2>
+    <h3>Привет, {user.first_name} {user.last_name}!</h3>
       <p>----------------------------</p>
       <h3>{user.email}</h3>
       <button
-        type="button"
-        onClick={() => setUpdateEmail(true)}>
-        Редактировать
+      type="button"
+      onClick={() => setUpdateEmail(true)}>
+      Редактировать
       </button>
       {updateEmail && (
         <>
@@ -225,7 +267,7 @@ export default function FreelancerAccount() {
             name="email"
             noValidate
             onSubmit={handleSubmitEmail}
-          >
+            >
             <label htmlFor="email">Введите новый email:</label>
             <input
               type="email"

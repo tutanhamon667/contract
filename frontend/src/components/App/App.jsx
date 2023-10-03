@@ -16,7 +16,7 @@ import "./App.css";
 import ResetPass from "../../pages/ResetPass/ResetPass";
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(false);
+  const [authenticated, setAuthenticated] = React.useState(true);
   const [currentUser, setCurrentUser] = React.useState({
     id: "5",
     first_name: "Иван",
