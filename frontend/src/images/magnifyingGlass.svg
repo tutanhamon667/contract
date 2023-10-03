@@ -1,6 +1,10 @@
-<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="MagnifyingGlass">
-<path id="Vector" d="M11.5 22C17.299 22 22 17.299 22 11.5C22 5.70101 17.299 1 11.5 1C5.70101 1 1 5.70101 1 11.5C1 17.299 5.70101 22 11.5 22Z" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Vector_2" d="M18.9248 18.925L24.9998 25" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="vuesax/linear/search-normal">
+<g id="vuesax/linear/search-normal_2">
+<g id="search-normal">
+<path id="Vector" d="M7.66683 14C11.1646 14 14.0002 11.1645 14.0002 7.66671C14.0002 4.1689 11.1646 1.33337 7.66683 1.33337C4.16903 1.33337 1.3335 4.1689 1.3335 7.66671C1.3335 11.1645 4.16903 14 7.66683 14Z" stroke="#7B7B7B" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M14.6668 14.6667L13.3335 13.3334" stroke="#7B7B7B" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
 </g>
 </svg>
