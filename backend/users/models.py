@@ -149,6 +149,13 @@ class WorkerProfile(models.Model):
     )
 
 
+class Industry(models.Model):
+    name = models.CharField(
+        max_length=255,
+        verbose_name='Сфера деятельности'
+    )
+
+
 class CustomerProfile(models.Model):
     user = models.OneToOneField(
         Member,
@@ -163,14 +170,21 @@ class CustomerProfile(models.Model):
         verbose_name='Фото или логотип'
     )
 
+    email = models.EmailField(
+        verbose_name='публичный email address для связи',
+        max_length=254,
+        db_index=True,
+        unique=True,
+    )
+
     name = models.CharField(
         max_length=150,
         verbose_name='Название компании или ваше имя'
     )
 
-    industry = models.CharField(
-        max_length=255,
-        verbose_name='Сфера деятельности'
+    industry = models.ForeignKey(
+        Industry,
+        on_delete=models.PROTECT
     )
 
     web = models.URLField(

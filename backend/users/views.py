@@ -7,8 +7,9 @@ from rest_framework.response import Response
 
 from .models import CustomerProfile, Member, Stack, WorkerProfile
 from .permissions import IsUser
-from .serializers import (CustomerProfileSerializer, NewEmailSerializer,
+from .serializers import (GetCustomerProfileSerializer, NewEmailSerializer,
                           PasswordResetConfirmSerializer,
+                          PostCustomerProfileSerializer,
                           SendEmailResetSerializer, SetPasswordSerializer,
                           UserCreateSerializer, UserViewSerialiser,
                           WorkerProfileSerializer)
@@ -17,7 +18,7 @@ User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by('last_name')
+    queryset = User.objects.filter(is_worker=True).order_by('last_name')
     http_method_names = ['get', 'post', 'patch']
     token_generator = DjoserView.token_generator
 
@@ -30,6 +31,10 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def get_queryset(self):
+        """"
+        action=profile дполнительно проверяет роль пользователя и
+        в зависимости от этого возвращает требуемый queryset
+        """
         if self.action == 'profile':
             user = get_object_or_404(Member, id=self.kwargs.get('pk'))
             if user.is_customer and not user.is_worker:
@@ -39,6 +44,10 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_queryset()
 
     def get_serializer_class(self):
+        """"
+        action=profile дполнительно проверяет роль пользователя и
+        в зависимости от этого возвращает требуемый serializer
+        """
         if self.action == 'reg_in':
             return UserCreateSerializer
         if self.action == 'new_email':
@@ -52,11 +61,19 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'profile':
             user = get_object_or_404(Member, id=self.kwargs.get('pk'))
             if user.is_customer and not user.is_worker:
-                return CustomerProfileSerializer
+                if self.request.method in ['POST', 'PATCH']:
+                    return PostCustomerProfileSerializer
+                return GetCustomerProfileSerializer
             if user.is_worker and not user.is_customer:
                 return WorkerProfileSerializer
             raise ValueError
         return UserViewSerialiser
+
+    def partial_update(self, request, *args, **kwargs):
+        """
+        Метод PATCH разрешён только для endpoint /profile/
+        """
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(url_path='reg_in', methods=['post'], detail=False)
     def reg_in(self, request):
@@ -126,7 +143,7 @@ class UserViewSet(viewsets.ModelViewSet):
             )
         if request.method == 'PATCH':
             serializer = self.get_serializer(
-                user,
+                request._user,
                 data=request.data,
                 partial=True
             )

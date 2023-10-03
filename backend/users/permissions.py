@@ -2,6 +2,10 @@ from rest_framework import permissions
 
 
 class IsUser(permissions.BasePermission):
+    """
+    Определяет права пользователя на просмотр и редактирование.
+    Дополнительно позволяет создать страницу profile только для себя
+    """
     def has_permission(self, request, view):
         if request.user.is_authenticated:
             if view.name.lower() == 'profile':

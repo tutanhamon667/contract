@@ -5,7 +5,7 @@ from djoser import serializers as djoser_serializers
 from rest_framework import serializers
 
 from .fields import Base64ImageField
-from .models import Activity, CustomerProfile, Member, Stack, WorkerProfile
+from .models import Activity, CustomerProfile, Industry, Stack, WorkerProfile
 
 User = get_user_model()
 
@@ -69,10 +69,55 @@ class WorkerProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CustomerProfileSerializer(serializers.ModelSerializer):
+class IndustrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Industry
+        fields = ('name',)
+
+
+class GetCustomerProfileSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     photo = Base64ImageField(required=False)
+    industry = IndustrySerializer(many=False, read_only=True)
 
     class Meta:
         model = CustomerProfile
         fields = ('user', 'photo', 'name', 'industry', 'web')
+
+
+class PostCustomerProfileSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    photo = Base64ImageField(required=False)
+    industry = IndustrySerializer(many=False)
+
+    class Meta:
+        model = CustomerProfile
+        fields = ('user', 'photo', 'name', 'industry', 'web')
+
+    def validate_industry(self, industry):
+        if not industry:
+            raise ValidationError(
+                'Укажите сферу деятельности компании'
+            )
+        return industry
+
+    def create(self, validated_data):
+        industry_data = validated_data.pop('industry')
+        industry, status = Industry.objects.get_or_create(**industry_data)
+        return CustomerProfile.objects.create(
+            industry=industry,
+            **validated_data
+        )
+
+    def update(self, user, validated_data):
+        industry_data = validated_data.pop('industry')
+        CustomerProfile.objects.filter(user=user).delete()
+        industry, status = Industry.objects.get_or_create(**industry_data)
+        return super().update(
+            validated_data,
+            CustomerProfile.objects.create(
+                user_id=user.id,
+                industry=industry,
+                **validated_data
+            )
+        )
