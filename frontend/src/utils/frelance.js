@@ -33,3 +33,25 @@ export const frelance = [
   }
 
 ];
+
+export const freelancerData = [
+  {
+    email: '',
+    number: '',
+    firstName: '',
+    lastName: '',
+    specialization: [],
+    skills: [],
+    rate: '',
+    aboutMe: '',
+    education: '',
+    start: '',
+    end: '',
+    degree: '',
+    faculty: '',
+    email_2: '',
+    telegram: '',
+    favorite: '',
+    link: '',
+  }
+]

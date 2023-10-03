@@ -13,10 +13,11 @@
 }
 
 .tag__input {
+  font-family: Inter;
   width: 100%;
   border: none;
   outline: none;
   color: #292D32;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 400;
 }

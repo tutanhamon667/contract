@@ -82,6 +82,7 @@
   color: #606060;
   font-size: 20px;
   font-weight: 600;
+  margin: 0;
 }
 
 
@@ -150,6 +151,7 @@
 }
 
 .form-profile__list {
+  appearance: none;
   color: #3F3F3F;
   font-size: 16px;
   font-weight: 400;
@@ -157,6 +159,17 @@
   background-color: white;
   border-radius: 10px;
   border: 1px solid #C6C6C6;
+  cursor: pointer;
+  /* стрелка раскрывающая список */
+  background-image: url(../../images/arrow-down.svg);
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+  background-position: 98% center;
+  /* ------------------------ */
+}
+
+.form-profile__list-default {
+  color: #7B7B7B;
 }
 
 .form-profile__list-default {
