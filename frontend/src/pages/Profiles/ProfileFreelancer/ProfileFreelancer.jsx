@@ -1,14 +1,15 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 
-import "../FreelancerAccount/FreelancerAccount.css";
-import "../Forms/FreelancerCompleteForm/FreelancerCompleteForm.css";
+import "../profile.css";
+import "./ProfileFreelancer.css";
+import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css";
 
-import useFormAndValidation from "../../hooks/useFormAndValidation";
-import { Context } from "../../context/context"
-import InputSpecializationList from "../Inputs/InputSpecializationList/InputSpecializationList";
-import InputTags from "../Inputs/InputTags/InputTags";
-import { InputDoc } from "../Inputs/InputDoc/InputDoc";
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
+import { Context } from "../../../context/context"
+import InputSpecializationList from "../../../components/Inputs/InputSpecializationList/InputSpecializationList";
+import InputTags from "../../../components/Inputs/InputTags/InputTags";
+import { InputDoc } from "../../../components/Inputs/InputDoc/InputDoc";
 // import { freelancerData } from "../../utils/frelance"; // заглушка для проверки обработки данных формы
 
 export default function FreelancerAccount() {
@@ -25,7 +26,7 @@ export default function FreelancerAccount() {
   // (1) временное решение для стилизации заголовка Степень
   function handleTitle(e) { setTitle(e.target.value) }
   const degreeTitleStyle = `
-  form-profile__list ${title === 'undefined' ? 'form-profile__list-default' : ''}`
+  form-profile__input form-profile__list ${title === 'undefined' ? 'form-profile__list-default' : ''}`
   // ------------------------------------------
 
   // переиспользуемые элементы с Forms/FreelancerCompleteForm
@@ -49,65 +50,67 @@ export default function FreelancerAccount() {
   }
 
   return (
-    <div className="accountF">
+    <div className="profile">
 
-      <div className="accountF_left-column">
+      <div className="profile_left-column">
 
-        <div className="accountF__short-info">
-          <div className="account__avatar"></div>
-          <h2 className="accountF__title">
+        <div className="profile_block profile__user-info">
+          <div className="profile__avatar"></div>
+          <h2 className="profile__title">
             {currentUser.first_name}&nbsp;{currentUser.last_name}
           </h2>
-          <p className="accountF__specialty">Фрилансер</p>
+          <p className="profile__main-text">Фрилансер</p>
         </div>
 
-        <div className="accountF__separate-line"></div>
+        <div className="profile__separate-line"></div>
 
-        <div className="accountF__setting-container">
-          <h3 className="accountF__setting">Настройки</h3>
-          <div className="accountF__separate-line"></div>
-          <Link className="accountF__subtitle" to="#">Информация</Link>
+        <div className="profile_block profile__setting ">
+          <h3 className="profile__title">Настройки</h3>
+          <div className="profile__separate-line"></div>
+          <Link className="profile__main-text" to="#">Информация</Link>
         </div>
 
       </div>
 
-      <div className="accountF__form-container">
+      <div className="profile_block profile__form-container">
 
-        <form className="form-profile" onSubmit={handleSubmit}>
+        <form
+          className="form-profile"
+          onSubmit={handleSubmit}
+        >
 
           <div className="form-profile__top-container">
-            <h2 className="accountF__title">Информация об аккаунте</h2>
+            <h2 className="profile__title">Информация об аккаунте</h2>
             {isEditable ? (
               <>
                 <button
                   onClick={() => setIsEditable(false)}
-                  className="accountF__subtitle form-profile__cansel">
+                  className="form-top-buttons form-top-buttons_type_cansel">
                   Отмена
                 </button>
                 <button
                   type="submit"
                   onClick={handleSubmit}
-                  className="accountF__subtitle form-profile__save">
+                  className="form-top-buttons form-top-buttons_type_submit">
                   Сохранить
                 </button>
               </>
             ) : (
               <button
                 onClick={() => setIsEditable(true)}
-                className="accountF__subtitle form-profile__save">
+                className="form-top-buttons form-top-buttons_type_submit">
                 Редактировать
               </button>
             )}
           </div>
 
           <div className="form-profile__input-container">
-
             <input
               type="email"
               name="email"
               id="email"
               placeholder="birukov@gmail.com"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
             />
             <input
               type="tel"
@@ -115,16 +118,16 @@ export default function FreelancerAccount() {
               id="phone"
               maxLength="12"
               placeholder="+7"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
             />
           </div>
 
-          <div className="accountF__separate-line"></div>
+          <div className="profile__separate-line"></div>
 
-          <h2 className="accountF__title">Информация о профиле</h2>
+          <h2 className="profile__title">Информация о профиле</h2>
           <div className="form-profile__input-container">
             <label
-              className="accountF__subtitle"
+              className="profile__main-text"
               htmlFor="firstName">
               Имя Фамилия
             </label>
@@ -133,30 +136,30 @@ export default function FreelancerAccount() {
               name="firstName"
               id="firstName"
               placeholder="Александр"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
             />
             <input
               type="text"
               name="lastName"
               id="lastName"
               placeholder="Бирюков"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
             />
           </div>
 
           <div className="form-profile__input-container">
-            <h2 className="accountF__subtitle">Специализация</h2>
+            <h2 className="profile__main-text">Специализация</h2>
             <InputSpecializationList />
           </div>
 
           <div className="form-profile__input-container">
-            <h2 className="accountF__subtitle">Навыки</h2>
+            <h2 className="profile__main-text">Навыки</h2>
             <InputTags />
           </div>
 
           <div className="form-profile__input-container">
             <label
-              className="accountF__subtitle"
+              className="profile__main-text"
               htmlFor="workingRate">
               Ставка в час
             </label>
@@ -165,13 +168,13 @@ export default function FreelancerAccount() {
               name="workingRate"
               id="workingRate"
               placeholder="150"
-              className="form-profile__input form-profile__rate-input"
+              className="profile__main-text form-profile__input form-profile__rate-input"
             />
           </div>
 
-          <div className="form-profile__input-container">
+          <div className="profile__main-text form-profile__input-container">
             <label
-              className="accountF__subtitle"
+              className="profile__main-text"
               htmlFor="aboutMe">
               О себе
             </label>
@@ -180,19 +183,19 @@ export default function FreelancerAccount() {
               id="aboutMe"
               cols="30"
               rows="1"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
               placeholder="Расскажите о себе как о специалисте и чем вы можете быть полезны"
             ></textarea>
           </div>
 
           <div className="form-profile__input-container">
 
-            <h2 className="accountF__subtitle">Образование</h2>
+            <h2 className="profile__main-text">Образование</h2>
             <input
               type="text"
               name="education"
               id="education"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
               placeholder="Университет"
             />
 
@@ -201,13 +204,13 @@ export default function FreelancerAccount() {
                 name="beginningOfStudies"
                 id="beginningOfStudies"
                 placeholder="Начало учёбы"
-                className="form-profile__input form-profile__input-dates"
+                className="profile__main-text form-profile__input form-profile__dates_input"
               />
               <input type="month"
                 name="endOfStudies"
                 id="endOfStudies"
                 placeholder="Окончание учёбы"
-                className="form-profile__input form-profile__input-dates"
+                className="profile__main-text form-profile__input form-profile__dates_input"
               />
             </div>
 
@@ -219,27 +222,27 @@ export default function FreelancerAccount() {
             >
               <option
                 value="undefined"
-                className="form-profile__list form-profile__list-default">
+                className="profile__main-text form-profile__list-default">
                 Степень
               </option>
               <option
                 value="bachelor"
-                className="form-profile__list">
+                className="profile__main-text">
                 Студент
               </option>
               <option
                 value="bachelor"
-                className="form-profile__list">
+                className="profile__main-text">
                 Бакалавр
               </option>
               <option
                 value="specialist"
-                className="form-profile__list">
+                className="profile__main-text">
                 Специалист
               </option>
               <option
                 value="master"
-                className="form-profile__list">
+                className="profile__main-text">
                 Магистр
               </option>
             </select>
@@ -248,13 +251,13 @@ export default function FreelancerAccount() {
               type="text"
               name="faculty"
               id="faculty"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
               placeholder="Факультет"
             />
           </div>
 
           <div className="form-profile__input-container">
-            <h2 className="accountF__subtitle">Сертификаты, грамоты, дипломы</h2>
+            <h2 className="profile__main-text">Сертификаты, грамоты, дипломы</h2>
             {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <div className="freelancer-complete-form__input-doc-wrapper">
               {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key) => (
@@ -269,13 +272,13 @@ export default function FreelancerAccount() {
           </div>
 
 
-          <div className="accountF__separate-line"></div>
+          <div className="profile__separate-line"></div>
 
-          <h2 className="accountF__title">Контакты</h2>
+          <h2 className="profile__title">Контакты</h2>
 
           <div className="form-profile__input-container">
             <label
-              className="accountF__subtitle"
+              className="profile__main-text"
               htmlFor="emailForContacts">
               Электронная почта
             </label>
@@ -283,7 +286,7 @@ export default function FreelancerAccount() {
               type="emailForContacts"
               name="emailForContacts"
               id="email"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
               placeholder="Эл.почта"
             />
             {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
@@ -296,7 +299,7 @@ export default function FreelancerAccount() {
 
           <div className="form-profile__input-container">
             <label
-              className="accountF__subtitle"
+              className="profile__main-text"
               htmlFor="telegram">
               Телеграм
             </label>
@@ -304,7 +307,7 @@ export default function FreelancerAccount() {
               type="text"
               name="telegram"
               id="telegram"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
               placeholder="Телеграм"
             />
             {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
@@ -317,7 +320,7 @@ export default function FreelancerAccount() {
 
           <div className="form-profile__input-container">
             <label
-              className="accountF__subtitle"
+              className="profile__main-text"
               htmlFor="portfolioLink">
               Ссылка на портфолио
             </label>
@@ -325,15 +328,15 @@ export default function FreelancerAccount() {
               type="url"
               name="portfolioLink"
               id="portfolioLink"
-              className="form-profile__input"
+              className="profile__main-text form-profile__input"
               placeholder="https://myportfolio.ru/"
             />
           </div>
 
-          <div className="accountF__separate-line"></div>
+          <div className="profile__separate-line"></div>
 
           <div className="form-profile__input-container">
-            <h2 className="accountF__title">Портфолио</h2>
+            <h2 className="profile__title">Портфолио</h2>
             {/* // переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <div className="freelancer-complete-form__input-doc-wrapper">
               {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key) => (
@@ -348,16 +351,16 @@ export default function FreelancerAccount() {
           </div>
 
           {isEditable && (
-            <div className="form-profile__submit-container">
+            <div className="form-profile__bottom-buttons-container">
               <button
-                className="form-profile__cansel-btn"
+                className="profile__main-text form-profile__bottom-buttons"
                 onClick={() => setIsEditable(false)}>
                 Отмена
               </button>
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className="form-profile__cansel-btn form-profile__submit-btn">
+                className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit">
                 Сохранить
               </button>
             </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "../../FreelancerAccount/FreelancerAccount.css";
+import "../../../pages/Profiles/profile.css"
+import "../../../pages/Profiles/ProfileFreelancer/ProfileFreelancer.css"
 import "./InputSpecializationList.css";
 
 const options = [
