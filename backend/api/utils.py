@@ -1,5 +1,6 @@
 from io import BytesIO
 
+from drf_extra_fields.fields import Base64FileField, Base64ImageField
 from pdf2image import convert_from_bytes, convert_from_path
 from PIL import Image
 
@@ -29,3 +30,33 @@ def generate_thumbnail(file):
     except Exception as e:
         print(f"Ошибка при создании миниатюры: {e}")
         return None
+
+
+class CustomBase64ImageField(Base64ImageField):
+    """
+    Fix для корректного отображения файла задания в документации swagger
+    см. https://github.com/Hipo/drf-extra-fields/issues/66
+    """
+
+    class Meta:
+        swagger_schema_fields = {
+            'type': 'string',
+            'title': 'File Content',
+            'description': 'Content of the file base64 encoded',
+            'read_only': False
+        }
+
+
+class CustomCurrentUserDefault(object):
+    """
+    Fix для корректного отображения файла задания в документации swagger
+    см. https://github.com/Hipo/drf-extra-fields/issues/66
+    """
+    def set_context(self, serializer_field):
+        self.user_id = serializer_field.context['request'].user.id
+
+    def __call__(self):
+        return self.user_id
+
+    def __str__(self):
+        return f"{self.__class__.__name__} instance with data: {self.data}"

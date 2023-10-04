@@ -1,20 +1,43 @@
-from django.contrib.auth import get_user_model
+from io import BytesIO
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import MinValueValidator
 from django.db import models
+from PIL import Image
+
+from users.models import CustomerProfile as Client
+from users.models import Stack
+from users.models import WorkerProfile as Freelancer
+
+THUMBNAIL_SIZE = (100, 100)
+CATEGORY_CHOICES = (
+    ('design', 'дизайн'),
+    ('development', 'разработка'),
+    ('testing', 'тестирование'),
+    ('administration', 'администрирование'),
+    ('marketing', 'маркетинг'),
+    ('content', 'контент'),
+    ('other', 'разное'),
+)
+
+'''
+# Временные модели пользователей. Удалить после внедрения моделей
+# пользователей из users
 
 User = get_user_model()
 
 
-# Модели пользователей временные для работы модели заказов #
 class Stack(models.Model):
     """
     Стэк технологий.
     """
     name = models.CharField(
-        verbose_name='Название навыка', max_length=50
+        verbose_name='Название навыка',
+        max_length=50,
     )
     slug = models.SlugField(
-        verbose_name='Идентификатор навыка', unique=True
+        verbose_name='Идентификатор навыка',
+        unique=True
     )
 
     class Meta:
@@ -65,7 +88,7 @@ class Client(models.Model):
     class Meta:
         verbose_name = 'Заказчик'
         verbose_name_plural = 'Заказчики'
-# Модели пользователей временные для работы модели заказов #
+'''
 
 
 class Category(models.Model):
@@ -73,10 +96,13 @@ class Category(models.Model):
     Специализации.
     """
     name = models.CharField(
-        verbose_name='Название специализации', max_length=50
+        verbose_name='Название специализации',
+        max_length=50,
+        choices=CATEGORY_CHOICES
     )
     slug = models.SlugField(
-        verbose_name='Идентификатор специализации', unique=True
+        verbose_name='Идентификатор специализации',
+        unique=True
     )
 
     class Meta:
@@ -88,21 +114,15 @@ class Category(models.Model):
         return self.name
 
 
+class File(models.Model):
+    file = models.ImageField(upload_to='job_files/',
+                             null=True,
+                             verbose_name='Файлы задания',)
+
+
 class Job(models.Model):
     """
     Размещение заказов заказчиком.
-    - Название заказа
-    - Специализация
-    - Навыки
-    - Бюджет (альтернатива - Запрос предложений)
-    - Срок (альтернатива - Запрос предложений)
-    - Описание
-    - Файлы
-    - Заказчик (не отображается)
-    - Дата создания (отображается при получении отдельного экземпляра)
-    - Миниатюры файлов при просмотре заказа - thumbnail
-    TODO:
-    добавить валидацию полей (точно бюджет, дэдлайн, файлы)
     """
     title = models.CharField(
         verbose_name='Название задания', max_length=200
@@ -114,7 +134,10 @@ class Job(models.Model):
         help_text='Выберите специализацию'
     )
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE
+        Client,
+        related_name='jobs',
+        verbose_name='Заказчик',
+        on_delete=models.CASCADE
     )
     stack = models.ManyToManyField(
         Stack,
@@ -124,42 +147,37 @@ class Job(models.Model):
         through='StackJob'
     )
     description = models.TextField(
-        verbose_name='Описание',
+        verbose_name='Описание задания',
     )
     budget = models.PositiveIntegerField(
         blank=True, null=True,
-        help_text='Укажите сумму в рублях',
+        help_text='Укажите сумму в рублях или выберете "Жду предложений"',
         verbose_name='Бюджет',
         validators=[MinValueValidator(0)],
     )
     ask_budget = models.BooleanField(
         default=False,
+        verbose_name='Запросить бюджет',
     )
     deadline = models.DateTimeField(
         blank=True, null=True,
-        verbose_name='Срок выполнения',
+        verbose_name='Срок выполнения или выберете "Жду предложений"',
     )
     ask_deadline = models.BooleanField(
-        default=False
+        default=False,
+        verbose_name='Запросить сроки',
     )
-    files = models.FileField(
-        upload_to='orders/job_files/',
-        blank=True, null=True,
-        verbose_name='Файлы к заданию',
+    pub_date = models.DateField(
+        auto_now_add=True,
+        verbose_name='Дата публикации задания',
     )
-    thumbnail = models.ImageField(
-        upload_to='orders/thumbnails/',
-        blank=True,
-        verbose_name='Миниатюра',
-    )
-    pub_date = models.DateField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        if self.ask_budget:
-            self.budget = None
-        if self.ask_deadline:
-            self.deadline = None
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.ask_budget:
+    #         self.budget = None
+    #     if self.ask_deadline:
+    #         self.deadline = None
+    #     super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Задание'
@@ -192,17 +210,54 @@ class StackJob(models.Model):
         return f"{self.job.title} - {self.stack.name}"
 
 
+class JobFile(models.Model):
+    job = models.ForeignKey(Job,
+                            on_delete=models.CASCADE,
+                            related_name='job_files',
+                            null=True,
+                            blank=True)
+    file = models.ImageField(upload_to='orders/job_files',)
+    name = models.CharField(max_length=255)
+    thumbnail = models.ImageField(
+        upload_to='orders/job_files/thumbnails/',
+        null=True,
+        blank=True)
+
+    def create_thumbnail(self):
+        image = Image.open(self.file)
+        thumbnail_size = THUMBNAIL_SIZE
+        image.thumbnail(thumbnail_size)
+        thumb_name = self.file.name.replace('.', '_thumb.')
+        thumb_io = BytesIO()
+        image.save(thumb_io, 'JPEG')
+        self.thumbnail.save(thumb_name, InMemoryUploadedFile(
+            thumb_io, None, thumb_name, 'image/jpeg', thumb_io.tell, None
+        ))
+
+        thumb_io.close()
+
+    class Meta:
+        verbose_name = 'Файл задания'
+        verbose_name_plural = 'Файлы задания'
+
+    def __str__(self):
+        return f"{self.job.title} - {self.file}"
+
+
 class Response(models.Model):
     """
     Отклики фрилансеров на заказы.
     """
-    job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    freelancer = models.ForeignKey(Freelancer, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE,
+                            related_name='responses')
+    freelancer = models.ForeignKey(Freelancer, on_delete=models.CASCADE,
+                                   related_name='responses')
 
     class Meta:
+        unique_together = ('freelancer', 'job')
         verbose_name = 'Отклик'
         verbose_name_plural = 'Отклики'
 
     def __str__(self):
         return (f'Отклик на заказ {self.job.title}'
-                f'от {self.freelancer.username}')
+                f'от {self.freelancer.first_name}')

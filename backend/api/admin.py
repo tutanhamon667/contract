@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
 
-from users.models import Activity, Member, Stack
+from users.models import (Activity, CustomerProfile, Member, Stack,
+                          WorkerProfile)
 
 # admin.site.unregister(Member)
 
@@ -20,13 +20,35 @@ class ActivityAdmin(admin.ModelAdmin):
 @admin.register(Member)
 class CustomUserAdmin(UserAdmin):
     list_display = ('first_name', 'last_name',
-                    'email', 'is_staff', 'is_active')
+                    'email', 'is_staff', 'is_active',
+                    'is_customer', 'is_worker')
     list_filter = ('email', 'last_name',)
     fieldsets = (
         (None, {'fields': ('email',)}),
         ('Personal info', {'fields': ('first_name', 'last_name')})
     )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'first_name', 'last_name',
+                       'is_customer', 'is_worker', 'is_active',
+                       'password1', 'password2'),
+        }),
+    )
     ordering = ('email',)
+
+
+@admin.register(WorkerProfile)
+class WorkerProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'payrate')
+    list_filter = ('activity', 'stacks')
+    filter_horizontal = ('activity', 'stacks')
+
+
+# Кастомный административный класс для модели CustomerProfile
+@admin.register(CustomerProfile)
+class CustomerProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'industry')
 
 
 admin.site.register(Stack, StackAdmin)
