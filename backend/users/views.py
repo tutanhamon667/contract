@@ -5,7 +5,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import CustomerProfile, Member, Stack, WorkerProfile
+from .models import CustomerProfile, Member, WorkerProfile
 from .permissions import IsUser
 from .serializers import (GetCustomerProfileSerializer, NewEmailSerializer,
                           PasswordResetConfirmSerializer,
@@ -23,20 +23,20 @@ class UserViewSet(viewsets.ModelViewSet):
     token_generator = DjoserView.token_generator
 
     def get_permissions(self):
-        if (
-            self.action == 'profile'
-            and self.request.method in ['POST', 'PATCH']
-        ):
+        if self.action == 'me':
             return (IsUser(),)
         return super().get_permissions()
 
     def get_queryset(self):
         """"
-        action=profile дполнительно проверяет роль пользователя и
-        в зависимости от этого возвращает требуемый queryset
+        action in ['retrieve', 'me']  дополнительно проверяет роль
+        пользователя и в зависимости от этого возвращает требуемый queryset
         """
-        if self.action == 'profile':
-            user = get_object_or_404(Member, id=self.kwargs.get('pk'))
+        if self.action in ['retrieve', 'me']:
+            if self.action == 'retrieve':
+                user = get_object_or_404(Member, id=self.kwargs.get('pk'))
+            else:
+                user = self.request._user
             if user.is_customer and not user.is_worker:
                 return CustomerProfile.objects.all()
             if user.is_worker and not user.is_customer:
@@ -45,8 +45,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """"
-        action=profile дполнительно проверяет роль пользователя и
-        в зависимости от этого возвращает требуемый serializer
+        action in ['retrieve', 'me'] дополнительно проверяет роль
+        пользователя и в зависимости от этого возвращает требуемый serializer
         """
         if self.action == 'reg_in':
             return UserCreateSerializer
@@ -58,8 +58,11 @@ class UserViewSet(viewsets.ModelViewSet):
             return SendEmailResetSerializer
         if self.action == 'reset_password_confirm':
             return PasswordResetConfirmSerializer
-        if self.action == 'profile':
-            user = get_object_or_404(Member, id=self.kwargs.get('pk'))
+        if self.action in ['retrieve', 'me']:
+            if self.action == 'retrieve':
+                user = get_object_or_404(Member, id=self.kwargs.get('pk'))
+            else:
+                user = self.request._user
             if user.is_customer and not user.is_worker:
                 if self.request.method in ['POST', 'PATCH']:
                     return PostCustomerProfileSerializer
@@ -69,9 +72,19 @@ class UserViewSet(viewsets.ModelViewSet):
             raise ValueError
         return UserViewSerialiser
 
-    def partial_update(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
+        self.get_queryset()
+        user = get_object_or_404(Member, id=self.kwargs.get('pk'))
+        if user.is_customer and not user.is_worker:
+            queryset = get_object_or_404(CustomerProfile, user_id=user.id)
+        if user.is_worker and not user.is_customer:
+            queryset = get_object_or_404(WorkerProfile, user_id=user.id)
+        serializer = self.get_serializer(queryset)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
         """
-        Метод PATCH разрешён только для endpoint /profile/
+        Метод PATCH разрешён только для endpoint /me/
         """
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -116,10 +129,10 @@ class UserViewSet(viewsets.ModelViewSet):
         DjoserView.reset_password_confirm(self, request, *args, **kwargs)
         return Response(status=status.HTTP_200_OK)
 
-    @action(url_path='profile', methods=['get', 'post', 'patch'], detail=True)
-    def profile(self, request, pk=None):
+    @action(url_path='me', methods=['get', 'post', 'patch'], detail=False)
+    def me(self, request):
         self.get_queryset()
-        user = get_object_or_404(Member, id=pk)
+        user = request._user
         if request.method == 'GET':
             if user.is_customer and not user.is_worker:
                 queryset = get_object_or_404(CustomerProfile, user_id=user.id)
@@ -133,7 +146,8 @@ class UserViewSet(viewsets.ModelViewSet):
         self.get_permissions()
         if request.method == 'POST':
             serializer = self.get_serializer(
-                data=request.data
+                data=request.data,
+                fields=('user', 'photo', 'name', 'industry', 'web')
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()

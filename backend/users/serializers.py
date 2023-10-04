@@ -10,6 +10,18 @@ from .models import Activity, CustomerProfile, Industry, Stack, WorkerProfile
 User = get_user_model()
 
 
+class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop('fields', None)
+        super().__init__(*args, **kwargs)
+
+        if fields is not None:
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
+
 class UserCreateSerializer(
         djoser_serializers.UserCreatePasswordRetypeSerializer
 ):
@@ -75,24 +87,31 @@ class IndustrySerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
-class GetCustomerProfileSerializer(serializers.ModelSerializer):
+class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     photo = Base64ImageField(required=False)
     industry = IndustrySerializer(many=False, read_only=True)
 
     class Meta:
         model = CustomerProfile
-        fields = ('user', 'photo', 'name', 'industry', 'web')
+        fields = ('user', 'photo', 'email', 'name', 'industry', 'web')
 
 
-class PostCustomerProfileSerializer(serializers.ModelSerializer):
+class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     photo = Base64ImageField(required=False)
     industry = IndustrySerializer(many=False)
 
     class Meta:
         model = CustomerProfile
-        fields = ('user', 'photo', 'name', 'industry', 'web')
+        fields = ('user', 'photo', 'email', 'name', 'industry', 'web')
+
+    def validate_user(self, user):
+        if CustomerProfile.objects.filter(user_id=user.id):
+            raise ValidationError(
+                'Профиль уже существует'
+            )
+        return user
 
     def validate_industry(self, industry):
         if not industry:
@@ -113,11 +132,8 @@ class PostCustomerProfileSerializer(serializers.ModelSerializer):
         industry_data = validated_data.pop('industry')
         CustomerProfile.objects.filter(user=user).delete()
         industry, status = Industry.objects.get_or_create(**industry_data)
-        return super().update(
-            validated_data,
-            CustomerProfile.objects.create(
-                user_id=user.id,
-                industry=industry,
-                **validated_data
-            )
+        return CustomerProfile.objects.create(
+            user_id=user.id,
+            industry=industry,
+            **validated_data
         )
