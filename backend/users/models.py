@@ -171,9 +171,11 @@ class CustomerProfile(models.Model):
     )
 
     email = models.EmailField(
-        verbose_name='публичный email address для связи',
+        verbose_name='публичный email для связи',
         max_length=254,
         db_index=True,
+        blank=True,
+        null=True,
         unique=True,
     )
 
