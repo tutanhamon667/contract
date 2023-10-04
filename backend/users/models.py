@@ -120,10 +120,12 @@ class WorkerProfile(models.Model):
     )
     first_name = models.CharField(
         max_length=150,
+        default=None,
     )
 
     last_name = models.CharField(
         max_length=150,
+        default=None,
     )
     photo = models.ImageField(
         upload_to='bio/images/',
@@ -163,12 +165,17 @@ class WorkerProfile(models.Model):
         default=None,
         verbose_name='Дипломы, сертификаты, грамоты'
     )
-    diploma_start_year = models.IntegerField(verbose_name='Начало учебы')
-    diploma_finish_year = models.IntegerField(verbose_name='Окончание учебы')
-    degree = models.CharField(verbose_name='Научная степень', max_length=150)
-    faculty = models.CharField(verbose_name='Факультет', max_length=150)
+    diploma_start_year = models.IntegerField(verbose_name='Начало учебы',
+                                             default=2023)
+    diploma_finish_year = models.IntegerField(verbose_name='Окончание учебы',
+                                              default=2023)
+    degree = models.CharField(verbose_name='Научная степень', max_length=150,
+                              default='Бакалавриат')
+    faculty = models.CharField(verbose_name='Факультет', max_length=150,
+                               default=None,)
     education = models.CharField(blank=False,
                                  max_length=150,
+                                 default=None,
                                  verbose_name='Факультет',)
     web = models.URLField(
         blank=True,

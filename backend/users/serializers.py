@@ -70,7 +70,7 @@ class UserViewSerialiser(serializers.ModelSerializer):
 
 class WorkerProfileSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    contacts = ContactsSerializer(many=True)
+    contacts = ContactsSerializer(source='contacts_set', many=True)
     job_example = Base64ImageField(required=True)
     diploma = Base64ImageField(required=True)
 
