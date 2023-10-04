@@ -1,0 +1,25 @@
+.employer-complete-form {
+  max-width: 610px;
+  margin: 0 auto;
+}
+
+.employer-complete-form__image-input {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 0;
+}
+
+.employer-complete-form__input-text {
+  margin: 32px 0 16px;
+  color: #3F3F3F;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.employer-complete-form__contacts-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 12px 16px;
+}

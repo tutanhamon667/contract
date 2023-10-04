@@ -5,17 +5,23 @@ import { Context } from "../../context/context";
 import "./Register.css";
 
 const Register = () => {
-  const {authenticated} = React.useContext(Context);
+  const { authenticated, currentUser } = React.useContext(Context);
   const location = useLocation();
 
-  if (authenticated) {
-    return <Navigate to={"/"} state={{ from: location }} />;
+  function onSubmit(values) {
+    globalThis.role = values.is_customer ? "employer" : values.is_worker && "freelancer";
   }
+
+  if (authenticated) {
+    /* eslint no-undef: "off" */ // globalThis.role is defined in onSubmit function
+    return <Navigate to={`/${role}/${currentUser.id}/complete`} state={{ from: location }} />;
+  }
+
   return (
     <div className="wrapper">
       <div className="container">
         <h1 className="title">Регистрация</h1>
-        <RegisterForm/>
+        <RegisterForm onSubmitHandler={onSubmit}/>
       </div>
     </div>
   );

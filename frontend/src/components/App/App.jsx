@@ -9,13 +9,14 @@ import Login from "../../pages/Login/Login";
 import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 import { SignOut } from "../SignOut/SignOut";
 import { ProtectedRoute } from "../../services/PotectedRouter";
-import FreelancerAccount from "../FreelancerAccount/FreelancerAccount";
+import ProfileFreelancer from "../../pages/Profiles/ProfileFreelancer/ProfileFreelancer";
 import { FreelancerCompleteForm } from "../Forms/FreelancerCompleteForm/FreelancerCompleteForm";
+import { EmployerCompleteForm } from '../Forms/EmployerCompleteForm/EmployerCompleteForm';
 import "./App.css";
+import ResetPass from "../../pages/ResetPass/ResetPass";
 
 function App() {
-  // const [authenticated, setAuthenticated] = React.useState(true);
-  const [authenticated, setAuthenticated] = React.useState(false);
+  const [authenticated, setAuthenticated] = React.useState(true);
   const [currentUser, setCurrentUser] = React.useState({
     id: "5",
     first_name: "Иван",
@@ -45,13 +46,16 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route element={<ProtectedRoute />}>
-              <Route path="freelancer/:freelancerId" element={<FreelancerAccount />} />
+              <Route path="freelancer/:freelancerId" element={<ProfileFreelancer />} />
               <Route path="freelancer/:freelancerId/complete" element={<FreelancerCompleteForm />} />
+
+              <Route path="employer/:employerId/complete" element={<EmployerCompleteForm />} />
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
             <Route path="signin" element={<Login />} />
             <Route path="forgot-password" element={<ForgotPass />} />
+            <Route path="reset-password" element={<ResetPass />} />
             <Route path="signout" element={<SignOut />} />
             <Route path="*" element={<NotFound />} />
           </Route>

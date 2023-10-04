@@ -6,6 +6,7 @@ import "./SetNewPassForm.css";
 
 const SetNewPassForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [buttonClicked, setButtonClicked] = React.useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const handleSubmit = (evt) => {
@@ -29,6 +30,7 @@ const SetNewPassForm = () => {
       });
       console.log(values);
     }
+    setButtonClicked(true);
   };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -46,8 +48,8 @@ const SetNewPassForm = () => {
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             pass={togglePasswordVisibility}
             name="password"
             onChange={handleChange}
@@ -60,8 +62,8 @@ const SetNewPassForm = () => {
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             name="re_password"
             onChange={handleChange}
             value={values.re_password || ""}
@@ -71,8 +73,12 @@ const SetNewPassForm = () => {
         </div>
         <Button
           text="Продолжить"
-          width={399}
+          width={400}
           type="submit"
+          disabled={
+            (!isValid || !values.password || !values.re_password) &&
+            buttonClicked
+          }
         />
       </div>
     </form>

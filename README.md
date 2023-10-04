@@ -1,5 +1,31 @@
 # Платформа для фрилансеров и поиска заказов для IT специалиста [freelancing-platform-project]
 
+## Фронтенд
+
+### Окружение
+
+- [Node.js 18 (LTS) и новее](https://nodejs.org/en/download)
+
+### Запуск фронтенд-сервера
+
+Перейти в директорию `frontend` и установить зависимости:
+
+```sh
+cd frontend
+npm install
+```
+
+Запустить фронтенд-сервер:
+
+```sh
+npm start
+```
+
+- Фронтенд-сервер запустится по адресу http://localhost:3000
+
+- Ссылка на просмотр фронта, загруженного на GitHub Pages (не всегда содержит последние изменения):
+  https://freelancing-platform-practicum.github.io/freelancing-platform-project/
+
 ## Бэкенд
 
 ### Окружение
@@ -185,29 +211,3 @@ JSON схема передаваемых данных
     "re_new_password": "ещё раз новый пароль"
 }
 ```
-
-## Фронтенд
-
-### Окружение
-
-- [Node.js 18 (LTS) и новее](https://nodejs.org/en/download)
-
-### Запуск фронтенд-сервера
-
-Перейти в директорию `frontend` и установить зависимости:
-
-```sh
-cd frontend
-npm install
-```
-
-Запустить фронтенд-сервер:
-
-```sh
-npm start
-```
-
-- Фронтенд-сервер запустится по адресу http://localhost:3000
-
-- Ссылка на просмотр фронта, загруженного на GitHub Pages (не всегда содержит последние изменения):
-https://freelancing-platform-practicum.github.io/freelancing-platform-project/
