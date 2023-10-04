@@ -1,29 +1,37 @@
 .content {
   margin: 0 auto;
-  max-width: 1440px;
 }
 
 .content__order-container {
   padding: 0 100px 80px 100px;
-  background: #F2F1EE;
+  background: #f2f1ee;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .content__border {
   height: 60px;
   border-top-left-radius: 60px;
   border-top-right-radius: 60px;
-  background: #F2F1EE;
+  background: #f2f1ee;
 }
 
 .content__image-decorate {
   height: 30px;
   margin-top: 158px;
   margin-bottom: 40px;
-  border-top: solid 1px  #fff ;
-  border-bottom: solid 1px  #fff ;
-  background-image: url(../../images/12.svg);
-  background-size: contain;
-  background-repeat: no-repeat;
+  border-top: solid 1px #fff;
+  border-bottom: solid 1px #fff;
+  color: #fff;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+  text-transform: lowercase;
+  white-space: pre-wrap;
 }
 
 /*

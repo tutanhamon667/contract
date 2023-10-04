@@ -6,7 +6,6 @@
 
 
 .header__container {
-  max-width: 1540px;
   padding: 0 24px;
   min-height: 56px;
   display: flex;
@@ -15,7 +14,6 @@
 }
 
 .header-with-background {
-  background-color: #3f3f3f;
 }
 
 .header__logo {
