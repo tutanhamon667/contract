@@ -60,11 +60,11 @@ class Stack(models.Model):
     name = models.CharField(
         verbose_name='Необходимый навык',
         max_length=50,
-        unique=True
+        unique=False
     )
     slug = models.SlugField(
         max_length=50,
-        unique=True,
+        unique=False,
         validators=[RegexValidator(
             regex=r'^[-a-zA-Z0-9_]+$',
             message='Используйте допустимые символы!'
@@ -143,6 +143,36 @@ class WorkerProfile(models.Model):
         verbose_name='Дипломы, сертификаты, грамоты'
     )
     # education
+    web = models.URLField(
+        blank=True,
+        verbose_name='Личный сайт'
+    )
+
+
+class CustomerProfile(models.Model):
+    user = models.OneToOneField(
+        Member,
+        on_delete=models.PROTECT
+    )
+
+    photo = models.ImageField(
+        upload_to='about/images/',
+        null=True,
+        default=None,
+        blank=True,
+        verbose_name='Фото или логотип'
+    )
+
+    name = models.CharField(
+        max_length=150,
+        verbose_name='Название компании или ваше имя'
+    )
+
+    industry = models.CharField(
+        max_length=255,
+        verbose_name='Сфера деятельности'
+    )
+
     web = models.URLField(
         blank=True,
         verbose_name='Личный сайт'
