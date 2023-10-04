@@ -1,15 +1,18 @@
 import "./Main.css";
 import React from "react";
 import StartWork from "../StartWork/StartWork";
-import OperationMode from "../OperationMode/OperationMode";
 import FreelanceOrder from "../FreelanceOrder/FreelanceOrder";
 
 function Main() {
+
   return (
     <main className="content">
       <StartWork />
-      <OperationMode />
-      <FreelanceOrder/>
+      <div className="content__image-decorate"></div>
+      <div className="content__border"></div>
+      <div className="content__order-container">
+        <FreelanceOrder />
+      </div>
     </main>
   );
 }

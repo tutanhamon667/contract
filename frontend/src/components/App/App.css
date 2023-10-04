@@ -1,0 +1,9 @@
+#root {
+  font-family: Inter, Arial, sans-serif;
+  background: #F2F1EE;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+}

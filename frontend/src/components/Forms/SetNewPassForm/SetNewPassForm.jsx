@@ -1,11 +1,12 @@
 import React from "react";
 import Button from "../../Button/Button";
-import useFormAndValidation from "../../hooks/useFormAndValidation";
-import InputAuth from "../../InputAuth/InputAuth";
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
+import InputText from "../../Inputs/InputText/InputText";
 import "./SetNewPassForm.css";
 
 const SetNewPassForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [buttonClicked, setButtonClicked] = React.useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const handleSubmit = (evt) => {
@@ -16,19 +17,20 @@ const SetNewPassForm = () => {
       newErrors = { ...newErrors, password: "Введите пароль" };
     }
 
-    if (!values.confirmPassword) {
-      newErrors = { ...newErrors, confirmPassword: "Повторите пароль" };
+    if (!values.re_password) {
+      newErrors = { ...newErrors, re_password: "Повторите пароль" };
     }
 
     setErrors({ ...errors, ...newErrors });
-    if (isValid && values.password && values.confirmPassword) {
+    if (isValid && values.password && values.re_password) {
       setValues({
         ...values,
         password: "",
-        confirmPassword: "",
+        re_password: "",
       });
       console.log(values);
     }
+    setButtonClicked(true);
   };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -41,13 +43,13 @@ const SetNewPassForm = () => {
           <p className="setNewPass__text">
             Придумайте новый пароль для восстановления доступа к аккаунту.
           </p>
-          <InputAuth
+          <InputText
             placeholder="Новый пароль"
             type={showPassword ? "text" : "password"}
-            autocomplete="new-password"
+            autoComplete="new-password"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             pass={togglePasswordVisibility}
             name="password"
             onChange={handleChange}
@@ -55,27 +57,28 @@ const SetNewPassForm = () => {
             error={errors.password}
             errorMessage={errors.password}
           />
-          <InputAuth
+          <InputText
             placeholder="Повторите пароль"
             type={showPassword ? "text" : "password"}
-            autocomplete="new-password"
+            autoComplete="new-password"
             marginTop={20}
-            width={610}
-            height={46}
-            name="confirmPassword"
+            width={400}
+            height={60}
+            name="re_password"
             onChange={handleChange}
-            value={values.confirmPassword || ""}
-            error={errors.confirmPassword}
-            errorMessage={errors.confirmPassword}
+            value={values.re_password || ""}
+            error={errors.re_password}
+            errorMessage={errors.re_password}
           />
         </div>
         <Button
           text="Продолжить"
-          width={399}
+          width={400}
           type="submit"
-          //   disabled={
-          //     !values.password || !values.confirmPassword || isDisabled(errors)
-          //   }
+          disabled={
+            (!isValid || !values.password || !values.re_password) &&
+            buttonClicked
+          }
         />
       </div>
     </form>

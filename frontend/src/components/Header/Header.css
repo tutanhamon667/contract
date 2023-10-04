@@ -1,28 +1,73 @@
 .header {
-  height: 80px;
-  background-color: #93A0FF;
+  background-color: none;
+  margin: 16px 76px 0 76px;
+  border-radius: 12px;
 }
 
+
 .header__container {
-  margin: auto;
-  padding: 20px 100px 0;
   max-width: 1540px;
+  padding: 0 24px;
+  min-height: 56px;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+}
+
+.header-with-background {
+  background-color: #3f3f3f;
 }
 
 .header__logo {
-  background-image: url(../../images/group98.svg);
+  background-image: url(../../images/logo.svg);
+  background-color: none;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  width: 96px;
+  height: 32px;
+  cursor: pointer;
+  background-color: transparent;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.header__logoBlack {
+  background-image: url(../../images/logo-black.svg);
   background-position: center;
   border: none;
   border-radius: 5px;
-  width: 85px;
-  height: 42.5px;
+  width: 96px;
+  height: 32px;
   cursor: pointer;
+  background-color: transparent;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.header__logo-black {
+  background-image: url(../../images/logo-black.svg);
 }
 
 .header__userInfo {
   display: flex;
+  align-items: center;
+  column-gap: 20px;
+}
+
+.header__name {
+  color: white;
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.header__avatar {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 50px;
 }

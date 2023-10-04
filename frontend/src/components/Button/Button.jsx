@@ -1,19 +1,47 @@
 import React from "react";
 import "./Button.css";
 
-const Button = ({ text, width, height, inheritTheme, type, onClick, white, disabled }) => {
+const Button = ({
+  text,
+  width,
+  height,
+  marginTop,
+  marginBottom,
+  buttonSecondary,
+  buttonBlack,
+  buttonWhite,
+  type,
+  onClick,
+  disabled,
+  border,
+  fontSize,
+  fontWeight,
+  opacity,
+}) => {
   return (
     <button
-      className={`buttonActHov ${inheritTheme ? "buttonInherit" : "button"} ${white && "buttonWhite"}`}
+      className={`button${
+        buttonSecondary ? " buttonSecondary" : disabled ? " buttonDisabled" : ""
+      } ${buttonWhite && " buttonWhite"} ${buttonBlack && " buttonBlack"}`}
       style={{
         width,
         height,
+        marginTop,
+        marginBottom,
+        border,
+        fontSize,
+        fontWeight,
+        opacity,
       }}
       type={type}
       onClick={onClick}
       disabled={disabled}
     >
-      <p className={`${inheritTheme ? "button__textBlack" : "button__text"}`}>
+      <p
+        className={`button__text${
+          buttonSecondary ? " buttonSecondary__text" : ""
+        }  button__text${buttonBlack ? " buttonBlack__text" : ""}`}
+      >
         {text}
       </p>
     </button>

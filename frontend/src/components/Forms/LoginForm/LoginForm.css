@@ -15,14 +15,15 @@
 }
 
 .login__forgotLink {
-  color: #585858;
-  font-family: "Inter";
-  font-size: 20px;
+  text-align: end;
+  color: #3F3F3F;
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
+  line-height: 24px;
   text-decoration-line: underline;
   text-underline-offset: 4px;
-  margin: 24px 0 60px;
+  margin: 20px 0 52px;
   transition: all 0.2s ease-in-out;
 }
 .login__forgotLink:hover{
@@ -33,20 +34,20 @@
   margin-top: 24px;
   display: flex;
   align-items: center;
-  color: #585858;
-  font-family: "Inter";
-  font-size: 20px;
+  color: #3F3F3F;
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 .login__footerLinkDescription {
-  margin: 0 6px 0 0;
+  margin: 0 12px 0 0;
 }
 .login__footerLink {
   text-decoration: underline;
   cursor: pointer;
-  color: #585858;
+  color: #3F3F3F;
+  text-underline-offset: 4px;
   transition: all 0.2s ease-in-out;
 }
 .login__footerLink:hover {

@@ -1,20 +1,47 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Context } from "../../../context/context";
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import Button from "../../Button/Button";
-import useFormAndValidation from "../../hooks/useFormAndValidation";
-import InputAuth from "../../InputAuth/InputAuth";
+import InputText from "../../Inputs/InputText/InputText";
 // import LinkBar from "../../LinkBar/LinkBar";
 import "./RegisterForm.css";
 
-const RegisterForm = () => {
+const RegisterForm = ({ onSubmitHandler }) => {
+  const { logIn } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
-  const [role, setRole] = React.useState("customer");
-  const { values, errors, isValid, handleChange, setValues, setErrors } =
-    useFormAndValidation();
+  const [buttonClicked, setButtonClicked] = React.useState(false);
+  const [role, setRole] = React.useState({
+    is_customer: true,
+    is_worker: false,
+  });
+  const {
+    values, errors, isValid, handleChange, setValues, setErrors
+  } = useFormAndValidation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const toggleRole = (isCustomer) => {
+    setRole({
+      is_customer: isCustomer,
+      is_worker: !isCustomer,
+    });
+    setValues({
+      ...values,
+      is_customer: role.is_customer,
+      is_worker: role.is_worker,
+    });
+  };
+
+  React.useEffect(() => {
+    setValues((prevValues) => ({
+      ...prevValues,
+      is_customer: role.is_customer,
+      is_worker: role.is_worker,
+    }));
+  }, [role.is_customer, role.is_worker, setValues]);
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -28,16 +55,16 @@ const RegisterForm = () => {
     if (!values.password) {
       newErrors = { ...newErrors, password: "Введите пароль" };
     }
-    if (!values.confirmPassword) {
-      newErrors = { ...newErrors, confirmPassword: "Повторите пароль" };
+    if (!values.re_password) {
+      newErrors = { ...newErrors, re_password: "Повторите пароль" };
     }
 
-    if (!values.firstName) {
-      newErrors = { ...newErrors, firstName: "Введите имя" };
+    if (!values.first_name) {
+      newErrors = { ...newErrors, first_name: "Введите имя" };
     }
 
-    if (!values.lastName) {
-      newErrors = { ...newErrors, lastName: "Введите фамилию" };
+    if (!values.last_name) {
+      newErrors = { ...newErrors, last_name: "Введите фамилию" };
     }
 
     setErrors({ ...errors, ...newErrors });
@@ -46,113 +73,139 @@ const RegisterForm = () => {
       isValid &&
       values.email &&
       values.password &&
-      values.confirmPassword &&
-      values.firstName &&
-      values.lastName
+      values.re_password &&
+      values.first_name &&
+      values.last_name
     ) {
       console.log(values);
       setValues({
         ...values,
         email: "",
-        firstName: "",
-        lastName: "",
+        first_name: "",
+        last_name: "",
         password: "",
-        confirmPassword: "",
-        role: role
+        re_password: "",
+        is_customer: role.is_customer,
+        is_worker: role.is_worker,
       });
+
+      logIn();
+
+      onSubmitHandler(values);
     }
+    setButtonClicked(true);
   };
+
   return (
     <form className="register" onSubmit={handleSubmit}>
       <div className="register__form">
         <div className="register__formRoleContainer">
           <Button
             text="Я заказчик"
-            width={295}
-            height={46}
+            width={200}
+            height={52}
             type="button"
-            inheritTheme
-            white={role === "customer" ? true : false}
-            onClick={() => setRole("customer")}
+            buttonSecondary
+            border="none"
+            fontSize={20}
+            fontWeight={600}
+            opacity={role.is_worker && 0.7}
+            buttonWhite={role.is_customer}
+            onClick={() => toggleRole(true)}
           />
           <Button
             text="Я фрилансер"
-            width={295}
-            height={46}
+            width={200}
+            height={52}
             type="button"
-            inheritTheme
-            white={role === "freelancer" ? true : false}
-            onClick={() => setRole("freelancer")}
+            buttonSecondary
+            border="none"
+            fontSize={20}
+            fontWeight={600}
+            opacity={role.is_customer && 0.7}
+            buttonWhite={!role.is_customer}
+            onClick={() => toggleRole(false)}
           />
         </div>
-        <InputAuth
+        <InputText
           placeholder="Имя"
           marginTop={20}
-          width={610}
-          height={46}
+          width={400}
+          height={60}
           type="text"
-          name="firstName"
-          autocomplete="given-name"
+          name="first_name"
+          autoComplete="given-name"
           onChange={handleChange}
-          value={values.firstName || ""}
-          error={errors.firstName}
-          errorMessage={errors.firstName}
+          value={values.first_name || ""}
+          error={errors.first_name}
+          errorMessage={errors.first_name}
         />
-        <InputAuth
+        <InputText
           placeholder="Фамилия"
           marginTop={20}
-          width={610}
-          height={46}
+          width={400}
+          height={60}
           type="text"
-          name="lastName"
-          autocomplete="family-name"
+          name="last_name"
+          autoComplete="family-name"
           onChange={handleChange}
-          value={values.lastName || ""}
-          error={errors.lastName}
-          errorMessage={errors.lastName}
+          value={values.last_name || ""}
+          error={errors.last_name}
+          errorMessage={errors.last_name}
         />
-        <InputAuth
+        <InputText
           placeholder="Эл. почта"
           marginTop={20}
-          width={610}
+          width={400}
           type="email"
           name="email"
-          autocomplete="email"
+          autoComplete="email"
           onChange={handleChange}
           value={values.email || ""}
           error={errors.email}
           errorMessage={errors.email}
         />
-        <InputAuth
+        <InputText
           placeholder="Пароль"
           pass={togglePasswordVisibility}
           marginTop={20}
-          width={610}
-          height={46}
+          width={400}
+          height={60}
           type={showPassword ? "text" : "password"}
-          autocomplete="new-password"
+          autoComplete="new-password"
           name="password"
           onChange={handleChange}
           value={values.password || ""}
           error={errors.password}
           errorMessage={errors.password}
         />
-        <InputAuth
+        <InputText
           placeholder="Повторите пароль"
           marginTop={20}
-          width={610}
-          height={46}
+          width={400}
+          height={60}
           type={showPassword ? "text" : "password"}
-          autocomplete="new-password"
-          name="confirmPassword"
+          autoComplete="new-password"
+          name="re_password"
           onChange={handleChange}
-          value={values.confirmPassword || ""}
-          error={errors.confirmPassword}
-          errorMessage={errors.confirmPassword}
+          value={values.re_password || ""}
+          error={errors.re_password}
+          errorMessage={errors.re_password}
         />
-        <div style={{marginBottom:60}}/>
+        <div style={{ marginBottom: 60 }} />
         {/* <LinkBar /> */}
-        <Button text="Создать аккаунт" width={399} type="submit" />
+        <Button
+          text="Создать аккаунт"
+          width={400}
+          type="submit"
+          disabled={(!isValid ||
+            !values.email ||
+            !values.password ||
+            !values.re_password ||
+            !values.first_name ||
+            !values.last_name) &&
+          buttonClicked}
+        />
         <div className="register__footerLinkContainer">
           <p className="register__footerLinkDescription">Уже есть аккаунт?</p>
           <Link className="register__footerLink" to="/signin">

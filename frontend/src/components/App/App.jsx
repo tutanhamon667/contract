@@ -1,21 +1,26 @@
 import React from "react";
 import Main from "../Main/Main";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Context } from "../../context/context";
 import Layout from "../../layout/Layout";
 import NotFound from "../../pages/NotFound/NotFound";
 import Register from "../../pages/Register/Register";
 import Login from "../../pages/Login/Login";
 import ForgotPass from "../../pages/ForgotPass/ForgotPass";
-// import { ProtectedRoute } from "../../services/PotectedRouter";
-import FreelancerAccount from "../FreelancerAccount/FreelancerAccount";
-import { CurrentUser } from "../../context/context"
+import { SignOut } from "../SignOut/SignOut";
+import { ProtectedRoute } from "../../services/PotectedRouter";
+import ProfileFreelancer from "../../pages/Profiles/ProfileFreelancer/ProfileFreelancer";
+import { FreelancerCompleteForm } from "../Forms/FreelancerCompleteForm/FreelancerCompleteForm";
+import { EmployerCompleteForm } from '../Forms/EmployerCompleteForm/EmployerCompleteForm';
+import "./App.css";
+import ResetPass from "../../pages/ResetPass/ResetPass";
 
 function App() {
   const [authenticated, setAuthenticated] = React.useState(true);
   const [currentUser, setCurrentUser] = React.useState({
     id: "5",
-    firstName: "Иван",
-    lastName: "Петров",
+    first_name: "Иван",
+    last_name: "Петров",
     email: "email@mail.ru",
     password: "topSecret"
   });
@@ -28,30 +33,34 @@ function App() {
   }
 
   const logIn = () => {
-    // Тут должна быть логика по авторизации(получение/проверка/запись токена и тд)
     setAuthenticated(true);
   };
+
   const logOut = () => {
-    // Тут должна быть логика по удалению токена и закрытию сессии
     setAuthenticated(false);
   };
 
   return (
     <BrowserRouter>
-      <CurrentUser.Provider value={currentUser}>
+      <Context.Provider value={{ currentUser, authenticated, updateUser, logIn, logOut }}>
         <Routes>
-          <Route path="/" element={<Layout authenticated={authenticated} />}>
-            {/* Тут будут защищенные роуты */}
-            {/* <Route element={<ProtectedRoute />}></Route> */}
+          <Route path="/" element={<Layout />}>
+            <Route element={<ProtectedRoute />}>
+              <Route path="freelancer/:freelancerId" element={<ProfileFreelancer />} />
+              <Route path="freelancer/:freelancerId/complete" element={<FreelancerCompleteForm />} />
+
+              <Route path="employer/:employerId/complete" element={<EmployerCompleteForm />} />
+            </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
             <Route path="signin" element={<Login />} />
             <Route path="forgot-password" element={<ForgotPass />} />
-            <Route path="freelancer/:freelancerId" element={<FreelancerAccount updateUser={updateUser} />} />
+            <Route path="reset-password" element={<ResetPass />} />
+            <Route path="signout" element={<SignOut />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-      </CurrentUser.Provider>
+      </Context.Provider>
     </BrowserRouter>
   );
 }

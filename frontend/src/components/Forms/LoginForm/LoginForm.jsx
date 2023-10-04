@@ -1,13 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Context } from "../../../context/context";
 import Button from "../../Button/Button";
-import useFormAndValidation from "../../hooks/useFormAndValidation";
-import InputAuth from "../../InputAuth/InputAuth";
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
+import InputText from "../../Inputs/InputText/InputText";
 // import LinkBar from "../../LinkBar/LinkBar";
 import "./LoginForm.css";
 
 const LoginForm = () => {
+  const { logIn } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [buttonClicked, setButtonClicked] = React.useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
   const togglePasswordVisibility = () => {
@@ -29,54 +32,62 @@ const LoginForm = () => {
 
     setErrors({ ...errors, ...newErrors });
 
-    
     if (isValid && values.email && values.password) {
       console.log(values);
-      setValues({ ...values, email: "", password: ""});
+      setValues({ ...values, email: "", password: "" });
+      logIn();
     }
+    setButtonClicked(true);
   };
 
   return (
     <form className="login" onSubmit={handleSubmit}>
       <div className="login__form">
         <div className="login__inputContainer">
-          <InputAuth
+          <InputText
             placeholder="Эл. почта"
             type="email"
-            autocomplete="email"
+            autoComplete="email"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             name="email"
             onChange={handleChange}
             value={values.email || ""}
             error={errors.email}
             errorMessage={errors.email}
           />
-          <InputAuth
+          <InputText
             placeholder="Пароль"
             type={showPassword ? "text" : "password"}
-            autocomplete="current-password"
+            autoComplete="current-password"
             marginTop={20}
-            width={610}
-            height={46}
+            width={400}
+            height={60}
             pass={togglePasswordVisibility}
             name="password"
             onChange={handleChange}
-            value={values.password || ''}
+            value={values.password || ""}
             error={errors.password}
             errorMessage={errors.password}
           />
           <Link className="login__forgotLink" to="/forgot-password">
-            Забыл пароль
+            Восстановить пароль
           </Link>
         </div>
         {/* <LinkBar /> */}
-        <Button text="Войти" width={399} type="submit"/>
+        <Button
+          text="Войти"
+          width={400}
+          type="submit"
+          disabled={
+            (!isValid || !values.email || !values.password) && buttonClicked
+          }
+        />
         <div className="login__footerLinkContainer">
           <p className="login__footerLinkDescription">Нет аккаунта?</p>
           <Link className="login__footerLink" to="/signup">
-            Регистрация
+            Зарегистрируйтесь
           </Link>
         </div>
       </div>
