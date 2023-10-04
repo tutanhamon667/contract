@@ -55,6 +55,20 @@ class PasswordResetConfirmSerializer(
     pass
 
 
+class StackSerializer(serializers.ModelSerializer):
+    """Стэк технологий."""
+    class Meta:
+        model = Stack
+        fields = '__all__'
+
+
+class ActivitySerializer(serializers.ModelSerializer):
+    """Стэк технологий."""
+    class Meta:
+        model = Activity
+        fields = '__all__'
+
+
 class ContactsSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -73,6 +87,8 @@ class WorkerProfileSerializer(serializers.ModelSerializer):
     contacts = ContactsSerializer(source='contacts_set', many=True)
     job_example = Base64ImageField(required=True)
     diploma = Base64ImageField(required=True)
+    activity = ActivitySerializer(many=True)
+    stacks = StackSerializer(many=True)
 
     class Meta:
         model = WorkerProfile
@@ -82,8 +98,13 @@ class WorkerProfileSerializer(serializers.ModelSerializer):
                   'diploma_finish_year', 'degree', 'faculty', 'diploma')
 
     def create(self, validated_data):
-        contacts = validated_data.pop('contacts')
+        print(validated_data)
+        contacts = validated_data.pop('contacts_set')
+        activity = validated_data.pop('activity')
+        stacks = validated_data.pop('stacks')
         profile = WorkerProfile.objects.create(**validated_data)
+        profile.activity.set(activity)
+        profile.stacks.set(stacks)
         for contact in contacts:
             Contacts.objects.create(
                 freelancer=profile,
