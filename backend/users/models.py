@@ -60,11 +60,11 @@ class Stack(models.Model):
     name = models.CharField(
         verbose_name='Необходимый навык',
         max_length=50,
-        unique=True
+        unique=False
     )
     slug = models.SlugField(
         max_length=50,
-        unique=True,
+        unique=False,
         validators=[RegexValidator(
             regex=r'^[-a-zA-Z0-9_]+$',
             message='Используйте допустимые символы!'

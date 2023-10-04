@@ -25,8 +25,31 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 
 class IsFreelancer(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            if view.action in ['create', 'delete']:
+                return request.user.is_worker
+            return True
+        return False
+
+
+class IsCustomer(permissions.BasePermission):
     def has_permission(self, request, _):
         return (
             request.user.is_authenticated
-            and request.user.account.is_freelancer
+            and request.user.is_customer
         )
+
+
+class IsCustomerOrReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            if view.action == 'create':
+                return request.user.is_customer
+            return True
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_authenticated and request.user.is_worker:
+            return view.action in ['retrieve', 'list']
+        return True
