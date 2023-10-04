@@ -1,18 +1,15 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
-
+import { Outlet, useLocation } from "react-router-dom";
 // import Footer from "../components/Footer/Footer";
 import Header from "../components/Header/Header";
-import  "./Layout.css";
-
+import "./Layout.css";
 export default function Layout() {
-  const { pathname } = useLocation();
+  let { pathname } = useLocation();
+  const mainPageStyle = `wrapper ${(pathname === '/') ? 'wrapper_type_background-image' : ''}`
 
   return (
-    <div className='wrapper'>
-      { pathname !== '/' && <Header /> }
-
+    <div className={mainPageStyle}>
+      <Header />
       <main className="outlet">
         <Outlet />
       </main>

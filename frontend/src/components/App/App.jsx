@@ -42,7 +42,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Context.Provider value={{currentUser, authenticated, updateUser, logIn, logOut}}>
+      <Context.Provider value={{ currentUser, authenticated, updateUser, logIn, logOut }}>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route element={<ProtectedRoute />}>
