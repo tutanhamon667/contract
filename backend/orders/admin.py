@@ -1,8 +1,10 @@
 from django.contrib import admin
 
-from orders.models import (Account, Category, Client, Freelancer, Job,
-                           Response, Stack)
+from orders.models import Category, Job, Response
 
+'''
+# Временные модели пользователей. Удалить после внедрения моделей
+# пользователей из users
 
 # Модели пользователей временные для работы модели заказов #
 @admin.register(Account)
@@ -32,6 +34,7 @@ class StackAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_filter = ('name',)
     empty_value_display = '-пусто-'
+'''
 
 
 @admin.register(Category)

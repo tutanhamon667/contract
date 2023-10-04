@@ -1,29 +1,31 @@
-from django.core.validators import FileExtensionValidator
 from django.utils import timezone
 from rest_framework import serializers
 
-from api.utils import generate_thumbnail
-from orders.models import (Category, Client, Freelancer, Job, Response, Stack,
+from orders.models import (CATEGORY_CHOICES, Category, Job, JobFile, Response,
                            StackJob)
+from users.models import CustomerProfile as Client
+from users.models import Stack
+from users.models import WorkerProfile as Freelancer
+from api.utils import CustomBase64ImageField
 
 # File requiremnts
-MAX_FILE_SIZE_MB = 2
+MAX_FILE_SIZE_MB = 50
 MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024
-ALLOWED_FILE_EXT = ['.jpg', '.jpeg', '.png', '.pdf']
+ALLOWED_FILE_EXT = ['.jpg', '.jpeg', '.png']
 
 # Error messages
 FILE_OVERSIZE_ERR = f"Превышен размер файла: {MAX_FILE_SIZE_MB} МБ."
-EXT_ERR = "Недопустимый формат файла. Разрешены:" + ', '.join(ALLOWED_FILE_EXT)
+FILE_EXT_ERR = 'Допустимые типы файлов:' + ', '.join(ALLOWED_FILE_EXT)
 STACK_ERR_MSG = 'Укажите минимум 1 навык'
-CURRENT_DATE_ERR = "Срок выполнения не может быть раньше сегодняшней даты."
-PUB_DATE_ERR = "Срок выполнения не может быть раньше даты создания заказа."
+CURRENT_DATE_ERR = 'Срок выполнения не может быть раньше сегодняшней даты.'
+PUB_DATE_ERR = 'Срок выполнения не может быть раньше даты создания заказа.'
 
 
 class ClientSerializer(serializers.ModelSerializer):
     """Заказчик."""
     class Meta:
         model = Client
-        fields = ('user',)
+        fields = ('id', 'name', 'user_id',)
 
 
 class FreelancerSerializer(serializers.ModelSerializer):
@@ -37,31 +39,43 @@ class StackSerializer(serializers.ModelSerializer):
     """Стэк технологий."""
     class Meta:
         model = Stack
-        fields = '__all__'
+        fields = ('name',)
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    """Стэк технологий."""
+    name = serializers.ChoiceField(choices=CATEGORY_CHOICES)
+
+    class Meta:
+        model = Category
+        fields = ('name',)
 
 
 class ResponseSerializer(serializers.ModelSerializer):
     """Откликнуться на задание."""
-    user = serializers.IntegerField(source='user.freelancer.id')
-    job = serializers.IntegerField(source='job.id')
+    freelancer = serializers.IntegerField(source='freelancer.id',
+                                          read_only=True)
+    job = serializers.IntegerField(source='job.id',
+                                   read_only=True)
 
     class Meta:
         model = Response
-        fields = ('user', 'job',)
+        fields = ('job', 'freelancer',)
 
     def validate(self, data):
-        user = data['user']['id']
+        freelancer = data['freelancer']['id']
         job = data['job']['id']
-        if Response.objects.filter(user__id=user, job__id=job).exists():
+        if Response.objects.filter(freelancer__id=freelancer,
+                                   job__id=job).exists():
             raise serializers.ValidationError(
-                {'ошибка': 'Нельзя повторно откликнуться на задание.'}
+                {'ошибка': 'Вы уже откликнулись на задание.'}
             )
         return data
 
     def create(self, validated_data):
-        user = validated_data['user']
+        freelancer = validated_data['freelancer']
         job = validated_data['job']
-        Response.objects.get_or_create(user=user, job=job)
+        Response.objects.get_or_create(freelancer=freelancer, job=job)
         return validated_data
 
 
@@ -69,8 +83,8 @@ class RespondedSerializer(serializers.ModelSerializer):
     """Получение заданий, на которые откликнулся."""
     class Meta:
         model = Job
-        fields = ('id', 'title', 'category', 'budget',
-                  'stack', 'client', 'description')
+        fields = ('id', 'title', 'category', 'budget', 'stack',
+                  'client', 'job_files', 'description',)
 
 
 class JobListSerializer(serializers.ModelSerializer):
@@ -82,57 +96,72 @@ class JobListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = ('id', 'title', 'category', 'stack', 'client', 'budget',
-                  'description', 'files', 'is_responded')
+                  'deadline', 'description', 'job_files', 'is_responded')
 
     def get_is_responded(self, obj):
         """
         Заказы, на которые фрилансер отправил отклик.
         """
         user = self.context['request'].user
-        if user.is_anonymous:
+        if user.is_anonymous or user.is_customer:
             return False
         return Response.objects.filter(
-            user=user,
-            job=obj
-        ).exists()
+            freelancer=user,
+            job=obj).exists()
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.ask_budget:
+            data['budget'] = 'Ожидает предложений'
+        if instance.ask_deadline:
+            data['deadline'] = 'Ожидает предложений'
+        return data
+
+
+class JobFileSerializer(serializers.ModelSerializer):
+    """Изображения в профайлах"""
+    file = CustomBase64ImageField(required=True)
+
+    class Meta:
+        model = JobFile
+        fields = ('file', 'name')
+
+    def validate_file(self, value):
+        if value:
+            if value.size > MAX_FILE_SIZE:
+                raise serializers.ValidationError(FILE_OVERSIZE_ERR)
+        return value
 
 
 class JobCreateSerializer(serializers.ModelSerializer):
     """Создание задания."""
-    client = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    client_id = serializers.IntegerField(
+        source='user.id',
+        read_only=True
+    )
+
+    # client_id = serializers.SerializerMethodField()
     category = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(),
+        many=True
     )
     stack = StackSerializer(many=True,)
-    files = serializers.FileField(
-        max_length=MAX_FILE_SIZE,
-        allow_empty_file=False,
-        use_url=False,
-        required=False,
-        write_only=True,
-        validators=[
-            FileExtensionValidator(allowed_extensions=ALLOWED_FILE_EXT),
-        ],
-    )
+    job_files = JobFileSerializer(many=True,)
 
     class Meta:
         model = Job
-        fields = ('id', 'client', 'title', 'category', 'stack', 'budget',
-                  'description', 'files')
+        fields = ('client_id', 'title', 'category', 'stack',
+                  'budget', 'ask_budget', 'deadline', 'ask_deadline',
+                  'description', 'job_files',)
+
+    # def get_client_id(self, _):
+    #     return self.context['request'].user.id
 
     def validate_stack(self, data):
         stack = self.initial_data.get('stack')
         if stack == []:
             raise serializers.ValidationError(STACK_ERR_MSG)
         return data
-
-    def validate_files(self, value):
-        if value:
-            file_extension = value.name.lower().split('.')[-1]
-            if (value.size > MAX_FILE_SIZE
-                    or file_extension not in ALLOWED_FILE_EXT):
-                raise serializers.ValidationError(FILE_OVERSIZE_ERR)
-        return value
 
     def validate_deadline(self, value):
         if value < timezone.now().date():
@@ -143,29 +172,61 @@ class JobCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         stack_data = validated_data.pop('stack')
-        files_data = validated_data.pop('files')
         category_data = validated_data.pop('category')
+        job_files_data = validated_data.pop('job_files')
+        ask_budget = validated_data.pop('ask_budget', False)
+        ask_deadline = validated_data.pop('ask_deadline', False)
+        if ask_budget:
+            validated_data['budget'] = 'Жду предложений'
+        if ask_deadline:
+            validated_data['deadline'] = 'Жду предложений'
         job = Job.objects.create(**validated_data)
+        for file in job_files_data:
+            JobFile.objects.create(job=job, file=file['file'])
         for skill in stack_data:
-            stack_obj = Stack.objects.get_or_create(
-                name=skill.get('name')
+            name = skill.get('name')
+            stack_obj, created = Stack.objects.get_or_create(
+                name=name
             )
-            StackJob.objects.get_or_create(job=job, stack=stack_obj)
-        if files_data:
-            job.files = files_data
-            job.thumbnail = generate_thumbnail(files_data)
+            StackJob.objects.get_or_create(
+                job=job, stack=stack_obj
+            )
+        # for skill in stack_data:
+        #     name = skill.get('id')
+        #     stack_obj, created = Stack.objects.get_or_create(name=name)
+        #     StackJob.objects.get_or_create(
+        #         job=job,
+        #         stack_id=skill.get('id'),
+        #     )
+
+        # for skill in stack_data:
+        #     stack_obj = Stack.objects.get_or_create(name=skill.get('name'))
+        #     StackJob.objects.create(job=job, stack=stack_obj)
         job.category.set(category_data)
         job.is_responded = False
         job.save()
         return job
 
     def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.budget = validated_data.get('budget', instance.budget)
-        instance.description = validated_data.get(
-            'description',
-            instance.description
-        )
+        instance.title = validated_data.get('title',
+                                            instance.title)
+        instance.description = validated_data.get('description',
+                                                  instance.description)
+        ask_budget = validated_data.get('ask_budget',
+                                        instance.ask_budget)
+        if ask_budget:
+            instance.budget = 'Жду предложений'
+        else:
+            instance.budget = validated_data.get('budget',
+                                                 instance.budget)
+
+        ask_deadline = validated_data.get('ask_deadline',
+                                          instance.ask_deadline)
+        if ask_deadline:
+            instance.deadline = 'Жду предложений'
+        else:
+            instance.deadline = validated_data.get('deadline',
+                                                   instance.deadline)
         category_data = validated_data.get('category')
         if category_data:
             instance.category.set(category_data)
@@ -173,15 +234,13 @@ class JobCreateSerializer(serializers.ModelSerializer):
         if stack_data:
             StackJob.objects.filter(job=instance).all().delete()
             for skill in stack_data:
-                stack_obj = Stack.objects.get_or_create(
-                    name=skill.get('name'))
-                StackJob.objects.get_or_create(job=instance, stack=stack_obj)
-
-            stack_obj.save()
-        files_data = validated_data.get('files')
-        if files_data:
-            instance.files = files_data
-            instance.thumbnail = generate_thumbnail(files_data)
+                stack_obj = Stack.objects.get_or_create(name=skill.get('name'))
+                StackJob.objects.create(job=instance, stack=stack_obj)
+        job_files_data = validated_data.get('job_files')
+        if job_files_data:
+            JobFile.objects.filter(job=instance).all().delete()
+            for file_data in job_files_data:
+                JobFile.objects.create(job=instance, **file_data)
         instance.save()
         return instance
 
