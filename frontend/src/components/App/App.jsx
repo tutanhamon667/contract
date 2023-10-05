@@ -22,7 +22,7 @@ function App() {
 
   //состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
-  const [authenticated, setAuthenticated] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(userFreelancer);
 
 

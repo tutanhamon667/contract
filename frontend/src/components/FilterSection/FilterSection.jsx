@@ -1,30 +1,28 @@
 import "./FilterSection.css";
-import React, {useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Button from "../Button/Button";
 import { Context } from "../../context/context";
 
 function FilterSection() {
-  const {authenticated} = React.useContext(Context)
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
-  const { orderFilter, authenticated} = useContext(Context);
-
-  useEffect((()=> {
-    console.log(orderFilter);
-  }),[budgetStart, budgetEnd])
+  const { currentUser, orderFilter, authenticated } = useContext(Context);
 
   const handleBudgetClean = () => {
-    setBudgetStart('');
-    setBudgetEnd('');
-  }
+    setBudgetStart("");
+    setBudgetEnd("");
+  };
 
-  const filtersContainerStyle = `filters-container  ${orderFilter && authenticated ? 'filters-conteiner__freelance ' : ''}`
+  const filtersContainerStyle = `filters-container  ${
+    orderFilter && authenticated ? "filters-conteiner__freelance " : ""
+  }`;
 
   return (
     <section className="filters">
+      {authenticated && currentUser.role === 'Заказчик' ? (
+        <Button text="Создать заказ" width={289} marginBottom={24} />
+      ) : (<></>)}
       <div className={filtersContainerStyle}>
-      {authenticated && <Button text='Создать заказ' width={289} marginBottom={24}/>}
-
         <h2 className="filters-container__title">Специализация</h2>
         <div>
           <input
@@ -118,17 +116,17 @@ function FilterSection() {
             type="text"
             id="filters-budget__start"
             className="filters-budget"
-            value={budgetStart || ''}
-            placeholder='от'
+            value={budgetStart || ""}
+            placeholder="от"
             onChange={(e) => setBudgetStart(e.target.value)}
             required
           />
-           <input
+          <input
             type="text"
             id="filters-budget__end"
             className="filters-budget"
-            value={budgetEnd || ''}
-            placeholder='до'
+            value={budgetEnd || ""}
+            placeholder="до"
             onChange={(e) => setBudgetEnd(e.target.value)}
             required
           />
@@ -136,7 +134,12 @@ function FilterSection() {
       </div>
       <div className="filters-buttons">
         <Button text="Применить фильтр" width={289} />
-        <Button text="Очистить фильтры" width={289} buttonSecondary onClick={handleBudgetClean}/>
+        <Button
+          text="Очистить фильтры"
+          width={289}
+          buttonSecondary
+          onClick={handleBudgetClean}
+        />
       </div>
     </section>
   );

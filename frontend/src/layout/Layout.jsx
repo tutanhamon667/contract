@@ -4,7 +4,6 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "../components/Header/Header";
 import { Context } from "../context/context";
 import "./Layout.css";
-import { Context } from "../context/context";
 
 export default function Layout({ setAuthenticated, setCurrentUser }) {
 
