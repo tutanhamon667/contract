@@ -1,0 +1,36 @@
+.profile__left-column-info {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  width: 289px;
+  box-sizing: border-box;
+}
+
+.profile__info-main-text {
+  margin-top: 8px;
+  color: #7b7b7b
+}
+
+.profile_right-column {
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
+.profile__file-container {
+  display: flex;
+  column-gap: 8px;
+}
+
+.profile__file {
+  width: 140px;
+  height: 140px;
+  background-color: #C6C6C6;
+  border-radius: 12px;
+}
+
+.profile__specialization {
+  color: #7b7b7b;
+}

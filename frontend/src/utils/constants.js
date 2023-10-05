@@ -4,7 +4,11 @@ export const userFreelancer = {
   last_name: "Петров",
   email: "email@mail.ru",
   password: "topSecret1",
-  role: "Фрилансер"
+  role: "Фрилансер",
+  rate: "300",
+  portfolio: "https://myportfolio.ru",
+  skills: ['CSS', 'HTML', 'JavaScript'],
+  education: 'МГУ имени М.В. Ломоносова',
 };
 
 export const userCustomer = {

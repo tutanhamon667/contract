@@ -8,18 +8,19 @@ import Register from "../../pages/Register/Register";
 import Login from "../../pages/Login/Login";
 import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 import { SignOut } from "../SignOut/SignOut";
-import { ProtectedRoute } from "../../services/PotectedRouter";
+// import { ProtectedRoute } from "../../services/PotectedRouter";
 import ProfileFreelancer from "../../pages/Profiles/ProfileFreelancer/ProfileFreelancer";
 import { FreelancerCompleteForm } from "../Forms/FreelancerCompleteForm/FreelancerCompleteForm";
 import { EmployerCompleteForm } from '../Forms/EmployerCompleteForm/EmployerCompleteForm';
 import "./App.css";
 import ResetPass from "../../pages/ResetPass/ResetPass";
 import ProfileCustomer from "../../pages/Profiles/ProfileCustomer/ProfileCustomer";
-// import { userCustomer, userFreelancer } from "../../utils/constants"
+import { userCustomer, userFreelancer } from "../../utils/constants"
+import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(false);
-  const [currentUser, setCurrentUser] = React.useState({});
+  const [authenticated, setAuthenticated] = React.useState(true);
+  const [currentUser, setCurrentUser] = React.useState(userCustomer);
 
   function updateUser(userEmail) {
     setCurrentUser({
@@ -47,13 +48,13 @@ function App() {
                 setAuthenticated={setAuthenticated}
                 setCurrentUser={setCurrentUser}
               />}>
-            <Route element={<ProtectedRoute />}>
+            {/* <Route element={<ProtectedRoute />}> */}
               <Route path="customer/:id" element={<ProfileCustomer />} />
               <Route path="freelancer/:id" element={<ProfileFreelancer />} />
               <Route path="freelancer/:id/complete" element={<FreelancerCompleteForm />} />
-
+              <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
               <Route path="employer/:employerId/complete" element={<EmployerCompleteForm />} />
-            </Route>
+            {/* </Route> */}
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
             <Route
