@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
+import { Context } from "../../context/context";
+import { userCustomer, userFreelancer } from "../../utils/constants";
 import "./OperationMode.css";
 
 function OperationMode({ operationMode, setOperationMode }) {
-
+  const {authenticated, currentUser} = React.useContext(Context)
 
 
   return (
@@ -15,7 +17,7 @@ function OperationMode({ operationMode, setOperationMode }) {
         }
         onClick={() => setOperationMode(true)}
       >
-        Tаски
+        {!authenticated ? 'Фрилансеры' : (currentUser === userFreelancer ? 'Таски' : 'Фрилансеры')}
       </button>
       <button
         className={
@@ -25,7 +27,8 @@ function OperationMode({ operationMode, setOperationMode }) {
         }
         onClick={() => setOperationMode(false)}
       >
-        Фрилансеры
+        {!authenticated && 'Таски'}
+        {authenticated && 'Мои заказы'}
       </button>
     </section>
   );

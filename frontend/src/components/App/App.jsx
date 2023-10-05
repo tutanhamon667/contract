@@ -19,8 +19,8 @@ import { userCustomer, userFreelancer } from "../../utils/constants"
 import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(true);
-  const [currentUser, setCurrentUser] = React.useState(userCustomer);
+  const [authenticated, setAuthenticated] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState(userFreelancer);
 
   function updateUser(userEmail) {
     setCurrentUser({

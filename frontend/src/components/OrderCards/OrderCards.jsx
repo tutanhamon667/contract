@@ -8,7 +8,7 @@ const OrderCards = ({ operationMode }) => {
 
   return (
     <div className="orderCards">
-      {operationMode ? <OrderCard   cards={tasks}/> : <OrderCard   cards={frelance}/> }
+      {operationMode ? <OrderCard   cards={frelance}/> : <OrderCard   cards={tasks}/> }
 
     </div>
   );
