@@ -113,7 +113,7 @@ function FilterSection() {
             type="text"
             id="filters-budget__start"
             className="filters-budget"
-            value={budgetStart}
+            value={budgetStart || ''}
             onChange={(e) => setBudgetStart(e.target.value)}
             required
           />
@@ -121,7 +121,7 @@ function FilterSection() {
             type="text"
             id="filters-budget__end"
             className="filters-budget"
-            value={budgetEnd}
+            value={budgetEnd || ''}
             onChange={(e) => setBudgetEnd(e.target.value)}
             required
           />

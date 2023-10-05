@@ -78,7 +78,7 @@ export default function useFormAndValidation() {
       } else if (!nameRegEx.test(value)) {
         setErrors({
           ...errors,
-          [name]: 'Имя не длиннее 80 символов, состоит только из латиницы, кириллицы, арабицы, "-", "_", "@", "."'
+          [name]: 'Имя не длиннее 80 символов. Латиница, кириллица, арабица'
         });
         setIsValid(false);
       }
@@ -91,7 +91,7 @@ export default function useFormAndValidation() {
       } else if (!nameRegEx.test(value)) {
         setErrors({
           ...errors,
-          [name]: 'Фамилия не длиннее 80 символов, состоит только из латиницы, кириллицы, арабицы, "-", "_", "@", "."'
+          [name]: 'Фамилия не длиннее 80 символов. Латиница, кириллица, арабица'
         });
         setIsValid(false);
       }
