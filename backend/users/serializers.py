@@ -55,6 +55,20 @@ class PasswordResetConfirmSerializer(
     pass
 
 
+class StackCreateSerializer(serializers.ModelSerializer):
+    """Стэк технологий."""
+    class Meta:
+        model = Stack
+        fields = ('id', )
+
+
+class ActivityCreateSerializer(serializers.ModelSerializer):
+    """Стэк технологий."""
+    class Meta:
+        model = Activity
+        fields = ('id', )
+
+
 class StackSerializer(serializers.ModelSerializer):
     """Стэк технологий."""
     class Meta:
@@ -82,7 +96,7 @@ class UserViewSerialiser(serializers.ModelSerializer):
         fields = ('first_name', 'last_name')
 
 
-class WorkerProfileSerializer(serializers.ModelSerializer):
+class WorkerProfileListSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     contacts = ContactsSerializer(source='contacts_set', many=True)
     job_example = Base64ImageField(required=True)
@@ -96,6 +110,27 @@ class WorkerProfileSerializer(serializers.ModelSerializer):
                   'stacks', 'payrate', 'about', 'job_example',
                   'web', 'education', 'diploma_start_year',
                   'diploma_finish_year', 'degree', 'faculty', 'diploma')
+
+
+class WorkerProfileCreateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    contacts = ContactsSerializer(source='contacts_set', many=True)
+    job_example = Base64ImageField(required=True)
+    diploma = Base64ImageField(required=True)
+    activity = ActivityCreateSerializer(many=True)
+    stacks = StackCreateSerializer(many=True)
+
+    class Meta:
+        model = WorkerProfile
+        fields = ('user', 'first_name', 'last_name', 'contacts', 'activity',
+                  'stacks', 'payrate', 'about', 'job_example',
+                  'web', 'education', 'diploma_start_year',
+                  'diploma_finish_year', 'degree', 'faculty', 'diploma')
+
+    def validate_activity(self, attrs):
+        print(self.initial_data['activity'])
+
+        return self.initial_data['activity']
 
     def create(self, validated_data):
         print(validated_data)

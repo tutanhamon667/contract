@@ -182,6 +182,9 @@ class WorkerProfile(models.Model):
         verbose_name='Личный сайт'
     )
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 class Contacts(models.Model):
     freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
