@@ -24,7 +24,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
     def get_permissions(self):
-        if self.action == 'me':
+        if self.action in ['me', 'new_email', 'new_password']:
             return (IsUser(),)
         return super().get_permissions()
 
@@ -49,29 +49,40 @@ class UserViewSet(viewsets.ModelViewSet):
         action in ['retrieve', 'me'] дополнительно проверяет роль
         пользователя и в зависимости от этого возвращает требуемый serializer
         """
-        if self.action == 'reg_in':
-            return UserCreateSerializer
-        if self.action == 'new_email':
-            return NewEmailSerializer
-        if self.action == 'new_password':
-            return SetPasswordSerializer
-        if self.action == 'reset_password':
-            return SendEmailResetSerializer
-        if self.action == 'reset_password_confirm':
-            return PasswordResetConfirmSerializer
-        if self.action in ['retrieve', 'me']:
+        serializers = {
+            'reg_in': UserCreateSerializer,
+            'new_email': NewEmailSerializer,
+            'new_password': SetPasswordSerializer,
+            'reset_password': SendEmailResetSerializer,
+            'reset_password_confirm': PasswordResetConfirmSerializer,
+            'GET_customer': GetCustomerProfileSerializer,
+            'POST_PATCH_customer': PostCustomerProfileSerializer,
+            'GET_worker': None,
+            'POST_PATCH_worker': None
+        }
+        key = self.action
+        if key in ['retrieve', 'me']:
             if self.action == 'retrieve':
                 user = get_object_or_404(Member, id=self.kwargs.get('pk'))
             else:
                 user = self.request._user
+
             if user.is_customer and not user.is_worker:
                 if self.request.method in ['POST', 'PATCH']:
-                    return PostCustomerProfileSerializer
-                return GetCustomerProfileSerializer
-            if user.is_worker and not user.is_customer:
-                return WorkerProfileSerializer
-            raise ValueError
-        return UserViewSerialiser
+                    key = 'POST_PATCH_customer'
+                else:
+                    key = 'GET_customer'
+            elif user.is_worker and not user.is_customer:
+                if self.request.method in ['POST', 'PATCH']:
+                    key = 'POST_PATCH_worker'
+                else:
+                    key = 'GET_worker'
+            else:
+                raise ValueError('Роль пользователя не определена')
+        try:
+            return (serializers[key])
+        except KeyError:
+            return UserViewSerialiser
 
     def create(self, request, *args, **kwargs):
         """
@@ -105,9 +116,9 @@ class UserViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED
         )
 
-    @action(url_path='new_email', methods=['post'], detail=False,
-            permission_classes=(IsUser,))
+    @action(url_path='new_email', methods=['post'], detail=False)
     def new_email(self, request):
+        self.get_permissions()
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.request.user.email = serializer.data["new_email"]
@@ -117,9 +128,9 @@ class UserViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(url_path='new_password', methods=['post'], detail=False,
-            permission_classes=(IsUser,))
+    @action(url_path='new_password', methods=['post'], detail=False)
     def new_password(self, request):
+        self.get_permissions()
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.request.user.set_password(serializer.data["new_password"])
