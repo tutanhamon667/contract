@@ -18,6 +18,10 @@
   background: #f2f1ee;
 }
 
+.content__border-authorized {
+  height: 24px;
+}
+
 .content__image-decorate {
   height: 30px;
   margin-top: 158px;
