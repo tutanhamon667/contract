@@ -2,11 +2,11 @@
   background-color: none;
   margin: 16px 76px 0 76px;
   border-radius: 12px;
+  position: relative;
 }
 
 
 .header__container {
-  max-width: 1540px;
   padding: 0 24px;
   min-height: 56px;
   display: flex;
@@ -15,7 +15,7 @@
 }
 
 .header-with-background {
-  background-color: #3f3f3f;
+  background-color: black;
 }
 
 .header__logo {
@@ -57,6 +57,13 @@
   column-gap: 20px;
 }
 
+.header__profile-container {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  cursor: pointer;
+}
+
 .header__name {
   color: white;
   font-family: Inter;
@@ -70,4 +77,31 @@
   height: 40px;
   background-color: white;
   border-radius: 50px;
+}
+
+.profile__popup {
+  position: absolute;
+  right: 0;
+  width: 295px;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  row-gap: 32px;
+  box-shadow: 1px 1px 1px grey;
+  opacity: 0;
+  z-index: -5;
+}
+
+.profile__popup_show {
+  opacity: 1;
+  z-index: 5;
+}
+
+.profile__popup-signout {
+  border: none;
+  background-color: white;
+  cursor: pointer;
 }

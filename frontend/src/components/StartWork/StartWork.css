@@ -1,5 +1,7 @@
 .start-work {
-  margin-left: 100px;
+  margin: 0 auto;
+  padding-left: 100px;
+  max-width: 1440px;
 }
 
 .start-work__title {
@@ -7,12 +9,12 @@
   padding: 0;
   width: 100%;
   max-width: 622px;
-  color: #FFF;
-  font-family: 'Overpass Mono', monospace;
+  color: #fff;
+  font-family: "Overpass Mono", monospace;
   font-size: 56px;
   font-style: normal;
   font-weight: 500;
-  line-height: 64px
+  line-height: 64px;
 }
 
 .start-work__buttons-container {

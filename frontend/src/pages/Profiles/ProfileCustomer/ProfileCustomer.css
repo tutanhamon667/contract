@@ -1,0 +1,8 @@
+.form__add-info {
+  border: none;
+  background-color: white;
+  cursor: pointer;
+  color: #B5B5B5;
+  font-size: 16px;
+  align-self: self-start;
+}

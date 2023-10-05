@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 
-import "../profile.css";
+import "../Profile.css";
 import "./ProfileFreelancer.css";
 import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css";
 
@@ -12,7 +12,7 @@ import InputTags from "../../../components/Inputs/InputTags/InputTags";
 import { InputDoc } from "../../../components/Inputs/InputDoc/InputDoc";
 // import { freelancerData } from "../../utils/frelance"; // заглушка для проверки обработки данных формы
 
-export default function FreelancerAccount() {
+export default function ProfileFreelancer() {
   const [isEditable, setIsEditable] = useState(false);
   // переиспользуемый хук с Forms/FreelancerCompleteForm
   const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
@@ -59,7 +59,7 @@ export default function FreelancerAccount() {
           <h2 className="profile__title">
             {currentUser.first_name}&nbsp;{currentUser.last_name}
           </h2>
-          <p className="profile__main-text">Фрилансер</p>
+          <p className="profile__main-text">{currentUser.role}</p>
         </div>
 
         <div className="profile__separate-line"></div>

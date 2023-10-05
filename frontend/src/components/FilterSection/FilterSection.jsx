@@ -1,63 +1,135 @@
 import "./FilterSection.css";
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Button from "../Button/Button";
 
 function FilterSection() {
+
+  const [budgetStart, setBudgetStart] = useState(null);
+  const [budgetEnd, setBudgetEnd] = useState(null);
+
+  useEffect((()=> {
+    console.log(budgetStart);
+    console.log(budgetEnd);
+  }),[budgetStart, budgetEnd])
+
+  const handleBudgetClean = () => {
+    setBudgetStart('');
+    setBudgetEnd('');
+  }
+
   return (
     <section className="filters">
       <div className="filters-container filters-conteiner__freelance">
         <h2 className="filters-container__title">Специализация</h2>
         <div>
-          <input type="checkbox" id="freelance-item1" name="freelance-item1" className="filters-checkbox" value="freelance-item1" />
-          <label htmlFor="freelance-item1" className="filters-checkbox__item">дизайн</label>
+          <input
+            type="checkbox"
+            id="freelance-item1"
+            name="freelance-item1"
+            className="filters-checkbox"
+            value="freelance-item1"
+          />
+          <label htmlFor="freelance-item1" className="filters-checkbox__item">
+            дизайн
+          </label>
         </div>
         <div>
-          <input type="checkbox" id="freelance-item2" name="freelance-item2" className="filters-checkbox" value="freelance-item2" />
-          <label htmlFor="freelance-item2" className="filters-checkbox__item">разработка</label>
+          <input
+            type="checkbox"
+            id="freelance-item2"
+            name="freelance-item2"
+            className="filters-checkbox"
+            value="freelance-item2"
+          />
+          <label htmlFor="freelance-item2" className="filters-checkbox__item">
+            разработка
+          </label>
         </div>
         <div>
-          <input type="checkbox" id="freelance-item3" name="freelance-item3" className="filters-checkbox" value="freelance-item3" />
-          <label htmlFor="freelance-item3" className="filters-checkbox__item">тестирование</label>
+          <input
+            type="checkbox"
+            id="freelance-item3"
+            name="freelance-item3"
+            className="filters-checkbox"
+            value="freelance-item3"
+          />
+          <label htmlFor="freelance-item3" className="filters-checkbox__item">
+            тестирование
+          </label>
         </div>
         <div>
-          <input type="checkbox" id="freelance-item4" name="freelance-item4" className="filters-checkbox" value="freelance-item4" />
-          <label htmlFor="freelance-item4" className="filters-checkbox__item">администрирование</label>
+          <input
+            type="checkbox"
+            id="freelance-item4"
+            name="freelance-item4"
+            className="filters-checkbox"
+            value="freelance-item4"
+          />
+          <label htmlFor="freelance-item4" className="filters-checkbox__item">
+            администрирование
+          </label>
         </div>
         <div>
-          <input type="checkbox" id="freelance-item5" name="freelance-item5" className="filters-checkbox" value="freelance-item5" />
-          <label htmlFor="freelance-item5" className="filters-checkbox__item">маркетинг</label>
+          <input
+            type="checkbox"
+            id="freelance-item5"
+            name="freelance-item5"
+            className="filters-checkbox"
+            value="freelance-item5"
+          />
+          <label htmlFor="freelance-item5" className="filters-checkbox__item">
+            маркетинг
+          </label>
         </div>
         <div>
-          <input type="checkbox" id="freelance-item6" name="freelance-item6" className="filters-checkbox" value="freelance-item6" />
-          <label htmlFor="freelance-item6" className="filters-checkbox__item">контент</label>
+          <input
+            type="checkbox"
+            id="freelance-item6"
+            name="freelance-item6"
+            className="filters-checkbox"
+            value="freelance-item6"
+          />
+          <label htmlFor="freelance-item6" className="filters-checkbox__item">
+            контент
+          </label>
         </div>
         <div>
-          <input type="checkbox" id="freelance-item7" name="freelance-item7" className="filters-checkbox" value="freelance-item7" />
-          <label htmlFor="freelance-item7" className="filters-checkbox__item">разное</label>
+          <input
+            type="checkbox"
+            id="freelance-item7"
+            name="freelance-item7"
+            className="filters-checkbox"
+            value="freelance-item7"
+          />
+          <label htmlFor="freelance-item7" className="filters-checkbox__item">
+            разное
+          </label>
         </div>
       </div>
       <div className="filters-container filters-container__budget">
-      <h2 className="filters-container__title">Бюджет</h2>
-        <div>
-          <input type="checkbox" id="budget-item1" name="budget-item1" className="filters-checkbox" />
-          <label htmlFor="budget-item1" className="filters-checkbox__item">Фильтр 1</label>
-        </div>
-        <div>
-          <input type="checkbox" id="budget-item2" name="budget-item2" className="filters-checkbox" />
-          <label htmlFor="budget-item2" className="filters-checkbox__item">Фильтр 2</label>
-        </div>
-        <div>
-          <input type="checkbox" id="budget-item3" name="budget-item3" className="filters-checkbox" />
-          <label htmlFor="budget-item3" className="filters-checkbox__item">Фильтр 3</label>
-        </div>
-        <div>
-          <input type="checkbox" id="budget-item4" name="budget-item4" className="filters-checkbox" />
-          <label htmlFor="budget-item4" className="filters-checkbox__item">Фильтр 4</label>
-        </div>
+        <h2 className="filters-container__title">Бюджет</h2>
+        <form className="filters-form-budget">
+          <input
+            type="text"
+            id="filters-budget__start"
+            className="filters-budget"
+            value={budgetStart}
+            onChange={(e) => setBudgetStart(e.target.value)}
+            required
+          />
+           <input
+            type="text"
+            id="filters-budget__end"
+            className="filters-budget"
+            value={budgetEnd}
+            onChange={(e) => setBudgetEnd(e.target.value)}
+            required
+          />
+        </form>
       </div>
       <div className="filters-buttons">
-      <Button text="Применить фильтр" width={295}/>
-      <Button text="Очистить фильтры" width={295} buttonSecondary />
+        <Button text="Применить фильтр" width={295} />
+        <Button text="Очистить фильтры" width={295} buttonSecondary onClick={handleBudgetClean}/>
       </div>
     </section>
   );
