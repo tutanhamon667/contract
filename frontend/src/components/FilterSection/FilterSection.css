@@ -93,3 +93,7 @@
   border-radius: 12px;
   border: 1px solid var(--border-gray, #c6c6c6);
 }
+
+.filters-conteiner__freelance {
+  display: none;
+}

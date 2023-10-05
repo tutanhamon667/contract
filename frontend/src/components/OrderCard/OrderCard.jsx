@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./OrderCard.css";
+import { Context } from "../../context/context";
 
-const OrderCard = ({ cards }) => {
+const OrderCard = ({ cards, orderArea }) => {
   // eslint-disable-next-line array-callback-return
+
+  const { currentUser, authenticated } = useContext(Context);
   return cards.map((item) => {
     return (
       <div className="orderCard">
@@ -19,6 +22,17 @@ const OrderCard = ({ cards }) => {
             return <p className="orderCard__tag">{tag}</p>;
           })}
         </div>
+        {orderArea && (
+          <div className="orderCard__respond-button-container">
+            {currentUser.role === "Фрилансер" && authenticated ? (
+              <button className="orderCard__respond-button">
+                Откликнуться
+              </button>
+            ) : (
+              ""
+            )}
+          </div>
+        )}
       </div>
     );
   });

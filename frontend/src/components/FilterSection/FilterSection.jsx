@@ -1,15 +1,16 @@
 import "./FilterSection.css";
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext } from "react";
 import Button from "../Button/Button";
+import { Context } from "../../context/context";
 
 function FilterSection() {
 
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
+  const { orderFilter, authenticated} = useContext(Context);
 
   useEffect((()=> {
-    console.log(budgetStart);
-    console.log(budgetEnd);
+    console.log(orderFilter);
   }),[budgetStart, budgetEnd])
 
   const handleBudgetClean = () => {
@@ -17,9 +18,11 @@ function FilterSection() {
     setBudgetEnd('');
   }
 
+  const filtersContainerStyle = `filters-container  ${orderFilter && authenticated ? 'filters-conteiner__freelance ' : ''}`
+
   return (
     <section className="filters">
-      <div className="filters-container filters-conteiner__freelance">
+      <div className={filtersContainerStyle}>
         <h2 className="filters-container__title">Специализация</h2>
         <div>
           <input

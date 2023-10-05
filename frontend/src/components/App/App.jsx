@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Main from "../Main/Main";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Context } from "../../context/context";
@@ -19,14 +19,20 @@ import { userCustomer, userFreelancer } from "../../utils/constants"
 import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
 
 function App() {
-  const [authenticated, setAuthenticated] = React.useState(true);
-  const [currentUser, setCurrentUser] = React.useState(userFreelancer);
+  const [authenticated, setAuthenticated] = useState(true);
+  const [currentUser, setCurrentUser] = useState(userFreelancer);
+  //состояние отображения фильтра поиска
+  const [orderFilter, setOrderFilter] = useState(true);
 
   function updateUser(userEmail) {
     setCurrentUser({
       ...currentUser,
       email: userEmail.email
     })
+  }
+
+  const handleOrderFilter = (state) => {
+    setOrderFilter(state)
   }
 
   const logIn = () => {
@@ -39,7 +45,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Context.Provider value={{ currentUser, authenticated, updateUser, logIn, logOut }}>
+      <Context.Provider value={{ currentUser, authenticated, orderFilter, updateUser, logIn, logOut, handleOrderFilter }}>
         <Routes>
           <Route
             path="/"

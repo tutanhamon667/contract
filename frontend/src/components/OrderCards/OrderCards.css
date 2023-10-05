@@ -10,7 +10,7 @@
   background-color: #fff;
   border-radius: 10px;
   padding: 24px;
-  border: 1px solid var(--border-gray, #C6C6C6);
+  border: 1px solid var(--border-gray, #c6c6c6);
 }
 
 .orderCard__header-container {
@@ -88,4 +88,25 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+}
+
+.orderCard__respond-button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.orderCard__respond-button {
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+  padding: 8px 14px;
+  justify-content: flex-end;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid var(--border-gray, #c6c6c6);
+  background: var(--background-beige, #f2f1ee);
 }
