@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 
-import "../Profile.css";
+import "../profile.css";
 import "./ProfileCustomer.css";
 import "../ProfileFreelancer/ProfileFreelancer.css";
 import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css";

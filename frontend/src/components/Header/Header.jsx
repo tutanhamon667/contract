@@ -1,5 +1,5 @@
 import "../Header/Header.css";
-import "../../pages/Profiles/Profile.css"
+import "../../pages/Profiles/profile.css"
 import React, { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import HeaderAuth from "../HeaderAuth/HeaderAuth";

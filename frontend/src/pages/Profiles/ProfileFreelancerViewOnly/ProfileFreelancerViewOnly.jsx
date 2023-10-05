@@ -1,5 +1,5 @@
 import React from "react";
-import "../Profile.css"
+import "../profile.css"
 import "../ProfileFreelancer/ProfileFreelancer.css"
 import "./ProfileFreelancerViewOnly.css"
 
