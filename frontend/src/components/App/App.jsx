@@ -50,7 +50,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="customer/:id" element={<ProfileCustomer />} />
               <Route path="freelancer/:id" element={<ProfileFreelancer />} />
-              <Route path="freelancer/:freelancerId/complete" element={<FreelancerCompleteForm />} />
+              <Route path="freelancer/:id/complete" element={<FreelancerCompleteForm />} />
 
               <Route path="employer/:employerId/complete" element={<EmployerCompleteForm />} />
             </Route>
