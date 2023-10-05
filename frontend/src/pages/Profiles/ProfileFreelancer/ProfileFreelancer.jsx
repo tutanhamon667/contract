@@ -12,7 +12,7 @@ import InputTags from "../../../components/Inputs/InputTags/InputTags";
 import { InputDoc } from "../../../components/Inputs/InputDoc/InputDoc";
 // import { freelancerData } from "../../utils/frelance"; // заглушка для проверки обработки данных формы
 
-export default function FreelancerAccount() {
+export default function ProfileFreelancer() {
   const [isEditable, setIsEditable] = useState(false);
   // переиспользуемый хук с Forms/FreelancerCompleteForm
   const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
