@@ -20,7 +20,7 @@ import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerVie
 
 function App() {
   const [authenticated, setAuthenticated] = React.useState(true);
-  const [currentUser, setCurrentUser] = React.useState(userCustomer);
+  const [currentUser, setCurrentUser] = React.useState(userFreelancer);
 
   function updateUser(userEmail) {
     setCurrentUser({

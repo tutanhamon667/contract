@@ -17,3 +17,7 @@
     width: 100%;
     margin: 0 auto;
 }
+
+.wrapper_type_background-image-none {
+  background-image: none;
+}
