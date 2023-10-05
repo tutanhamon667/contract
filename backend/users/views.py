@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjoserView
-from rest_framework import status, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -21,6 +21,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(is_worker=True).order_by('last_name')
     http_method_names = ['get', 'post', 'patch']
     token_generator = DjoserView.token_generator
+    permission_classes = (permissions.AllowAny,)
 
     def get_permissions(self):
         if self.action == 'me':
@@ -72,6 +73,12 @@ class UserViewSet(viewsets.ModelViewSet):
             raise ValueError
         return UserViewSerialiser
 
+    def create(self, request, *args, **kwargs):
+        """
+        Метод POST запрещён для endpoint /users/
+        """
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
     def retrieve(self, request, *args, **kwargs):
         self.get_queryset()
         user = get_object_or_404(Member, id=self.kwargs.get('pk'))
@@ -82,7 +89,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset)
         return Response(serializer.data)
 
-    def update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, **kwargs):
         """
         Метод PATCH разрешён только для endpoint /me/
         """

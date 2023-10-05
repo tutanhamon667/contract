@@ -1,7 +1,5 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from orders.models import Category, Job
-from orders.models import Response as Responses
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
@@ -16,6 +14,8 @@ from api.permissions import (IsAdminOrReadOnly, IsCustomerOrReadOnly,
 from api.serializers import (CategorySerializer, JobCreateSerializer,
                              JobListSerializer, RespondedSerializer,
                              ResponseSerializer)
+from orders.models import Category, Job
+from orders.models import Response as Responses
 
 
 class CategoryViewSet(CreateListDestroytViewSet):

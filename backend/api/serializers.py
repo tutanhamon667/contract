@@ -1,12 +1,12 @@
 from django.utils import timezone
 from rest_framework import serializers
 
+from api.utils import CustomBase64ImageField
 from orders.models import (CATEGORY_CHOICES, Category, Job, JobFile, Response,
                            StackJob)
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
-from api.utils import CustomBase64ImageField
 
 # File requiremnts
 MAX_FILE_SIZE_MB = 50

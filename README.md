@@ -53,7 +53,9 @@ pip install -r requirements.txt
 Выполнить миграции:
 
 ```sh
-python manage.py makemigrations
+python manage.py makemigrations users
+python manage.py makemigrations api
+python manage.py makemigrations orders
 python manage.py migrate
 ```
 
