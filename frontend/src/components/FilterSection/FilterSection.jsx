@@ -4,7 +4,7 @@ import Button from "../Button/Button";
 import { Context } from "../../context/context";
 
 function FilterSection() {
-
+  const {authenticated} = React.useContext(Context)
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
   const { orderFilter, authenticated} = useContext(Context);
@@ -23,6 +23,8 @@ function FilterSection() {
   return (
     <section className="filters">
       <div className={filtersContainerStyle}>
+      {authenticated && <Button text='Создать заказ' width={289} marginBottom={24}/>}
+
         <h2 className="filters-container__title">Специализация</h2>
         <div>
           <input
@@ -116,7 +118,8 @@ function FilterSection() {
             type="text"
             id="filters-budget__start"
             className="filters-budget"
-            value={budgetStart}
+            value={budgetStart || ''}
+            placeholder='от'
             onChange={(e) => setBudgetStart(e.target.value)}
             required
           />
@@ -124,15 +127,16 @@ function FilterSection() {
             type="text"
             id="filters-budget__end"
             className="filters-budget"
-            value={budgetEnd}
+            value={budgetEnd || ''}
+            placeholder='до'
             onChange={(e) => setBudgetEnd(e.target.value)}
             required
           />
         </form>
       </div>
       <div className="filters-buttons">
-        <Button text="Применить фильтр" width={295} />
-        <Button text="Очистить фильтры" width={295} buttonSecondary onClick={handleBudgetClean}/>
+        <Button text="Применить фильтр" width={289} />
+        <Button text="Очистить фильтры" width={289} buttonSecondary onClick={handleBudgetClean}/>
       </div>
     </section>
   );

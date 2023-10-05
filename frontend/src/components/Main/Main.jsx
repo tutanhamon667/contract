@@ -6,7 +6,6 @@ import FreelanceOrder from "../FreelanceOrder/FreelanceOrder";
 import { Context } from "../../context/context";
 
 function Main() {
-
   const { authenticated } = useContext(Context);
   const contentBorderAuthorized = `content__border ${authenticated ? 'content__border-authorized' : ''}`
 

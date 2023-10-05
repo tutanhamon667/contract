@@ -19,10 +19,12 @@ import { userCustomer, userFreelancer } from "../../utils/constants"
 import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(true);
-  const [currentUser, setCurrentUser] = useState(userFreelancer);
+
   //состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
+  const [authenticated, setAuthenticated] = useState(true);
+  const [currentUser, setCurrentUser] = useState(userFreelancer);
+
 
   function updateUser(userEmail) {
     setCurrentUser({

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 // import Footer from "../components/Footer/Footer";
 import Header from "../components/Header/Header";
+import { Context } from "../context/context";
 import "./Layout.css";
 import { Context } from "../context/context";
 

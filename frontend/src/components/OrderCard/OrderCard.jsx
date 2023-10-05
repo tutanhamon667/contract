@@ -4,11 +4,10 @@ import { Context } from "../../context/context";
 
 const OrderCard = ({ cards, orderArea }) => {
   // eslint-disable-next-line array-callback-return
-
   const { currentUser, authenticated } = useContext(Context);
-  return cards.map((item) => {
+  return cards.map((item, index) => {
     return (
-      <div className="orderCard">
+      <div key={index} className="orderCard">
         <div className="orderCard__header-container">
           <div className="orderCard__title-container">
             <h3 className="orderCard__title">{item.title}</h3>
@@ -18,8 +17,8 @@ const OrderCard = ({ cards, orderArea }) => {
         </div>
         <p className="orderCard__description">{item.description}</p>
         <div className="orderCard__tag-container">
-          {item.tag.map((tag) => {
-            return <p className="orderCard__tag">{tag}</p>;
+          {item.tag.map((tag, index) => {
+            return <p key={index} className="orderCard__tag">{tag}</p>;
           })}
         </div>
         {orderArea && (

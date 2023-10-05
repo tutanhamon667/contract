@@ -27,7 +27,6 @@ const OrderCards = ({ operationMode }) => {
   return (
     <div className="orderCards">
       {operationMode ? <OrderCard   cards={tasks} orderArea={true}/> : <OrderCard   cards={area2 ? order : frelance} /> }
-
     </div>
   );
 };
