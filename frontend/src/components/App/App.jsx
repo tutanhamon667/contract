@@ -48,8 +48,8 @@ function App() {
                 setCurrentUser={setCurrentUser}
               />}>
             <Route element={<ProtectedRoute />}>
-              <Route path={`customer/:${currentUser.id}`} element={<ProfileCustomer />} />
-              <Route path={`freelancer/:${currentUser.id}`} element={<ProfileFreelancer />} />
+              <Route path="customer/:id" element={<ProfileCustomer />} />
+              <Route path="freelancer/:id" element={<ProfileFreelancer />} />
               <Route path="freelancer/:freelancerId/complete" element={<FreelancerCompleteForm />} />
 
               <Route path="employer/:employerId/complete" element={<EmployerCompleteForm />} />

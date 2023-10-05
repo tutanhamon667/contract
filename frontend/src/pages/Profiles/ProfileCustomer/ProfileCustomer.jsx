@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import "../Profile.css";
+import "./ProfileCustomer.css";
 import "../ProfileFreelancer/ProfileFreelancer.css";
 import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css";
 
@@ -141,6 +142,11 @@ export default function ProfileCustomer() {
               className="profile__main-text form-profile__input"
               placeholder="www.example.com"
             />
+            <button
+              type="button"
+              className="form__add-info">
+              Добавить ещё сайт или социальные сети +
+            </button>
           </div>
 
           {isEditable && (

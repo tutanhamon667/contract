@@ -15,9 +15,9 @@ function Header({ setAuthenticated, setCurrentUser }) {
   }
 
   const authPaths = pathname === '/signin' || pathname === '/signup';
-  const profilePaths = (currentUser.role === 'customer')
-    ? `/customer/${currentUser.id}`
-    : `/freelancer/${currentUser.id}`;
+  const profilePaths = (currentUser.role === 'Заказчик')
+    ? `customer/${currentUser.id}`
+    : `freelancer/${currentUser.id}`;
 
   function handleSetting() {
     setShowSetting(!showSetting)
