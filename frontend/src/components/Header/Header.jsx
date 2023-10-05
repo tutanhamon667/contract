@@ -1,10 +1,12 @@
 import "../Header/Header.css";
-import React, { useContext } from "react";
+import "../../pages/Profiles/Profile.css"
+import React, { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import HeaderAuth from "../HeaderAuth/HeaderAuth";
 import { Context } from "../../context/context"
 
-function Header() {
+function Header({ setAuthenticated, setCurrentUser }) {
+  const [showSetting, setShowSetting] = useState(false);
   const { currentUser, authenticated } = useContext(Context);
   let { pathname } = useLocation();
 
@@ -13,18 +15,49 @@ function Header() {
   }
 
   const authPaths = pathname === '/signin' || pathname === '/signup';
+  const profilePaths = (currentUser.role === 'customer')
+    ? `/customer/${currentUser.id}`
+    : `/freelancer/${currentUser.id}`;
+
+  function handleSetting() {
+    setShowSetting(!showSetting)
+  }
+
+  function signout() {
+    setAuthenticated(false)
+    setCurrentUser({})
+    setShowSetting(false)
+  }
+
+  const popStyle = `profile__popup profile_block ${showSetting ? 'profile__popup_show' : ''}`
 
   return (
     <header className={`header ${authenticated ? 'header-with-background' : ''}`}>
       <div className="header__container">
         <Link to="/" className={`header__logo ${authPaths ? 'header__logo-black' : ''}`}></Link>
         {authenticated ? (
-          <Link to={`/freelancer/${currentUser.id}`} className="header__userInfo">
+          <div
+            onClick={handleSetting}
+            className="header__profile-container"
+          >
             <p className="header__name">{giveOutNameInHeader(currentUser)}</p>
             <div className="header__avatar"></div>
-          </Link>
+          </div>
         ) : (<HeaderAuth />)
         }
+      </div>
+      <div className={popStyle}>
+        <Link
+          to={profilePaths}
+          onClick={() => setShowSetting(false)}
+          className="profile__title">
+          Настройки
+        </Link>
+        <button
+          className="profile__title profile__popup-signout"
+          onClick={signout}>
+          Выйти
+        </button>
       </div>
     </header>
   );

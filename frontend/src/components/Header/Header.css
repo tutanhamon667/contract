@@ -2,6 +2,7 @@
   background-color: none;
   margin: 16px 76px 0 76px;
   border-radius: 12px;
+  position: relative;
 }
 
 
@@ -55,6 +56,13 @@
   column-gap: 20px;
 }
 
+.header__profile-container {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  cursor: pointer;
+}
+
 .header__name {
   color: white;
   font-family: Inter;
@@ -68,4 +76,29 @@
   height: 40px;
   background-color: white;
   border-radius: 50px;
+}
+
+.profile__popup {
+  position: absolute;
+  right: 0;
+  width: 295px;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  row-gap: 32px;
+  box-shadow: 1px 1px 1px grey;
+  opacity: 0;
+}
+
+.profile__popup_show {
+  opacity: 1;
+}
+
+.profile__popup-signout {
+  border: none;
+  background-color: white;
+  cursor: pointer;
 }

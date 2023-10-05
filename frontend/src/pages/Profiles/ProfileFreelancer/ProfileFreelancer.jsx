@@ -59,7 +59,7 @@ export default function ProfileFreelancer() {
           <h2 className="profile__title">
             {currentUser.first_name}&nbsp;{currentUser.last_name}
           </h2>
-          <p className="profile__main-text">Фрилансер</p>
+          <p className="profile__main-text">{currentUser.role}</p>
         </div>
 
         <div className="profile__separate-line"></div>

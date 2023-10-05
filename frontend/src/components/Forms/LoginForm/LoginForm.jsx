@@ -6,8 +6,9 @@ import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import InputText from "../../Inputs/InputText/InputText";
 // import LinkBar from "../../LinkBar/LinkBar";
 import "./LoginForm.css";
+import { userCustomer, userFreelancer } from "../../../utils/constants";
 
-const LoginForm = () => {
+const LoginForm = ({ setAuthenticated, setCurrentUser }) => {
   const { logIn } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
   const [buttonClicked, setButtonClicked] = React.useState(false);
@@ -38,6 +39,20 @@ const LoginForm = () => {
       logIn();
     }
     setButtonClicked(true);
+
+    // временное решение входа в аккаунт
+    if (values.email === 'email@mail.ru' && values.password === 'topSecret1') {
+      setAuthenticated(true);
+      setCurrentUser(userFreelancer)
+      console.log('Вход выполнен в роли Фрилансер')
+    } else if (values.email === 'boss@mail.ru' && values.password === 'imsuperboss1') {
+      setAuthenticated(true);
+      setCurrentUser(userCustomer)
+    } else {
+      setAuthenticated(false);
+      console.log('Не правильные почта или пароль')
+    }
+    // ----------------------------------
   };
 
   return (

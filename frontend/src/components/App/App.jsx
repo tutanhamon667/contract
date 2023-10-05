@@ -9,22 +9,17 @@ import Login from "../../pages/Login/Login";
 import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 import { SignOut } from "../SignOut/SignOut";
 import { ProtectedRoute } from "../../services/PotectedRouter";
-// import ProfileFreelancer from "../../pages/Profiles/ProfileFreelancer/ProfileFreelancer";
+import ProfileFreelancer from "../../pages/Profiles/ProfileFreelancer/ProfileFreelancer";
 import { FreelancerCompleteForm } from "../Forms/FreelancerCompleteForm/FreelancerCompleteForm";
 import { EmployerCompleteForm } from '../Forms/EmployerCompleteForm/EmployerCompleteForm';
 import "./App.css";
 import ResetPass from "../../pages/ResetPass/ResetPass";
 import ProfileCustomer from "../../pages/Profiles/ProfileCustomer/ProfileCustomer";
+// import { userCustomer, userFreelancer } from "../../utils/constants"
 
 function App() {
   const [authenticated, setAuthenticated] = React.useState(false);
-  const [currentUser, setCurrentUser] = React.useState({
-    id: "5",
-    first_name: "Иван",
-    last_name: "Петров",
-    email: "email@mail.ru",
-    password: "topSecret"
-  });
+  const [currentUser, setCurrentUser] = React.useState({});
 
   function updateUser(userEmail) {
     setCurrentUser({
@@ -45,17 +40,30 @@ function App() {
     <BrowserRouter>
       <Context.Provider value={{ currentUser, authenticated, updateUser, logIn, logOut }}>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route
+            path="/"
+            element={
+              <Layout
+                setAuthenticated={setAuthenticated}
+                setCurrentUser={setCurrentUser}
+              />}>
             <Route element={<ProtectedRoute />}>
-              <Route path="freelancer/:freelancerId" element={<ProfileCustomer />} />
-              {/* <Route path="freelancer/:freelancerId" element={<ProfileFreelancer />} /> */}
+              <Route path={`customer/:${currentUser.id}`} element={<ProfileCustomer />} />
+              <Route path={`freelancer/:${currentUser.id}`} element={<ProfileFreelancer />} />
               <Route path="freelancer/:freelancerId/complete" element={<FreelancerCompleteForm />} />
 
               <Route path="employer/:employerId/complete" element={<EmployerCompleteForm />} />
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
-            <Route path="signin" element={<Login />} />
+            <Route
+              path="signin"
+              element={
+                <Login
+                  setAuthenticated={setAuthenticated}
+                  setCurrentUser={setCurrentUser}
+                />}
+            />
             <Route path="forgot-password" element={<ForgotPass />} />
             <Route path="reset-password" element={<ResetPass />} />
             <Route path="signout" element={<SignOut />} />

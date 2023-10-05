@@ -5,8 +5,8 @@ import { Context } from '../../context/context';
 import "./Login.css";
 
 
-const Login = () => {
-  const {authenticated} = React.useContext(Context);
+const Login = ({ setAuthenticated, setCurrentUser }) => {
+  const { authenticated } = React.useContext(Context);
   const location = useLocation();
 
   if (authenticated) {
@@ -14,11 +14,14 @@ const Login = () => {
   }
   return (
     <div className="wrapper">
-    <div className="container">
-      <h1 className="title">Вход в профиль</h1>
-    <LoginForm/>
+      <div className="container">
+        <h1 className="title">Вход в профиль</h1>
+        <LoginForm
+          setAuthenticated={setAuthenticated}
+          setCurrentUser={setCurrentUser}
+        />
+      </div>
     </div>
-  </div>
   )
 }
 
