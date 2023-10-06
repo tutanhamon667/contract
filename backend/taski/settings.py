@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'users',
     'api',
     'orders',
-    'drf_spectacular',
     'drf_extra_fields',
 
 ]
@@ -140,7 +139,6 @@ REST_FRAMEWORK = {
     #    'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     # ],
 
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -200,12 +198,3 @@ SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'Freelancing platform API',
-    'DESCRIPTION': 'Platform where freelancers can find job',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'SCHEMA_PATH_PREFIX': 'api/v1/',
-    'SCHEMA_PATH_PREFIX_TRIM': False,
-    # OTHER SETTINGS
-}

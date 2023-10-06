@@ -9,10 +9,6 @@ from . import settings
 
 
 urlpatterns = [
-    path('schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
-    path('swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('admin/', admin.site.urls),
     # path('auth/', include('djoser.urls')),
     path('api/v1/', include('users.urls')),
