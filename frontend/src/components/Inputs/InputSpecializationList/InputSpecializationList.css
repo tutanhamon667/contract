@@ -3,10 +3,10 @@
   width: 100%;
   font-size: 16px;
   font-weight: 400;
-  min-height: 45px;
+  min-height: 60px;
   display: flex;
   align-items: center;
-  padding: 12px 24px;
+  padding: 11px 23px;
   box-sizing: border-box;
   border: 1px solid #C6C6C6;
   border-radius: 12px;
@@ -16,6 +16,12 @@
   background-size: 24px 24px;
   background-position: 98% center;
   cursor: pointer;
+  background-color: #fff;
+  transition: box-shadow .3s ease-in-out;
+}
+
+.list__container:hover {
+  box-shadow: 2px 2px 0 0 #C6C6C6;
 }
 
 .list__preview {
@@ -39,9 +45,11 @@
   align-items: center;
   border-radius: 8px;
   border: 1px solid #C6C6C6;
-  padding: 8px 16px;
+  padding: 7px 15px;
   column-gap: 8px;
   cursor: pointer;
+  font-size: 16px;
+  line-height: 1.25;
 }
 
 .list__item-close {
@@ -76,7 +84,7 @@
   display: flex;
   column-gap: 16px;
   align-items: center;
-  padding: 8px 0 0 24px;
+  padding: 8px 0 8px 24px;
   cursor: pointer;
 }
 
@@ -96,5 +104,5 @@
   background-image: url(../../../images/check.svg);
   background-repeat: no-repeat;
   background-position: center center;
-  border: none;
+  border-color: #3F3F3F;
 }

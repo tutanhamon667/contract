@@ -42,7 +42,7 @@ function EmployerCompleteForm() {
         email: '',
       });
 
-      navigate(`/employer/${employerId}`);
+      navigate(`/customer/${employerId}`);
     }
   };
 

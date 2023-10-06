@@ -2,11 +2,13 @@ import "./FilterSection.css";
 import React, { useState, useEffect, useContext } from "react";
 import Button from "../Button/Button";
 import { Context } from "../../context/context";
+import { useNavigate } from 'react-router-dom';
 
 function FilterSection() {
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
   const { currentUser, orderFilter, authenticated } = useContext(Context);
+  const navigate = useNavigate();
 
   const handleBudgetClean = () => {
     setBudgetStart("");
@@ -20,7 +22,7 @@ function FilterSection() {
   return (
     <section className="filters">
       {authenticated && currentUser.role === 'Заказчик' ? (
-        <Button text="Создать заказ" width={289} marginBottom={24} />
+        <Button text="Создать заказ" width={289} marginBottom={24} onClick={() => navigate('/create-task')} />
       ) : (<></>)}
       <div className={filtersContainerStyle}>
         <h2 className="filters-container__title">Специализация</h2>
