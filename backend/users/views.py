@@ -4,8 +4,6 @@ from djoser.views import UserViewSet as DjoserView
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from drf_spectacular.utils import extend_schema
 
 from .models import CustomerProfile, Member, WorkerProfile
 from .permissions import IsUser
@@ -14,8 +12,8 @@ from .serializers import (GetCustomerProfileSerializer, NewEmailSerializer,
                           PostCustomerProfileSerializer,
                           SendEmailResetSerializer, SetPasswordSerializer,
                           UserCreateSerializer, UserViewSerialiser,
-                          WorkerProfileListSerializer,
-                          WorkerProfileCreateSerializer)
+                          WorkerProfileCreateSerializer,
+                          WorkerProfileListSerializer)
 
 User = get_user_model()
 
@@ -41,6 +39,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 user = get_object_or_404(Member, id=self.kwargs.get('pk'))
             else:
                 user = self.request._user
+
             if user.is_customer and not user.is_worker:
                 return CustomerProfile.objects.all()
             if user.is_worker and not user.is_customer:
@@ -98,7 +97,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = get_object_or_404(Member, id=self.kwargs.get('pk'))
         if user.is_customer and not user.is_worker:
             queryset = get_object_or_404(CustomerProfile, user_id=user.id)
-        if user.is_worker and not user.is_customer:
+        elif user.is_worker and not user.is_customer:
             queryset = get_object_or_404(WorkerProfile, user_id=user.id)
         serializer = self.get_serializer(queryset)
         return Response(serializer.data)
@@ -157,13 +156,14 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             if user.is_customer and not user.is_worker:
                 queryset = get_object_or_404(CustomerProfile, user_id=user.id)
-            if user.is_worker and not user.is_customer:
+            elif user.is_worker and not user.is_customer:
                 queryset = get_object_or_404(WorkerProfile, user_id=user.id)
             serializer = self.get_serializer(queryset)
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
             )
+
         self.get_permissions()
         if request.method == 'POST':
             serializer = self.get_serializer(
@@ -187,16 +187,18 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class FreelancerViewSet(viewsets.ModelViewSet):
     queryset = WorkerProfile.objects.all()
     http_method_names = ["get", "post", "put", "delete"]
     serializer_class = WorkerProfileListSerializer
-    permission_classes = [IsAuthenticated, ]
-    
+    permission_classes = [permissions.IsAuthenticated, ]
+
     def get_serializer_class(self):
-        if self.action == 'list' or self.action == 'retrieve':
-            return WorkerProfileListSerializer
+        # if self.action == 'list' or self.action == 'retrieve':
+        # return WorkerProfileListSerializer
         if self.action == 'create' or self.action == 'update':
             return WorkerProfileCreateSerializer
+        return WorkerProfileListSerializer

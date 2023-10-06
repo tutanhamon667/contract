@@ -1,14 +1,11 @@
 from django.contrib import admin
 
-from .models import (Member, Stack,
-                     Activity, WorkerProfile,
-                     Contacts)
+from .models import Activity, Contacts, Member, Stack, WorkerProfile
 
-
-@admin.register(WorkerProfile)
-class WorkerProfileAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name')
-    empty_value_display = '-пусто-'
+# @admin.register(WorkerProfile)
+# class WorkerProfileAdmin(admin.ModelAdmin):
+#    list_display = ('first_name', 'last_name')
+#    empty_value_display = '-пусто-'
 
 
 @admin.register(Contacts)

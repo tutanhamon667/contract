@@ -7,15 +7,15 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.filters import JobFilter
-from api.mixins import CreateListDestroytViewSet
-from api.permissions import (IsAdminOrReadOnly, IsCustomerOrReadOnly,
-                             IsFreelancer)
-from api.serializers import (CategorySerializer, JobCreateSerializer,
-                             JobListSerializer, RespondedSerializer,
-                             ResponseSerializer)
 from orders.models import Category, Job
 from orders.models import Response as Responses
+
+from .filters import JobFilter
+from .mixins import CreateListDestroytViewSet
+from .permissions import IsAdminOrReadOnly, IsCustomerOrReadOnly, IsFreelancer
+from .serializers import (CategorySerializer, JobCreateSerializer,
+                          JobListSerializer, RespondedSerializer,
+                          ResponseSerializer)
 
 
 class CategoryViewSet(CreateListDestroytViewSet):

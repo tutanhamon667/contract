@@ -4,9 +4,8 @@ from django.db import models
 
 from .usermanager import UserManager
 
-
 CONTACT_TYPE = [
-    ('Phone number','Phone number'),
+    ('Phone number', 'Phone number'),
     ('Email', 'Email'),
     ('Telegram', 'Telegram'),
     ('Other', 'Other')
@@ -158,12 +157,14 @@ class WorkerProfile(models.Model):
         upload_to="examples/",
         null=True,
         default=None,
+        blank=True,
         verbose_name='Примеры работ/портфолио'
     )
     diploma = models.ImageField(
         upload_to="diplomas/",
         null=True,
         default=None,
+        blank=True,
         verbose_name='Дипломы, сертификаты, грамоты'
     )
     diploma_start_year = models.IntegerField(verbose_name='Начало учебы',
@@ -251,5 +252,8 @@ class FreelancerStack(models.Model):
 class FreelancerActivity(models.Model):
     freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE,
                                    related_name='freelancers_activity')
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE,
-                              related_name='freelancers_activity')
+    activity = models.ForeignKey(
+        Activity,
+        on_delete=models.CASCADE,
+        related_name='freelancers_activity'
+    )

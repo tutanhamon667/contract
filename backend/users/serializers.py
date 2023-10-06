@@ -2,11 +2,11 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from djoser import serializers as djoser_serializers
-from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
 
-from .models import (Activity, CustomerProfile, Industry, Stack, WorkerProfile, Contacts,
-                     FreelancerActivity, FreelancerStack)
+from .models import (Activity, Contacts, CustomerProfile, FreelancerActivity,
+                     FreelancerStack, Industry, Stack, WorkerProfile)
 
 User = get_user_model()
 
@@ -113,8 +113,8 @@ class WorkerProfileListSerializer(serializers.ModelSerializer):
 class WorkerProfileCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     contacts = ContactsSerializer(source='contacts_set', many=True)
-    job_example = Base64ImageField(required=True)
-    diploma = Base64ImageField(required=True)
+    job_example = Base64ImageField(required=False)
+    diploma = Base64ImageField(required=False)
     activity = ActivitySerializer(many=True)
     stacks = StackSerializer(many=True)
 
@@ -150,7 +150,7 @@ class WorkerProfileCreateSerializer(serializers.ModelSerializer):
             )
         profile.save()
         return profile
-    
+
     def update(self, instance, validated_data):
         contacts = validated_data.pop('contacts_set')
         activityes = validated_data.pop('activity')
@@ -177,3 +177,61 @@ class WorkerProfileCreateSerializer(serializers.ModelSerializer):
                 contact=contact['contact']
             )
         return super().update(instance, validated_data)
+
+
+class IndustrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Industry
+        fields = ('name',)
+
+
+class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    photo = Base64ImageField(required=False)
+    industry = IndustrySerializer(many=False, read_only=True)
+
+    class Meta:
+        model = CustomerProfile
+        fields = ('user', 'photo', 'email', 'name', 'industry', 'web')
+
+
+class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    photo = Base64ImageField(required=False)
+    industry = IndustrySerializer(many=False)
+
+    class Meta:
+        model = CustomerProfile
+        fields = ('user', 'photo', 'email', 'name', 'industry', 'web')
+
+    def validate_user(self, user):
+        if CustomerProfile.objects.filter(user_id=user.id):
+            raise ValidationError(
+                'Профиль уже существует'
+            )
+        return user
+
+    def validate_industry(self, industry):
+        if not industry:
+            raise ValidationError(
+                'Укажите сферу деятельности компании'
+            )
+        return industry
+
+    def create(self, validated_data):
+        industry_data = validated_data.pop('industry')
+        industry, status = Industry.objects.get_or_create(**industry_data)
+        return CustomerProfile.objects.create(
+            industry=industry,
+            **validated_data
+        )
+
+    def update(self, user, validated_data):
+        industry_data = validated_data.pop('industry')
+        CustomerProfile.objects.filter(user=user).delete()
+        industry, status = Industry.objects.get_or_create(**industry_data)
+        return CustomerProfile.objects.create(
+            user_id=user.id,
+            industry=industry,
+            **validated_data
+        )
