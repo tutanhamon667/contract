@@ -1,25 +1,30 @@
 import "./FilterSection.css";
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Button from "../Button/Button";
+import { Context } from "../../context/context";
+import { useNavigate } from 'react-router-dom';
 
 function FilterSection() {
-
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
-
-  useEffect((()=> {
-    console.log(budgetStart);
-    console.log(budgetEnd);
-  }),[budgetStart, budgetEnd])
+  const { currentUser, orderFilter, authenticated } = useContext(Context);
+  const navigate = useNavigate();
 
   const handleBudgetClean = () => {
-    setBudgetStart('');
-    setBudgetEnd('');
-  }
+    setBudgetStart("");
+    setBudgetEnd("");
+  };
+
+  const filtersContainerStyle = `filters-container  ${
+    orderFilter && authenticated ? "filters-conteiner__freelance " : ""
+  }`;
 
   return (
     <section className="filters">
-      <div className="filters-container filters-conteiner__freelance">
+      {authenticated && currentUser.role === 'Заказчик' ? (
+        <Button text="Создать заказ" width={289} marginBottom={24} onClick={() => navigate('/create-task')} />
+      ) : (<></>)}
+      <div className={filtersContainerStyle}>
         <h2 className="filters-container__title">Специализация</h2>
         <div>
           <input
@@ -113,23 +118,30 @@ function FilterSection() {
             type="text"
             id="filters-budget__start"
             className="filters-budget"
-            value={budgetStart}
+            value={budgetStart || ""}
+            placeholder="от"
             onChange={(e) => setBudgetStart(e.target.value)}
             required
           />
-           <input
+          <input
             type="text"
             id="filters-budget__end"
             className="filters-budget"
-            value={budgetEnd}
+            value={budgetEnd || ""}
+            placeholder="до"
             onChange={(e) => setBudgetEnd(e.target.value)}
             required
           />
         </form>
       </div>
       <div className="filters-buttons">
-        <Button text="Применить фильтр" width={295} />
-        <Button text="Очистить фильтры" width={295} buttonSecondary onClick={handleBudgetClean}/>
+        <Button text="Применить фильтр" width={289} />
+        <Button
+          text="Очистить фильтры"
+          width={289}
+          buttonSecondary
+          onClick={handleBudgetClean}
+        />
       </div>
     </section>
   );

@@ -1,3 +1,15 @@
+body{
+  scrollbar-color: black rgba(0, 0, 0, 0.5);
+}
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color:#000;
+  border-radius: 6px;
+}
+
 .wrapper {
     box-sizing: border-box;
     position: relative;
@@ -8,6 +20,8 @@
     justify-content: space-between;
   }
 
+
+
   .wrapper_type_background-image {
     background-image: url(../images/background_main_page.png);
     background-size: contain;
@@ -16,4 +30,8 @@
   .outlet{
     width: 100%;
     margin: 0 auto;
+}
+
+.wrapper_type_background-image-none {
+  background-image: none;
 }

@@ -1,5 +1,5 @@
 .filters {
-  max-width: 295px;
+  max-width: 289px;
   margin-top: 148px;
 }
 
@@ -92,4 +92,8 @@
   align-self: stretch;
   border-radius: 12px;
   border: 1px solid var(--border-gray, #c6c6c6);
+}
+
+.filters-conteiner__freelance {
+  display: none;
 }

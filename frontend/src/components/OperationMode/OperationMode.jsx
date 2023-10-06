@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import "./OperationMode.css";
+import { Context } from "../../context/context";
 
 function OperationMode({ operationMode, setOperationMode }) {
-
+  const { currentUser, authenticated } = useContext(Context);
 
 
   return (
@@ -15,7 +16,8 @@ function OperationMode({ operationMode, setOperationMode }) {
         }
         onClick={() => setOperationMode(true)}
       >
-        Tаски
+        { currentUser.role === 'Заказчик' ? 'Фрилансеры' : 'Tаски'}
+
       </button>
       <button
         className={
@@ -25,7 +27,8 @@ function OperationMode({ operationMode, setOperationMode }) {
         }
         onClick={() => setOperationMode(false)}
       >
-        Фрилансеры
+        { authenticated ? 'Мои заказы' : 'Фрилансеры'}
+
       </button>
     </section>
   );

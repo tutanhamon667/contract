@@ -5,8 +5,15 @@ from django.db import models
 from .usermanager import UserManager
 
 
+CONTACT_TYPE = [
+    ('Phone number','Phone number'),
+    ('Email', 'Email'),
+    ('Telegram', 'Telegram'),
+    ('Other', 'Other')
+]
+
+
 class Member(PermissionsMixin, AbstractBaseUser):
-    username = None
 
     email = models.EmailField(
         verbose_name='email address',
@@ -110,7 +117,15 @@ class WorkerProfile(models.Model):
         Member,
         on_delete=models.PROTECT
     )
+    first_name = models.CharField(
+        max_length=150,
+        default=None,
+    )
 
+    last_name = models.CharField(
+        max_length=150,
+        default=None,
+    )
     photo = models.ImageField(
         upload_to='bio/images/',
         null=True,
@@ -118,16 +133,17 @@ class WorkerProfile(models.Model):
         blank=True,
         verbose_name='Фото'
     )
-#    contacts
     activity = models.ManyToManyField(
         Activity,
         blank=True,
-        verbose_name='Специализация'
+        verbose_name='Специализация',
+        through='FreelancerActivity'
     )
     stacks = models.ManyToManyField(
         Stack,
         blank=True,
-        verbose_name='Навык'
+        verbose_name='Навык',
+        through='FreelancerStack'
     )
     payrate = models.IntegerField(
         default=0,
@@ -138,11 +154,30 @@ class WorkerProfile(models.Model):
         blank=True,
         verbose_name='О себе'
     )
-    diploma = models.FileField(
-        blank=True,
+    job_example = models.ImageField(
+        upload_to="examples/",
+        null=True,
+        default=None,
+        verbose_name='Примеры работ/портфолио'
+    )
+    diploma = models.ImageField(
+        upload_to="diplomas/",
+        null=True,
+        default=None,
         verbose_name='Дипломы, сертификаты, грамоты'
     )
-    # education
+    diploma_start_year = models.IntegerField(verbose_name='Начало учебы',
+                                             default=2023)
+    diploma_finish_year = models.IntegerField(verbose_name='Окончание учебы',
+                                              default=2023)
+    degree = models.CharField(verbose_name='Научная степень', max_length=150,
+                              default='Бакалавриат')
+    faculty = models.CharField(verbose_name='Факультет', max_length=150,
+                               default=None,)
+    education = models.CharField(blank=False,
+                                 max_length=150,
+                                 default=None,
+                                 verbose_name='Факультет',)
     web = models.URLField(
         blank=True,
         verbose_name='Личный сайт'
@@ -193,3 +228,28 @@ class CustomerProfile(models.Model):
         blank=True,
         verbose_name='Личный сайт'
     )
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+
+class Contacts(models.Model):
+    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
+    type = models.CharField(choices=CONTACT_TYPE,
+                            max_length=150,)
+    contact = models.CharField(max_length=150,
+                               verbose_name='Контакт')
+
+
+class FreelancerStack(models.Model):
+    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE,
+                                   related_name='freelancers_stacks')
+    stack = models.ForeignKey(Stack, on_delete=models.CASCADE,
+                              related_name='freelancers_stacks')
+
+
+class FreelancerActivity(models.Model):
+    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE,
+                                   related_name='freelancers_activity')
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE,
+                              related_name='freelancers_activity')

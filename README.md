@@ -21,7 +21,7 @@ npm install
 npm start
 ```
 
-- Фронтенд-сервер запустится по адресу http://localhost:3000
+- Фронтенд-сервер запустится по адресу http://localhost:5173
 
 - Ссылка на просмотр фронта, загруженного на GitHub Pages (не всегда содержит последние изменения):
   https://freelancing-platform-practicum.github.io/freelancing-platform-project/
