@@ -2,7 +2,7 @@
   "name": "taski-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "./",
+  "homepage": "https://freelancing-platform-practicum.github.io/freelancing-platform-project/",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -4,6 +4,7 @@ import eslintPlugin from "@nabla/vite-plugin-eslint";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/freelancing-platform-project/',
   plugins: [
     react(),
     eslintPlugin(),
