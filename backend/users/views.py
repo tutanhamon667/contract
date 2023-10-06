@@ -99,7 +99,7 @@ class UserViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=["Freelancers"])
 class FreelancerViewSet(viewsets.ModelViewSet):
     queryset = WorkerProfile.objects.all()
-    http_method_names = ["get", "post", "delete"]
+    http_method_names = ["get", "post", "put", "delete"]
     serializer_class = WorkerProfileListSerializer
     permission_classes = [IsAuthenticated, ]
     

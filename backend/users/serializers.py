@@ -5,7 +5,8 @@ from djoser import serializers as djoser_serializers
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
-from .models import Activity, Member, Stack, WorkerProfile, Contacts
+from .models import (Activity, Member, Stack, WorkerProfile, Contacts,
+                     FreelancerActivity, FreelancerStack)
 
 User = get_user_model()
 
@@ -53,20 +54,6 @@ class PasswordResetConfirmSerializer(
     djoser_serializers.PasswordResetConfirmRetypeSerializer
 ):
     pass
-
-
-class StackCreateSerializer(serializers.ModelSerializer):
-    """Стэк технологий."""
-    class Meta:
-        model = Stack
-        fields = ('id', )
-
-
-class ActivityCreateSerializer(serializers.ModelSerializer):
-    """Стэк технологий."""
-    class Meta:
-        model = Activity
-        fields = ('id', )
 
 
 class StackSerializer(serializers.ModelSerializer):
@@ -117,8 +104,8 @@ class WorkerProfileCreateSerializer(serializers.ModelSerializer):
     contacts = ContactsSerializer(source='contacts_set', many=True)
     job_example = Base64ImageField(required=True)
     diploma = Base64ImageField(required=True)
-    activity = ActivityCreateSerializer(many=True)
-    stacks = StackCreateSerializer(many=True)
+    activity = ActivitySerializer(many=True)
+    stacks = StackSerializer(many=True)
 
     class Meta:
         model = WorkerProfile
@@ -127,19 +114,23 @@ class WorkerProfileCreateSerializer(serializers.ModelSerializer):
                   'web', 'education', 'diploma_start_year',
                   'diploma_finish_year', 'degree', 'faculty', 'diploma')
 
-    def validate_activity(self, attrs):
-        print(self.initial_data['activity'])
-
-        return self.initial_data['activity']
-
     def create(self, validated_data):
-        print(validated_data)
         contacts = validated_data.pop('contacts_set')
-        activity = validated_data.pop('activity')
+        activityes = validated_data.pop('activity')
         stacks = validated_data.pop('stacks')
         profile = WorkerProfile.objects.create(**validated_data)
-        profile.activity.set(activity)
-        profile.stacks.set(stacks)
+        for activity in activityes:
+            ac, status = Activity.objects.get_or_create(**activity)
+            FreelancerActivity.objects.create(
+                freelancer=profile,
+                activity=ac
+            )
+        for stack in stacks:
+            st, status = Stack.objects.get_or_create(**stack)
+            FreelancerStack.objects.create(
+                freelancer=profile,
+                stack=st
+            )
         for contact in contacts:
             Contacts.objects.create(
                 freelancer=profile,
@@ -148,3 +139,30 @@ class WorkerProfileCreateSerializer(serializers.ModelSerializer):
             )
         profile.save()
         return profile
+    
+    def update(self, instance, validated_data):
+        contacts = validated_data.pop('contacts_set')
+        activityes = validated_data.pop('activity')
+        stacks = validated_data.pop('stacks')
+        FreelancerActivity.objects.filter(freelancer=instance).delete()
+        FreelancerStack.objects.filter(freelancer=instance).delete()
+        Contacts.objects.filter(freelancer=instance).delete()
+        for activity in activityes:
+            ac, status = Activity.objects.get_or_create(**activity)
+            FreelancerActivity.objects.create(
+                freelancer=instance,
+                activity=ac
+            )
+        for stack in stacks:
+            st, status = Stack.objects.get_or_create(**stack)
+            FreelancerStack.objects.create(
+                freelancer=instance,
+                stack=st
+            )
+        for contact in contacts:
+            Contacts.objects.create(
+                freelancer=instance,
+                type=contact['type'],
+                contact=contact['contact']
+            )
+        return super().update(instance, validated_data)

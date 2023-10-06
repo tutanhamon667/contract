@@ -14,7 +14,6 @@ CONTACT_TYPE = [
 
 
 class Member(PermissionsMixin, AbstractBaseUser):
-    username = None
 
     email = models.EmailField(
         verbose_name='email address',
@@ -137,12 +136,14 @@ class WorkerProfile(models.Model):
     activity = models.ManyToManyField(
         Activity,
         blank=True,
-        verbose_name='Специализация'
+        verbose_name='Специализация',
+        through='FreelancerActivity'
     )
     stacks = models.ManyToManyField(
         Stack,
         blank=True,
-        verbose_name='Навык'
+        verbose_name='Навык',
+        through='FreelancerStack'
     )
     payrate = models.IntegerField(
         default=0,
@@ -192,3 +193,17 @@ class Contacts(models.Model):
                             max_length=150,)
     contact = models.CharField(max_length=150,
                                verbose_name='Контакт')
+
+
+class FreelancerStack(models.Model):
+    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE,
+                                   related_name='freelancers_stacks')
+    stack = models.ForeignKey(Stack, on_delete=models.CASCADE,
+                              related_name='freelancers_stacks')
+
+
+class FreelancerActivity(models.Model):
+    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE,
+                                   related_name='freelancers_activity')
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE,
+                              related_name='freelancers_activity')
