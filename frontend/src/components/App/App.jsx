@@ -58,13 +58,19 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="customer/:id" element={<ProfileCustomer />} />
               <Route path="freelancer/:id" element={<ProfileFreelancer />} />
-              <Route path="freelancer/:id/complete" element={<FreelancerCompleteForm />} />
               <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
               <Route path="customer/:id/complete" element={<EmployerCompleteForm />} />
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
+            <Route
+              path="signup/freelancer"
+              element={
+                <FreelancerCompleteForm
+                  setAuthenticated={setAuthenticated}
+                  setCurrentUser={setCurrentUser}
+                />} />
             <Route
               path="signin"
               element={

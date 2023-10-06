@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../../../context/context";
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import Button from "../../Button/Button";
@@ -18,6 +18,7 @@ const RegisterForm = ({ onSubmitHandler }) => {
   const {
     values, errors, isValid, handleChange, setValues, setErrors
   } = useFormAndValidation();
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -94,6 +95,7 @@ const RegisterForm = ({ onSubmitHandler }) => {
       onSubmitHandler(values);
     }
     setButtonClicked(true);
+    navigate('freelancer', { replace: true })
   };
 
   return (
@@ -204,7 +206,7 @@ const RegisterForm = ({ onSubmitHandler }) => {
             !values.re_password ||
             !values.first_name ||
             !values.last_name) &&
-          buttonClicked}
+            buttonClicked}
         />
         <div className="register__footerLinkContainer">
           <p className="register__footerLinkDescription">Уже есть аккаунт?</p>
