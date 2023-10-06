@@ -4,6 +4,8 @@ from djoser.views import UserViewSet as DjoserView
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from drf_spectacular.utils import extend_schema
 
 from .models import CustomerProfile, Member, WorkerProfile
 from .permissions import IsUser
@@ -12,7 +14,8 @@ from .serializers import (GetCustomerProfileSerializer, NewEmailSerializer,
                           PostCustomerProfileSerializer,
                           SendEmailResetSerializer, SetPasswordSerializer,
                           UserCreateSerializer, UserViewSerialiser,
-                          WorkerProfileSerializer)
+                          WorkerProfileListSerializer,
+                          WorkerProfileCreateSerializer)
 
 User = get_user_model()
 
@@ -183,6 +186,17 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(
                 serializer.data,
-                status=status.HTTP_200_OK
-            )
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+                status=status.HTTP_200_OK)
+
+
+class FreelancerViewSet(viewsets.ModelViewSet):
+    queryset = WorkerProfile.objects.all()
+    http_method_names = ["get", "post", "put", "delete"]
+    serializer_class = WorkerProfileListSerializer
+    permission_classes = [IsAuthenticated, ]
+    
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return WorkerProfileListSerializer
+        if self.action == 'create' or self.action == 'update':
+            return WorkerProfileCreateSerializer

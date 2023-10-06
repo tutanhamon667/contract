@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'api',
     'orders',
     'drf_yasg',
+    'drf_extra_fields',
+
 ]
 
 MIDDLEWARE = [
@@ -136,6 +138,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #    'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    # ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',

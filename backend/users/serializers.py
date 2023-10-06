@@ -3,9 +3,10 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from djoser import serializers as djoser_serializers
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 
-from .fields import Base64ImageField
-from .models import Activity, CustomerProfile, Industry, Stack, WorkerProfile
+from .models import (Activity, CustomerProfile, Industry, Stack, WorkerProfile, Contacts,
+                     FreelancerActivity, FreelancerStack)
 
 User = get_user_model()
 
@@ -66,74 +67,113 @@ class PasswordResetConfirmSerializer(
     pass
 
 
+class StackSerializer(serializers.ModelSerializer):
+    """Стэк технологий."""
+    class Meta:
+        model = Stack
+        fields = '__all__'
+
+
+class ActivitySerializer(serializers.ModelSerializer):
+    """Стэк технологий."""
+    class Meta:
+        model = Activity
+        fields = '__all__'
+
+
+class ContactsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Contacts
+        fields = ('type', 'contact')
+
+
 class UserViewSerialiser(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name')
 
 
-class WorkerProfileSerializer(serializers.ModelSerializer):
+class WorkerProfileListSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    photo = Base64ImageField(required=False)
+    contacts = ContactsSerializer(source='contacts_set', many=True)
+    job_example = Base64ImageField(required=True)
+    diploma = Base64ImageField(required=True)
+    activity = ActivitySerializer(many=True)
+    stacks = StackSerializer(many=True)
 
     class Meta:
         model = WorkerProfile
-        fields = '__all__'
+        fields = ('user', 'first_name', 'last_name', 'contacts', 'activity',
+                  'stacks', 'payrate', 'about', 'job_example',
+                  'web', 'education', 'diploma_start_year',
+                  'diploma_finish_year', 'degree', 'faculty', 'diploma')
 
 
-class IndustrySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Industry
-        fields = ('name',)
-
-
-class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
+class WorkerProfileCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    photo = Base64ImageField(required=False)
-    industry = IndustrySerializer(many=False, read_only=True)
+    contacts = ContactsSerializer(source='contacts_set', many=True)
+    job_example = Base64ImageField(required=True)
+    diploma = Base64ImageField(required=True)
+    activity = ActivitySerializer(many=True)
+    stacks = StackSerializer(many=True)
 
     class Meta:
-        model = CustomerProfile
-        fields = ('user', 'photo', 'email', 'name', 'industry', 'web')
-
-
-class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    photo = Base64ImageField(required=False)
-    industry = IndustrySerializer(many=False)
-
-    class Meta:
-        model = CustomerProfile
-        fields = ('user', 'photo', 'email', 'name', 'industry', 'web')
-
-    def validate_user(self, user):
-        if CustomerProfile.objects.filter(user_id=user.id):
-            raise ValidationError(
-                'Профиль уже существует'
-            )
-        return user
-
-    def validate_industry(self, industry):
-        if not industry:
-            raise ValidationError(
-                'Укажите сферу деятельности компании'
-            )
-        return industry
+        model = WorkerProfile
+        fields = ('user', 'first_name', 'last_name', 'contacts', 'activity',
+                  'stacks', 'payrate', 'about', 'job_example',
+                  'web', 'education', 'diploma_start_year',
+                  'diploma_finish_year', 'degree', 'faculty', 'diploma')
 
     def create(self, validated_data):
-        industry_data = validated_data.pop('industry')
-        industry, status = Industry.objects.get_or_create(**industry_data)
-        return CustomerProfile.objects.create(
-            industry=industry,
-            **validated_data
-        )
-
-    def update(self, user, validated_data):
-        industry_data = validated_data.pop('industry')
-        CustomerProfile.objects.filter(user=user).delete()
-        industry, status = Industry.objects.get_or_create(**industry_data)
-        return CustomerProfile.objects.create(
-            user_id=user.id,
-            industry=industry,
-            **validated_data
-        )
+        contacts = validated_data.pop('contacts_set')
+        activityes = validated_data.pop('activity')
+        stacks = validated_data.pop('stacks')
+        profile = WorkerProfile.objects.create(**validated_data)
+        for activity in activityes:
+            ac, status = Activity.objects.get_or_create(**activity)
+            FreelancerActivity.objects.create(
+                freelancer=profile,
+                activity=ac
+            )
+        for stack in stacks:
+            st, status = Stack.objects.get_or_create(**stack)
+            FreelancerStack.objects.create(
+                freelancer=profile,
+                stack=st
+            )
+        for contact in contacts:
+            Contacts.objects.create(
+                freelancer=profile,
+                type=contact['type'],
+                contact=contact['contact']
+            )
+        profile.save()
+        return profile
+    
+    def update(self, instance, validated_data):
+        contacts = validated_data.pop('contacts_set')
+        activityes = validated_data.pop('activity')
+        stacks = validated_data.pop('stacks')
+        FreelancerActivity.objects.filter(freelancer=instance).delete()
+        FreelancerStack.objects.filter(freelancer=instance).delete()
+        Contacts.objects.filter(freelancer=instance).delete()
+        for activity in activityes:
+            ac, status = Activity.objects.get_or_create(**activity)
+            FreelancerActivity.objects.create(
+                freelancer=instance,
+                activity=ac
+            )
+        for stack in stacks:
+            st, status = Stack.objects.get_or_create(**stack)
+            FreelancerStack.objects.create(
+                freelancer=instance,
+                stack=st
+            )
+        for contact in contacts:
+            Contacts.objects.create(
+                freelancer=instance,
+                type=contact['type'],
+                contact=contact['contact']
+            )
+        return super().update(instance, validated_data)
