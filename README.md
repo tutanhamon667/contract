@@ -26,6 +26,16 @@ npm start
 - Ссылка на просмотр фронта, загруженного на GitHub Pages (не всегда содержит последние изменения):
   https://freelancing-platform-practicum.github.io/freelancing-platform-project/
 
+### Сборка фронтенда
+
+Собрать фронтенд для деплоя:
+
+```shell
+npm run build
+```
+
+Готовый фронтенд будет в папке `dist`.
+
 ## Бэкенд
 
 ### Окружение
