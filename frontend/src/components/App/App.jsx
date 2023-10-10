@@ -18,9 +18,10 @@ import ProfileCustomer from "../../pages/Profiles/ProfileCustomer/ProfileCustome
 import { userCustomer, userFreelancer } from "../../utils/constants"
 import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
 import { CreateTaskForm } from '../Forms/CreateTaskForm/CreateTaskForm';
+import Order from "../../pages/Order/Order";
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(true);
   const [currentUser, setCurrentUser] = useState(userFreelancer);
   //состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
@@ -64,6 +65,7 @@ function App() {
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
+            <Route path="order" element={<Order />} />
             <Route
               path="signup/freelancer"
               element={
