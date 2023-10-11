@@ -59,10 +59,10 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="customer/:id" element={<ProfileCustomer />} />
               <Route path="freelancer/:id" element={<ProfileFreelancer />} />
-              <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
-              <Route path="customer/:id/complete" element={<EmployerCompleteForm />} />
-              <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
+            <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
+            <Route path="create-task" element={<CreateTaskForm />} />
+            <Route path="customer/:id/complete" element={<EmployerCompleteForm />} />
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
             <Route path="order" element={<Order />} />
