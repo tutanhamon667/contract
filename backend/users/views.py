@@ -5,15 +5,16 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import CustomerProfile, Member, WorkerProfile
+from .freelancers import (GetEducationSerializer, GetWorkerProfileSerializer,
+                          PostEducationSerializer, PostWorkerProfileSerializer,
+                          UserViewSerialiser)
+from .models import CustomerProfile, Education, Member, WorkerProfile
 from .permissions import IsUser
 from .serializers import (GetCustomerProfileSerializer, NewEmailSerializer,
                           PasswordResetConfirmSerializer,
                           PostCustomerProfileSerializer,
                           SendEmailResetSerializer, SetPasswordSerializer,
-                          UserCreateSerializer, UserViewSerialiser,
-                          WorkerProfileCreateSerializer,
-                          WorkerProfileListSerializer)
+                          UserCreateSerializer)
 
 User = get_user_model()
 
@@ -193,12 +194,34 @@ class UserViewSet(viewsets.ModelViewSet):
 class FreelancerViewSet(viewsets.ModelViewSet):
     queryset = WorkerProfile.objects.all()
     http_method_names = ["get", "post", "put", "delete"]
-    serializer_class = WorkerProfileListSerializer
-    permission_classes = [permissions.IsAuthenticated, ]
+#    serializer_class = WorkerProfileListSerializer
+    permission_classes = [permissions.AllowAny, ]
+
+    def get_permissions(self):
+        if self.action in ['create', 'update']:
+            return (IsUser(),)
+        return super().get_permissions()
 
     def get_serializer_class(self):
         # if self.action == 'list' or self.action == 'retrieve':
         # return WorkerProfileListSerializer
         if self.action == 'create' or self.action == 'update':
-            return WorkerProfileCreateSerializer
-        return WorkerProfileListSerializer
+            return PostWorkerProfileSerializer
+        return GetWorkerProfileSerializer
+
+
+class TestViewSet(viewsets.ModelViewSet):
+    queryset = Education.objects.all()
+    permission_classes = [permissions.AllowAny, ]
+
+    def get_permissions(self):
+        if self.action in ['create', 'update']:
+            return (IsUser(),)
+        return super().get_permissions()
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return GetEducationSerializer
+        if self.action in ['create', 'update']:
+            return PostEducationSerializer
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

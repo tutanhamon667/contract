@@ -1,9 +1,23 @@
+from io import BytesIO
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.core.validators import RegexValidator
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
+from PIL import Image
 
 from .usermanager import UserManager
 
+THUMBNAIL_SIZE = (100, 100)
+CATEGORY_CHOICES = (
+    ('design', 'дизайн'),
+    ('development', 'разработка'),
+    ('testing', 'тестирование'),
+    ('administration', 'администрирование'),
+    ('marketing', 'маркетинг'),
+    ('content', 'контент'),
+    ('other', 'разное'),
+)
 CONTACT_TYPE = [
     ('Phone number', 'Phone number'),
     ('Email', 'Email'),
@@ -62,6 +76,21 @@ class Member(PermissionsMixin, AbstractBaseUser):
         return self.is_admin
 
 
+class Contact(models.Model):
+    type = models.CharField(
+        choices=CONTACT_TYPE,
+        max_length=150,
+        )
+    contact = models.CharField(
+        max_length=150,
+        verbose_name='Контакт'
+    )
+    preferred = models.BooleanField(
+        default=False,
+        verbose_name='Предпочитаемый вид контакта'
+    )
+
+
 class Stack(models.Model):
     name = models.CharField(
         verbose_name='Необходимый навык',
@@ -84,28 +113,116 @@ class Stack(models.Model):
         return self.name
 
 
-class Activity(models.Model):
+class Category(models.Model):
+    """
+    Специализации.
+    """
     name = models.CharField(
-        verbose_name='Направление деятельности',
-        max_length=200,
-        unique=True
+        verbose_name='Название специализации',
+        max_length=50,
+        choices=CATEGORY_CHOICES
     )
     slug = models.SlugField(
-        max_length=200,
-        unique=True,
-        validators=[RegexValidator(
-            regex=r'^[-a-zA-Z0-9_]+$',
-            message='Используйте допустимые символы!'
-        )]
-    )
-    stacks = models.ManyToManyField(
-        Stack,
-        blank=True,
-        verbose_name='Необходимый навык'
+        verbose_name='Идентификатор специализации',
+        unique=False
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ('-name',)
+        verbose_name = 'Специализация'
+        verbose_name_plural = 'Специализации'
+
+    def __str__(self):
+        return self.name
+
+
+class PortfolioFile(models.Model):
+    file = models.ImageField(
+        upload_to="portfolio/",
+    )
+    name = models.CharField(
+        max_length=255,
+        verbose_name='Имя документа'
+    )
+    thumbnail = models.ImageField(
+        upload_to='portfolio/',
+        null=True,
+        blank=True)
+
+    def create_thumbnail(self):
+        image = Image.open(self.file, 'r')
+        thumbnail_size = THUMBNAIL_SIZE
+        image.thumbnail(thumbnail_size)
+        x, thumb_name = self.file.name.replace('.', '_thumb.').split('/')
+        path = settings.MEDIA_ROOT + '\\' + x + '\\' + thumb_name
+        image.save(path)
+        
+
+class DiplomaFile(models.Model):
+    file = models.ImageField(
+        upload_to="education/",
+    )
+    name = models.CharField(
+        max_length=255,
+        verbose_name='Имя документа'
+    )
+    thumbnail = models.ImageField(
+        upload_to='education/thumbnails/',
+        null=True,
+        blank=True)
+
+    def create_thumbnail(self):
+        image = Image.open(self.file)
+        thumbnail_size = THUMBNAIL_SIZE
+        image.thumbnail(thumbnail_size)
+        thumb_name = self.file.name.replace('.', '_thumb.')
+        thumb_io = BytesIO()
+        image.save(thumb_io, 'JPEG')
+        self.thumbnail.save(
+            thumb_name,
+            InMemoryUploadedFile(
+                thumb_io, None,
+                thumb_name, 'image/jpeg',
+                thumb_io.tell, None
+            ),
+            save=False
+            )
+        thumb_io.close()
+
+
+class Education(models.Model):
+    name = models.CharField(
+        verbose_name='Учебное заведение',
+        blank=False,
+        max_length=150,
+        default=None,
+    )
+    faculty = models.CharField(
+        verbose_name='Факультет',
+        max_length=150,
+        default=None,
+    )
+    start_year = models.IntegerField(
+        verbose_name='Начало учебы',
+        default=2023
+    )
+    finish_year = models.IntegerField(
+        verbose_name='Окончание учебы',
+        default=2023
+    )
+    degree = models.CharField(
+        verbose_name='Научная степень',
+        max_length=150,
+        default='Бакалавриат'
+    )
+    diploma = models.ManyToManyField(
+        DiplomaFile,
+        through='EducationDiploma'
+    )
+
+    class Meta:
+        ordering = ('-name',)
+        verbose_name = 'Образование'
 
     def __str__(self):
         return self.name
@@ -114,16 +231,8 @@ class Activity(models.Model):
 class WorkerProfile(models.Model):
     user = models.OneToOneField(
         Member,
+        related_name='freelancer',
         on_delete=models.PROTECT
-    )
-    first_name = models.CharField(
-        max_length=150,
-        default=None,
-    )
-
-    last_name = models.CharField(
-        max_length=150,
-        default=None,
     )
     photo = models.ImageField(
         upload_to='bio/images/',
@@ -132,20 +241,9 @@ class WorkerProfile(models.Model):
         blank=True,
         verbose_name='Фото'
     )
-    activity = models.ManyToManyField(
-        Activity,
-        blank=True,
-        verbose_name='Специализация',
-        through='FreelancerActivity'
-    )
-    stacks = models.ManyToManyField(
-        Stack,
-        blank=True,
-        verbose_name='Навык',
-        through='FreelancerStack'
-    )
     payrate = models.IntegerField(
         default=0,
+        validators=[MinValueValidator(0)],
         verbose_name='Ставка оплаты'
     )
     about = models.TextField(
@@ -153,35 +251,96 @@ class WorkerProfile(models.Model):
         blank=True,
         verbose_name='О себе'
     )
-    job_example = models.ImageField(
-        upload_to="examples/",
-        null=True,
-        default=None,
-        blank=True,
-        verbose_name='Примеры работ/портфолио'
-    )
-    diploma = models.ImageField(
-        upload_to="diplomas/",
-        null=True,
-        default=None,
-        blank=True,
-        verbose_name='Дипломы, сертификаты, грамоты'
-    )
-    diploma_start_year = models.IntegerField(verbose_name='Начало учебы',
-                                             default=2023)
-    diploma_finish_year = models.IntegerField(verbose_name='Окончание учебы',
-                                              default=2023)
-    degree = models.CharField(verbose_name='Научная степень', max_length=150,
-                              default='Бакалавриат')
-    faculty = models.CharField(verbose_name='Факультет', max_length=150,
-                               default=None,)
-    education = models.CharField(blank=False,
-                                 max_length=150,
-                                 default=None,
-                                 verbose_name='Факультет',)
     web = models.URLField(
         blank=True,
         verbose_name='Личный сайт'
+    )
+    contacts = models.ManyToManyField(
+        Contact,
+        through='FreelancerContact'
+    )
+    stacks = models.ManyToManyField(
+        Stack,
+        through='FreelancerStack'
+    )
+    categories = models.ManyToManyField(
+        Category,
+        through='FreelancerCategory'
+    )
+    portfolio = models.ManyToManyField(
+        PortfolioFile,
+        through='FreelancerPortfolio'
+    )
+    education = models.ManyToManyField(
+        Education,
+        through='FreelancerEducation'
+    )
+
+
+class FreelancerContact(models.Model):
+    freelancer = models.ForeignKey(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+    )
+    contact = models.ForeignKey(
+        Contact,
+        on_delete=models.CASCADE,
+    )
+
+
+class FreelancerStack(models.Model):
+    freelancer = models.ForeignKey(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+    )
+    stack = models.ForeignKey(
+        Stack,
+        on_delete=models.CASCADE,
+    )
+
+
+class FreelancerCategory(models.Model):
+    freelancer = models.ForeignKey(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+    )
+
+
+class EducationDiploma(models.Model):
+    diploma = models.ForeignKey(
+        DiplomaFile,
+        on_delete=models.CASCADE,
+        related_name='diploma'
+    )
+    education = models.ForeignKey(
+        Education,
+        on_delete=models.CASCADE,
+    )
+
+
+class FreelancerEducation(models.Model):
+    freelancer = models.ForeignKey(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+    )
+    education = models.ForeignKey(
+        Education,
+        on_delete=models.CASCADE,
+    )
+
+
+class FreelancerPortfolio(models.Model):
+    freelancer = models.ForeignKey(
+        WorkerProfile,
+        on_delete=models.CASCADE,
+    )
+    portfolio = models.ForeignKey(
+        PortfolioFile,
+        on_delete=models.CASCADE,
     )
 
 
@@ -231,29 +390,4 @@ class CustomerProfile(models.Model):
     )
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-
-
-class Contacts(models.Model):
-    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
-    type = models.CharField(choices=CONTACT_TYPE,
-                            max_length=150,)
-    contact = models.CharField(max_length=150,
-                               verbose_name='Контакт')
-
-
-class FreelancerStack(models.Model):
-    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE,
-                                   related_name='freelancers_stacks')
-    stack = models.ForeignKey(Stack, on_delete=models.CASCADE,
-                              related_name='freelancers_stacks')
-
-
-class FreelancerActivity(models.Model):
-    freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE,
-                                   related_name='freelancers_activity')
-    activity = models.ForeignKey(
-        Activity,
-        on_delete=models.CASCADE,
-        related_name='freelancers_activity'
-    )
+        return self.name

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Activity, Contacts, Member, Stack, WorkerProfile
+from .models import Category, Contacts, Member, Stack, WorkerProfile
 
 # @admin.register(WorkerProfile)
 # class WorkerProfileAdmin(admin.ModelAdmin):
