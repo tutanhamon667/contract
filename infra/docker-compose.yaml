@@ -28,11 +28,8 @@ services:
   
   frontend:
     image: taskiproject/freelancing-platform-project_frontend:latest
-    env_file: .env
     volumes:
       - ./frontend/:/app/result_build/      
-    depends_on:
-      - backend
 
   nginx:
     image: nginx:1.21.3-alpine
