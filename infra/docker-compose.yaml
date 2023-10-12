@@ -8,7 +8,7 @@ volumes:
 services:
   
   db:
-    image: postgres:latest
+    image: postgres:13.0-alpine
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
@@ -36,7 +36,8 @@ services:
       - backend
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.21.3-alpine
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -53,6 +54,7 @@ services:
 
   certbot:
     image: certbot/certbot
+    restart: unless-stopped
     volumes:
       - /data/certbot/conf:/etc/letsencrypt
       - /data/certbot/www:/var/www/certbot
