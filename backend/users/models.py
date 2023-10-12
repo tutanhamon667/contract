@@ -1,5 +1,5 @@
 from io import BytesIO
-from django.conf import settings
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import MinValueValidator, RegexValidator
@@ -80,7 +80,7 @@ class Contact(models.Model):
     type = models.CharField(
         choices=CONTACT_TYPE,
         max_length=150,
-        )
+    )
     contact = models.CharField(
         max_length=150,
         verbose_name='Контакт'
@@ -145,7 +145,7 @@ class PortfolioFile(models.Model):
         verbose_name='Имя документа'
     )
     thumbnail = models.ImageField(
-        upload_to='portfolio/',
+        upload_to='portfolio/thumnails/',
         null=True,
         blank=True)
 
@@ -154,9 +154,19 @@ class PortfolioFile(models.Model):
         thumbnail_size = THUMBNAIL_SIZE
         image.thumbnail(thumbnail_size)
         x, thumb_name = self.file.name.replace('.', '_thumb.').split('/')
-        path = settings.MEDIA_ROOT + '\\' + x + '\\' + thumb_name
-        image.save(path)
-        
+        thumb_io = BytesIO()
+        image.save(thumb_io, 'png')
+        self.thumbnail.save(
+            thumb_name,
+            InMemoryUploadedFile(
+                thumb_io, None,
+                thumb_name, 'image/png',
+                thumb_io.tell, None
+            ),
+            save=True
+        )
+        thumb_io.close()
+
 
 class DiplomaFile(models.Model):
     file = models.ImageField(
@@ -172,21 +182,21 @@ class DiplomaFile(models.Model):
         blank=True)
 
     def create_thumbnail(self):
-        image = Image.open(self.file)
+        image = Image.open(self.file, 'r')
         thumbnail_size = THUMBNAIL_SIZE
         image.thumbnail(thumbnail_size)
-        thumb_name = self.file.name.replace('.', '_thumb.')
+        x, thumb_name = self.file.name.replace('.', '_thumb.').split('/')
         thumb_io = BytesIO()
-        image.save(thumb_io, 'JPEG')
+        image.save(thumb_io, 'png')
         self.thumbnail.save(
             thumb_name,
             InMemoryUploadedFile(
                 thumb_io, None,
-                thumb_name, 'image/jpeg',
+                thumb_name, 'image/png',
                 thumb_io.tell, None
             ),
-            save=False
-            )
+            save=True
+        )
         thumb_io.close()
 
 
@@ -231,7 +241,6 @@ class Education(models.Model):
 class WorkerProfile(models.Model):
     user = models.OneToOneField(
         Member,
-        related_name='freelancer',
         on_delete=models.PROTECT
     )
     photo = models.ImageField(
@@ -281,10 +290,12 @@ class FreelancerContact(models.Model):
     freelancer = models.ForeignKey(
         WorkerProfile,
         on_delete=models.CASCADE,
+        related_name='f_contact'
     )
     contact = models.ForeignKey(
         Contact,
         on_delete=models.CASCADE,
+        related_name='f_contact'
     )
 
 
@@ -292,10 +303,12 @@ class FreelancerStack(models.Model):
     freelancer = models.ForeignKey(
         WorkerProfile,
         on_delete=models.CASCADE,
+        related_name='f_stack'
     )
     stack = models.ForeignKey(
         Stack,
         on_delete=models.CASCADE,
+        related_name='f_stack'
     )
 
 
@@ -303,10 +316,12 @@ class FreelancerCategory(models.Model):
     freelancer = models.ForeignKey(
         WorkerProfile,
         on_delete=models.CASCADE,
+        related_name='f_category'
     )
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
+        related_name='f_category'
     )
 
 
@@ -314,11 +329,12 @@ class EducationDiploma(models.Model):
     diploma = models.ForeignKey(
         DiplomaFile,
         on_delete=models.CASCADE,
-        related_name='diploma'
+        related_name='f_diploma'
     )
     education = models.ForeignKey(
         Education,
         on_delete=models.CASCADE,
+        related_name='f_diploma'
     )
 
 
@@ -326,10 +342,12 @@ class FreelancerEducation(models.Model):
     freelancer = models.ForeignKey(
         WorkerProfile,
         on_delete=models.CASCADE,
+        related_name='f_education'
     )
     education = models.ForeignKey(
         Education,
         on_delete=models.CASCADE,
+        related_name='f_education'
     )
 
 
@@ -337,10 +355,12 @@ class FreelancerPortfolio(models.Model):
     freelancer = models.ForeignKey(
         WorkerProfile,
         on_delete=models.CASCADE,
+        related_name='f_portfolio'
     )
     portfolio = models.ForeignKey(
         PortfolioFile,
         on_delete=models.CASCADE,
+        related_name='f_portfolio'
     )
 
 

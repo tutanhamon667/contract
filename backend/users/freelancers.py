@@ -66,71 +66,25 @@ class PortfolioFileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class GetEducationSerializer(serializers.ModelSerializer):
-    diploma = DiplomaFileSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Education
-        fields = '__all__'
-
-
-class PostEducationSerializer(serializers.ModelSerializer):
+class EducationSerializer(serializers.ModelSerializer):
     diploma = DiplomaFileSerializer(many=True, required=False)
 
     class Meta:
         model = Education
         fields = '__all__'
 
-    def create(self, validated_data):
-        diploma = validated_data.pop('diploma')
-        education = Education.objects.create(**validated_data)
-        for example in diploma:
-            instance, status = DiplomaFile.objects.get_or_create(**example)
-            EducationDiploma.objects.create(
-                education=education,
-                diploma=instance
-            )
-        return education
-
-    def update(self, instance, validated_data):
-#        diploma = validated_data.pop('diploma')
-#        education = Education.objects.create(**validated_data)
-#        for example in diploma:
-#            instance, status = DiplomaFile.objects.get_or_create(**example)
-#            EducationDiploma.objects.create(
-#                education=education,
-#                diploma=instance
-#            )
-#        return education
-        return
-
-
-class PortfolioSerializer(serializers.ModelSerializer):
-    freelancer = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    portfolio = PortfolioFileSerializer(many=True)
-
-    class Meta:
-        model = FreelancerPortfolio
-        fields = '__all__'
-
 
 class GetWorkerProfileSerializer(serializers.ModelSerializer):
-#    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-#    freelancer = UserViewSerialiser(many=False, read_only=True)
     user = serializers.StringRelatedField(read_only=True)
     contacts = ContactSerializer(many=True)
     stacks = StackSerializer(many=True)
     categories = CategorySerializer(many=True)
-    education = GetEducationSerializer(many=True)
-    portfolio = PortfolioSerializer(many=True)
+    education = EducationSerializer(many=True)
+    portfolio = PortfolioFileSerializer(many=True, read_only=True)
 
     class Meta:
         model = WorkerProfile
         fields = '__all__'
-#        fields = ('user', 'first_name', 'last_name', 'contacts', 'activity',
-#                  'stacks', 'payrate', 'about', 'job_example',
-#                  'web', 'education', 'diploma_start_year',
-#                  'diploma_finish_year', 'degree', 'faculty', 'diploma')
 
 
 class PostWorkerProfileSerializer(serializers.ModelSerializer):
@@ -138,7 +92,7 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
     contacts = ContactSerializer(many=True, required=True)
     stacks = StackSerializer(many=True, required=True)
     categories = CategorySerializer(many=True, required=True)
-    education = PostEducationSerializer(many=True, required=True)
+    education = EducationSerializer(many=True, required=True)
     portfolio = PortfolioFileSerializer(many=True, required=True)
 
     class Meta:
@@ -158,7 +112,7 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
         categories = validated_data.pop('categories')
         education = validated_data.pop('education')
         portfolio = validated_data.pop('portfolio')
-        
+
         profile = WorkerProfile.objects.create(**validated_data)
 
         for contact in contacts:
@@ -188,6 +142,7 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
 
             for example in diploma:
                 file = DiplomaFile.objects.create(**example)
+                file.create_thumbnail()
                 EducationDiploma.objects.create(
                     education=instance,
                     diploma=file
@@ -208,28 +163,5 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
         return profile
 
     def update(self, instance, validated_data):
-        contacts = validated_data.pop('contacts_set')
-        activityes = validated_data.pop('activity')
-        stacks = validated_data.pop('stacks')
-#        FreelancerActivity.objects.filter(freelancer=instance).delete()
-#        FreelancerStack.objects.filter(freelancer=instance).delete()
-        Contact.objects.filter(freelancer=instance).delete()
-        for activity in activityes:
-            ac, status = Category.objects.get_or_create(**activity)
-#            FreelancerActivity.objects.create(
-#                freelancer=instance,
-#                activity=ac
-#            )
-        for stack in stacks:
-            st, status = Stack.objects.get_or_create(**stack)
-#            FreelancerStack.objects.create(
-#                freelancer=instance,
-#                stack=st
-#            )
-        for contact in contacts:
-            Contact.objects.create(
-                freelancer=instance,
-                type=contact['type'],
-                contact=contact['contact']
-            )
+
         return super().update(instance, validated_data)

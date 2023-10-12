@@ -134,20 +134,22 @@ class PostEducationSerializer(serializers.ModelSerializer):
         return education
 
     def update(self, instance, validated_data):
-#        diploma = validated_data.pop('diploma')
-#        education = Education.objects.create(**validated_data)
-#        for example in diploma:
-#            instance, status = DiplomaFile.objects.get_or_create(**example)
-#            EducationDiploma.objects.create(
-#                education=education,
-#                diploma=instance
-#            )
-#        return education
+        # diploma = validated_data.pop('diploma')
+        # education = Education.objects.create(**validated_data)
+        # for example in diploma:
+        #     instance, status = DiplomaFile.objects.get_or_create(**example)
+        #     EducationDiploma.objects.create(
+        #         education=education,
+        #         diploma=instance
+        #     )
+        # return education
         return
 
 
 class PortfolioSerializer(serializers.ModelSerializer):
-    freelancer = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    freelancer = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
     portfolio = PortfolioFileSerializer(many=True, read_only=True)
 
     class Meta:
@@ -162,8 +164,8 @@ class UserViewSerialiser(serializers.ModelSerializer):
 
 
 class WorkerProfileListSerializer(serializers.ModelSerializer):
-#    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-#    freelancer = UserViewSerialiser(many=False, read_only=True)
+    # user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    # freelancer = UserViewSerialiser(many=False, read_only=True)
     user = serializers.StringRelatedField(read_only=True)
     contacts = ContactSerializer(many=True)
     stacks = StackSerializer(many=True)
