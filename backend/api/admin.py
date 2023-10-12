@@ -38,11 +38,16 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 
+'''
+# Проверить корректность работы WorkerProfile
+# через users/admin.py
+
 @admin.register(WorkerProfile)
 class WorkerProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'payrate')
     list_filter = ('activity', 'stacks')
     filter_horizontal = ('activity', 'stacks')
+'''
 
 
 # Кастомный административный класс для модели CustomerProfile

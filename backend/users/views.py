@@ -3,9 +3,8 @@ from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjoserView
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from drf_spectacular.utils import extend_schema
+from rest_framework.response import Response
 
 from .models import CustomerProfile, Member, WorkerProfile
 from .permissions import IsUser
@@ -14,8 +13,8 @@ from .serializers import (GetCustomerProfileSerializer, NewEmailSerializer,
                           PostCustomerProfileSerializer,
                           SendEmailResetSerializer, SetPasswordSerializer,
                           UserCreateSerializer, UserViewSerialiser,
-                          WorkerProfileListSerializer,
-                          WorkerProfileCreateSerializer)
+                          WorkerProfileCreateSerializer,
+                          WorkerProfileListSerializer)
 
 User = get_user_model()
 
@@ -188,15 +187,27 @@ class UserViewSet(viewsets.ModelViewSet):
                 serializer.data,
                 status=status.HTTP_200_OK)
 
+        # @ilgiz flake8 выдавал ошибку:
+        # "missing explicit return at the end of
+        # function able to return non-None value".
+        # Исправил на вариант, что если метод не GET, POST или PATCH,
+        # возвращаем ошибку "Метод не разрешен".
+        return Response(
+            {"detail": "Метод не разрешен."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
 
 class FreelancerViewSet(viewsets.ModelViewSet):
     queryset = WorkerProfile.objects.all()
     http_method_names = ["get", "post", "put", "delete"]
     serializer_class = WorkerProfileListSerializer
     permission_classes = [IsAuthenticated, ]
-    
+
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
             return WorkerProfileListSerializer
         if self.action == 'create' or self.action == 'update':
             return WorkerProfileCreateSerializer
+        # @ilgiz Добавляем None, чтобы устранить ошибку flake8(R503).
+        return None

@@ -4,9 +4,8 @@ from django.db import models
 
 from .usermanager import UserManager
 
-
 CONTACT_TYPE = [
-    ('Phone number','Phone number'),
+    ('Phone number', 'Phone number'),
     ('Email', 'Email'),
     ('Telegram', 'Telegram'),
     ('Other', 'Other')
@@ -252,4 +251,4 @@ class FreelancerActivity(models.Model):
     freelancer = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE,
                                    related_name='freelancers_activity')
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE,
-                              related_name='freelancers_activity')
+                                 related_name='freelancers_activity')

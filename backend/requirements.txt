@@ -48,4 +48,3 @@ tzdata==2023.3
 uritemplate==4.1.1
 urllib3==2.0.5
 views-py==2.0.0
-drf-extra-fields==3.6.1
