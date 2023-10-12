@@ -35,7 +35,7 @@ class FreelancerSerializer(serializers.ModelSerializer):
         fields = ('user',)
 
 
-class StackSerializer(serializers.ModelSerializer):
+class JobStackSerializer(serializers.ModelSerializer):
     """Стэк технологий."""
     class Meta:
         model = Stack
@@ -89,7 +89,7 @@ class RespondedSerializer(serializers.ModelSerializer):
 
 class JobListSerializer(serializers.ModelSerializer):
     """Получение списка заказов."""
-    stack = StackSerializer(many=True)
+    stack = JobStackSerializer(many=True)
     client = ClientSerializer()
     is_responded = serializers.SerializerMethodField()
 
@@ -145,7 +145,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(),
         many=True
     )
-    stack = StackSerializer(many=True,)
+    stack = JobStackSerializer(many=True,)
     job_files = JobFileSerializer(many=True,)
 
     class Meta:

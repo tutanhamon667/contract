@@ -1,8 +1,6 @@
 from django.contrib import admin
 
-from .models import (Member, Stack,
-                     Activity, WorkerProfile,
-                     Contacts)
+from .models import Activity, Contacts, Member, Stack, WorkerProfile
 
 
 @admin.register(WorkerProfile)

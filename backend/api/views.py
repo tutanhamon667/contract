@@ -50,7 +50,7 @@ class JobViewSet(ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
-        serializer.save(client=self.request.user.customerprofile)
+        serializer.save(client_id=self.request.user.id)
 
     def perform_update(self, serializer):
         serializer.save()
