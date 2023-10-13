@@ -74,12 +74,15 @@ function EmployerCompleteForm() {
                    errorMessage={errors.about} onChange={handleChange}
         />
       </label>
-      <label>
+      <div>
         <p className="employer-complete-form__input-text">Укажите ссылку на сайт компании</p>
         <InputText type="url" placeholder="www.example.com" name="web" width={610} value={values.web || ''}
                    error={errors.web} errorMessage={errors.web} onChange={handleChange}
         />
-      </label>
+        <button type="button" className="employer-complete-form__add-link-button">
+          Добавить ещё сайт или социальные сети +
+        </button>
+      </div>
 
 
       <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200}></Button>
