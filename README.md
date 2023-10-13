@@ -1,5 +1,7 @@
 # Платформа для фрилансеров и поиска заказов для IT специалиста [freelancing-platform-project]
 
+[![Freelance platform workflow](https://github.com/freelancing-platform-practicum/freelancing-platform-project/actions/workflows/main.yml/badge.svg)](https://github.com/freelancing-platform-practicum/freelancing-platform-project/actions/workflows/main.yml)
+
 ## О проекте
 
 Платформа может помочь IT специалистам создать удобную и эффективную среду для нахождения работы и развития профессиональной карьеры в IT. Может помочь сократить время и усилия, связанные с поиском проектов и коммуникацией с заказчиками.

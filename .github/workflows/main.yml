@@ -2,6 +2,10 @@ name: Freelance platform workflow
 
 on:
   push:
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'setup.cfg'
     branches:
       - develop
 
