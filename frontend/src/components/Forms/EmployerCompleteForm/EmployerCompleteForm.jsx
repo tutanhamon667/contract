@@ -6,7 +6,8 @@ import { InputImage } from '../../Inputs/InputImage/InputImage';
 import InputText from '../../Inputs/InputText/InputText';
 import Button from '../../Button/Button';
 import "./EmployerCompleteForm.css";
-import InputSpecializationList from '../../Inputs/InputSpecializationList/InputSpecializationList';
+import InputMultipleSelect from '../../Inputs/InputMultipleSelect/InputMultipleSelect';
+import { activityOptions } from '../../../utils/constants';
 
 function EmployerCompleteForm() {
   const {
@@ -62,8 +63,8 @@ function EmployerCompleteForm() {
       </label>
       <label>
         <p className="employer-complete-form__input-text">Сфера деятельности</p>
-        <InputSpecializationList name="activity" value={values.activity || ''} error={errors.activity}
-                                 errorMessage={errors.activity} onChange={handleChange}
+        <InputMultipleSelect name="activity" value={values.activity || ''} error={errors.activity}
+                             errorMessage={errors.activity} onChange={handleChange} options={activityOptions}
         />
       </label>
       <label>

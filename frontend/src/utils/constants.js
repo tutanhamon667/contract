@@ -19,3 +19,20 @@ export const userCustomer = {
   password: "imsuperboss1",
   role: "Заказчик"
 };
+
+export const activityOptions = [
+  { label: 'Дизайн', value: 1 },
+  { label: 'Разработка', value: 2 },
+  { label: 'Тестирование', value: 3 },
+  { label: 'Администрирование', value: 4 },
+  { label: 'Маркетинг', value: 5 },
+  { label: 'Контент', value: 6 },
+  { label: 'Разное', value: 7 },
+]
+
+export const degreeOptions = [
+  { label: 'Студент', value: 1 },
+  { label: 'Бакалавр', value: 2 },
+  { label: 'Специалист', value: 3 },
+  { label: 'Магистр', value: 4 },
+]

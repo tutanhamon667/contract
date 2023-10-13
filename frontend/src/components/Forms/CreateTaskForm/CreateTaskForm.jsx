@@ -1,18 +1,16 @@
 import InputText from '../../Inputs/InputText/InputText';
-import InputSpecializationList from '../../Inputs/InputSpecializationList/InputSpecializationList';
+import InputMultipleSelect from '../../Inputs/InputMultipleSelect/InputMultipleSelect';
 import InputTags from '../../Inputs/InputTags/InputTags';
 import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
 import Button from '../../Button/Button';
 import React, { useState } from 'react';
-import useFormAndValidation from '../../../hooks/useFormAndValidation';
-import { useNavigate } from 'react-router-dom';
 import './CreateTaskForm.css';
+import { activityOptions } from '../../../utils/constants';
 
 const MAX_ATTACHED_DOCS = 8;
 
 function CreateTaskForm() {
   const [docKeys, setDocKeys] = useState([Date.now()]);
-  const navigate = useNavigate();
 
   const handleDocChange = (event) => {
     if (event.currentTarget.files[0]) {
@@ -36,7 +34,7 @@ function CreateTaskForm() {
       </label>
       <label>
         <p className="create-task-form__input-text">Специализация</p>
-        <InputSpecializationList name="activity" />
+        <InputMultipleSelect name="activity" options={activityOptions} />
       </label>
       <label>
         <p className="create-task-form__input-text">Навыки</p>
@@ -48,7 +46,7 @@ function CreateTaskForm() {
       </label>
       <label className="create-task-form__input-checkbox-text">
         <input type="checkbox" className="create-task-form__input-checkbox" name="budget-discussion"/>
-        Предпочтительный вид связи
+        Жду предложений от фрилансеров
       </label>
       <div>
         <p className="create-task-form__input-text">Сроки</p>
@@ -58,7 +56,7 @@ function CreateTaskForm() {
       </div>
       <label className="create-task-form__input-checkbox-text">
         <input type="checkbox" className="create-task-form__input-checkbox" name="deadline-discussion"/>
-        Предпочтительный вид связи
+        Жду предложений от фрилансеров
       </label>
       <label>
         <p className="create-task-form__input-text">Описание</p>

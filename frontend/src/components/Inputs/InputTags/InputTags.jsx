@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../InputSpecializationList/InputSpecializationList.css';
+import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
 function InputTags() {

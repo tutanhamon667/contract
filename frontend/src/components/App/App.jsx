@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Main from "../Main/Main";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Context } from "../../context/context";
@@ -49,38 +49,23 @@ function App() {
     <BrowserRouter>
       <Context.Provider value={{ currentUser, authenticated, orderFilter, updateUser, logIn, logOut, handleOrderFilter }}>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <Layout
-                setAuthenticated={setAuthenticated}
-                setCurrentUser={setCurrentUser}
-              />}>
+          <Route path="/" element={<Layout setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />}>
             <Route element={<ProtectedRoute />}>
               <Route path="customer/:id" element={<ProfileCustomer />} />
-              <Route path="freelancer/:id" element={<ProfileFreelancer />} />
-              <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
               <Route path="customer/:id/complete" element={<EmployerCompleteForm />} />
+              <Route path="freelancer/:id" element={<ProfileFreelancer />} />
+              <Route path="freelancer/:id/complete" element={
+                <FreelancerCompleteForm setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
+              } />
+              <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
             <Route path="order" element={<Order />} />
-            <Route
-              path="signup/freelancer"
-              element={
-                <FreelancerCompleteForm
-                  setAuthenticated={setAuthenticated}
-                  setCurrentUser={setCurrentUser}
-                />} />
-            <Route
-              path="signin"
-              element={
-                <Login
-                  setAuthenticated={setAuthenticated}
-                  setCurrentUser={setCurrentUser}
-                />}
-            />
+            <Route path="signin" element={
+              <Login setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
+            } />
             <Route path="forgot-password" element={<ForgotPass />} />
             <Route path="reset-password" element={<ResetPass />} />
             <Route path="signout" element={<SignOut />} />
