@@ -9,7 +9,7 @@ from .clients import (GetCustomerProfileSerializer,
                       PostCustomerProfileSerializer)
 from .freelancers import (GetWorkerProfileSerializer,
                           PostWorkerProfileSerializer, UserViewSerialiser)
-from .models import CustomerProfile, Member, WorkerProfile
+from .models import CustomerProfile, WorkerProfile
 from .permissions import IsUser
 from .serializers import (NewEmailSerializer, PasswordResetConfirmSerializer,
                           SendEmailResetSerializer, SetPasswordSerializer,
@@ -36,15 +36,15 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         if self.action in ['retrieve', 'me']:
             if self.action == 'retrieve':
-                user = get_object_or_404(Member, id=self.kwargs.get('pk'))
+                user = get_object_or_404(User, id=self.kwargs.get('pk'))
             elif self.request.user.is_authenticated:
                 user = self.request._user
             else:
-                return super().get_queryset()
+                return Response(status=status.HTTP_403_FORBIDDEN)
 
-            if user.is_customer and not user.is_worker:
+            if user.is_customer:
                 return CustomerProfile.objects.all()
-            if user.is_worker and not user.is_customer:
+            if user.is_worker:
                 return WorkerProfile.objects.all()
         return super().get_queryset()
 
@@ -67,18 +67,18 @@ class UserViewSet(viewsets.ModelViewSet):
         key = self.action
         if key in ['retrieve', 'me']:
             if self.action == 'retrieve':
-                user = get_object_or_404(Member, id=self.kwargs.get('pk'))
+                user = get_object_or_404(User, id=self.kwargs.get('pk'))
             elif self.request.user.is_authenticated:
                 user = self.request._user
             else:
-                return UserViewSerialiser
+                return Response(status=status.HTTP_403_FORBIDDEN)
 
-            if user.is_customer and not user.is_worker:
+            if user.is_customer:
                 if self.request.method in ['POST', 'PATCH']:
                     key = 'POST_PATCH_customer'
                 else:
                     key = 'GET_customer'
-            elif user.is_worker and not user.is_customer:
+            elif user.is_worker:
                 if self.request.method in ['POST', 'PATCH']:
                     key = 'POST_PATCH_worker'
                 else:
@@ -97,13 +97,15 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def retrieve(self, request, *args, **kwargs):
-        self.get_queryset()
-        user = get_object_or_404(Member, id=self.kwargs.get('pk'))
-        if user.is_customer and not user.is_worker:
+        user = get_object_or_404(User, id=self.kwargs.get('pk'))
+        if user.is_customer == user.is_worker:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if user.is_customer:
             queryset = get_object_or_404(CustomerProfile, user_id=user.id)
-        elif user.is_worker and not user.is_customer:
+        elif user.is_worker:
             queryset = get_object_or_404(WorkerProfile, user_id=user.id)
         serializer = self.get_serializer(queryset)
+        self.get_queryset()
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
@@ -155,52 +157,43 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(url_path='me', methods=['get', 'post', 'patch'], detail=False)
     def me(self, request):
-        self.get_queryset()
         user = request._user
-        if request.method == 'GET':
-            if user.is_customer and not user.is_worker:
-                queryset = get_object_or_404(CustomerProfile, user_id=user.id)
-            elif user.is_worker and not user.is_customer:
-                queryset = get_object_or_404(WorkerProfile, user_id=user.id)
-            serializer = self.get_serializer(queryset)
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK
-            )
-
+        if user.is_customer == user.is_worker:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         self.get_permissions()
-        if request.method == 'POST':
-            if user.is_customer and not user.is_worker:
+        self.get_queryset()
+
+        if user.is_customer:
+            if request.method == 'GET':
+                queryset = get_object_or_404(CustomerProfile, user_id=user.id)
+                serializer = self.get_serializer(queryset)
+            elif request.method == 'POST':
                 serializer = self.get_serializer(
                     data=request.data,
                     fields=('user', 'photo', 'name', 'industry', 'web')
                 )
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
-                return Response(
-                    serializer.data,
-                    status=status.HTTP_200_OK
-                )
-            if user.is_worker and not user.is_customer:
+
+        elif user.is_worker:
+            if request.method == 'GET':
+                queryset = get_object_or_404(WorkerProfile, user_id=user.id)
+                serializer = self.get_serializer(queryset)
+            elif request.method == 'POST':
                 serializer = self.get_serializer(
                     data=request.data
                 )
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
-                return Response(
-                    serializer.data,
-                    status=status.HTTP_200_OK
+            elif request.method == 'PATCH':
+                serializer = self.get_serializer(
+                    request._user,
+                    request.data,
+                    partial=True
                 )
-        if request.method == 'PATCH':
-            print(request._user)
-            serializer = self.get_serializer(
-                request._user,
-                data=request.data,
-                partial=True
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )

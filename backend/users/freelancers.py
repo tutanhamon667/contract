@@ -116,40 +116,40 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
         profile = WorkerProfile.objects.create(**validated_data)
 
         for contact in contacts:
-            instance = Contact.objects.create(**contact)
+            record = Contact.objects.create(**contact)
             FreelancerContact.objects.create(
                 freelancer=profile,
-                contact=instance
+                contact=record
             )
 
         for stack in stacks:
-            instance, status = Stack.objects.get_or_create(**stack)
+            record, status = Stack.objects.get_or_create(**stack)
             FreelancerStack.objects.create(
                 freelancer=profile,
-                stack=instance
+                stack=record
             )
 
         for category in categories:
-            instance, status = Category.objects.get_or_create(**category)
+            record, status = Category.objects.get_or_create(**category)
             FreelancerCategory.objects.create(
                 freelancer=profile,
-                category=instance
+                category=record
             )
 
         for stage in education:
             diploma = stage.pop('diploma')
-            instance = Education.objects.create(**stage)
+            record = Education.objects.create(**stage)
 
             for example in diploma:
                 file = DiplomaFile.objects.create(**example)
                 file.create_thumbnail()
                 EducationDiploma.objects.create(
-                    education=instance,
+                    education=record,
                     diploma=file
                 )
             FreelancerEducation.objects.create(
                 freelancer=profile,
-                education=instance
+                education=record
             )
 
         for example in portfolio:
@@ -163,5 +163,65 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
         return profile
 
     def update(self, instance, validated_data):
+        contacts = validated_data.pop('contacts')
+        stacks = validated_data.pop('stacks')
+        categories = validated_data.pop('categories')
+        education = validated_data.pop('education')
+        portfolio = validated_data.pop('portfolio')
+        Contact.objects.filter(workerprofile__user=instance).delete()
+        Stack.objects.filter(workerprofile__user=instance).delete()
+        Category.objects.filter(workerprofile__user=instance).delete()
+        DiplomaFile.objects.filter(
+            education__workerprofile__user=instance
+        ).delete()
+        Education.objects.filter(workerprofile__user=instance).delete()
+        PortfolioFile.objects.filter(workerprofile__user=instance).delete()
 
-        return super().update(instance, validated_data)
+        profile = WorkerProfile.objects.get(user=instance)
+
+        for contact in contacts:
+            record = Contact.objects.create(**contact)
+            FreelancerContact.objects.create(
+                freelancer=profile,
+                contact=record
+            )
+
+        for stack in stacks:
+            record, status = Stack.objects.get_or_create(**stack)
+            FreelancerStack.objects.create(
+                freelancer=profile,
+                stack=record
+            )
+
+        for category in categories:
+            record, status = Category.objects.get_or_create(**category)
+            FreelancerCategory.objects.create(
+                freelancer=profile,
+                category=record
+            )
+
+        for stage in education:
+            diploma = stage.pop('diploma')
+            record = Education.objects.create(**stage)
+
+            for example in diploma:
+                file = DiplomaFile.objects.create(**example)
+                file.create_thumbnail()
+                EducationDiploma.objects.create(
+                    education=record,
+                    diploma=file
+                )
+            FreelancerEducation.objects.create(
+                freelancer=profile,
+                education=record
+            )
+
+        for example in portfolio:
+            file = PortfolioFile.objects.create(**example)
+            file.create_thumbnail()
+            FreelancerPortfolio.objects.create(
+                freelancer=profile,
+                portfolio=file
+            )
+        profile.save()
+        return profile
