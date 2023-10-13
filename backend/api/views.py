@@ -7,21 +7,21 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from orders.models import Category, Job
+from orders.models import Job, JobCategory
 from orders.models import Response as Responses
 
 from .filters import JobFilter
 from .mixins import CreateListDestroytViewSet
 from .permissions import IsAdminOrReadOnly, IsCustomerOrReadOnly, IsFreelancer
-from .serializers import (CategorySerializer, JobCreateSerializer,
+from .serializers import (JobCategorySerializer, JobCreateSerializer,
                           JobListSerializer, RespondedSerializer,
                           ResponseSerializer)
 
 
-class CategoryViewSet(CreateListDestroytViewSet):
+class JobCategoryViewSet(CreateListDestroytViewSet):
     """Специализации."""
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    queryset = JobCategory.objects.all()
+    serializer_class = JobCategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = None
 
@@ -50,7 +50,7 @@ class JobViewSet(ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
-        serializer.save(client=self.request.user.customerprofile)
+        serializer.save(client_id=self.request.user.id)
 
     def perform_update(self, serializer):
         serializer.save()

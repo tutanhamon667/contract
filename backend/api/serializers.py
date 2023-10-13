@@ -2,8 +2,8 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from api.utils import CustomBase64ImageField
-from orders.models import (CATEGORY_CHOICES, Category, Job, JobFile, Response,
-                           StackJob)
+from orders.models import (CATEGORY_CHOICES, Job, JobCategory, JobFile,
+                           Response, StackJob)
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
@@ -35,19 +35,19 @@ class FreelancerSerializer(serializers.ModelSerializer):
         fields = ('user',)
 
 
-class StackSerializer(serializers.ModelSerializer):
+class JobStackSerializer(serializers.ModelSerializer):
     """Стэк технологий."""
     class Meta:
         model = Stack
         fields = ('name',)
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class JobCategorySerializer(serializers.ModelSerializer):
     """Стэк технологий."""
     name = serializers.ChoiceField(choices=CATEGORY_CHOICES)
 
     class Meta:
-        model = Category
+        model = JobCategory
         fields = ('name',)
 
 
@@ -89,7 +89,7 @@ class RespondedSerializer(serializers.ModelSerializer):
 
 class JobListSerializer(serializers.ModelSerializer):
     """Получение списка заказов."""
-    stack = StackSerializer(many=True)
+    stack = JobStackSerializer(many=True)
     client = ClientSerializer()
     is_responded = serializers.SerializerMethodField()
 
@@ -142,10 +142,10 @@ class JobCreateSerializer(serializers.ModelSerializer):
 
     # client_id = serializers.SerializerMethodField()
     category = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(),
+        queryset=JobCategory.objects.all(),
         many=True
     )
-    stack = StackSerializer(many=True,)
+    stack = JobStackSerializer(many=True,)
     job_files = JobFileSerializer(many=True,)
 
     class Meta:
