@@ -3,7 +3,7 @@ name: Freelance platform workflow
 on:
   push:
     branches:
-      - develop
+      - infra/cicdconfiguration
 
 jobs:
 
