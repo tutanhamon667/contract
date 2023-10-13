@@ -34,7 +34,10 @@ class UserViewSet(viewsets.ModelViewSet):
         action in ['retrieve', 'me']  дополнительно проверяет роль
         пользователя и в зависимости от этого возвращает требуемый queryset
         """
-        if self.action in ['retrieve', 'me']:
+        # @ilgiz добавил проверку на авторизацию,
+        # так как потом надо получить авторизованного user, чтобы получить pk
+        if ((self.action in ['retrieve', 'me'])
+                and self.request.user.is_authenticated):
             if self.action == 'retrieve':
                 user = get_object_or_404(User, id=self.kwargs.get('pk'))
             elif self.request.user.is_authenticated:
@@ -65,7 +68,9 @@ class UserViewSet(viewsets.ModelViewSet):
             'POST_PATCH_worker': PostWorkerProfileSerializer
         }
         key = self.action
-        if key in ['retrieve', 'me']:
+        # @ilgiz добавил проверку на авторизацию,
+        # так как потом надо получить авторизованного user, чтобы получить pk
+        if (key in ['retrieve', 'me']) and self.request.user.is_authenticated:
             if self.action == 'retrieve':
                 user = get_object_or_404(User, id=self.kwargs.get('pk'))
             elif self.request.user.is_authenticated:

@@ -91,7 +91,7 @@ class Client(models.Model):
 '''
 
 
-class Category(models.Model):
+class JobCategory(models.Model):
     """
     Специализации.
     """
@@ -128,7 +128,7 @@ class Job(models.Model):
         verbose_name='Название задания', max_length=200
     )
     category = models.ManyToManyField(
-        Category,
+        JobCategory,
         related_name='jobs',
         verbose_name='Специализация',
         help_text='Выберите специализацию'
