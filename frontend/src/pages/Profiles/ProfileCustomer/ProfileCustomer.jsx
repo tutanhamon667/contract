@@ -6,14 +6,15 @@ import "./ProfileCustomer.css";
 import "../ProfileFreelancer/ProfileFreelancer.css";
 import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css";
 
-import useFormAndValidation from "../../../hooks/useFormAndValidation";
+// import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import { Context } from "../../../context/context"
-import InputSpecializationList from "../../../components/Inputs/InputSpecializationList/InputSpecializationList";
+import InputMultipleSelect from "../../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
+import { activityOptions } from '../../../utils/constants';
 
 export default function ProfileCustomer() {
   const [isEditable, setIsEditable] = useState(false);
   const { currentUser } = useContext(Context);
-  const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
+  // const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -110,7 +111,7 @@ export default function ProfileCustomer() {
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Специализация</h2>
-            <InputSpecializationList />
+            <InputMultipleSelect name="activity" options={activityOptions} />
           </div>
 
           <div className="profile__main-text form-profile__input-container">

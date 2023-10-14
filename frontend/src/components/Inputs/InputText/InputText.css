@@ -28,6 +28,26 @@
   box-shadow: 2px 2px 0 0 #C6C6C6;
 }
 
+.input_type_error {
+  border: 1px solid #EB5757;
+}
+
+.input_type_number {
+  background: #fff url(../../../images/ruble.svg) no-repeat calc(100% - 19px) center / 11px;
+  padding: 19px 49px 19px 19px;
+}
+
+/* start: hide default browser arrow for number  */
+.input_type_number {
+  appearance: textfield;
+}
+
+.input_type_number::-webkit-outer-spin-button,
+.input_type_number::-webkit-inner-spin-button {
+  appearance: none;
+}
+/* end: hide default browser arrow for number */
+
 .input__showPass {
   position: absolute;
   top: 46%;
@@ -38,10 +58,6 @@
   background-position: center;
   opacity: .15;
   cursor: pointer;
-}
-
-.input__error {
-  border: 1px solid #EB5757;
 }
 
 .input__errorText {

@@ -1,12 +1,26 @@
 # Платформа для фрилансеров и поиска заказов для IT специалиста [freelancing-platform-project]
 
+[![Freelance platform workflow](https://github.com/freelancing-platform-practicum/freelancing-platform-project/actions/workflows/main.yml/badge.svg)](https://github.com/freelancing-platform-practicum/freelancing-platform-project/actions/workflows/main.yml)
+
+## О проекте
+
+Платформа может помочь IT специалистам создать удобную и эффективную среду для нахождения работы и развития профессиональной карьеры в IT. Может помочь сократить время и усилия, связанные с поиском проектов и коммуникацией с заказчиками.
+
+Сервис доступен по адресу: https://taski.ddns.net
+
+API: https://taski.ddns.net/api/
+
+Документация Redoc: https://taski.ddns.net/redoc/
+
+Настроен автоматический деплой проекта из ветки `develop`. 
+
 ## Фронтенд
 
 ### Окружение
 
 - [Node.js 18 (LTS) и новее](https://nodejs.org/en/download)
 
-### Запуск фронтенд-сервера
+### Установка зависимостей
 
 Перейти в директорию `frontend` и установить зависимости:
 
@@ -14,6 +28,8 @@
 cd frontend
 npm install
 ```
+
+### Запуск фронтенд-сервера
 
 Запустить фронтенд-сервер:
 
@@ -23,8 +39,17 @@ npm start
 
 - Фронтенд-сервер запустится по адресу http://localhost:5173
 
-- Ссылка на просмотр фронта, загруженного на GitHub Pages (не всегда содержит последние изменения):
-  https://freelancing-platform-practicum.github.io/freelancing-platform-project/
+- Ссылка на просмотр фронтенда, находящего в ветке `develop`: https://freelancing-platform-project.pages.dev/
+
+### Сборка фронтенда
+
+Собрать фронтенд для деплоя:
+
+```shell
+npm run build
+```
+
+Готовый фронтенд будет в папке `dist`.
 
 ## Бэкенд
 
@@ -32,7 +57,9 @@ npm start
 
 - [Python 3.10.11 и новее](https://www.python.org/downloads/)
 
-### Запуск бэкенд-сервера
+### Локальный запуск бэкенд-сервера
+
+В settings раскомментировать блок DATABASES с sqlite3 и соответственно текущий блок DATABASES закомментить.
 
 Перейти в папку `backend`, обновить менеджер пакетов pip:
 

@@ -1,7 +1,7 @@
 .search {
   border-radius: 10px;
   background-color: transparent;
-  border: 1px solid var(--border-gray, #C6C6C6);
+  border: 1px solid #C6C6C6;
 }
 
 .search__container {
@@ -23,11 +23,10 @@
   border: none;
   box-sizing: border-box;
   width: 100%;
-  font-family: Inter;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px; /* 125% */
+  line-height: 1.25;
   background-color: transparent;
 }
 

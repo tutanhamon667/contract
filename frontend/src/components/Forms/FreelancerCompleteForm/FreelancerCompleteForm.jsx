@@ -5,10 +5,12 @@ import useFormAndValidation from '../../../hooks/useFormAndValidation';
 import InputText from '../../Inputs/InputText/InputText';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
-import InputSpecializationList from '../../Inputs/InputSpecializationList/InputSpecializationList';
+import InputMultipleSelect from '../../Inputs/InputMultipleSelect/InputMultipleSelect';
 import InputTags from '../../Inputs/InputTags/InputTags';
 import Button from '../../Button/Button';
 import './FreelancerCompleteForm.css';
+import { activityOptions, degreeOptions } from '../../../utils/constants';
+import InputSelect from '../../Inputs/InputSelect/InputSelect';
 
 const MAX_ATTACHED_DOCS = 8;
 
@@ -76,7 +78,6 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
         email: '',
       });
 
-      // navigate(`/freelancer/${freelancerId}`);
       setAuthenticated(true)
       setCurrentUser({
         id: "1",
@@ -90,7 +91,8 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
         skills: ['CSS', 'HTML', 'JavaScript'],
         education: 'МГУ имени М.В. Ломоносова',
       })
-      navigate(`/`);
+
+      navigate(`/freelancer/${freelancerId}`);
     }
   };
 
@@ -142,8 +144,8 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
       </div>
       <label>
         <p className="freelancer-complete-form__input-text">Специализация</p>
-        <InputSpecializationList name="activity" value={values.activity || ''} error={errors.activity}
-          errorMessage={errors.activity} onChange={handleChange}
+        <InputMultipleSelect name="activity" value={values.activity || ''} error={errors.activity}
+                     errorMessage={errors.activity} onChange={handleChange} options={activityOptions}
         />
       </label>
       <label>
@@ -153,7 +155,7 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
       <label>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>
         <InputText type="number" placeholder="Ставка" name="payrate" width={295} value={values.payrate || ''}
-          error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
+                   error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
         />
       </label>
       <label>
@@ -202,9 +204,7 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
       </div>
       <label>
         <p className="freelancer-complete-form__input-text">Степень</p>
-        <InputText type="text" placeholder="Выберите из списка" name="degree" width={610} value={values.degree || ''}
-          error={errors.degree} errorMessage={errors.degree} onChange={handleChange}
-        />
+        <InputSelect options={degreeOptions} placeholder="Выберите из списка" />
       </label>
       <label>
         <p className="freelancer-complete-form__input-text">Факультет</p>
@@ -226,7 +226,7 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
         </div>
       </label>
 
-      <Button type="submit" text="Создать профиль" width={289} marginTop={60} marginBottom={200}></Button>
+      <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200}></Button>
     </form>
   );
 }

@@ -5,7 +5,6 @@ import { Context } from "../../context/context";
 function OperationMode({ operationMode, setOperationMode }) {
   const { currentUser, authenticated } = useContext(Context);
 
-
   return (
     <section className="operation-mode">
       <button
