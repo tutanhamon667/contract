@@ -22,8 +22,10 @@ import "./App.css";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(true);
-  const [currentUser, setCurrentUser] = useState(userCustomer);
-  //состояние отображения фильтра поиска
+  // const [authenticated, setAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(userFreelancer);
+  // const [currentUser, setCurrentUser] = useState(userCustomer);
+  // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
 
   function updateUser(userEmail) {
