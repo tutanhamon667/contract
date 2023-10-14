@@ -1,23 +1,9 @@
-.form-profile__rate-input {
-  width: 25%;
-  background-image: url(../../../images/ruble.svg);
-  background-repeat: no-repeat;
-  background-position: 90% center;
-  background-size: 11px 20px;
-}
-
 .form-profile__dates {
   display: flex;
   justify-content: space-between;
   column-gap: 12px;
 }
 
-.form-profile__dates_input {
-  width: 48%;
+.form-profile__dates > div {
+  flex-grow: 1;
 }
-
-
-
-
-
-

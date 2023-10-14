@@ -84,7 +84,6 @@ function EmployerCompleteForm() {
         </button>
       </div>
 
-
       <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200}></Button>
     </form>
   )

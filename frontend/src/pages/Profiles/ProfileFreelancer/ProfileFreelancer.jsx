@@ -12,6 +12,7 @@ import InputTags from "../../../components/Inputs/InputTags/InputTags";
 import { InputDoc } from "../../../components/Inputs/InputDoc/InputDoc";
 import { activityOptions, degreeOptions } from '../../../utils/constants';
 import InputSelect from '../../../components/Inputs/InputSelect/InputSelect';
+import InputText from '../../../components/Inputs/InputText/InputText';
 // import { freelancerData } from "../../utils/freelance"; // заглушка для проверки обработки данных формы
 
 // переиспользуемые элементы с Forms/FreelancerCompleteForm
@@ -156,12 +157,9 @@ export default function ProfileFreelancer() {
               htmlFor="workingRate">
               Ставка в час
             </label>
-            <input
-              type="text"
-              name="workingRate"
-              id="workingRate"
-              placeholder="150"
-              className="profile__main-text form-profile__input form-profile__rate-input"
+            <InputText type="number" placeholder="Ставка" name="payrate" width={295} value={values.payrate || ''}
+                       error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
+                       id="workingRate"
             />
           </div>
 
@@ -193,17 +191,13 @@ export default function ProfileFreelancer() {
             />
 
             <div className="form-profile__dates">
-              <input type="month"
-                name="beginningOfStudies"
-                id="beginningOfStudies"
-                placeholder="Начало учёбы"
-                className="profile__main-text form-profile__input form-profile__dates_input"
+              <InputText type="month" placeholder="Начало учёбы" name="start_year" width="100%"
+                         value={values.start_year || ''} error={errors.start_year} errorMessage={errors.start_year}
+                         onChange={handleChange}
               />
-              <input type="month"
-                name="endOfStudies"
-                id="endOfStudies"
-                placeholder="Окончание учёбы"
-                className="profile__main-text form-profile__input form-profile__dates_input"
+              <InputText type="month" placeholder="Окончание учёбы" name="end_year" width="100%"
+                         value={values.end_year || ''} error={errors.end_year} errorMessage={errors.end_year}
+                         onChange={handleChange}
               />
             </div>
 

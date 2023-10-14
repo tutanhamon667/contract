@@ -15,7 +15,7 @@ import { EmployerCompleteForm } from '../Forms/EmployerCompleteForm/EmployerComp
 import "./App.css";
 import ResetPass from "../../pages/ResetPass/ResetPass";
 import ProfileCustomer from "../../pages/Profiles/ProfileCustomer/ProfileCustomer";
-import { userCustomer, userFreelancer } from "../../utils/constants";
+import { userFreelancer, userCustomer } from "../../utils/constants";
 import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
 import { CreateTaskForm } from '../Forms/CreateTaskForm/CreateTaskForm';
 import Order from "../../pages/Order/Order";
@@ -23,8 +23,8 @@ import Order from "../../pages/Order/Order";
 function App() {
   const [authenticated, setAuthenticated] = useState(true);
   // const [authenticated, setAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(userCustomer);
-  // const [currentUser, setCurrentUser] = useState(userFreelancer);
+  const [currentUser, setCurrentUser] = useState(userFreelancer);
+  // const [currentUser, setCurrentUser] = useState(userCustomer);
 
   //состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
