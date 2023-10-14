@@ -17,7 +17,6 @@ console.log(area2)
   useEffect((() => {
     if (currentUser.role === 'Фрилансер' && !operationMode) {
       handleOrderFilter(true);
-      console.log('тут');
     } else {
       handleOrderFilter(false)
     }
@@ -27,6 +26,9 @@ console.log(area2)
     setArea2(true)
     }
   }), [currentUser, authenticated, operationMode, handleOrderFilter])
+
+  console.log(area2);
+
 
   return (
     <div className="orderCards">
