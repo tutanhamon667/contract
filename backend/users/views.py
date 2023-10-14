@@ -34,22 +34,21 @@ class UserViewSet(viewsets.ModelViewSet):
         action in ['retrieve', 'me']  дополнительно проверяет роль
         пользователя и в зависимости от этого возвращает требуемый queryset
         """
-        # @ilgiz добавил проверку на авторизацию,
-        # так как потом надо получить авторизованного user, чтобы получить pk
-        if ((self.action in ['retrieve', 'me'])
-                and self.request.user.is_authenticated):
-            if self.action == 'retrieve':
-                user = get_object_or_404(User, id=self.kwargs.get('pk'))
-            elif self.request.user.is_authenticated:
+        if self.action == 'retrieve':
+            user = get_object_or_404(User, id=self.kwargs.get('pk'))
+        elif self.action == 'me':
+            if self.request.user.is_authenticated:
                 user = self.request._user
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
+        else:
+            return super().get_queryset()
 
-            if user.is_customer:
-                return CustomerProfile.objects.all()
-            if user.is_worker:
-                return WorkerProfile.objects.all()
-        return super().get_queryset()
+        if user.is_customer:
+            return CustomerProfile.objects.all()
+        if user.is_worker:
+            return WorkerProfile.objects.all()
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def get_serializer_class(self):
         """"
@@ -68,10 +67,8 @@ class UserViewSet(viewsets.ModelViewSet):
             'POST_PATCH_worker': PostWorkerProfileSerializer
         }
         key = self.action
-        # @ilgiz добавил проверку на авторизацию,
-        # так как потом надо получить авторизованного user, чтобы получить pk
-        if (key in ['retrieve', 'me']) and self.request.user.is_authenticated:
-            if self.action == 'retrieve':
+        if key in ['retrieve', 'me']:
+            if key == 'retrieve':
                 user = get_object_or_404(User, id=self.kwargs.get('pk'))
             elif self.request.user.is_authenticated:
                 user = self.request._user
