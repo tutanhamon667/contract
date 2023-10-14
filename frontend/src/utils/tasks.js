@@ -34,5 +34,4 @@ export const tasks = [
     client: "Компания ООО Крошка Картошка",
     id: 4
   }
-
 ];

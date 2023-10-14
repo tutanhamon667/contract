@@ -5,16 +5,16 @@ import { Context } from "../../context/context";
 import "./Register.css";
 
 const Register = () => {
-  const { authenticated, currentUser } = React.useContext(Context);
+  const { authenticated } = React.useContext(Context);
   const location = useLocation();
 
   function onSubmit(values) {
-    globalThis.role = values.is_customer ? "employer" : values.is_worker && "freelancer";
+    /* eslint no-undef: "off" */ // globalThis.role is defined in onSubmit function
+    globalThis.role = values.is_customer ? "customer" : values.is_worker && "freelancer";
   }
 
   if (authenticated) {
-    /* eslint no-undef: "off" */ // globalThis.role is defined in onSubmit function
-    return <Navigate to={`/${role}/${currentUser.id}/complete`} state={{ from: location }} />;
+    return <Navigate to={`/${role}/complete`} state={{ from: location }} />;
   }
 
   return (

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from orders.models import Category, Job, Response
+from orders.models import Job, JobCategory, Response
 
 '''
 # Временные модели пользователей. Удалить после внедрения моделей
@@ -37,7 +37,7 @@ class StackAdmin(admin.ModelAdmin):
 '''
 
 
-@admin.register(Category)
+@admin.register(JobCategory)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}

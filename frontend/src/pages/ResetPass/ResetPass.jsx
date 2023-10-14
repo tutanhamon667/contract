@@ -8,8 +8,6 @@ const ResetPass = () => {
   const { authenticated } = React.useContext(Context);
   const location = useLocation();
 
-
-
   if (authenticated) {
     return <Navigate to={"/"} state={{ from: location }} />;
   }

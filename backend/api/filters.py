@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from orders.models import Category, Job
+from orders.models import Job, JobCategory
 
 
 class JobFilter(filters.FilterSet):
@@ -13,7 +13,7 @@ class JobFilter(filters.FilterSet):
     category = filters.ModelMultipleChoiceFilter(
         field_name='category__slug',
         to_field_name='slug',
-        queryset=Category.objects.all(),
+        queryset=JobCategory.objects.all(),
         label='Категории',
     )
 

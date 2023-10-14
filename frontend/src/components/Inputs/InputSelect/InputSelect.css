@@ -1,0 +1,26 @@
+.select {
+  box-sizing: border-box;
+  width: 610px;
+  padding: 19px 51px 19px 19px;
+  border: 1px solid #C6C6C6;
+  border-radius: 12px;
+  appearance: none;
+  color: #3F3F3F;
+  background: #fff url(../../../images/arrow-down.svg) no-repeat calc(100% - 19px) center / 24px;
+  font-size: 16px;
+  line-height: 1.25;
+  transition: box-shadow .3s ease-in-out, border .3s ease-in-out;
+  cursor: pointer;
+}
+
+.select_type_placeholder {
+  color: #7B7B7B;
+}
+
+.select:hover {
+  box-shadow: 2px 2px 0 0 #C6C6C6;
+}
+
+.select:focus {
+  outline: none;
+}

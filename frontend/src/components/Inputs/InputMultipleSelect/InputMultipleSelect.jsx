@@ -1,19 +1,9 @@
 import React, { useState } from "react";
 import "../../../pages/Profiles/Profile.css"
 import "../../../pages/Profiles/ProfileFreelancer/ProfileFreelancer.css"
-import "./InputSpecializationList.css";
+import "./InputMultipleSelect.css";
 
-const options = [
-  { label: 'Дизайн', value: 1 },
-  { label: 'Разработка', value: 2 },
-  { label: 'Тестирование', value: 3 },
-  { label: 'Администрирование', value: 4 },
-  { label: 'Маркетинг', value: 5 },
-  { label: 'Контент', value: 6 },
-  { label: 'Разное', value: 7 },
-]
-
-export default function InputSpecializationList() {
+export default function InputMultipleSelect({options}) {
   const [value, setValue] = useState([]);
   const [isOpen, setIsopen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
