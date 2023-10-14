@@ -6,11 +6,9 @@
 
 Платформа может помочь IT специалистам создать удобную и эффективную среду для нахождения работы и развития профессиональной карьеры в IT. Может помочь сократить время и усилия, связанные с поиском проектов и коммуникацией с заказчиками.
 
-Сервис доступен по адресу: https://taski.ddns.net
-
-API: https://taski.ddns.net/api/
-
-Документация Redoc: https://taski.ddns.net/redoc/
+- Сервис доступен по адресу: https://taski.ddns.net
+- API: https://taski.ddns.net/api/
+- Документация Redoc: https://taski.ddns.net/redoc/
 
 Настроен автоматический деплой проекта из ветки `develop`. 
 
@@ -37,9 +35,7 @@ npm install
 npm start
 ```
 
-- Фронтенд-сервер запустится по адресу http://localhost:5173
-
-- Ссылка на просмотр фронтенда, находящего в ветке `develop`: https://freelancing-platform-project.pages.dev/
+Фронтенд-сервер запустится по адресу: http://localhost:5173
 
 ### Сборка фронтенда
 
@@ -59,20 +55,22 @@ npm run build
 
 ### Локальный запуск бэкенд-сервера
 
-В settings раскомментировать блок DATABASES с sqlite3 и соответственно текущий блок DATABASES закомментить.
+> [!IMPORTANT]
+> В файле `/backend/taski/settings.py` раскомментировать блок `DATABASES` с `sqlite3`, 
+> а блок `DATABASES` выше закомментировать.
 
-Перейти в папку `backend`, обновить менеджер пакетов pip:
+Перейти в папку `backend`, создать и активировать виртуальное окружение:
 
 ```sh
 cd backend
-python -m pip install --upgrade pip
-```
-
-Затем нужно создать и активировать виртуальное окружение и установить зависимости:
-
-```sh
 python -m venv venv
 source venv/bin/activate
+```
+
+Обновить менеджер пакетов pip и установить зависимости:
+
+```sh
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
@@ -93,18 +91,15 @@ python manage.py runserver
 
 ### Примеры запросов
 
-Получить список основных эндпоинтов: http://127.0.0.1:8000/api/v1/
+Получить список основных эндпоинтов: http://127.0.0.1:8000/api/
 
 ### Документация
 
-Redoc и Swagger доступны по адресам (но пока есть проблемы, поэтому см. [Эндпоинты модели Member](#эндпоинты-модели-member)):
+Redoc и Swagger доступны по адресам (но пока есть проблемы, поэтому смотри [Эндпоинты модели Member](#эндпоинты-модели-member)):
 
 - http://127.0.0.1:8000/redoc/
 
 - http://127.0.0.1:8000/swagger/
-
-- Ссылка на просмотр документации онлайн (не всегда содержит последние изменения):
-https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/freelancing-platform-practicum/freelancing-platform-project/develop/backend/docs/redoc_orders.yml&nocors
 
 #### Эндпоинты модели Member
   
