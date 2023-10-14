@@ -5,11 +5,11 @@ import { Context } from '../../../context/context';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import InputText from '../../Inputs/InputText/InputText';
 import Button from '../../Button/Button';
-import "./EmployerCompleteForm.css";
+import "./CustomerCompleteForm.css";
 import InputMultipleSelect from '../../Inputs/InputMultipleSelect/InputMultipleSelect';
 import { activityOptions } from '../../../utils/constants';
 
-function EmployerCompleteForm() {
+function CustomerCompleteForm() {
   const {
     values, errors, isValid, handleChange, setValues, setErrors
   } = useFormAndValidation();
@@ -89,4 +89,4 @@ function EmployerCompleteForm() {
   )
 }
 
-export { EmployerCompleteForm };
+export { CustomerCompleteForm };

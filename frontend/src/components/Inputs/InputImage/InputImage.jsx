@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./InputImage.css";
 
-const InputImage = ({ name, value, onChange }) => {
+const InputImage = ({ name, value, onChange, width, height }) => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const inputStyle = file && {
@@ -31,8 +31,8 @@ const InputImage = ({ name, value, onChange }) => {
   return (
     <>
       <label
-        className={`input-image__real-input${error ? ' input-image__error' : ''}`}
-        style={inputStyle}
+        className={`input-image__real-input${width === 80 ? ' input-image__real-input_small' : ''}${error ? ' input-image__error' : ''}`}
+        style={{ ...inputStyle, width, height }}
       >
         <input
           className="input-image__fake-input"
