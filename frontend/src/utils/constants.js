@@ -17,7 +17,7 @@ export const userCustomer = {
   last_name: "Иванов",
   email: "boss@mail.ru",
   password: "imsuperboss1",
-  role: "Заказчик"
+  role: "Заказчик",
 };
 
 export const activityOptions = [
