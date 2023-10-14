@@ -216,18 +216,9 @@ export default function ProfileFreelancer() {
               htmlFor="emailForContacts">
               Электронная почта
             </label>
-<<<<<<< HEAD
-            <input
-              type="text"
-              name="emailForContacts"
-              id="email"
-              className="profile__main-text form-profile__input"
-              placeholder="Эл.почта"
-=======
             <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
                        value={values.email || ''} error={errors.email} errorMessage={errors.email}
                        onChange={handleChange} id="emailForContacts"
->>>>>>> 8634c179b7bfc0ebb5667a379ec74452dfe4ad2c
             />
             {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <label className="freelancer-complete-form__input-radio-text">
