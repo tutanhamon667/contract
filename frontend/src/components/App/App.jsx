@@ -51,15 +51,13 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />}>
             <Route element={<ProtectedRoute />}>
-              <Route path="customer/:id" element={<ProfileCustomer />} />
-              <Route path="freelancer/:id" element={<ProfileFreelancer />} />
+              <Route path="freelancer" element={<ProfileFreelancer />} />
               <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
-              <Route path="customer/:id/complete" element={<EmployerCompleteForm />} />
+              <Route path="freelancer/complete" element={<FreelancerCompleteForm />} />
+              <Route path="customer" element={<ProfileCustomer />} />
+              <Route path="customer/complete" element={<CustomerCompleteForm />} />
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
-            <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
-            <Route path="create-task" element={<CreateTaskForm />} />
-            <Route path="customer/:id/complete" element={<EmployerCompleteForm />} />
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
             <Route path="order" element={<Order />} />
