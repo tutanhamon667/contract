@@ -13,6 +13,15 @@
   border: 1px solid var(--border-gray, #c6c6c6);
 }
 
+.orderCard__avatar-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.orderCard__avatar {
+ margin-right: 12px;
+}
+
 .orderCard__header-container {
   display: flex;
   flex-direction: row;

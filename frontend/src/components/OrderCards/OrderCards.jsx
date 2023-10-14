@@ -16,7 +16,6 @@ const OrderCards = ({ operationMode }) => {
   useEffect((() => {
     if (currentUser.role === 'Фрилансер' && !operationMode) {
       handleOrderFilter(true);
-      console.log('тут');
     } else {
       handleOrderFilter(false)
     }
@@ -24,9 +23,12 @@ const OrderCards = ({ operationMode }) => {
     setArea2(false)
   }), [currentUser, authenticated, operationMode])
 
+  console.log(area2);
+
+
   return (
     <div className="orderCards">
-      {operationMode ? <OrderCard cards={tasks} orderArea={true}/> : <OrderCard   cards={area2 ? order : freelance} /> }
+      {operationMode ? <OrderCard cards={area2 ? tasks : freelance} orderArea={true}/> : <OrderCard   cards={order} /> }
     </div>
   );
 };
