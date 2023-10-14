@@ -1,20 +1,20 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-
+import { Context } from "../../../context/context"
+import { activityOptions } from '../../../utils/constants';
+import useFormAndValidation from "../../../hooks/useFormAndValidation";
+import InputMultipleSelect from "../../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
 import "../Profile.css";
-import "./ProfileCustomer.css";
 import "../ProfileFreelancer/ProfileFreelancer.css";
 import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css";
-
-// import useFormAndValidation from "../../../hooks/useFormAndValidation";
-import { Context } from "../../../context/context"
-import InputMultipleSelect from "../../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
-import { activityOptions } from '../../../utils/constants';
+import "./ProfileCustomer.css";
+import InputText from '../../../components/Inputs/InputText/InputText';
+import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
 
 export default function ProfileCustomer() {
   const [isEditable, setIsEditable] = useState(false);
   const { currentUser } = useContext(Context);
-  // const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
+  const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -27,7 +27,9 @@ export default function ProfileCustomer() {
       <div className="profile_left-column">
 
         <div className="profile_block profile__user-info">
-          <div className="profile__avatar"></div>
+          <InputImage name="photo" width={80} height={80} value={values.photo || ''} error={errors.photo}
+                      errorMessage={errors.photo} onChange={handleChange}
+          />
           <h2 className="profile__title">
             {currentUser.first_name}&nbsp;{currentUser.last_name}
           </h2>
@@ -82,12 +84,9 @@ export default function ProfileCustomer() {
               htmlFor="email">
               Электронная почта
             </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="birukov@gmail.com"
-              className="profile__main-text form-profile__input"
+            <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
+                       value={values.email || ''} error={errors.email} errorMessage={errors.email}
+                       onChange={handleChange} id="email"
             />
           </div>
 
@@ -98,19 +97,16 @@ export default function ProfileCustomer() {
             <label
               className="profile__main-text"
               htmlFor="companyName">
-              Название компании
+              Название компании или ваше имя
             </label>
-            <input
-              type="text"
-              name="companyName"
-              id="companyName"
-              placeholder=""
-              className="profile__main-text form-profile__input"
+            <InputText type="text" placeholder="Название компании или ваше имя" autoComplete="given-name" name="first_name" width="100%"
+                       value={values.first_name || ''} error={errors.first_name} errorMessage={errors.first_name}
+                       onChange={handleChange} id="companyName"
             />
           </div>
 
           <div className="form-profile__input-container">
-            <h2 className="profile__main-text">Специализация</h2>
+            <h2 className="profile__main-text">Сфера деятельности</h2>
             <InputMultipleSelect name="activity" options={activityOptions} />
           </div>
 
@@ -118,16 +114,12 @@ export default function ProfileCustomer() {
             <label
               className="profile__main-text"
               htmlFor="aboutMe">
-              О себе
+              О компании
             </label>
-            <textarea
-              name="aboutMe"
-              id="aboutMe"
-              cols="30"
-              rows="3"
-              className="profile__main-text form-profile__input"
-              placeholder=""
-            ></textarea>
+            <InputText type="textarea" placeholder="Расскажите чем занимается ваша компания" name="about" width="100%"
+                       height={150} value={values.about || ''} error={errors.about} errorMessage={errors.about}
+                       onChange={handleChange} id="aboutMe"
+            />
           </div>
 
           <div className="form-profile__input-container">
@@ -136,12 +128,8 @@ export default function ProfileCustomer() {
               htmlFor="portfolioLink">
               Ссылка на портфолио
             </label>
-            <input
-              type="url"
-              name="portfolioLink"
-              id="portfolioLink"
-              className="profile__main-text form-profile__input"
-              placeholder="www.example.com"
+            <InputText type="url" placeholder="www.example.com" name="web" width="100%" value={values.web || ''}
+                       error={errors.web} errorMessage={errors.web} onChange={handleChange} id="portfolioLink"
             />
             {isEditable && (
               <button
