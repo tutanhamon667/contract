@@ -37,12 +37,14 @@ export default function InputSpecializationList() {
     setIsopen(prev => !prev)
   }
 
+  const listContainerStyle = `list__container ${isOpen ? 'list__container-open' : ''}`;
+
   return (
     <div
       tabIndex={0}
       onClick={exposeList}
       onBlur={() => setIsopen(false)}
-      className="list__container"
+      className={listContainerStyle}
     >
       <span className={`list__preview ${(value.length < 1) ? 'list__preview_show' : ''}`}>Выберите из списка</span>
       <div className="list__value">

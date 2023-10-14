@@ -22,7 +22,7 @@ import Order from "../../pages/Order/Order";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(true);
-  const [currentUser, setCurrentUser] = useState(userFreelancer);
+  const [currentUser, setCurrentUser] = useState(userCustomer);
   //состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
 
@@ -87,6 +87,8 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
+
+
       </Context.Provider>
     </BrowserRouter>
   );

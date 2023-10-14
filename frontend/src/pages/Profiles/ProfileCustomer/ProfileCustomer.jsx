@@ -109,7 +109,7 @@ export default function ProfileCustomer() {
           </div>
 
           <div className="form-profile__input-container">
-            <h2 className="profile__main-text">Специализация</h2>
+            <h2 className="profile__main-text">Сфера деятельности</h2>
             <InputSpecializationList />
           </div>
 
@@ -142,11 +142,13 @@ export default function ProfileCustomer() {
               className="profile__main-text form-profile__input"
               placeholder="www.example.com"
             />
-            <button
-              type="button"
-              className="form__add-info">
-              Добавить ещё сайт или социальные сети +
-            </button>
+            {isEditable && (
+              <button
+                type="button"
+                className="form__add-info">
+                Добавить ещё сайт или социальные сети +
+              </button>
+            )}
           </div>
 
           {isEditable && (

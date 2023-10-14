@@ -283,7 +283,7 @@ export default function ProfileFreelancer() {
               Электронная почта
             </label>
             <input
-              type="emailForContacts"
+              type="text"
               name="emailForContacts"
               id="email"
               className="profile__main-text form-profile__input"
@@ -318,21 +318,6 @@ export default function ProfileFreelancer() {
             {/* --------------------------------------------- */}
           </div>
 
-          <div className="form-profile__input-container">
-            <label
-              className="profile__main-text"
-              htmlFor="portfolioLink">
-              Ссылка на портфолио
-            </label>
-            <input
-              type="url"
-              name="portfolioLink"
-              id="portfolioLink"
-              className="profile__main-text form-profile__input"
-              placeholder="https://myportfolio.ru/"
-            />
-          </div>
-
           <div className="profile__separate-line"></div>
 
           <div className="form-profile__input-container">
@@ -348,6 +333,21 @@ export default function ProfileFreelancer() {
               ))}
             </div>
             {/* --------------------------------------------- */}
+          </div>
+
+          <div className="form-profile__input-container">
+            <label
+              className="profile__main-text"
+              htmlFor="portfolioLink">
+              Ссылка на портфолио
+            </label>
+            <input
+              type="url"
+              name="portfolioLink"
+              id="portfolioLink"
+              className="profile__main-text form-profile__input"
+              placeholder="https://myportfolio.ru/"
+            />
           </div>
 
           {isEditable && (
