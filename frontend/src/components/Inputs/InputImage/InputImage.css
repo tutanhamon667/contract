@@ -7,6 +7,10 @@
   cursor: pointer;
 }
 
+.input-image__real-input_small {
+  background-size: 21px;
+}
+
 .input-image__real-input:hover {
   background-color: #7B7B7B;
 }

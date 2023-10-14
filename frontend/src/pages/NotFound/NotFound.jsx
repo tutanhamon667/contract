@@ -6,7 +6,7 @@ import './NotFound.css'
 
 const NotFound = () => {
   return (
-    <div className="page">
+    <div className="notFoundPage">
       <h1 className="titleErr">404</h1>
       <p className="subtitleErr">Страница не найдена</p>
       <span className="descriptionErr">Попробуйте вернуться назад или перейдите на главную.</span>

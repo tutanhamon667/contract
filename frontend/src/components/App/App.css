@@ -1,3 +1,7 @@
+.root {
+  scrollbar-gutter: stable;
+}
+
 .page__wrapper {
   font-family: Inter, Arial, sans-serif;
   background: #F2F1EE;
