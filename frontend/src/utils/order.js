@@ -7,5 +7,4 @@ export const order = [
     tag: ["Дизайн", "Web", "UX", "Верстка", "UI", "Figma", "Adobe" ],
     id: 1
   }
-
 ];

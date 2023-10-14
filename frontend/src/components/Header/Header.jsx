@@ -11,7 +11,7 @@ function Header({ setAuthenticated, setCurrentUser }) {
   let { pathname } = useLocation();
 
   function giveOutNameInHeader(currentUser) {
-    return `${currentUser.first_name} ${currentUser.last_name.slice(0, 1)}.`
+    // return `${currentUser.first_name} ${currentUser.last_name.slice(0, 1)}.`
   }
 
   const authPaths = pathname === '/signin' || pathname === '/signup';

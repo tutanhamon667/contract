@@ -7,30 +7,24 @@ import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.
 
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import { Context } from "../../../context/context"
-import InputSpecializationList from "../../../components/Inputs/InputSpecializationList/InputSpecializationList";
+import InputMultipleSelect from "../../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
 import InputTags from "../../../components/Inputs/InputTags/InputTags";
 import { InputDoc } from "../../../components/Inputs/InputDoc/InputDoc";
+import { activityOptions, degreeOptions } from '../../../utils/constants';
+import InputSelect from '../../../components/Inputs/InputSelect/InputSelect';
+import InputText from '../../../components/Inputs/InputText/InputText';
 // import { freelancerData } from "../../utils/freelance"; // заглушка для проверки обработки данных формы
+
+// переиспользуемые элементы с Forms/FreelancerCompleteForm
+const MAX_ATTACHED_DOCS = 8;
 
 export default function ProfileFreelancer() {
   const [isEditable, setIsEditable] = useState(false);
   // переиспользуемый хук с Forms/FreelancerCompleteForm
   const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
   // ------------------------------------------
-  // (1) временное решение для стилизации заголовка Степень
-  const [title, setTitle] = useState('undefined');
-  // ------------------------------------------
   const { updateUser, currentUser } = useContext(Context);
   const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
-
-  // (1) временное решение для стилизации заголовка Степень
-  function handleTitle(e) { setTitle(e.target.value) }
-  const degreeTitleStyle = `
-  form-profile__input form-profile__list ${title === 'undefined' ? 'form-profile__list-default' : ''}`
-  // ------------------------------------------
-
-  // переиспользуемые элементы с Forms/FreelancerCompleteForm
-  const MAX_ATTACHED_DOCS = 8;
 
   const handleDocPortfolioChange = (event) => {
     handleChange(event);
@@ -149,7 +143,7 @@ export default function ProfileFreelancer() {
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Специализация</h2>
-            <InputSpecializationList />
+            <InputMultipleSelect name="activity" options={activityOptions} />
           </div>
 
           <div className="form-profile__input-container">
@@ -163,12 +157,9 @@ export default function ProfileFreelancer() {
               htmlFor="workingRate">
               Ставка в час
             </label>
-            <input
-              type="text"
-              name="workingRate"
-              id="workingRate"
-              placeholder="150"
-              className="profile__main-text form-profile__input form-profile__rate-input"
+            <InputText type="number" placeholder="Ставка" name="payrate" width={295} value={values.payrate || ''}
+                       error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
+                       id="workingRate"
             />
           </div>
 
@@ -200,52 +191,17 @@ export default function ProfileFreelancer() {
             />
 
             <div className="form-profile__dates">
-              <input type="month"
-                name="beginningOfStudies"
-                id="beginningOfStudies"
-                placeholder="Начало учёбы"
-                className="profile__main-text form-profile__input form-profile__dates_input"
+              <InputText type="month" placeholder="Начало учёбы" name="start_year" width="100%"
+                         value={values.start_year || ''} error={errors.start_year} errorMessage={errors.start_year}
+                         onChange={handleChange}
               />
-              <input type="month"
-                name="endOfStudies"
-                id="endOfStudies"
-                placeholder="Окончание учёбы"
-                className="profile__main-text form-profile__input form-profile__dates_input"
+              <InputText type="month" placeholder="Окончание учёбы" name="end_year" width="100%"
+                         value={values.end_year || ''} error={errors.end_year} errorMessage={errors.end_year}
+                         onChange={handleChange}
               />
             </div>
 
-            <select
-              name="degree"
-              id="degree"
-              className={degreeTitleStyle}
-              onChange={handleTitle}
-            >
-              <option
-                value="undefined"
-                className="profile__main-text form-profile__list-default">
-                Степень
-              </option>
-              <option
-                value="bachelor"
-                className="profile__main-text">
-                Студент
-              </option>
-              <option
-                value="bachelor"
-                className="profile__main-text">
-                Бакалавр
-              </option>
-              <option
-                value="specialist"
-                className="profile__main-text">
-                Специалист
-              </option>
-              <option
-                value="master"
-                className="profile__main-text">
-                Магистр
-              </option>
-            </select>
+            <InputSelect options={degreeOptions} placeholder="Степень" width="100%" />
 
             <input
               type="text"

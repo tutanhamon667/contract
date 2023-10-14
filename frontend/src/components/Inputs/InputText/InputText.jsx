@@ -3,6 +3,7 @@ import "./InputText.css";
 
 const InputText = (
   {
+    id,
     type,
     placeholder,
     autoComplete,
@@ -25,7 +26,7 @@ const InputText = (
   return (
     <div className="inputContainer">
       <InputType
-        className={`input${error ? ' input__error' : ''}`}
+        className={`input${type === 'number' ? ' input_type_number' : ''}${error ? ' input_type_error' : ''}`}
         type={type !== 'textarea' ? type : ''}
         placeholder={placeholder}
         autoComplete={autoComplete}
@@ -33,6 +34,7 @@ const InputText = (
         value={value}
         onChange={onChange}
         name={name}
+        id={id}
       />
       {pass && <div className="input__showPass" onClick={pass} />}
       <span className="input__errorText">{errorMessage}</span>

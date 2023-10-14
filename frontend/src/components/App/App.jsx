@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Main from "../Main/Main";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Context } from "../../context/context";
@@ -15,14 +15,17 @@ import { EmployerCompleteForm } from '../Forms/EmployerCompleteForm/EmployerComp
 import "./App.css";
 import ResetPass from "../../pages/ResetPass/ResetPass";
 import ProfileCustomer from "../../pages/Profiles/ProfileCustomer/ProfileCustomer";
-import { userCustomer, userFreelancer } from "../../utils/constants"
+import { userFreelancer, userCustomer } from "../../utils/constants";
 import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
 import { CreateTaskForm } from '../Forms/CreateTaskForm/CreateTaskForm';
 import Order from "../../pages/Order/Order";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(true);
+  // const [authenticated, setAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(userFreelancer);
+  // const [currentUser, setCurrentUser] = useState(userCustomer);
+
   //состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
 
@@ -49,38 +52,23 @@ function App() {
     <BrowserRouter>
       <Context.Provider value={{ currentUser, authenticated, orderFilter, updateUser, logIn, logOut, handleOrderFilter }}>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <Layout
-                setAuthenticated={setAuthenticated}
-                setCurrentUser={setCurrentUser}
-              />}>
+          <Route path="/" element={<Layout setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />}>
             <Route element={<ProtectedRoute />}>
               <Route path="customer/:id" element={<ProfileCustomer />} />
-              <Route path="freelancer/:id" element={<ProfileFreelancer />} />
-              <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
               <Route path="customer/:id/complete" element={<EmployerCompleteForm />} />
+              <Route path="freelancer/:id" element={<ProfileFreelancer />} />
+              <Route path="freelancer/:id/complete" element={
+                <FreelancerCompleteForm setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
+              } />
+              <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register />} />
             <Route path="order" element={<Order />} />
-            <Route
-              path="signup/freelancer"
-              element={
-                <FreelancerCompleteForm
-                  setAuthenticated={setAuthenticated}
-                  setCurrentUser={setCurrentUser}
-                />} />
-            <Route
-              path="signin"
-              element={
-                <Login
-                  setAuthenticated={setAuthenticated}
-                  setCurrentUser={setCurrentUser}
-                />}
-            />
+            <Route path="signin" element={
+              <Login setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
+            } />
             <Route path="forgot-password" element={<ForgotPass />} />
             <Route path="reset-password" element={<ResetPass />} />
             <Route path="signout" element={<SignOut />} />

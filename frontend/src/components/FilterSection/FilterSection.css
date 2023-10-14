@@ -10,7 +10,7 @@
   flex-direction: column;
   background-color: #fff;
   gap: 18px;
-  border: 1px solid var(--border-gray, #c6c6c6);
+  border: 1px solid #c6c6c6;
 }
 
 .filters-container__budget {
@@ -28,7 +28,6 @@
 
 .filters-checkbox__item {
   color: #3f3f3f;
-  font-family: Inter;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -91,7 +90,7 @@
   gap: 8px;
   align-self: stretch;
   border-radius: 12px;
-  border: 1px solid var(--border-gray, #c6c6c6);
+  border: 1px solid #c6c6c6;
 }
 
 .filters-conteiner__freelance {

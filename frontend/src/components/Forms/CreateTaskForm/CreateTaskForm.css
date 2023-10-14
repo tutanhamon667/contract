@@ -32,6 +32,10 @@
   color: #7B7B7B;
 }
 
+.create-task-form__input-checkbox-text:hover {
+  cursor: pointer;
+}
+
 .create-task-form__input-checkbox {
   box-sizing: border-box;
   position: relative;
@@ -46,6 +50,7 @@
 
 .create-task-form__input-checkbox:hover {
   box-shadow: 2px 2px 0 0 #C6C6C6;
+  cursor: pointer;
 }
 
 .create-task-form__input-checkbox:checked {

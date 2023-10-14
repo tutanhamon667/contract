@@ -3,7 +3,7 @@
 }
 
 .content__order-container {
-  padding: 0 100px 80px 100px;
+  padding: 0 100px 80px;
   background: #f2f1ee;
   display: flex;
   align-items: center;
@@ -29,11 +29,10 @@
   border-top: solid 1px #fff;
   border-bottom: solid 1px #fff;
   color: #fff;
-  font-family: Inter;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 24px; /* 150% */
+  line-height: 1.5;
   text-transform: lowercase;
   white-space: pre-wrap;
 }
