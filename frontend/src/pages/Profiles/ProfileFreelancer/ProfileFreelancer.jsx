@@ -216,13 +216,6 @@ export default function ProfileFreelancer() {
               htmlFor="emailForContacts">
               Электронная почта
             </label>
-            {/*<input*/}
-            {/*  type="emailForContacts"*/}
-            {/*  name="emailForContacts"*/}
-            {/*  id="emailForContacts"*/}
-            {/*  className="profile__main-text form-profile__input"*/}
-            {/*  placeholder="Эл.почта"*/}
-            {/*/>*/}
             <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
                        value={values.email || ''} error={errors.email} errorMessage={errors.email}
                        onChange={handleChange} id="emailForContacts"
