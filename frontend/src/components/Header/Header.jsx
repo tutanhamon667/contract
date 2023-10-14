@@ -14,8 +14,6 @@ function Header({ setAuthenticated, setCurrentUser }) {
     // return `${currentUser.first_name} ${currentUser.last_name.slice(0, 1)}.`
   }
 
-<<<<<<< HEAD
-=======
   const completeFormPaths = (
     pathname === '/freelancer/complete' ||
     pathname === '/customer/complete' ||
@@ -28,7 +26,7 @@ function Header({ setAuthenticated, setCurrentUser }) {
     pathname === '/forgot-password' ||
     pathname === '/reset-password'
   );
->>>>>>> 8634c179b7bfc0ebb5667a379ec74452dfe4ad2c
+
   const profilePaths = (currentUser.role === 'Заказчик')
     ? 'customer'
     : 'freelancer';
@@ -43,28 +41,12 @@ function Header({ setAuthenticated, setCurrentUser }) {
     setShowSetting(false);
   }
 
-<<<<<<< HEAD
   const popStyle = `profile__popup profile_block ${showSetting ? 'profile__popup_show' : ''}`
-  const logoMainPageStyle = (pathname === '/' && !authenticated)
-    ? 'header__logo'
-    : authenticated
-      ? 'header__logo'
-      : 'header__logo header__logo-black';
-  const headerStyle = `header ${authenticated ? 'header-with-background' : ''}`
-
-
-  return (
-    <header className={headerStyle}>
-      <div className="header__container">
-        <Link to="/" className={logoMainPageStyle}></Link>
-=======
-  const popStyle = `profile__popup profile_block ${showSetting ? 'profile__popup_show' : ''}`;
 
   return (
     <header className={`header${authenticated && !completeFormPaths ? ' header-with-background' : ''}`}>
       <div className="header__container">
         <Link to="/" className={`header__logo${authPaths || completeFormPaths ? ' header__logo-black' : ''}`}></Link>
->>>>>>> 8634c179b7bfc0ebb5667a379ec74452dfe4ad2c
         {authenticated ? (
           <div
             onClick={handleSetting}

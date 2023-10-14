@@ -10,7 +10,7 @@ import "../ForgotPass/ForgotPass.css";
 
 import { Context } from "../../context/context";
 
-import InputSpecializationList from "../../components/Inputs/InputSpecializationList/InputSpecializationList";
+import InputMultipleSelect from "../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
 import InputTags from "../../components/Inputs/InputTags/InputTags";
 
 export default function Order() {
@@ -52,7 +52,7 @@ export default function Order() {
 
       <section className="profile order">
 
-        <Link className="order__back-container">
+        <Link to="#" className="order__back-container">
           <div className="order__back"></div>
           Назад
         </Link>
@@ -119,7 +119,7 @@ export default function Order() {
 
                 <div className="form-profile__input-container">
                   <h2 className="profile__main-text">Специализация</h2>
-                  <InputSpecializationList />
+                  <InputMultipleSelect />
                 </div>
 
                 <div className="form-profile__input-container">
