@@ -155,7 +155,7 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
       <label>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>
         <InputText type="number" placeholder="Ставка" name="payrate" width={295} value={values.payrate || ''}
-          error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
+                   error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
         />
       </label>
       <label>
@@ -226,7 +226,7 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
         </div>
       </label>
 
-      <Button type="submit" text="Создать профиль" width={289} marginTop={60} marginBottom={200}></Button>
+      <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200}></Button>
     </form>
   );
 }
