@@ -180,6 +180,7 @@ class Job(models.Model):
     #     super().save(*args, **kwargs)
 
     class Meta:
+        ordering = ('-pub_date',)
         verbose_name = 'Задание'
         verbose_name_plural = 'Задания'
 
@@ -244,7 +245,7 @@ class JobFile(models.Model):
         return f"{self.job.title} - {self.file}"
 
 
-class Response(models.Model):
+class JobResponse(models.Model):
     """
     Отклики фрилансеров на заказы.
     """
