@@ -275,6 +275,21 @@ export default function ProfileFreelancer() {
 
           </div>
 
+          <div className="form-profile__input-container">
+            <label
+              className="profile__main-text"
+              htmlFor="portfolioLink">
+              Ссылка на портфолио
+            </label>
+            <input
+              type="url"
+              name="portfolioLink"
+              id="portfolioLink"
+              className="profile__main-text form-profile__input"
+              placeholder="https://myportfolio.ru/"
+            />
+          </div>
+
           {isEditable && (
             <div className="form-profile__bottom-buttons-container">
               <button

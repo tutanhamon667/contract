@@ -32,7 +32,7 @@ console.log(area2)
 
   return (
     <div className="orderCards">
-      {operationMode ? <OrderCard cards={area2 ? tasks : freelance} orderArea={ area2 ? true : false}/> : <OrderCard   cards={order} /> }
+      {operationMode ? <OrderCard cards={area2 ? tasks : freelance} orderArea={ area2 }/> : <OrderCard cards={order} /> }
     </div>
   );
 };

@@ -25,8 +25,7 @@ function App() {
   // const [authenticated, setAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(userFreelancer);
   // const [currentUser, setCurrentUser] = useState(userCustomer);
-
-  //состояние отображения фильтра поиска
+  // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
 
   function updateUser(userEmail) {
@@ -54,13 +53,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />}>
             <Route element={<ProtectedRoute />}>
-              <Route path="customer/:id" element={<ProfileCustomer />} />
-              <Route path="customer/:id/complete" element={<CustomerCompleteForm />} />
-              <Route path="freelancer/:id" element={<ProfileFreelancer />} />
-              <Route path="freelancer/:id/complete" element={
-                <FreelancerCompleteForm setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
-              } />
+              <Route path="freelancer" element={<ProfileFreelancer />} />
               <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
+              <Route path="freelancer/complete" element={<FreelancerCompleteForm />} />
+              <Route path="customer" element={<ProfileCustomer />} />
+              <Route path="customer/complete" element={<CustomerCompleteForm />} />
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
             <Route index element={<Main />} />
@@ -75,6 +72,8 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
+
+
       </Context.Provider>
     </BrowserRouter>
   );

@@ -69,7 +69,7 @@ function CustomerCompleteForm() {
       </label>
       <label>
         <p className="employer-complete-form__input-text">О компании</p>
-        <InputText type="textarea" placeholder="Расскажите о себе как о специалисте и чем вы можете быть полезны"
+        <InputText type="textarea" placeholder="Расскажите чем занимается ваша компания"
                    name="about" width={610} height={150} value={values.about || ''} error={errors.about}
                    errorMessage={errors.about} onChange={handleChange}
         />
