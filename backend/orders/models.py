@@ -106,6 +106,7 @@ class JobCategory(models.Model):
     )
 
     class Meta:
+        db_table = 'orders_jobcategory'
         ordering = ('id',)
         verbose_name = 'Специализация'
         verbose_name_plural = 'Специализации'
@@ -255,6 +256,7 @@ class JobResponse(models.Model):
                                    related_name='responses')
 
     class Meta:
+        db_table = 'orders_jobresponse'
         unique_together = ('freelancer', 'job')
         verbose_name = 'Отклик'
         verbose_name_plural = 'Отклики'
