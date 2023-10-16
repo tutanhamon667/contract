@@ -106,7 +106,7 @@ class JobCategory(models.Model):
     )
 
     class Meta:
-        ordering = ('-name',)
+        ordering = ('id',)
         verbose_name = 'Специализация'
         verbose_name_plural = 'Специализации'
 

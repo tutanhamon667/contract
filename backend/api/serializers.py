@@ -48,7 +48,7 @@ class JobCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobCategory
-        fields = ('name',)
+        fields = ('id', 'name', 'slug')
 
 
 class JobResponseSerializer(serializers.ModelSerializer):
