@@ -93,7 +93,7 @@ jobs:
           script: | 
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_frontend:latest
-            sudo docker-compose stop
+            sudo docker-compose down
             touch .env
             echo DEBUG=False >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
@@ -103,6 +103,9 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker-compose up -d
+            sudo docker-compose exec -T backend python manage.py makemigrations users
+            sudo docker-compose exec -T backend python manage.py makemigrations orders
             sudo docker-compose exec -T backend python manage.py migrate
             sudo docker-compose exec -T backend python manage.py loaddata
             sudo docker-compose exec -T backend python manage.py collectstatic --no-input
+            sudo docker image prune -af
