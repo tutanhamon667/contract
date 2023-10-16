@@ -20,76 +20,6 @@ CATEGORY_CHOICES = (
     ('other', 'разное'),
 )
 
-'''
-# Временные модели пользователей. Удалить после внедрения моделей
-# пользователей из users
-
-User = get_user_model()
-
-
-class Stack(models.Model):
-    """
-    Стэк технологий.
-    """
-    name = models.CharField(
-        verbose_name='Название навыка',
-        max_length=50,
-    )
-    slug = models.SlugField(
-        verbose_name='Идентификатор навыка',
-        unique=True
-    )
-
-    class Meta:
-        ordering = ('-name',)
-        verbose_name = 'Навык'
-        verbose_name_plural = 'Навыки'
-
-    def __str__(self):
-        return self.name
-
-
-class Account(models.Model):
-    """
-    Аккаунт пользователя.
-    """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = 'Аккаунт'
-        verbose_name_plural = 'Аккаунты'
-
-
-class Freelancer(models.Model):
-    """
-    Аккаунт фрилансера.
-    """
-    user = models.OneToOneField(Account, on_delete=models.CASCADE)
-    skills = models.ManyToManyField(
-        Stack, related_name='freelancers', blank=True
-    )
-    experience = models.TextField()
-    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)
-    availability = models.CharField(max_length=255)
-
-    class Meta:
-        verbose_name = 'Фрилансер'
-        verbose_name_plural = 'Фрилансеры'
-
-
-class Client(models.Model):
-    """
-    Аккаунт заказчика.
-    """
-    user = models.OneToOneField(Account, on_delete=models.CASCADE)
-    industry = models.CharField(max_length=255)
-    description = models.TextField()
-
-    class Meta:
-        verbose_name = 'Заказчик'
-        verbose_name_plural = 'Заказчики'
-'''
-
 
 class JobCategory(models.Model):
     """
@@ -113,12 +43,6 @@ class JobCategory(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class File(models.Model):
-    file = models.ImageField(upload_to='job_files/',
-                             null=True,
-                             verbose_name='Файлы задания',)
 
 
 class Job(models.Model):
