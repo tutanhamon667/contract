@@ -19,12 +19,12 @@ class JobFilter(FilterSet):
     )
     client = filters.NumberFilter(
         field_name='client_id',
-        label='id заказчика для отображения его заданий',
+        label='тип поля - integer: id заказчика для отображения его заданий',
         lookup_expr='exact',
     )
     is_responded = filters.BooleanFilter(
         method='get_is_responded',
-        label='1 - задания с откликами фрилансера, 0 - без фильтра',
+        label='тип поля boolean: 1 - c откликами фрилансера, 0 - без фильтра',
         help_text='',
         widget=BooleanWidget(),
     )
