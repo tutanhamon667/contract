@@ -106,5 +106,5 @@ jobs:
             sudo docker-compose exec -T backend python manage.py migrate
             sudo docker-compose exec -T backend python manage.py loaddata
             sudo docker-compose exec -T backend python manage.py collectstatic --no-input
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_backend
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_frontend
+            sudo docker rm ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_backend
+            sudo docker rm ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_frontend
