@@ -9,14 +9,14 @@ const Register = ({handleRegister}) => {
   const location = useLocation();
 
   function onSubmit(values) {
-    globalThis.role = values.is_customer ? "employer" : values.is_worker && "freelancer";
+    globalThis.role = values.is_customer ? "customer" : values.is_worker && "freelancer";
     console.log(values);
     handleRegister(values)
   }
 
  // if (authenticated) {
     /* eslint no-undef: "off" */ // globalThis.role is defined in onSubmit function
- //   return <Navigate to={`/${globalThis.role}/${currentUser.id}/complete`} state={{ from: location }} />;
+ //   return <Navigate to={`/${globalThis.role}/complete`} state={{ from: location }} />;
  // }
 
 
