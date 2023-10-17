@@ -19,6 +19,7 @@ import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerVie
 import { CreateTaskForm } from '../Forms/CreateTaskForm/CreateTaskForm';
 import Order from "../../pages/Order/Order";
 import "./App.css";
+import * as api from '../../utils/Api';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(true);
@@ -27,6 +28,16 @@ function App() {
   // const [currentUser, setCurrentUser] = useState(userCustomer);
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
+
+  function handleRegisterSubmit({ first_name, last_name, email, password, re_password, is_customer, is_worker }){
+    api.register({ first_name, last_name, email, password, re_password, is_customer, is_worker })
+    .then((data) => {
+      console.log(data)
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
 
   function updateUser(userEmail) {
     setCurrentUser({
@@ -61,7 +72,7 @@ function App() {
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
             <Route index element={<Main />} />
-            <Route path="signup" element={<Register />} />
+            <Route path="signup" element={<Register handleRegister={handleRegisterSubmit} />} />
             <Route path="order" element={<Order />} />
             <Route path="signin" element={
               <Login setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
