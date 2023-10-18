@@ -22,14 +22,17 @@ export const userCustomer = {
 };
 
 export const activityOptions = [
-  { label: 'Дизайн', value: 1 },
-  { label: 'Разработка', value: 2 },
-  { label: 'Тестирование', value: 3 },
-  { label: 'Администрирование', value: 4 },
-  { label: 'Маркетинг', value: 5 },
-  { label: 'Контент', value: 6 },
-  { label: 'Разное', value: 7 },
+  'Дизайн', 'Разработка', 'Тестирование', 'Администрирование', 'Маркетинг', 'Контент', 'Разное',
 ]
+// export const activityOptions = [
+//   { label: 'Дизайн', value: 1 },
+//   { label: 'Разработка', value: 2 },
+//   { label: 'Тестирование', value: 3 },
+//   { label: 'Администрирование', value: 4 },
+//   { label: 'Маркетинг', value: 5 },
+//   { label: 'Контент', value: 6 },
+//   { label: 'Разное', value: 7 },
+// ]
 
 export const degreeOptions = [
   { label: 'Студент', value: 1 },

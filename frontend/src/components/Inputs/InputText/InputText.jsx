@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
 import "./InputText.css";
 
@@ -36,7 +37,7 @@ const InputText = (
         name={name}
         id={id}
       />
-      {pass && <div className="input__showPass" onClick={pass} />}
+      {pass && <div className="input__showPass" onClick={pass} role="button" tabIndex={0} />}
       <span className="input__errorText">{errorMessage}</span>
     </div>
   );

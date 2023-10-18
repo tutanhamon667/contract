@@ -24,8 +24,8 @@ import * as api from '../../utils/Api';
 function App() {
   const [authenticated, setAuthenticated] = useState(true);
   // const [authenticated, setAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(userFreelancer);
-  // const [currentUser, setCurrentUser] = useState(userCustomer);
+  // const [currentUser, setCurrentUser] = useState(userFreelancer);
+  const [currentUser, setCurrentUser] = useState(userCustomer);
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
 
