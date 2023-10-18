@@ -4,7 +4,7 @@ import { Context } from "../../../context/context";
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import Button from "../../Button/Button";
 import InputText from "../../Inputs/InputText/InputText";
-// import LinkBar from "../../LinkBar/LinkBar";
+// import SocialLinksBar from "../../SocialLinksBar/SocialLinksBar";
 import "./RegisterForm.css";
 
 const RegisterForm = ({ onSubmitHandler }) => {
@@ -80,9 +80,9 @@ const RegisterForm = ({ onSubmitHandler }) => {
       console.log(values);
       setValues({
         ...values,
-        email: "",
         first_name: "",
         last_name: "",
+        email: "",
         password: "",
         re_password: "",
         is_customer: role.is_customer,
@@ -193,7 +193,7 @@ const RegisterForm = ({ onSubmitHandler }) => {
           errorMessage={errors.re_password}
         />
         <div style={{ marginBottom: 60 }} />
-        {/* <LinkBar /> */}
+        {/* <SocialLinksBar /> */}
         <Button
           text="Создать аккаунт"
           width={400}

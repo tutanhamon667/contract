@@ -95,6 +95,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_frontend:latest
             sudo docker-compose down
             touch .env
+            echo DEBUG=False >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
             echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
@@ -105,4 +106,6 @@ jobs:
             sudo docker-compose exec -T backend python manage.py makemigrations users
             sudo docker-compose exec -T backend python manage.py makemigrations orders
             sudo docker-compose exec -T backend python manage.py migrate
+            sudo docker-compose exec -T backend python manage.py loaddata
             sudo docker-compose exec -T backend python manage.py collectstatic --no-input
+            sudo docker image prune -af
