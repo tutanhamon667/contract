@@ -13,7 +13,9 @@ import { InputDoc } from "../../../components/Inputs/InputDoc/InputDoc";
 import { activityOptions, degreeOptions } from '../../../utils/constants';
 import InputSelect from '../../../components/Inputs/InputSelect/InputSelect';
 import InputText from '../../../components/Inputs/InputText/InputText';
+import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
 // import { freelancerData } from "../../utils/freelance"; // заглушка для проверки обработки данных формы
+import Button from "../../../components/Button/Button";
 
 // переиспользуемые элементы с Forms/FreelancerCompleteForm
 const MAX_ATTACHED_DOCS = 8;
@@ -49,7 +51,9 @@ export default function ProfileFreelancer() {
       <div className="profile_left-column">
 
         <div className="profile_block profile__user-info">
-          <div className="profile__avatar"></div>
+          <InputImage name="photo" width={80} height={80} value={values.photo || ''} error={errors.photo}
+            errorMessage={errors.photo} onChange={handleChange}
+          />
           <h2 className="profile__title">
             {currentUser.first_name}&nbsp;{currentUser.last_name}
           </h2>
@@ -99,20 +103,12 @@ export default function ProfileFreelancer() {
           </div>
 
           <div className="form-profile__input-container">
-            <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="birukov@gmail.com"
-              className="profile__main-text form-profile__input"
+            <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
+              value={values.email || ''} error={errors.email} errorMessage={errors.email}
+              onChange={handleChange} id="email"
             />
-            <input
-              type="tel"
-              name="phone"
-              id="phone"
-              maxLength="12"
-              placeholder="+7"
-              className="profile__main-text form-profile__input"
+            <InputText type="tel" placeholder="+7" autoComplete="tel" name="phone" width="100%" value={values.tel || ''}
+              error={errors.tel} errorMessage={errors.tel} onChange={handleChange} id="phone"
             />
           </div>
 
@@ -125,19 +121,13 @@ export default function ProfileFreelancer() {
               htmlFor="firstName">
               Имя Фамилия
             </label>
-            <input
-              type="text"
-              name="firstName"
-              id="firstName"
-              placeholder="Александр"
-              className="profile__main-text form-profile__input"
+            <InputText type="text" placeholder="Имя" autoComplete="given-name" name="first_name" width="100%"
+              value={values.first_name || ''} error={errors.first_name} errorMessage={errors.first_name}
+              onChange={handleChange} id="firstName"
             />
-            <input
-              type="text"
-              name="lastName"
-              id="lastName"
-              placeholder="Бирюков"
-              className="profile__main-text form-profile__input"
+            <InputText type="text" placeholder="Фамилия" autoComplete="family-name" name="last_name" width="100%"
+              marginTop={12} value={values.last_name || ''} error={errors.last_name}
+              errorMessage={errors.last_name} onChange={handleChange} id="lastName"
             />
           </div>
 
@@ -158,8 +148,8 @@ export default function ProfileFreelancer() {
               Ставка в час
             </label>
             <InputText type="number" placeholder="Ставка" name="payrate" width={295} value={values.payrate || ''}
-                       error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
-                       id="workingRate"
+              error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
+              id="workingRate"
             />
           </div>
 
@@ -169,46 +159,35 @@ export default function ProfileFreelancer() {
               htmlFor="aboutMe">
               О себе
             </label>
-            <textarea
-              name="aboutMe"
-              id="aboutMe"
-              cols="30"
-              rows="1"
-              className="profile__main-text form-profile__input"
-              placeholder="Расскажите о себе как о специалисте и чем вы можете быть полезны"
-            ></textarea>
+            <InputText type="textarea" placeholder="Расскажите о себе как о специалисте и чем вы можете быть полезны"
+              name="about" width="100%" height={60} value={values.about || ''} error={errors.about}
+              errorMessage={errors.about} onChange={handleChange} id="aboutMe"
+            />
           </div>
 
           <div className="form-profile__input-container">
 
             <h2 className="profile__main-text">Образование</h2>
-            <input
-              type="text"
-              name="education"
-              id="education"
-              className="profile__main-text form-profile__input"
-              placeholder="Университет"
+            <InputText type="text" placeholder="Учебное заведение" name="education" width="100%"
+              value={values.education || ''} error={errors.education} errorMessage={errors.education}
+              onChange={handleChange} id="education"
             />
 
             <div className="form-profile__dates">
               <InputText type="month" placeholder="Начало учёбы" name="start_year" width="100%"
-                         value={values.start_year || ''} error={errors.start_year} errorMessage={errors.start_year}
-                         onChange={handleChange}
+                value={values.start_year || ''} error={errors.start_year} errorMessage={errors.start_year}
+                onChange={handleChange}
               />
               <InputText type="month" placeholder="Окончание учёбы" name="end_year" width="100%"
-                         value={values.end_year || ''} error={errors.end_year} errorMessage={errors.end_year}
-                         onChange={handleChange}
+                value={values.end_year || ''} error={errors.end_year} errorMessage={errors.end_year}
+                onChange={handleChange}
               />
             </div>
 
             <InputSelect options={degreeOptions} placeholder="Степень" width="100%" />
 
-            <input
-              type="text"
-              name="faculty"
-              id="faculty"
-              className="profile__main-text form-profile__input"
-              placeholder="Факультет"
+            <InputText type="text" placeholder="Факультет" name="faculty" width="100%" value={values.faculty || ''}
+              error={errors.faculty} errorMessage={errors.faculty} onChange={handleChange} id="faculty"
             />
           </div>
 
@@ -238,12 +217,9 @@ export default function ProfileFreelancer() {
               htmlFor="emailForContacts">
               Электронная почта
             </label>
-            <input
-              type="emailForContacts"
-              name="emailForContacts"
-              id="email"
-              className="profile__main-text form-profile__input"
-              placeholder="Эл.почта"
+            <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
+              value={values.email || ''} error={errors.email} errorMessage={errors.email}
+              onChange={handleChange} id="emailForContacts"
             />
             {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <label className="freelancer-complete-form__input-radio-text">
@@ -259,12 +235,9 @@ export default function ProfileFreelancer() {
               htmlFor="telegram">
               Телеграм
             </label>
-            <input
-              type="text"
-              name="telegram"
-              id="telegram"
-              className="profile__main-text form-profile__input"
-              placeholder="Телеграм"
+            <InputText type="text" placeholder="Телеграм" autoComplete="telegram" name="telegram" width="100%"
+              value={values.telegram || ''} error={errors.telegram} errorMessage={errors.telegram}
+              onChange={handleChange} id="telegram"
             />
             {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <label className="freelancer-complete-form__input-radio-text">
@@ -272,21 +245,6 @@ export default function ProfileFreelancer() {
               Предпочтительный вид связи
             </label>
             {/* --------------------------------------------- */}
-          </div>
-
-          <div className="form-profile__input-container">
-            <label
-              className="profile__main-text"
-              htmlFor="portfolioLink">
-              Ссылка на портфолио
-            </label>
-            <input
-              type="url"
-              name="portfolioLink"
-              id="portfolioLink"
-              className="profile__main-text form-profile__input"
-              placeholder="https://myportfolio.ru/"
-            />
           </div>
 
           <div className="profile__separate-line"></div>
@@ -304,15 +262,42 @@ export default function ProfileFreelancer() {
               ))}
             </div>
             {/* --------------------------------------------- */}
+
+            <div className="form-profile__input-container">
+              <label
+                className="profile__main-text"
+                htmlFor="portfolioLink">
+                Ссылка на портфолио
+              </label>
+              <InputText type="url" placeholder="www.example.com" name="web" width="100%" value={values.web || ''}
+                error={errors.web} errorMessage={errors.web} onChange={handleChange} id="portfolioLink"
+              />
+            </div>
+
+          </div>
+
+          <div className="form-profile__input-container">
+            <label
+              className="profile__main-text"
+              htmlFor="portfolioLink">
+              Ссылка на портфолио
+            </label>
+            <input
+              type="url"
+              name="portfolioLink"
+              id="portfolioLink"
+              className="profile__main-text form-profile__input"
+              placeholder="https://myportfolio.ru/"
+            />
           </div>
 
           {isEditable && (
             <div className="form-profile__bottom-buttons-container">
-              <button
-                className="profile__main-text form-profile__bottom-buttons"
-                onClick={() => setIsEditable(false)}>
-                Отмена
-              </button>
+              <Button
+                text='Отмена'
+                buttonSecondary={true}
+                width={289}
+              />
               <button
                 type="submit"
                 onClick={handleSubmit}

@@ -7,6 +7,10 @@
   column-gap: 32px;
 }
 
+.left-column {
+  width: 100%;
+}
+
 .order__back-container {
   display: flex;
   justify-content: flex-start;
@@ -54,4 +58,8 @@
 
 .order__client-text {
   color: #7B7B7B;
+}
+
+.form-profile__bottom-buttons-hide {
+  display: none;
 }

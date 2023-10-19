@@ -1,33 +1,46 @@
 import React, { useState } from "react";
-import Main from "../Main/Main";
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Route, Routes, BrowserRouter, useNavigate } from "react-router-dom";
 import { Context } from "../../context/context";
 import Layout from "../../layout/Layout";
+import { ProtectedRoute } from "../../services/PotectedRouter";
+import { userFreelancer, userCustomer } from "../../utils/constants";
+import Main from "../Main/Main";
 import NotFound from "../../pages/NotFound/NotFound";
 import Register from "../../pages/Register/Register";
 import Login from "../../pages/Login/Login";
 import ForgotPass from "../../pages/ForgotPass/ForgotPass";
 import { SignOut } from "../SignOut/SignOut";
-import { ProtectedRoute } from "../../services/PotectedRouter";
 import ProfileFreelancer from "../../pages/Profiles/ProfileFreelancer/ProfileFreelancer";
 import { FreelancerCompleteForm } from "../Forms/FreelancerCompleteForm/FreelancerCompleteForm";
-import { EmployerCompleteForm } from '../Forms/EmployerCompleteForm/EmployerCompleteForm';
-import "./App.css";
+import { CustomerCompleteForm } from '../Forms/CustomerCompleteForm/CustomerCompleteForm';
 import ResetPass from "../../pages/ResetPass/ResetPass";
 import ProfileCustomer from "../../pages/Profiles/ProfileCustomer/ProfileCustomer";
-import { userFreelancer, userCustomer } from "../../utils/constants";
 import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
 import { CreateTaskForm } from '../Forms/CreateTaskForm/CreateTaskForm';
 import Order from "../../pages/Order/Order";
+import "./App.css";
+import * as api from '../../utils/Api';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(true);
   // const [authenticated, setAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(userFreelancer);
-  // const [currentUser, setCurrentUser] = useState(userCustomer);
-
-  //состояние отображения фильтра поиска
+  // const [currentUser, setCurrentUser] = useState(userFreelancer);
+  const [currentUser, setCurrentUser] = useState(userCustomer);
+  // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
+
+  const navigate = useNavigate();
+
+  function handleRegisterSubmit({ first_name, last_name, email, password, re_password, is_customer, is_worker }){
+    api.register({ first_name, last_name, email, password, re_password, is_customer, is_worker })
+    .then((data) => {
+      console.log(data);
+      navigate(`/${globalThis.role}/complete`, {replace: true})
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
 
   function updateUser(userEmail) {
     setCurrentUser({
@@ -49,22 +62,19 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
       <Context.Provider value={{ currentUser, authenticated, orderFilter, updateUser, logIn, logOut, handleOrderFilter }}>
         <Routes>
           <Route path="/" element={<Layout setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />}>
             <Route element={<ProtectedRoute />}>
-              <Route path="customer/:id" element={<ProfileCustomer />} />
-              <Route path="customer/:id/complete" element={<EmployerCompleteForm />} />
-              <Route path="freelancer/:id" element={<ProfileFreelancer />} />
-              <Route path="freelancer/:id/complete" element={
-                <FreelancerCompleteForm setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
-              } />
+              <Route path="freelancer" element={<ProfileFreelancer />} />
               <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
+              <Route path="freelancer/complete" element={<FreelancerCompleteForm />} />
+              <Route path="customer" element={<ProfileCustomer />} />
+              <Route path="customer/complete" element={<CustomerCompleteForm />} />
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
             <Route index element={<Main />} />
-            <Route path="signup" element={<Register />} />
+            <Route path="signup" element={<Register handleRegister={handleRegisterSubmit} />} />
             <Route path="order" element={<Order />} />
             <Route path="signin" element={
               <Login setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
@@ -75,8 +85,9 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
+
+
       </Context.Provider>
-    </BrowserRouter>
   );
 }
 

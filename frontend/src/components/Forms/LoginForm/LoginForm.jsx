@@ -4,7 +4,7 @@ import { Context } from "../../../context/context";
 import Button from "../../Button/Button";
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import InputText from "../../Inputs/InputText/InputText";
-// import LinkBar from "../../LinkBar/LinkBar";
+// import SocialLinksBar from "../../SocialLinksBar/SocialLinksBar";
 import "./LoginForm.css";
 import { userCustomer, userFreelancer } from "../../../utils/constants";
 
@@ -90,7 +90,7 @@ const LoginForm = ({ setAuthenticated, setCurrentUser }) => {
             Восстановить пароль
           </Link>
         </div>
-        {/* <LinkBar /> */}
+        {/* <SocialLinksBar /> */}
         <Button
           text="Войти"
           width={400}

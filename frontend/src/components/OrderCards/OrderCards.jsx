@@ -12,23 +12,27 @@ const OrderCards = ({ operationMode }) => {
   const [area2, setArea2] = useState(false);
   const { handleOrderFilter } = useContext(Context);
  // const area2 = currentUser.role === 'Фрилансер' && authenticated ? order : freelance;
-
+console.log(operationMode)
+console.log(area2)
   useEffect((() => {
     if (currentUser.role === 'Фрилансер' && !operationMode) {
       handleOrderFilter(true);
     } else {
       handleOrderFilter(false)
     }
-    if (currentUser.role === 'Фрилансер' && authenticated ) return setArea2(true)
-    setArea2(false)
-  }), [currentUser, authenticated, operationMode])
+    if (currentUser.role === 'Заказчик' && authenticated ) {
+      setArea2(false)
+    }else {
+    setArea2(true)
+    }
+  }), [currentUser, authenticated, operationMode, handleOrderFilter])
 
   console.log(area2);
 
 
   return (
     <div className="orderCards">
-      {operationMode ? <OrderCard cards={area2 ? tasks : freelance} orderArea={true}/> : <OrderCard   cards={order} /> }
+      {operationMode ? <OrderCard cards={area2 ? tasks : freelance} orderArea={ area2 }/> : <OrderCard cards={order} /> }
     </div>
   );
 };

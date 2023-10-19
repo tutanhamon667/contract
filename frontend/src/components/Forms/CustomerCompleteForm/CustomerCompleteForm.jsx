@@ -5,11 +5,11 @@ import { Context } from '../../../context/context';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import InputText from '../../Inputs/InputText/InputText';
 import Button from '../../Button/Button';
-import "./EmployerCompleteForm.css";
+import "./CustomerCompleteForm.css";
 import InputMultipleSelect from '../../Inputs/InputMultipleSelect/InputMultipleSelect';
 import { activityOptions } from '../../../utils/constants';
 
-function EmployerCompleteForm() {
+function CustomerCompleteForm() {
   const {
     values, errors, isValid, handleChange, setValues, setErrors
   } = useFormAndValidation();
@@ -69,7 +69,7 @@ function EmployerCompleteForm() {
       </label>
       <label>
         <p className="employer-complete-form__input-text">О компании</p>
-        <InputText type="textarea" placeholder="Расскажите о себе как о специалисте и чем вы можете быть полезны"
+        <InputText type="textarea" placeholder="Расскажите чем занимается ваша компания"
                    name="about" width={610} height={150} value={values.about || ''} error={errors.about}
                    errorMessage={errors.about} onChange={handleChange}
         />
@@ -89,4 +89,4 @@ function EmployerCompleteForm() {
   )
 }
 
-export { EmployerCompleteForm };
+export { CustomerCompleteForm };

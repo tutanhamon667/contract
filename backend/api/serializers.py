@@ -2,8 +2,8 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from api.utils import CustomBase64ImageField
-from orders.models import (CATEGORY_CHOICES, Category, Job, JobFile, Response,
-                           StackJob)
+from orders.models import (CATEGORY_CHOICES, Job, JobCategory, JobFile,
+                           JobResponse, StackJob)
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
@@ -42,16 +42,16 @@ class JobStackSerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class JobCategorySerializer(serializers.ModelSerializer):
     """Стэк технологий."""
     name = serializers.ChoiceField(choices=CATEGORY_CHOICES)
 
     class Meta:
-        model = Category
-        fields = ('name',)
+        model = JobCategory
+        fields = ('id', 'name', 'slug')
 
 
-class ResponseSerializer(serializers.ModelSerializer):
+class JobResponseSerializer(serializers.ModelSerializer):
     """Откликнуться на задание."""
     freelancer = serializers.IntegerField(source='freelancer.id',
                                           read_only=True)
@@ -59,14 +59,14 @@ class ResponseSerializer(serializers.ModelSerializer):
                                    read_only=True)
 
     class Meta:
-        model = Response
+        model = JobResponse
         fields = ('job', 'freelancer',)
 
     def validate(self, data):
         freelancer = data['freelancer']['id']
         job = data['job']['id']
-        if Response.objects.filter(freelancer__id=freelancer,
-                                   job__id=job).exists():
+        if JobResponse.objects.filter(
+                freelancer__id=freelancer, job__id=job).exists():
             raise serializers.ValidationError(
                 {'ошибка': 'Вы уже откликнулись на задание.'}
             )
@@ -75,7 +75,7 @@ class ResponseSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         freelancer = validated_data['freelancer']
         job = validated_data['job']
-        Response.objects.get_or_create(freelancer=freelancer, job=job)
+        JobResponse.objects.get_or_create(freelancer=freelancer, job=job)
         return validated_data
 
 
@@ -95,8 +95,9 @@ class JobListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ('id', 'title', 'category', 'stack', 'client', 'budget',
-                  'deadline', 'description', 'job_files', 'is_responded')
+        fields = ('id', 'title', 'category', 'stack', 'client',
+                  'budget', 'deadline', 'description', 'job_files',
+                  'is_responded', 'pub_date')
 
     def get_is_responded(self, obj):
         """
@@ -105,8 +106,8 @@ class JobListSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         if user.is_anonymous or user.is_customer:
             return False
-        return Response.objects.filter(
-            freelancer=user,
+        return JobResponse.objects.filter(
+            freelancer__user=user,
             job=obj).exists()
 
     def to_representation(self, instance):
@@ -139,10 +140,8 @@ class JobCreateSerializer(serializers.ModelSerializer):
         source='user.id',
         read_only=True
     )
-
-    # client_id = serializers.SerializerMethodField()
     category = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(),
+        queryset=JobCategory.objects.all(),
         many=True
     )
     stack = JobStackSerializer(many=True,)
@@ -153,9 +152,6 @@ class JobCreateSerializer(serializers.ModelSerializer):
         fields = ('client_id', 'title', 'category', 'stack',
                   'budget', 'ask_budget', 'deadline', 'ask_deadline',
                   'description', 'job_files',)
-
-    # def get_client_id(self, _):
-    #     return self.context['request'].user.id
 
     def validate_stack(self, data):
         stack = self.initial_data.get('stack')
@@ -191,17 +187,6 @@ class JobCreateSerializer(serializers.ModelSerializer):
             StackJob.objects.get_or_create(
                 job=job, stack=stack_obj
             )
-        # for skill in stack_data:
-        #     name = skill.get('id')
-        #     stack_obj, created = Stack.objects.get_or_create(name=name)
-        #     StackJob.objects.get_or_create(
-        #         job=job,
-        #         stack_id=skill.get('id'),
-        #     )
-
-        # for skill in stack_data:
-        #     stack_obj = Stack.objects.get_or_create(name=skill.get('name'))
-        #     StackJob.objects.create(job=job, stack=stack_obj)
         job.category.set(category_data)
         job.is_responded = False
         job.save()

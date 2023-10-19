@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from users.models import (Activity, CustomerProfile, Member, Stack,
+from users.models import (Category, CustomerProfile, Member, Stack,
                           WorkerProfile)
 
 # admin.site.unregister(Member)
@@ -38,16 +38,11 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 
-'''
-# Проверить корректность работы WorkerProfile
-# через users/admin.py
-
 @admin.register(WorkerProfile)
 class WorkerProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'payrate')
-    list_filter = ('activity', 'stacks')
-    filter_horizontal = ('activity', 'stacks')
-'''
+    list_filter = ('category', 'stacks')
+    filter_horizontal = ('category', 'stacks')
 
 
 # Кастомный административный класс для модели CustomerProfile
@@ -57,4 +52,4 @@ class CustomerProfileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Stack, StackAdmin)
-admin.site.register(Activity, ActivityAdmin)
+admin.site.register(Category, ActivityAdmin)

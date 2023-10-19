@@ -78,7 +78,7 @@
 
 .profile__popup {
   position: absolute;
-  right: 0;
+  right: 25px;
   width: 295px;
   height: 160px;
   display: flex;
@@ -90,6 +90,7 @@
   box-shadow: 1px 1px 1px grey;
   opacity: 0;
   z-index: -5;
+  margin: 4px 0 0 0;
 }
 
 .profile__popup_show {

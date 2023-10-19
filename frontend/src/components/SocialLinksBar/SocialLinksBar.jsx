@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./LinkBar.css";
+import "./SocialLinksBar.css";
 
-const LinkBar = () => {
+const SocialLinksBar = () => {
   return (
     <div className="linkBar">
       <p className="linkBar__text">или</p>
@@ -24,4 +24,4 @@ const LinkBar = () => {
   );
 };
 
-export default LinkBar;
+export default SocialLinksBar;
