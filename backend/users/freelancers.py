@@ -51,7 +51,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class DiplomaFileSerializer(serializers.ModelSerializer):
-    file = Base64ImageField(required=False)
+    file = Base64ImageField()
 
     class Meta:
         model = DiplomaFile
@@ -74,8 +74,31 @@ class EducationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FreelancerField(serializers.RelatedField):
+    def to_representation(self, value):
+        return [{
+            'first_name': value.first_name,
+            'last_name': value.last_name
+        }]
+
+    def to_internal_value(self, data):
+        user = self.context.get('request').user
+        for field in data:
+            if not getattr(self.root, 'partial'):
+                if 'first_name' not in field:
+                    raise ValidationError('\'first_name\' обязательное поле')
+                if 'last_name' not in field:
+                    raise ValidationError('\'last_name\' обязательное поле')
+        user.first_name = field.get('first_name')
+        user.last_name = field.get('last_name')
+        user.save()
+        return data
+
+
 class GetWorkerProfileSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = FreelancerField(queryset=User.objects.all())
+    is_worker = serializers.ReadOnlyField(source='user.is_worker')
+    is_customer = serializers.ReadOnlyField(source='user.is_customer')
     contacts = ContactSerializer(many=True)
     stacks = StackSerializer(many=True)
     categories = CategorySerializer(many=True)
@@ -88,18 +111,19 @@ class GetWorkerProfileSerializer(serializers.ModelSerializer):
 
 
 class PostWorkerProfileSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    user = FreelancerField(queryset=User.objects.all())
     contacts = ContactSerializer(many=True, required=True)
-    stacks = StackSerializer(many=True, required=True)
+    stacks = StackSerializer(many=True, required=False)
     categories = CategorySerializer(many=True, required=True)
-    education = EducationSerializer(many=True, required=True)
-    portfolio = PortfolioFileSerializer(many=True, required=True)
+    education = EducationSerializer(many=True, required=False)
+    portfolio = PortfolioFileSerializer(many=True, required=False)
 
     class Meta:
         model = WorkerProfile
         fields = '__all__'
 
-    def validate_user(self, user):
+    def validate_user(self, freelancer):
+        user = self.context.get('request').user
         if WorkerProfile.objects.filter(user_id=user.id):
             raise ValidationError(
                 'Профиль уже существует'
@@ -107,67 +131,82 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
         return user
 
     def create(self, validated_data):
-        contacts = validated_data.pop('contacts')
-        stacks = validated_data.pop('stacks')
-        categories = validated_data.pop('categories')
-        education = validated_data.pop('education')
-        portfolio = validated_data.pop('portfolio')
-
+        if 'contacts' in self.initial_data:
+            contacts = validated_data.pop('contacts')
+        if 'stacks' in self.initial_data:
+            stacks = validated_data.pop('stacks')
+        if 'categories' in self.initial_data:
+            categories = validated_data.pop('categories')
+        if 'education' in self.initial_data:
+            education = validated_data.pop('education')
+        if 'portfolio' in self.initial_data:
+            portfolio = validated_data.pop('portfolio')
         profile = WorkerProfile.objects.create(**validated_data)
 
-        for contact in contacts:
-            record = Contact.objects.create(**contact)
-            FreelancerContact.objects.create(
-                freelancer=profile,
-                contact=record
-            )
-
-        for stack in stacks:
-            record, status = Stack.objects.get_or_create(**stack)
-            FreelancerStack.objects.create(
-                freelancer=profile,
-                stack=record
-            )
-
-        for category in categories:
-            record, status = Category.objects.get_or_create(**category)
-            FreelancerCategory.objects.create(
-                freelancer=profile,
-                category=record
-            )
-
-        for stage in education:
-            diploma = stage.pop('diploma')
-            record = Education.objects.create(**stage)
-
-            for example in diploma:
-                file = DiplomaFile.objects.create(**example)
-                file.create_thumbnail()
-                EducationDiploma.objects.create(
-                    education=record,
-                    diploma=file
+        if 'contacts' in locals():
+            for contact in contacts:
+                record = Contact.objects.create(**contact)
+                FreelancerContact.objects.create(
+                    freelancer=profile,
+                    contact=record
                 )
-            FreelancerEducation.objects.create(
-                freelancer=profile,
-                education=record
-            )
 
-        for example in portfolio:
-            file = PortfolioFile.objects.create(**example)
-            file.create_thumbnail()
-            FreelancerPortfolio.objects.create(
-                freelancer=profile,
-                portfolio=file
-            )
-        profile.save()
+        if 'stacks' in locals():
+            for stack in stacks:
+                record, status = Stack.objects.get_or_create(**stack)
+                FreelancerStack.objects.create(
+                    freelancer=profile,
+                    stack=record
+                )
+
+        if 'categories' in locals():
+            for category in categories:
+                record, status = Category.objects.get_or_create(**category)
+                FreelancerCategory.objects.create(
+                    freelancer=profile,
+                    category=record
+                )
+
+        if 'education' in locals():
+            for stage in education:
+                if 'diploma' in stage:
+                    diploma = stage.pop('diploma')
+                record = Education.objects.create(**stage)
+
+                if 'diploma' in locals():
+                    for example in diploma:
+                        file = DiplomaFile.objects.create(**example)
+                        file.create_thumbnail()
+                        EducationDiploma.objects.create(
+                            education=record,
+                            diploma=file
+                        )
+                FreelancerEducation.objects.create(
+                    freelancer=profile,
+                    education=record
+                )
+
+        if 'portfolio' in locals():
+            for example in portfolio:
+                file = PortfolioFile.objects.create(**example)
+                file.create_thumbnail()
+                FreelancerPortfolio.objects.create(
+                    freelancer=profile,
+                    portfolio=file
+                )
         return profile
 
     def update(self, instance, validated_data):
-        contacts = validated_data.pop('contacts')
-        stacks = validated_data.pop('stacks')
-        categories = validated_data.pop('categories')
-        education = validated_data.pop('education')
-        portfolio = validated_data.pop('portfolio')
+        if 'contacts' in self.initial_data:
+            contacts = validated_data.pop('contacts')
+        if 'stacks' in self.initial_data:
+            stacks = validated_data.pop('stacks')
+        if 'categories' in self.initial_data:
+            categories = validated_data.pop('categories')
+        if 'education' in self.initial_data:
+            education = validated_data.pop('education')
+        if 'portfolio' in self.initial_data:
+            portfolio = validated_data.pop('portfolio')
         Contact.objects.filter(workerprofile__user=instance).delete()
         Stack.objects.filter(workerprofile__user=instance).delete()
         Category.objects.filter(workerprofile__user=instance).delete()
@@ -179,49 +218,55 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
 
         profile = WorkerProfile.objects.get(user=instance)
 
-        for contact in contacts:
-            record = Contact.objects.create(**contact)
-            FreelancerContact.objects.create(
-                freelancer=profile,
-                contact=record
-            )
-
-        for stack in stacks:
-            record, status = Stack.objects.get_or_create(**stack)
-            FreelancerStack.objects.create(
-                freelancer=profile,
-                stack=record
-            )
-
-        for category in categories:
-            record, status = Category.objects.get_or_create(**category)
-            FreelancerCategory.objects.create(
-                freelancer=profile,
-                category=record
-            )
-
-        for stage in education:
-            diploma = stage.pop('diploma')
-            record = Education.objects.create(**stage)
-
-            for example in diploma:
-                file = DiplomaFile.objects.create(**example)
-                file.create_thumbnail()
-                EducationDiploma.objects.create(
-                    education=record,
-                    diploma=file
+        if 'contacts' in locals():
+            for contact in contacts:
+                record = Contact.objects.create(**contact)
+                FreelancerContact.objects.create(
+                    freelancer=profile,
+                    contact=record
                 )
-            FreelancerEducation.objects.create(
-                freelancer=profile,
-                education=record
-            )
 
-        for example in portfolio:
-            file = PortfolioFile.objects.create(**example)
-            file.create_thumbnail()
-            FreelancerPortfolio.objects.create(
-                freelancer=profile,
-                portfolio=file
-            )
-        profile.save()
+        if 'stacks' in locals():
+            for stack in stacks:
+                record, status = Stack.objects.get_or_create(**stack)
+                FreelancerStack.objects.create(
+                    freelancer=profile,
+                    stack=record
+                )
+
+        if 'categories' in locals():
+            for category in categories:
+                record, status = Category.objects.get_or_create(**category)
+                FreelancerCategory.objects.create(
+                    freelancer=profile,
+                    category=record
+                )
+
+        if 'education' in locals():
+            for stage in education:
+                if 'diploma' in stage:
+                    diploma = stage.pop('diploma')
+                record = Education.objects.create(**stage)
+
+                if 'diploma' in locals():
+                    for example in diploma:
+                        file = DiplomaFile.objects.create(**example)
+                        file.create_thumbnail()
+                        EducationDiploma.objects.create(
+                            education=record,
+                            diploma=file
+                        )
+                FreelancerEducation.objects.create(
+                    freelancer=profile,
+                    education=record
+                )
+
+        if 'portfolio' in locals():
+            for example in portfolio:
+                file = PortfolioFile.objects.create(**example)
+                file.create_thumbnail()
+                FreelancerPortfolio.objects.create(
+                    freelancer=profile,
+                    portfolio=file
+                )
         return profile

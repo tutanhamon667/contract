@@ -18,12 +18,12 @@ CATEGORY_CHOICES = (
     ('content', 'контент'),
     ('other', 'разное'),
 )
-CONTACT_TYPE = [
-    ('Phone number', 'Phone number'),
-    ('Email', 'Email'),
-    ('Telegram', 'Telegram'),
-    ('Other', 'Other')
-]
+CONTACT_TYPE = (
+    ('phone', 'Phone number'),
+    ('email', 'E-mail'),
+    ('telegram', 'Telegram'),
+    ('other', 'Other')
+)
 
 
 class Member(PermissionsMixin, AbstractBaseUser):
@@ -90,6 +90,9 @@ class Contact(models.Model):
         verbose_name='Предпочитаемый вид контакта'
     )
 
+    def __str__(self):
+        return f'{self.type} {self.contact} {self.preferred}'
+
 
 class Stack(models.Model):
     name = models.CharField(
@@ -99,6 +102,7 @@ class Stack(models.Model):
     )
     slug = models.SlugField(
         max_length=50,
+        blank=True,
         unique=False,
         validators=[RegexValidator(
             regex=r'^[-a-zA-Z0-9_]+$',
@@ -123,6 +127,7 @@ class Category(models.Model):
         choices=CATEGORY_CHOICES
     )
     slug = models.SlugField(
+        blank=True,
         verbose_name='Идентификатор специализации',
         unique=False
     )
@@ -170,7 +175,7 @@ class PortfolioFile(models.Model):
 
 class DiplomaFile(models.Model):
     file = models.ImageField(
-        upload_to="education/",
+        upload_to="education/"
     )
     name = models.CharField(
         max_length=255,
@@ -209,6 +214,7 @@ class Education(models.Model):
     )
     faculty = models.CharField(
         verbose_name='Факультет',
+        blank=False,
         max_length=150,
         default=None,
     )
@@ -241,6 +247,7 @@ class Education(models.Model):
 class WorkerProfile(models.Model):
     user = models.OneToOneField(
         Member,
+        related_name='freelancer',
         on_delete=models.PROTECT
     )
     photo = models.ImageField(
@@ -270,6 +277,7 @@ class WorkerProfile(models.Model):
     )
     stacks = models.ManyToManyField(
         Stack,
+        blank=True,
         through='FreelancerStack'
     )
     categories = models.ManyToManyField(
@@ -278,10 +286,12 @@ class WorkerProfile(models.Model):
     )
     portfolio = models.ManyToManyField(
         PortfolioFile,
+        blank=True,
         through='FreelancerPortfolio'
     )
     education = models.ManyToManyField(
         Education,
+        blank=True,
         through='FreelancerEducation'
     )
 

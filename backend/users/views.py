@@ -55,6 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
         action in ['retrieve', 'me'] дополнительно проверяет роль
         пользователя и в зависимости от этого возвращает требуемый serializer
         """
+        print(self.allowed_methods)
         serializers = {
             'reg_in': UserCreateSerializer,
             'new_email': NewEmailSerializer,
@@ -88,7 +89,7 @@ class UserViewSet(viewsets.ModelViewSet):
             else:
                 raise ValueError('Роль пользователя не определена')
         try:
-            return (serializers[key])
+            return serializers[key]
         except KeyError:
             return UserViewSerialiser
 
@@ -183,13 +184,13 @@ class UserViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(queryset)
             elif request.method == 'POST':
                 serializer = self.get_serializer(
-                    data=request.data
+                    data=request.data,
                 )
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
             elif request.method == 'PATCH':
                 serializer = self.get_serializer(
-                    request._user,
+                    request._user.id,
                     request.data,
                     partial=True
                 )

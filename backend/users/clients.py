@@ -35,12 +35,17 @@ class IndustrySerializer(serializers.ModelSerializer):
 
 class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    is_worker = serializers.ReadOnlyField(source='user.is_worker')
+    is_customer = serializers.ReadOnlyField(source='user.is_customer')
     photo = Base64ImageField(required=False)
     industry = IndustrySerializer(many=False, read_only=True)
 
     class Meta:
         model = CustomerProfile
-        fields = ('user', 'photo', 'email', 'name', 'industry', 'web')
+        fields = (
+            'user', 'is_worker', 'is_customer', 'photo', 'email',
+            'name', 'industry', 'web'
+        )
 
 
 class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
