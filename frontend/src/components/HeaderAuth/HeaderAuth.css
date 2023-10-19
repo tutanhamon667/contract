@@ -24,7 +24,7 @@
 }
 
 .header-auth__singup-button:hover {
-  transition: 1s ease-in;
+  transition: 0.5s  ease-in-out;
   opacity: 0.5;
 }
 
@@ -33,6 +33,8 @@
   border: 0;
   border-radius: 10px;
   padding: 6px 28px;
+  width: 103px;
+  height: 36px;
   justify-content: center;
   align-items: center;
   background: #fff;
@@ -51,7 +53,6 @@ color:#fff
 
 .header-auth__entry-button:hover {
   transition: all 0.2s ease-in-out;
-  opacity: 0.8;
 }
 
 .header-auth__authState {
