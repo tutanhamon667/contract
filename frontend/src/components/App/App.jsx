@@ -28,6 +28,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState(userCustomer);
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
+  const [errorRequest, setErrorRequest] = useState({});
+  const [isError, setIsError] = useState(false)
 
   const navigate = useNavigate();
 
@@ -35,10 +37,13 @@ function App() {
     api.register({ first_name, last_name, email, password, re_password, is_customer, is_worker })
     .then((data) => {
       console.log(data);
+      setIsError(false);
+      setErrorRequest({});
       navigate(`/${globalThis.role}/complete`, {replace: true})
     })
     .catch((err) => {
-      console.log(err);
+      setErrorRequest(err);
+      setIsError(true)
     })
   }
 
@@ -74,7 +79,7 @@ function App() {
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
             <Route index element={<Main />} />
-            <Route path="signup" element={<Register handleRegister={handleRegisterSubmit} />} />
+            <Route path="signup" element={<Register handleRegister={handleRegisterSubmit} error={errorRequest} isError={isError} />} />
             <Route path="order" element={<Order />} />
             <Route path="signin" element={
               <Login setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />

@@ -4,7 +4,7 @@ import RegisterForm from "../../components/Forms/RegisterForm/RegisterForm";
 import { Context } from "../../context/context";
 import "./Register.css";
 
-const Register = ({handleRegister}) => {
+const Register = ({handleRegister, error, isError}) => {
   const { authenticated, currentUser } = React.useContext(Context);
   const location = useLocation();
 
@@ -19,12 +19,11 @@ const Register = ({handleRegister}) => {
  //   return <Navigate to={`/${globalThis.role}/complete`} state={{ from: location }} />;
  // }
 
-
   return (
     <div className="wrapper">
       <div className="container">
         <h1 className="title">Регистрация</h1>
-        <RegisterForm onSubmitHandler={onSubmit}/>
+        <RegisterForm onSubmitHandler={onSubmit} errorRequest={error} isError={isError}/>
       </div>
     </div>
   );

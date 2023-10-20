@@ -23,10 +23,10 @@ export default function useFormAndValidation() {
     }
 
     if (name === "password") {
-      if (value.length < 6) {
+      if (value.length < 8) {
         setErrors({
           ...errors,
-          [name]: "Пароль должен содержать не менее 6 символов",
+          [name]: "Пароль должен содержать не менее 8 символов",
         });
         setIsValid(false);
       } else if (value.length > 20) {
