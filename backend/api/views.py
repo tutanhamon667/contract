@@ -7,14 +7,18 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from api.filters import JobFilter
+from api.mixins import CreateListDestroytViewSet, CreateListViewSet
+from api.permissions import (ChatPermission, IsAdminOrReadOnly,
+                             IsCustomerOrReadOnly, IsFreelancer,
+                             MessagePermission)
+from api.serializers import (ChatCreateSerializer, ChatReadSerializer,
+                             JobCategorySerializer, JobCreateSerializer,
+                             JobListSerializer, JobResponseSerializer,
+                             MessageSerializer, RespondedSerializer)
+from chat.models import Chat, Message
 from orders.models import Job, JobCategory, JobResponse
-
-from .filters import JobFilter
-from .mixins import CreateListDestroytViewSet
-from .permissions import IsAdminOrReadOnly, IsCustomerOrReadOnly, IsFreelancer
-from .serializers import (JobCategorySerializer, JobCreateSerializer,
-                          JobListSerializer, JobResponseSerializer,
-                          RespondedSerializer)
+from users.models import WorkerProfile
 
 
 class JobCategoryViewSet(CreateListDestroytViewSet):
@@ -92,3 +96,91 @@ class JobViewSet(ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         response = {'errors': response_errors[request.method]}
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChatViewSet(CreateListViewSet):
+    """ Чаты.
+    Для чатов разрешается:
+    - заказчик или фрилансер могут получать
+    список только своих чатов;
+    - чат может создаваться как без привязки к заданию
+    так и с привязкой к заданию (для этого указать job_id в теле запроса)
+    - создавать чат по заданию может только автор
+    задания;
+    - администратор может создавать и удалять;
+    - все действия необходимо выполнять авторизованным.
+    """
+    queryset = Chat.objects.all()
+    permission_classes = (ChatPermission,)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ChatCreateSerializer
+        return ChatReadSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            return Chat.objects.all()
+        if user.is_worker:
+            return Chat.objects.filter(freelancer=user.workerprofile)
+        if user.is_customer:
+            return Chat.objects.filter(customer=user.customerprofile)
+        return Message.objects.none()
+
+    def perform_create(self, serializer):
+        """
+        Задание может создвать с привязкой к заданию.
+        """
+        err = 'Вы не можете создать чат по чужому заданию.'
+        customer = self.request.user.customerprofile
+        freelancer_id = self.request.data.get('freelancer')
+        freelancer = get_object_or_404(WorkerProfile, pk=freelancer_id)
+        job_id = self.request.data.get('job_id')
+        if job_id:
+            job = get_object_or_404(Job, pk=job_id)
+            if customer == job.client:
+                serializer.save(customer=customer,
+                                freelancer=freelancer,
+                                title=job.title,
+                                job=job)
+            else:
+                return Response({'detail': err},
+                                status=status.HTTP_403_FORBIDDEN)
+        else:
+            serializer.save(customer=customer,
+                            freelancer=freelancer,
+                            title='Без задания')
+        return Response({'detail': 'Что-то пошло не так.'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+class MessageViewSet(CreateListViewSet):
+    """ Сообщения в чатах.
+    Для сообщений разрешается:
+    - заказчик или фрилансер могут получать
+    список только своих сообщений;
+    - писать сообщения могут только в свои чаты;
+    - администратор может создавать и удалять;
+    - все действия необходимо выполнять авторизованным.
+    """
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [MessagePermission]
+
+    def get_queryset(self):
+        chat_id = self.kwargs.get('chat_id')
+        user = self.request.user
+        if user.is_superuser:
+            return Message.objects.all()
+        if user.is_worker:
+            chats = Chat.objects.filter(freelancer=user.workerprofile)
+        if user.is_customer:
+            chats = Chat.objects.filter(customer=user.customerprofile)
+        return Message.objects.filter(chat__in=chats, chat_id=chat_id)
+
+    def perform_create(self, serializer):
+        sender = self.request.user
+        chat_id = self.kwargs.get('chat_id')
+        chat = Chat.objects.get(pk=chat_id)
+        serializer.save(sender=sender, chat=chat)
