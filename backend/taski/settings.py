@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users',
     'api',
     'orders',
+    'chat',
     'drf_yasg',
     'drf_extra_fields',
 
