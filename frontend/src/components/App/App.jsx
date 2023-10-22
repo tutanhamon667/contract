@@ -28,6 +28,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState(userCustomer);
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
+  // массив активных фильтров
+  const [freelanceFilter, setFreelanceFilter] = useState([]);
   const [errorRequest, setErrorRequest] = useState({});
   const [isError, setIsError] = useState(false);
 
@@ -67,7 +69,7 @@ function App() {
   };
 
   return (
-      <Context.Provider value={{ currentUser, authenticated, orderFilter, updateUser, logIn, logOut, handleOrderFilter }}>
+      <Context.Provider value={{ currentUser, authenticated, orderFilter, updateUser, logIn, logOut, handleOrderFilter, freelanceFilter, setFreelanceFilter }}>
         <Routes>
           <Route path="/" element={<Layout setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />}>
             <Route element={<ProtectedRoute />}>

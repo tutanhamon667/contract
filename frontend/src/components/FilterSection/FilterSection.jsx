@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 function FilterSection() {
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
-  const { currentUser, orderFilter, authenticated } = useContext(Context);
+  const { currentUser, orderFilter, authenticated, setFreelanceFilter } = useContext(Context);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,7 +56,7 @@ function FilterSection() {
             id="freelance-item1"
             name="freelance-item1"
             className="filters-checkbox"
-            value="freelance-item1"
+            value="Дизайн"
             onClick={() => saveFilters(1)}
           />
           <label htmlFor="freelance-item1" className="filters-checkbox__item">
@@ -69,7 +69,7 @@ function FilterSection() {
             id="freelance-item2"
             name="freelance-item2"
             className="filters-checkbox"
-            value="freelance-item2"
+            value="Разработка"
             onClick={() => saveFilters(2)}
           />
           <label htmlFor="freelance-item2" className="filters-checkbox__item">
@@ -82,7 +82,7 @@ function FilterSection() {
             id="freelance-item3"
             name="freelance-item3"
             className="filters-checkbox"
-            value="freelance-item3"
+            value="Тестирование"
             onClick={() => saveFilters(3)}
           />
           <label htmlFor="freelance-item3" className="filters-checkbox__item">
@@ -95,7 +95,7 @@ function FilterSection() {
             id="freelance-item4"
             name="freelance-item4"
             className="filters-checkbox"
-            value="freelance-item4"
+            value="Администрирование"
             onClick={() => saveFilters(4)}
           />
           <label htmlFor="freelance-item4" className="filters-checkbox__item">
@@ -108,7 +108,7 @@ function FilterSection() {
             id="freelance-item5"
             name="freelance-item5"
             className="filters-checkbox"
-            value="freelance-item5"
+            value="Маркетинг"
             onClick={() => saveFilters(5)}
           />
           <label htmlFor="freelance-item5" className="filters-checkbox__item">
@@ -121,7 +121,7 @@ function FilterSection() {
             id="freelance-item6"
             name="freelance-item6"
             className="filters-checkbox"
-            value="freelance-item6"
+            value="Контент"
             onClick={() => saveFilters(6)}
           />
           <label htmlFor="freelance-item6" className="filters-checkbox__item">
@@ -134,7 +134,7 @@ function FilterSection() {
             id="freelance-item7"
             name="freelance-item7"
             className="filters-checkbox"
-            value="freelance-item7"
+            value="Разное"
             onClick={() => saveFilters(7)}
           />
           <label htmlFor="freelance-item7" className="filters-checkbox__item">
