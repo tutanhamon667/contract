@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Route, Routes, BrowserRouter, useNavigate } from "react-router-dom";
 import { Context } from "../../context/context";
 import Layout from "../../layout/Layout";
 import { ProtectedRoute } from "../../services/PotectedRouter";
@@ -19,14 +19,33 @@ import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerVie
 import { CreateTaskForm } from '../Forms/CreateTaskForm/CreateTaskForm';
 import Order from "../../pages/Order/Order";
 import "./App.css";
+import * as api from '../../utils/Api';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(true);
   // const [authenticated, setAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(userFreelancer);
-  // const [currentUser, setCurrentUser] = useState(userCustomer);
+  // const [currentUser, setCurrentUser] = useState(userFreelancer);
+  const [currentUser, setCurrentUser] = useState(userCustomer);
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
+  const [errorRequest, setErrorRequest] = useState({});
+  const [isError, setIsError] = useState(false)
+
+  const navigate = useNavigate();
+
+  function handleRegisterSubmit({ first_name, last_name, email, password, re_password, is_customer, is_worker }){
+    api.register({ first_name, last_name, email, password, re_password, is_customer, is_worker })
+    .then((data) => {
+      console.log(data);
+      setIsError(false);
+      setErrorRequest({});
+      navigate(`/${globalThis.role}/complete`, {replace: true})
+    })
+    .catch((err) => {
+      setErrorRequest(err);
+      setIsError(true)
+    })
+  }
 
   function updateUser(userEmail) {
     setCurrentUser({
@@ -48,7 +67,6 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
       <Context.Provider value={{ currentUser, authenticated, orderFilter, updateUser, logIn, logOut, handleOrderFilter }}>
         <Routes>
           <Route path="/" element={<Layout setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />}>
@@ -61,7 +79,7 @@ function App() {
               <Route path="create-task" element={<CreateTaskForm />} />
             </Route>
             <Route index element={<Main />} />
-            <Route path="signup" element={<Register />} />
+            <Route path="signup" element={<Register handleRegister={handleRegisterSubmit} error={errorRequest} isError={isError} />} />
             <Route path="order" element={<Order />} />
             <Route path="signin" element={
               <Login setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
@@ -75,7 +93,6 @@ function App() {
 
 
       </Context.Provider>
-    </BrowserRouter>
   );
 }
 

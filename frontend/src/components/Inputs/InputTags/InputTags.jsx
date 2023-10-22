@@ -1,8 +1,10 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react';
 import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
-function InputTags() {
+function InputTags({setStacksValues}) {
   const [tags, setTags] = useState([]);
   const [isEditMode, setIsEditMode] = useState(true);
 
@@ -10,9 +12,11 @@ function InputTags() {
     if (e.key !== 'Enter') return;
     const value = e.target.value;
     if (!value.trim()) return;
+
     setTags([...tags, value]);
+    setStacksValues([...tags, value])
+
     e.target.value = '';
-    // onChange(tags);
     e.preventDefault();
   }
 

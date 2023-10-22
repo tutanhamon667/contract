@@ -2,11 +2,14 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from api.utils import CustomBase64ImageField
+from chat.models import Chat, Message
 from orders.models import (CATEGORY_CHOICES, Job, JobCategory, JobFile,
                            JobResponse, StackJob)
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
+from users.serializers import (GetCustomerProfileSerializer,
+                               WorkerProfileListSerializer)
 
 # File requiremnts
 MAX_FILE_SIZE_MB = 50
@@ -235,3 +238,47 @@ class JobCreateSerializer(serializers.ModelSerializer):
             context=self.context
         )
         return serializer.data
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    """
+    Отдельные сообщения.
+    """
+    class Meta:
+        model = Message
+        fields = ('id', 'sender', 'content', 'timestamp')
+        read_only_fields = ('sender',)
+
+
+class ChatReadSerializer(serializers.ModelSerializer):
+    messages = MessageSerializer(many=True)
+    freelancer = WorkerProfileListSerializer()
+    customer = GetCustomerProfileSerializer()
+
+    class Meta:
+        model = Chat
+        fields = ('id', 'title', 'customer', 'freelancer', 'messages')
+        read_only_fields = ('customer',)
+
+
+class ChatCreateSerializer(serializers.ModelSerializer):
+    job_id = serializers.IntegerField(
+        help_text="ID задания, к которому создается чат. "
+                  "Необязательное поле. Оставьте его пустым"
+                  " для создания чата без привязки к заданию.",
+        required=False
+    )
+
+    class Meta:
+        model = Chat
+        fields = ('id', 'job_id', 'customer', 'freelancer')
+        read_only_fields = ('customer',)
+
+    def validate(self, data):
+        job_id = self.context['request'].data.get('job_id')
+        freelancer_id = self.context['request'].data.get('freelancer')
+        if Chat.objects.filter(job__id=job_id,
+                               freelancer__id=freelancer_id).exists():
+            raise serializers.ValidationError(
+                'Вы уже создали чат с фрилансером по этому заданию.')
+        return data

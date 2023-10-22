@@ -145,7 +145,7 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
       <label>
         <p className="freelancer-complete-form__input-text">Специализация</p>
         <InputMultipleSelect name="activity" value={values.activity || ''} error={errors.activity}
-                     errorMessage={errors.activity} onChange={handleChange} options={activityOptions}
+          errorMessage={errors.activity} onChange={handleChange} options={activityOptions}
         />
       </label>
       <label>
@@ -155,7 +155,7 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
       <label>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>
         <InputText type="number" placeholder="Ставка" name="payrate" width={295} value={values.payrate || ''}
-                   error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
+          error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
         />
       </label>
       <label>

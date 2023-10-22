@@ -7,7 +7,7 @@ import InputText from "../../Inputs/InputText/InputText";
 // import SocialLinksBar from "../../SocialLinksBar/SocialLinksBar";
 import "./RegisterForm.css";
 
-const RegisterForm = ({ onSubmitHandler }) => {
+const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
   const { logIn } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
   const [buttonClicked, setButtonClicked] = React.useState(false);
@@ -15,6 +15,7 @@ const RegisterForm = ({ onSubmitHandler }) => {
     is_customer: true,
     is_worker: false,
   });
+
   const {
     values, errors, isValid, handleChange, setValues, setErrors
   } = useFormAndValidation();
@@ -42,6 +43,26 @@ const RegisterForm = ({ onSubmitHandler }) => {
       is_worker: role.is_worker,
     }));
   }, [role.is_customer, role.is_worker, setValues]);
+
+  React.useEffect(() => {
+    if (isError) {
+      let newErrors = {};
+
+      if (errorRequest.email) {
+        if (errorRequest.email.includes('member с таким email address уже существует.')) {
+          newErrors = { ...newErrors, email: "Пользователь с таким Email уже существует" };
+          setErrors({ ...errors, ...newErrors });
+        }
+
+      }
+      else if (errorRequest.password) {
+        newErrors = { ...newErrors, password: `${errorRequest.password}` };
+        setErrors({ ...errors, ...newErrors })
+      }
+
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buttonClicked, isError])
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -77,12 +98,11 @@ const RegisterForm = ({ onSubmitHandler }) => {
       values.first_name &&
       values.last_name
     ) {
-      console.log(values);
       setValues({
         ...values,
-        email: "",
         first_name: "",
         last_name: "",
+        email: "",
         password: "",
         re_password: "",
         is_customer: role.is_customer,
@@ -94,7 +114,10 @@ const RegisterForm = ({ onSubmitHandler }) => {
       onSubmitHandler(values);
     }
     setButtonClicked(true);
+
+
   };
+
 
   return (
     <form className="register" onSubmit={handleSubmit}>

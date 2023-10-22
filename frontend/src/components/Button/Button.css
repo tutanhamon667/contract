@@ -37,14 +37,20 @@
 
 .buttonSecondary {
   border: 1px solid #c6c6c6;
-  background-color: #f2f1ee;
+  background-color: #ffffff;
   padding: 0;
 }
 
 .buttonBlack {
-  background-color: #000;
+  background-color: transparent;
   border: none;
 }
+
+.buttonBlack:hover {
+  opacity: .4;
+  box-shadow: none;
+}
+
 
 .buttonWhite {
   background-color: #FFF;
@@ -68,3 +74,4 @@
 .buttonBlack__text {
   color: #fff;
 }
+
