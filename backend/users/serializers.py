@@ -3,7 +3,6 @@ from django.core.validators import RegexValidator
 from djoser import serializers as djoser_serializers
 from rest_framework import serializers
 
-
 User = get_user_model()
 
 
