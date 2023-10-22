@@ -8,8 +8,8 @@ from orders.models import (CATEGORY_CHOICES, Job, JobCategory, JobFile,
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
-from users.serializers import (GetCustomerProfileSerializer,
-                               WorkerProfileListSerializer)
+from users.clients import GetCustomerProfileSerializer
+from users.freelancers import GetWorkerProfileSerializer
 
 # File requiremnts
 MAX_FILE_SIZE_MB = 50
@@ -252,7 +252,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class ChatReadSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True)
-    freelancer = WorkerProfileListSerializer()
+    freelancer = GetWorkerProfileSerializer()
     customer = GetCustomerProfileSerializer()
 
     class Meta:
