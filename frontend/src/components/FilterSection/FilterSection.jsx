@@ -1,8 +1,8 @@
 import "./FilterSection.css";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Button from "../Button/Button";
 import { Context } from "../../context/context";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function FilterSection() {
   const [budgetStart, setBudgetStart] = useState(null);
@@ -10,10 +10,27 @@ function FilterSection() {
   const { currentUser, orderFilter, authenticated } = useContext(Context);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    load(7);
+  }, []);
+
   const handleBudgetClean = () => {
     setBudgetStart("");
     setBudgetEnd("");
   };
+
+  function saveFilters(n) {
+    let checkbox = document.getElementById(`freelance-item${n}`);
+    localStorage.setItem(`freelance-item${n}`, checkbox.checked);
+  }
+
+  function load(n) {
+    while (n) {
+      let checked = JSON.parse(localStorage.getItem(`freelance-item${n}`));
+      document.getElementById(`freelance-item${n}`).checked = checked;
+      n--;
+    }
+  }
 
   const filtersContainerStyle = `filters-container  ${
     orderFilter && authenticated ? "filters-conteiner__freelance " : ""
@@ -21,9 +38,16 @@ function FilterSection() {
 
   return (
     <section className="filters">
-      {authenticated && currentUser.role === 'Заказчик' ? (
-        <Button text="Создать заказ" width={289} marginBottom={24} onClick={() => navigate('/create-task')} />
-      ) : (<></>)}
+      {authenticated && currentUser.role === "Заказчик" ? (
+        <Button
+          text="Создать заказ"
+          width={289}
+          marginBottom={24}
+          onClick={() => navigate("/create-task")}
+        />
+      ) : (
+        <></>
+      )}
       <div className={filtersContainerStyle}>
         <h2 className="filters-container__title">Специализация</h2>
         <div>
@@ -33,6 +57,7 @@ function FilterSection() {
             name="freelance-item1"
             className="filters-checkbox"
             value="freelance-item1"
+            onClick={() => saveFilters(1)}
           />
           <label htmlFor="freelance-item1" className="filters-checkbox__item">
             дизайн
@@ -45,6 +70,7 @@ function FilterSection() {
             name="freelance-item2"
             className="filters-checkbox"
             value="freelance-item2"
+            onClick={() => saveFilters(2)}
           />
           <label htmlFor="freelance-item2" className="filters-checkbox__item">
             разработка
@@ -57,6 +83,7 @@ function FilterSection() {
             name="freelance-item3"
             className="filters-checkbox"
             value="freelance-item3"
+            onClick={() => saveFilters(3)}
           />
           <label htmlFor="freelance-item3" className="filters-checkbox__item">
             тестирование
@@ -69,6 +96,7 @@ function FilterSection() {
             name="freelance-item4"
             className="filters-checkbox"
             value="freelance-item4"
+            onClick={() => saveFilters(4)}
           />
           <label htmlFor="freelance-item4" className="filters-checkbox__item">
             администрирование
@@ -81,6 +109,7 @@ function FilterSection() {
             name="freelance-item5"
             className="filters-checkbox"
             value="freelance-item5"
+            onClick={() => saveFilters(5)}
           />
           <label htmlFor="freelance-item5" className="filters-checkbox__item">
             маркетинг
@@ -93,6 +122,7 @@ function FilterSection() {
             name="freelance-item6"
             className="filters-checkbox"
             value="freelance-item6"
+            onClick={() => saveFilters(6)}
           />
           <label htmlFor="freelance-item6" className="filters-checkbox__item">
             контент
@@ -105,12 +135,14 @@ function FilterSection() {
             name="freelance-item7"
             className="filters-checkbox"
             value="freelance-item7"
+            onClick={() => saveFilters(7)}
           />
           <label htmlFor="freelance-item7" className="filters-checkbox__item">
             разное
           </label>
         </div>
       </div>
+
       <div className="filters-container filters-container__budget">
         <h2 className="filters-container__title">Бюджет</h2>
         <form className="filters-form-budget">

@@ -29,7 +29,7 @@ function App() {
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
   const [errorRequest, setErrorRequest] = useState({});
-  const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
 

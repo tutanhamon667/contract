@@ -6,7 +6,6 @@ const OrderCard = ({ cards, orderArea }) => {
   // eslint-disable-next-line array-callback-return
   const { currentUser, authenticated } = useContext(Context);
 
-  console.log(cards);
   return cards.map((item, index) => {
     return (
       <div key={index} className="orderCard">

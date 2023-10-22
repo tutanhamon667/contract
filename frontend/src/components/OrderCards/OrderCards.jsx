@@ -12,8 +12,6 @@ const OrderCards = ({ operationMode }) => {
   const [area2, setArea2] = useState(false);
   const { handleOrderFilter } = useContext(Context);
  // const area2 = currentUser.role === 'Фрилансер' && authenticated ? order : freelance;
-console.log(operationMode)
-console.log(area2)
   useEffect((() => {
     if (currentUser.role === 'Фрилансер' && !operationMode) {
       handleOrderFilter(true);
@@ -27,7 +25,6 @@ console.log(area2)
     }
   }), [currentUser, authenticated, operationMode, handleOrderFilter])
 
-  console.log(area2);
 
 
   return (
