@@ -247,7 +247,6 @@ class Education(models.Model):
 class WorkerProfile(models.Model):
     user = models.OneToOneField(
         Member,
-        related_name='freelancer',
         on_delete=models.PROTECT
     )
     photo = models.ImageField(

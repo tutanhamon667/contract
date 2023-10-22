@@ -35,7 +35,10 @@ class UserViewSet(viewsets.ModelViewSet):
         пользователя и в зависимости от этого возвращает требуемый queryset
         """
         if self.action == 'retrieve':
-            user = get_object_or_404(User, id=self.kwargs.get('pk'))
+            user = get_object_or_404(
+                User,
+                id=self.kwargs.get('pk')
+            )
         elif self.action == 'me':
             if self.request.user.is_authenticated:
                 user = self.request._user
@@ -55,147 +58,109 @@ class UserViewSet(viewsets.ModelViewSet):
         action in ['retrieve', 'me'] дополнительно проверяет роль
         пользователя и в зависимости от этого возвращает требуемый serializer
         """
-        print(self.allowed_methods)
-        serializers = {
-            'reg_in': UserCreateSerializer,
-            'new_email': NewEmailSerializer,
-            'new_password': SetPasswordSerializer,
-            'reset_password': SendEmailResetSerializer,
-            'reset_password_confirm': PasswordResetConfirmSerializer,
-            'GET_customer': GetCustomerProfileSerializer,
-            'POST_PATCH_customer': PostCustomerProfileSerializer,
-            'GET_worker': GetWorkerProfileSerializer,
-            'POST_PATCH_worker': PostWorkerProfileSerializer
-        }
         key = self.action
+        if key == 'create':
+            return UserCreateSerializer
+        if key == 'reset_password':
+            return SendEmailResetSerializer
+        if key == 'reset_password_confirm':
+            return PasswordResetConfirmSerializer
+        if key == 'new_email':
+            return NewEmailSerializer
+        if key == 'new_password':
+            return SetPasswordSerializer
+
         if key in ['retrieve', 'me']:
             if key == 'retrieve':
-                user = get_object_or_404(User, id=self.kwargs.get('pk'))
-            elif self.request.user.is_authenticated:
-                user = self.request._user
+                user = get_object_or_404(
+                    User,
+                    id=self.kwargs.get('pk')
+                )
+            elif key == 'me':
+                if self.request.user.is_authenticated:
+                    user = self.request._user
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
 
-            if user.is_customer:
-                if self.request.method in ['POST', 'PATCH']:
-                    key = 'POST_PATCH_customer'
-                else:
-                    key = 'GET_customer'
-            elif user.is_worker:
-                if self.request.method in ['POST', 'PATCH']:
-                    key = 'POST_PATCH_worker'
-                else:
-                    key = 'GET_worker'
-            else:
-                raise ValueError('Роль пользователя не определена')
-        try:
-            return serializers[key]
-        except KeyError:
-            return UserViewSerialiser
+            if self.request.method in ['POST', 'PATCH']:
+                if user.is_customer:
+                    return PostCustomerProfileSerializer
+                if user.is_worker:
+                    return PostWorkerProfileSerializer
+            if self.request.method == 'GET':
+                if user.is_customer:
+                    return GetCustomerProfileSerializer
+                if user.is_worker:
+                    return GetWorkerProfileSerializer
+        #    return Response(status=status.HTTP_400_BAD_REQUEST)
+        return UserViewSerialiser
 
-    def create(self, request, *args, **kwargs):
-        """
-        Метод POST запрещён для endpoint /users/
-        """
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def retrieve(self, request, *args, **kwargs):
-        user = get_object_or_404(User, id=self.kwargs.get('pk'))
-        if user.is_customer == user.is_worker:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        if user.is_customer:
-            queryset = get_object_or_404(CustomerProfile, user_id=user.id)
-        elif user.is_worker:
-            queryset = get_object_or_404(WorkerProfile, user_id=user.id)
-        serializer = self.get_serializer(queryset)
-        self.get_queryset()
+    def retrieve(self, request, pk=None):
+        user = get_object_or_404(User, id=pk)
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, user_id=user.id)
+        serializer = self.get_serializer(obj)
         return Response(serializer.data)
 
-    def partial_update(self, request, *args, **kwargs):
+    def partial_update():
         """
         Метод PATCH разрешён только для endpoint /me/
         """
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    @action(url_path='reg_in', methods=['post'], detail=False)
-    def reg_in(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED
-        )
-
     @action(url_path='new_email', methods=['post'], detail=False)
-    def new_email(self, request):
-        self.get_permissions()
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.request.user.email = serializer.data["new_email"]
-        self.request.user.save()
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK
-        )
+    def new_email(self, request, *args, **kwargs):
+        return DjoserView.set_username(self, request, *args, **kwargs)
 
     @action(url_path='new_password', methods=['post'], detail=False)
-    def new_password(self, request):
-        self.get_permissions()
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.request.user.set_password(serializer.data["new_password"])
-        self.request.user.save()
-        return Response(status=status.HTTP_200_OK)
+    def new_password(self, request, *args, **kwargs):
+        return DjoserView.set_password(self, request, *args, **kwargs)
 
     @action(url_path='reset_password', methods=['post'], detail=False)
     def reset_password(self, request, *args, **kwargs):
-        DjoserView.reset_password(self, request, *args, **kwargs)
-        return Response(status=status.HTTP_200_OK)
+        return DjoserView.reset_password(self, request, *args, **kwargs)
 
     @action(url_path='reset_password_confirm', methods=['post'], detail=False)
     def reset_password_confirm(self, request, *args, **kwargs):
-        DjoserView.reset_password_confirm(self, request, *args, **kwargs)
-        return Response(status=status.HTTP_200_OK)
+        return DjoserView.reset_password_confirm(
+            self, request, *args, **kwargs
+        )
 
     @action(url_path='me', methods=['get', 'post', 'patch'], detail=False)
     def me(self, request):
         user = request._user
         if user.is_customer == user.is_worker:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        self.get_permissions()
-        self.get_queryset()
+        queryset = self.get_queryset()
 
-        if user.is_customer:
-            if request.method == 'GET':
-                queryset = get_object_or_404(CustomerProfile, user_id=user.id)
-                serializer = self.get_serializer(queryset)
-            elif request.method == 'POST':
-                serializer = self.get_serializer(
-                    data=request.data,
-                    fields=('user', 'photo', 'name', 'industry', 'web')
-                )
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
+        if request.method == 'GET':
+            obj = get_object_or_404(queryset, user_id=user.id)
+            serializer = self.get_serializer(obj)
+        if request.method == 'POST':
+            if user.is_worker:
+                fields = None
+            elif user.is_customer:
+                fields = ('user', 'photo', 'name', 'industry', 'web')
+            serializer = self.get_serializer(
+                data=request.data,
+                fields=fields
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        if request.method == 'PATCH':
+            if user.is_worker:
+                fields = None
+            elif user.is_customer:
+                fields = ('user', 'photo', 'name', 'industry', 'web')
+            serializer = self.get_serializer(
+                request._user,
+                data=request.data,
+                fields=fields,
+                partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-        elif user.is_worker:
-            if request.method == 'GET':
-                queryset = get_object_or_404(WorkerProfile, user_id=user.id)
-                serializer = self.get_serializer(queryset)
-            elif request.method == 'POST':
-                serializer = self.get_serializer(
-                    data=request.data,
-                )
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-            elif request.method == 'PATCH':
-                serializer = self.get_serializer(
-                    request._user.id,
-                    request.data,
-                    partial=True
-                )
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
         return Response(
             serializer.data,
             status=status.HTTP_200_OK

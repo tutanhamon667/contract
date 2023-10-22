@@ -8,6 +8,7 @@ from .models import (Category, Contact, DiplomaFile, Education,
                      EducationDiploma, FreelancerCategory, FreelancerContact,
                      FreelancerEducation, FreelancerPortfolio, FreelancerStack,
                      PortfolioFile, Stack, WorkerProfile)
+from .serializers import DynamicFieldsModelSerializer
 
 User = get_user_model()
 
@@ -16,18 +17,6 @@ class UserViewSerialiser(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name')
-
-
-class DynamicFieldsModelSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        fields = kwargs.pop('fields', None)
-        super().__init__(*args, **kwargs)
-
-        if fields is not None:
-            allowed = set(fields)
-            existing = set(self.fields)
-            for field_name in existing - allowed:
-                self.fields.pop(field_name)
 
 
 class ContactSerializer(serializers.ModelSerializer):
@@ -92,10 +81,10 @@ class FreelancerField(serializers.RelatedField):
         user.first_name = field.get('first_name')
         user.last_name = field.get('last_name')
         user.save()
-        return data
+        return user
 
 
-class GetWorkerProfileSerializer(serializers.ModelSerializer):
+class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
     user = FreelancerField(queryset=User.objects.all())
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
@@ -110,7 +99,7 @@ class GetWorkerProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PostWorkerProfileSerializer(serializers.ModelSerializer):
+class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
     user = FreelancerField(queryset=User.objects.all())
     contacts = ContactSerializer(many=True, required=True)
     stacks = StackSerializer(many=True, required=False)
@@ -196,29 +185,12 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
                 )
         return profile
 
-    def update(self, instance, validated_data):
+    def update(self, user, validated_data):
+        profile = WorkerProfile.objects.get(user=user)
+
         if 'contacts' in self.initial_data:
             contacts = validated_data.pop('contacts')
-        if 'stacks' in self.initial_data:
-            stacks = validated_data.pop('stacks')
-        if 'categories' in self.initial_data:
-            categories = validated_data.pop('categories')
-        if 'education' in self.initial_data:
-            education = validated_data.pop('education')
-        if 'portfolio' in self.initial_data:
-            portfolio = validated_data.pop('portfolio')
-        Contact.objects.filter(workerprofile__user=instance).delete()
-        Stack.objects.filter(workerprofile__user=instance).delete()
-        Category.objects.filter(workerprofile__user=instance).delete()
-        DiplomaFile.objects.filter(
-            education__workerprofile__user=instance
-        ).delete()
-        Education.objects.filter(workerprofile__user=instance).delete()
-        PortfolioFile.objects.filter(workerprofile__user=instance).delete()
-
-        profile = WorkerProfile.objects.get(user=instance)
-
-        if 'contacts' in locals():
+            Contact.objects.filter(workerprofile__user=user).delete()
             for contact in contacts:
                 record = Contact.objects.create(**contact)
                 FreelancerContact.objects.create(
@@ -226,23 +198,27 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
                     contact=record
                 )
 
-        if 'stacks' in locals():
+        if 'stacks' in self.initial_data:
+            stacks = validated_data.pop('stacks')
+            Stack.objects.filter(workerprofile__user=user).delete()
             for stack in stacks:
                 record, status = Stack.objects.get_or_create(**stack)
-                FreelancerStack.objects.create(
-                    freelancer=profile,
-                    stack=record
-                )
+                profile.stacks.add(record)
 
-        if 'categories' in locals():
+        if 'categories' in self.initial_data:
+            categories = validated_data.pop('categories')
+            Category.objects.filter(workerprofile__user=user).delete()
             for category in categories:
                 record, status = Category.objects.get_or_create(**category)
-                FreelancerCategory.objects.create(
-                    freelancer=profile,
-                    category=record
-                )
+                profile.categories.add(record)
 
-        if 'education' in locals():
+        if 'education' in self.initial_data:
+            education = validated_data.pop('education')
+            DiplomaFile.objects.filter(
+                education__workerprofile__user=user
+            ).delete()
+            Education.objects.filter(workerprofile__user=user).delete()
+
             for stage in education:
                 if 'diploma' in stage:
                     diploma = stage.pop('diploma')
@@ -261,7 +237,9 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
                     education=record
                 )
 
-        if 'portfolio' in locals():
+        if 'portfolio' in self.initial_data:
+            portfolio = validated_data.pop('portfolio')
+            PortfolioFile.objects.filter(workerprofile__user=user).delete()
             for example in portfolio:
                 file = PortfolioFile.objects.create(**example)
                 file.create_thumbnail()
@@ -269,4 +247,7 @@ class PostWorkerProfileSerializer(serializers.ModelSerializer):
                     freelancer=profile,
                     portfolio=file
                 )
-        return profile
+        for field, value in validated_data.items():
+            setattr(profile, field, value)
+        profile.save()
+        return super().update(profile, validated_data)

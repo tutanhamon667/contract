@@ -5,20 +5,9 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from .models import CustomerProfile, Industry
+from .serializers import DynamicFieldsModelSerializer
 
 User = get_user_model()
-
-
-class DynamicFieldsModelSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        fields = kwargs.pop('fields', None)
-        super().__init__(*args, **kwargs)
-
-        if fields is not None:
-            allowed = set(fields)
-            existing = set(self.fields)
-            for field_name in existing - allowed:
-                self.fields.pop(field_name)
 
 
 class UserViewSerialiser(serializers.ModelSerializer):
@@ -80,11 +69,12 @@ class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
         )
 
     def update(self, user, validated_data):
-        industry_data = validated_data.pop('industry')
-        CustomerProfile.objects.filter(user=user).delete()
-        industry, status = Industry.objects.get_or_create(**industry_data)
-        return CustomerProfile.objects.create(
-            user_id=user.id,
-            industry=industry,
-            **validated_data
-        )
+        profile = CustomerProfile.objects.get(user=user)
+        if 'industry' in self.initial_data:
+            industry_data = validated_data.pop('industry')
+            industry, status = Industry.objects.get_or_create(**industry_data)
+            profile.industry = industry
+        for field, value in validated_data.items():
+            setattr(profile, field, value)
+        profile.save()
+        return profile
