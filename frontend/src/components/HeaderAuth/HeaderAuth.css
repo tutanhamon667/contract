@@ -28,25 +28,6 @@
   opacity: 0.5;
 }
 
-.header-auth__entry-button {
-  margin-left: 40px;
-  border: 0;
-  border-radius: 10px;
-  padding: 6px 28px;
-  width: 103px;
-  height: 36px;
-  justify-content: center;
-  align-items: center;
-  background: #fff;
-  cursor: pointer;
-  overflow: hidden;
-  color: #606060;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-
 .header-auth__white {
 color:#fff
 }

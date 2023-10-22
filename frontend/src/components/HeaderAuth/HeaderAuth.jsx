@@ -22,7 +22,7 @@ function HeaderAuth() {
             <button
               className={`${location.pathname === "/signup"
                   ? "header-auth__singup-button"
-                  : "button header-auth__entry-button"
+                  : "button button__header-auth_entry-button"
                 }`}
               type="button"
             >
