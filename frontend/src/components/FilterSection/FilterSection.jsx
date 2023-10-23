@@ -4,14 +4,16 @@ import Button from "../Button/Button";
 import { Context } from "../../context/context";
 import { useNavigate } from "react-router-dom";
 
-function FilterSection() {
+function FilterSection({ freelanceFilter, handleFreelanceFilter }) {
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
-  const { currentUser, orderFilter, authenticated, setFreelanceFilter } = useContext(Context);
+  const { currentUser, orderFilter, authenticated } = useContext(Context);
   const navigate = useNavigate();
+  let localFreelanceFilter = {};
 
   useEffect(() => {
     load(7);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBudgetClean = () => {
@@ -19,17 +21,23 @@ function FilterSection() {
     setBudgetEnd("");
   };
 
-  function saveFilters(n) {
-    let checkbox = document.getElementById(`freelance-item${n}`);
-    localStorage.setItem(`freelance-item${n}`, checkbox.checked);
-  }
-
   function load(n) {
     while (n) {
       let checked = JSON.parse(localStorage.getItem(`freelance-item${n}`));
+      let profession = document.getElementById(`freelance-item${n}`).value
+      localFreelanceFilter[`${profession}`] = checked;
       document.getElementById(`freelance-item${n}`).checked = checked;
       n--;
     }
+    handleFreelanceFilter(localFreelanceFilter);
+  }
+
+  const saveFilters = (n) => {
+    let checkbox = document.getElementById(`freelance-item${n}`);
+    localFreelanceFilter = freelanceFilter;
+    localFreelanceFilter[`${checkbox.value}`] = checkbox.checked;
+    localStorage.setItem(`freelance-item${n}`, checkbox.checked);
+    handleFreelanceFilter(localFreelanceFilter);
   }
 
   const filtersContainerStyle = `filters-container  ${
@@ -56,7 +64,7 @@ function FilterSection() {
             id="freelance-item1"
             name="freelance-item1"
             className="filters-checkbox"
-            value="Дизайн"
+            value="дизайн"
             onClick={() => saveFilters(1)}
           />
           <label htmlFor="freelance-item1" className="filters-checkbox__item">
@@ -69,7 +77,7 @@ function FilterSection() {
             id="freelance-item2"
             name="freelance-item2"
             className="filters-checkbox"
-            value="Разработка"
+            value="разработка"
             onClick={() => saveFilters(2)}
           />
           <label htmlFor="freelance-item2" className="filters-checkbox__item">
@@ -82,7 +90,7 @@ function FilterSection() {
             id="freelance-item3"
             name="freelance-item3"
             className="filters-checkbox"
-            value="Тестирование"
+            value="тестирование"
             onClick={() => saveFilters(3)}
           />
           <label htmlFor="freelance-item3" className="filters-checkbox__item">
@@ -95,7 +103,7 @@ function FilterSection() {
             id="freelance-item4"
             name="freelance-item4"
             className="filters-checkbox"
-            value="Администрирование"
+            value="администрирование"
             onClick={() => saveFilters(4)}
           />
           <label htmlFor="freelance-item4" className="filters-checkbox__item">
@@ -108,7 +116,7 @@ function FilterSection() {
             id="freelance-item5"
             name="freelance-item5"
             className="filters-checkbox"
-            value="Маркетинг"
+            value="маркетинг"
             onClick={() => saveFilters(5)}
           />
           <label htmlFor="freelance-item5" className="filters-checkbox__item">
@@ -121,7 +129,7 @@ function FilterSection() {
             id="freelance-item6"
             name="freelance-item6"
             className="filters-checkbox"
-            value="Контент"
+            value="контент"
             onClick={() => saveFilters(6)}
           />
           <label htmlFor="freelance-item6" className="filters-checkbox__item">
@@ -134,7 +142,7 @@ function FilterSection() {
             id="freelance-item7"
             name="freelance-item7"
             className="filters-checkbox"
-            value="Разное"
+            value="разное"
             onClick={() => saveFilters(7)}
           />
           <label htmlFor="freelance-item7" className="filters-checkbox__item">

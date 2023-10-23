@@ -1,13 +1,30 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./OrderCard.css";
 import { Context } from "../../context/context";
 
-const OrderCard = ({ cards, orderArea }) => {
+const OrderCard = ({ cards, orderArea, operationMode, freelanceFilter  }) => {
   // eslint-disable-next-line array-callback-return
   const { currentUser, authenticated } = useContext(Context);
+  const filter = one();
 
-  return cards.map((item, index) => {
-    return (
+  useEffect(()=> {
+    console.log("тут111111")
+  }, [freelanceFilter])
+
+
+  function one() {
+    for (const key in freelanceFilter) {
+      if (freelanceFilter[key]) {
+        return false
+      }
+    }
+    return true
+  }
+
+  return  cards.map((item, index) => {
+    // eslint-disable-next-line no-lone-blocks
+    {
+          return (freelanceFilter[`${item.direction}`] || !operationMode || filter) && (
       <div key={index} className="orderCard">
         <div className="orderCard__header-container">
           <div className="orderCard__avatar-container">
@@ -53,7 +70,7 @@ const OrderCard = ({ cards, orderArea }) => {
         )}
       </div>
     );
+    }
   });
 };
-
 export default OrderCard;
