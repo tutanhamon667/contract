@@ -87,7 +87,7 @@ function App() {
             </Route>
             <Route index element={<Main />} />
             <Route path="signup" element={<Register handleRegister={handleRegisterSubmit} error={errorRequest} isError={isError} />} />
-            <Route path="order" element={<Order />} />
+            <Route path="order/:id" element={<Order />} />
             <Route path="signin" element={
               <Login setAuthenticated={setAuthenticated} setCurrentUser={setCurrentUser} />
             } />

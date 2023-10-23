@@ -3,7 +3,7 @@ import InputMultipleSelect from '../../Inputs/InputMultipleSelect/InputMultipleS
 import InputTags from '../../Inputs/InputTags/InputTags';
 import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
 import Button from '../../Button/Button';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CreateTaskForm.css';
 import { activityOptions } from '../../../utils/constants';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
@@ -16,6 +16,16 @@ function CreateTaskForm() {
   const [activityValues, setActivityValues] = useState([])
   const [stacksValues, setStacksValues] = useState([])
   const [isChecked, setIsChecked] = useState({ budgetDiscussion: false, deadlineDiscussion: false })
+  const [allTaskValues, setAllTaskValues] = useState([])
+
+  // временное решение: сохранение значений формы в локальное хранилище
+  // для сохранения нескольких заказов в одном файле
+  // необходимо не выходя из страницы создания заказа, сделать два заказа
+  useEffect(() => {
+    const taskValues = JSON.stringify(allTaskValues)
+    localStorage.setItem('taskValues', taskValues)
+  }, [allTaskValues])
+  // -------------------------------------------------------------------
 
   const handleDocChange = (event) => {
     if (event.currentTarget.files[0]) {
@@ -29,15 +39,17 @@ function CreateTaskForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     const allValues = {
       ...values,
       activityValues: activityValues,
       stacksValues: stacksValues,
       budgetDiscussion: isChecked.budgetDiscussion,
       deadlineDiscussion: isChecked.deadlineDiscussion,
+      orderId: Math.floor(Math.random() * 100) + 1,
     }
 
-    console.log(allValues);
+    setAllTaskValues([...allTaskValues, allValues])
   };
 
   return (
