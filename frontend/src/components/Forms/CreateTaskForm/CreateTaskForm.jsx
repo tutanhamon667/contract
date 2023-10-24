@@ -42,8 +42,8 @@ function CreateTaskForm() {
 
     const allValues = {
       ...values,
-      activityValues: activityValues,
-      stacksValues: stacksValues,
+      direction: activityValues,
+      stacks: stacksValues,
       budgetDiscussion: isChecked.budgetDiscussion,
       deadlineDiscussion: isChecked.deadlineDiscussion,
       orderId: Math.floor(Math.random() * 100) + 1,
@@ -51,6 +51,8 @@ function CreateTaskForm() {
 
     setAllTaskValues([...allTaskValues, allValues])
   };
+
+  console.log(allTaskValues);
 
   return (
     <form className="create-task-form" onSubmit={handleSubmit}>

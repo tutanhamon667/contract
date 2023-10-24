@@ -25,8 +25,9 @@ const OrderCards = ({ operationMode, freelanceFilter }) => {
     }
   }), [currentUser, authenticated, operationMode, handleOrderFilter, freelanceFilter])
 
-  const tasks = JSON.parse(localStorage.getItem('taskValues'))
 
+  const arrayOfTasks = JSON.parse(localStorage.getItem('taskValues'))
+  console.log(arrayOfTasks);
 
   return (
     <div className="orderCards">
@@ -38,8 +39,9 @@ const OrderCards = ({ operationMode, freelanceFilter }) => {
           freelanceFilter={freelanceFilter}
         />
         : <OrderCard
-          cards={order}
+          cards={arrayOfTasks}
           freelanceFilter={freelanceFilter}
+          isTasks={true}
         />}
     </div>
   );

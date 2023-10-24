@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 import "./Order.css";
 import "../Profiles/Profile.css";
@@ -18,13 +18,20 @@ export default function Order() {
   const [isEditable, setIsEditable] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const { currentUser } = useContext(Context);
-
+  // -----------
   const userIsCustomer = (currentUser.role === 'Заказчик');
 
   const freelancerBtnStyle = `
   form-profile__bottom-buttons form-profile__bottom-buttons_type_submit
   ${responded ? 'form-profile__bottom-buttons-hide' : ''}`
   const customerBtnStyle = `form-profile__bottom-buttons ${isEditable ? 'form-profile__bottom-buttons-hide' : ''}`
+  // -----------
+  let { id } = useParams()
+  const tasks = JSON.parse(localStorage.getItem('taskValues'))
+  const task = tasks.find((item) => {
+    return item.orderId == id
+  })
+  // -----------
 
   return (
     <>
@@ -36,7 +43,7 @@ export default function Order() {
               Отменить это действие будет невозможно
             </p>
             <button
-              style={{marginBottom: 12}}
+              style={{ marginBottom: 12 }}
               onClick={() => setIsPopupOpen(false)}
               className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit">
               Удалить
