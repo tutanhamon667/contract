@@ -395,7 +395,6 @@ class CustomerProfile(models.Model):
         max_length=254,
         db_index=True,
         blank=True,
-        null=True,
         unique=True,
     )
     name = models.CharField(
@@ -404,6 +403,8 @@ class CustomerProfile(models.Model):
     )
     industry = models.ForeignKey(
         Industry,
+        blank=True,
+        null=True,
         on_delete=models.PROTECT
     )
     about = models.TextField(
