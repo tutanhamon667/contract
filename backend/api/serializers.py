@@ -5,11 +5,11 @@ from api.utils import CustomBase64ImageField
 from chat.models import Chat, Message
 from orders.models import (CATEGORY_CHOICES, Job, JobCategory, JobFile,
                            JobResponse, StackJob)
+from users.clients import GetCustomerProfileSerializer
+from users.freelancers import GetWorkerProfileSerializer
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
-from users.clients import GetCustomerProfileSerializer
-from users.freelancers import GetWorkerProfileSerializer
 
 # File requiremnts
 MAX_FILE_SIZE_MB = 50
@@ -257,21 +257,34 @@ class ChatReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ('id', 'title', 'customer', 'freelancer', 'messages')
+        fields = ('id', 'title', 'job_id',
+                  'customer', 'freelancer', 'messages')
         read_only_fields = ('customer',)
 
 
 class ChatCreateSerializer(serializers.ModelSerializer):
+    """
+    Создания чата с отправкой сообщения:
+    - для создания чата используется профиль заказчика
+    - для создания сообщения - общий профиль пользователя
+    - поле job_id не обязательное для чатов без привязки к заданию
+    - поле  message_text не обязательное - заменяется на дефолтное
+    """
     job_id = serializers.IntegerField(
         help_text="ID задания, к которому создается чат. "
                   "Необязательное поле. Оставьте его пустым"
                   " для создания чата без привязки к заданию.",
         required=False
     )
+    message_text = serializers.CharField(
+        help_text="Cообщение для начала чата. "
+                  "Заменяется на дефолтное, если отставить пустым.",
+        required=False
+    )
 
     class Meta:
         model = Chat
-        fields = ('id', 'job_id', 'customer', 'freelancer')
+        fields = ('id', 'job_id', 'customer', 'freelancer', 'message_text')
         read_only_fields = ('customer',)
 
     def validate(self, data):
@@ -282,3 +295,14 @@ class ChatCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Вы уже создали чат с фрилансером по этому заданию.')
         return data
+
+    def create(self, validated_data):
+        message_text = validated_data.pop('message_text', None)
+        chat = super(ChatCreateSerializer, self).create(validated_data)
+
+        if message_text:
+            customer = chat.customer.user
+            Message.objects.create(chat=chat,
+                                   content=message_text,
+                                   sender=customer)
+        return chat
