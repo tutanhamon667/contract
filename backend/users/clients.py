@@ -24,6 +24,7 @@ class IndustrySerializer(serializers.ModelSerializer):
 
 class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    account_email = serializers.ReadOnlyField(source='user.email')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
     photo = Base64ImageField(required=False)
@@ -32,24 +33,34 @@ class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = (
-            'user', 'is_worker', 'is_customer', 'photo', 'email',
-            'name', 'industry', 'web'
+            'user', 'account_email', 'is_worker', 'is_customer', 'photo',
+            'name', 'about', 'industry', 'web'
         )
 
 
 class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    account_email = serializers.ReadOnlyField(source='user.email')
+    is_worker = serializers.ReadOnlyField(source='user.is_worker')
+    is_customer = serializers.ReadOnlyField(source='user.is_customer')
     photo = Base64ImageField(required=False)
     industry = IndustrySerializer(many=False)
 
     class Meta:
         model = CustomerProfile
-        fields = ('user', 'photo', 'email', 'name', 'industry', 'web')
+        fields = (
+            'user', 'account_email', 'is_worker', 'is_customer', 'photo',
+            'name', 'about', 'industry', 'web'
+        )
 
     def validate_user(self, user):
-        if CustomerProfile.objects.filter(user_id=user.id):
+        user = self.context.get('request').user
+        if (
+            CustomerProfile.objects.filter(user_id=user.id)
+            and self.context.get('request').method == 'POST'
+        ):
             raise ValidationError(
-                'Профиль уже существует'
+                'Профиль уже существует!'
             )
         return user
 
