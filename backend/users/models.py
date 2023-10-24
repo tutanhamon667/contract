@@ -81,7 +81,7 @@ class Contact(models.Model):
         choices=CONTACT_TYPE,
         max_length=150,
     )
-    contact = models.CharField(
+    value = models.CharField(
         max_length=150,
         verbose_name='Контакт'
     )
@@ -351,12 +351,10 @@ class FreelancerEducation(models.Model):
     freelancer = models.ForeignKey(
         WorkerProfile,
         on_delete=models.CASCADE,
-        related_name='f_education'
     )
     education = models.ForeignKey(
         Education,
         on_delete=models.CASCADE,
-        related_name='f_education'
     )
 
 
@@ -385,7 +383,6 @@ class CustomerProfile(models.Model):
         Member,
         on_delete=models.PROTECT
     )
-
     photo = models.ImageField(
         upload_to='about/images/',
         null=True,
@@ -393,26 +390,28 @@ class CustomerProfile(models.Model):
         blank=True,
         verbose_name='Фото или логотип'
     )
-
     email = models.EmailField(
         verbose_name='публичный email для связи',
         max_length=254,
         db_index=True,
         blank=True,
-        null=True,
         unique=True,
     )
-
     name = models.CharField(
         max_length=150,
         verbose_name='Название компании или ваше имя'
     )
-
     industry = models.ForeignKey(
         Industry,
+        blank=True,
+        null=True,
         on_delete=models.PROTECT
     )
-
+    about = models.TextField(
+        max_length=500,
+        blank=True,
+        verbose_name='О себе'
+    )
     web = models.URLField(
         blank=True,
         verbose_name='Личный сайт'
