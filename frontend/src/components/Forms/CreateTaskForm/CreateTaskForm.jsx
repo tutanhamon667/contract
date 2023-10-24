@@ -47,12 +47,19 @@ function CreateTaskForm() {
       budgetDiscussion: isChecked.budgetDiscussion,
       deadlineDiscussion: isChecked.deadlineDiscussion,
       orderId: Math.floor(Math.random() * 100) + 1,
+      orderCreationDate: new Date().toString().split(":").slice(0, 2).join(":"),
     }
 
     setAllTaskValues([...allTaskValues, allValues])
   };
 
-  console.log(allTaskValues);
+  // console.log(new Date().toString());
+
+  const dateString = "Tue Oct 24 2023 23:46:30 GMT+0600 (Kyrgyzstan Time)";
+  const trimmedDateString = dateString.split(":").slice(0, 2).join(":");
+  console.log(dateString.split(":"));
+  console.log(dateString.split(":").slice(0, 2));
+  console.log(trimmedDateString);
 
   return (
     <form className="create-task-form" onSubmit={handleSubmit}>

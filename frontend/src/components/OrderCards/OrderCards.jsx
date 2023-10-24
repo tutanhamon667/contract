@@ -27,7 +27,6 @@ const OrderCards = ({ operationMode, freelanceFilter }) => {
 
 
   const arrayOfTasks = JSON.parse(localStorage.getItem('taskValues'))
-  console.log(arrayOfTasks);
 
   return (
     <div className="orderCards">

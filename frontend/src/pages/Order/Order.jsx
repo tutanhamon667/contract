@@ -18,20 +18,35 @@ export default function Order() {
   const [isEditable, setIsEditable] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const { currentUser } = useContext(Context);
-  // -----------
+  // Стили
   const userIsCustomer = (currentUser.role === 'Заказчик');
 
   const freelancerBtnStyle = `
   form-profile__bottom-buttons form-profile__bottom-buttons_type_submit
   ${responded ? 'form-profile__bottom-buttons-hide' : ''}`
   const customerBtnStyle = `form-profile__bottom-buttons ${isEditable ? 'form-profile__bottom-buttons-hide' : ''}`
-  // -----------
+  // Получаю данные заказа
   let { id } = useParams()
   const tasks = JSON.parse(localStorage.getItem('taskValues'))
   const task = tasks.find((item) => {
     return item.orderId == id
   })
+  // Записываю значения в переменные
+  const stacksList = task.stacks.map((item, index) =>
+  <li
+      key={index}
+      className="order__list-item">
+      {item}
+    </li>
+  )
+  const stacksList2 = task.stacks.join(', ')
+  const specialization = task.direction.join(', ')
+  const budgetMoney = task.budget
+  const budgetDiscussion = task.budgetDiscussion.toString()
+  const deadline = task.deadline
+  const deadlineDiscussion = task.deadlineDiscussion.toString()
   // -----------
+
 
   return (
     <>
@@ -59,7 +74,7 @@ export default function Order() {
 
       <section className="profile order">
 
-        <Link to="#" className="order__back-container">
+        <Link to=".." className="order__back-container">
           <div className="order__back"></div>
           Назад
         </Link>
@@ -193,37 +208,9 @@ export default function Order() {
             ) : (
               <>
                 <div className="form-profile__input-container">
-                  <h1 className="profile__title">Создать дизайн лендинга</h1>
-
-                  <p className="profile__main-text">
-                    Ищу веб дизайнера (веб-дизайнера-верстальщика), чтобы сделать дизайн и верстку
-                    в Figma страницы сайта ИТ тематики. Нужна десктоп и мобильная версия, можно сдать последовательно. <br />
-                    <ul>
-                      <li>Разработать дизайн лендинга для продвижения нового продукта/услуги.</li>
-                      <li>Следовать брендбуку компании (цвета, шрифты и т.д.).</li>
-                      <li>Создать адаптивный дизайн, который будет хорошо выглядеть на всех устройствах (десктоп, таблет, смартфон).</li>
-                      <li>Интеграция с формами для сбора контактной информации, подписки на новости и т.д.a </li>
-                    </ul>
-                    ТЗ предоставляю в виде: <br />
-                    Прототип в Фигме, примеры страниц с нужным стилем дизайна и созвон в Zoom для уточнения ТЗ.
-                    Потребуется немного вникнуть в специфику услуг и целевой аудитории. Готов рассказать подробнее при созвоне.
-                    Результат нужен в Figma, чтобы передать веб-разработчику. <br /><br />
-                    Сроки: Прототип готов. <br />
-                    Созвониться готов сегодня до конца дня или завтра вечером. Макет нужен оперативно до конца дня понедельника
-                    18 сентября 2023.Прошу в отклике указать стоимость и прислать 1 – 3 примеров ваших работ, наиболее
-                    релевантных ТЗ (ссылку или вложением, например PDF).
-                    И указать, есть ли у вас опыт дизайна для ИТ или для B2B тематики. Предпочтение дизайнерам с опытом
-                    веб-дизайна сайтов/лендингов для ИТ или для B2B тематики. Рассматриваю исключительно самостоятельных
-                    специалистов дизайнеров, не студии, не агентства. <br /><br />
-                    Бюджет готов обсудить. Ориентируюсь на примерно 15 000р.
-                  </p>
-
-                  <ul className="order__list">
-                    <li className="order__list-item">Дизайн</li>
-                    <li className="order__list-item">Web</li>
-                    <li className="order__list-item">Figma</li>
-                    <li className="order__list-item">Adobe</li>
-                  </ul>
+                  <h1 className="profile__title">{task.task_name}</h1>
+                  <p className="profile__main-text">{task.about}</p>
+                  <ul className="order__list">{stacksList}</ul>
                 </div>
 
                 <div className="form-profile__input-container">
@@ -291,23 +278,33 @@ export default function Order() {
             <div className="profile_block profile__left-column-info">
               <div>
                 <h2 className="profile__title">Дата публикации</h2>
-                <p className="profile__main-text profile__info-main-text">14.09.2023</p>
+                <p className="profile__main-text profile__info-main-text">
+                  {task.orderCreationDate}
+                </p>
               </div>
               <div>
                 <h2 className="profile__title">Специализация</h2>
-                <p className="profile__main-text profile__info-main-text">Дизайн</p>
+                <p className="profile__main-text profile__info-main-text">
+                  {specialization}
+                </p>
               </div>
               <div>
                 <h2 className="profile__title">Навыки</h2>
-                <p className="profile__main-text profile__info-main-text">UX, UI, Figma, Adobe, Web design</p>
+                <p className="profile__main-text profile__info-main-text">
+                  {stacksList2}
+                </p>
               </div>
               <div>
                 <h2 className="profile__title">Бюджет</h2>
-                <p className="profile__main-text profile__info-main-text">Ожидает предложений</p>
+                <p className="profile__main-text profile__info-main-text">
+                  {budgetMoney}, ожидает предложений: {budgetDiscussion}
+                </p>
               </div>
               <div>
                 <h2 className="profile__title">Срок</h2>
-                <p className="profile__main-text profile__info-main-text">По договорённости</p>
+                <p className="profile__main-text profile__info-main-text">
+                  {deadline}, по договорённости: {deadlineDiscussion}
+                </p>
               </div>
             </div>
 
