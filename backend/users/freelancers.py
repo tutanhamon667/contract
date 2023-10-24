@@ -65,21 +65,20 @@ class EducationSerializer(serializers.ModelSerializer):
 
 class FreelancerField(serializers.RelatedField):
     def to_representation(self, value):
-        return [{
+        return {
             'first_name': value.first_name,
             'last_name': value.last_name
-        }]
+        }
 
     def to_internal_value(self, data):
         user = self.context.get('request').user
-        for field in data:
-            if not getattr(self.root, 'partial'):
-                if 'first_name' not in field:
-                    raise ValidationError('\'first_name\' обязательное поле')
-                if 'last_name' not in field:
-                    raise ValidationError('\'last_name\' обязательное поле')
-        user.first_name = field.get('first_name')
-        user.last_name = field.get('last_name')
+        if not getattr(self.root, 'partial'):
+            if 'first_name' not in data:
+                raise ValidationError('\'first_name\' обязательное поле')
+            if 'last_name' not in data:
+                raise ValidationError('\'last_name\' обязательное поле')
+        for field, value in data.items():
+            setattr(user, field, value)
         user.save()
         return user
 
@@ -88,6 +87,7 @@ class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
     user = FreelancerField(queryset=User.objects.all())
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
+    account_email = serializers.ReadOnlyField(source='user.email')
     contacts = ContactSerializer(many=True)
     stacks = StackSerializer(many=True)
     categories = CategorySerializer(many=True)
@@ -101,6 +101,9 @@ class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
 
 class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
     user = FreelancerField(queryset=User.objects.all())
+    is_worker = serializers.ReadOnlyField(source='user.is_worker')
+    is_customer = serializers.ReadOnlyField(source='user.is_customer')
+    account_email = serializers.ReadOnlyField(source='user.email')
     contacts = ContactSerializer(many=True, required=True)
     stacks = StackSerializer(many=True, required=False)
     categories = CategorySerializer(many=True, required=True)
@@ -113,9 +116,12 @@ class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
 
     def validate_user(self, freelancer):
         user = self.context.get('request').user
-        if WorkerProfile.objects.filter(user_id=user.id):
+        if (
+            WorkerProfile.objects.filter(user_id=user.id)
+            and self.context.get('request').method == 'POST'
+        ):
             raise ValidationError(
-                'Профиль уже существует'
+                'Профиль уже существует!'
             )
         return user
 
@@ -250,4 +256,4 @@ class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
         for field, value in validated_data.items():
             setattr(profile, field, value)
         profile.save()
-        return super().update(profile, validated_data)
+        return profile
