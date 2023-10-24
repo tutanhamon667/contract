@@ -109,6 +109,12 @@ class ChatViewSet(CreateListViewSet):
     задания;
     - администратор может создавать и удалять;
     - все действия необходимо выполнять авторизованным.
+
+    Создание чата с отправкой сообщения:
+    - для создания чата используется профиль заказчика
+    - для создания сообщения - общий профиль пользователя
+    - поле job_id не обязательное для чатов без привязки к заданию
+    - поле  message_text не обязательное - заменяется на дефолтное
     """
     queryset = Chat.objects.all()
     permission_classes = (ChatPermission,)
@@ -133,26 +139,35 @@ class ChatViewSet(CreateListViewSet):
         Задание может создвать с привязкой к заданию.
         """
         err = 'Вы не можете создать чат по чужому заданию.'
+        default_message = 'Вас выбрали в качестве исполнителя'
         customer = self.request.user.customerprofile
         freelancer_id = self.request.data.get('freelancer')
         freelancer = get_object_or_404(WorkerProfile, pk=freelancer_id)
         job_id = self.request.data.get('job_id')
+        message_text = self.request.data.get('message_text', default_message)
         if job_id:
             job = get_object_or_404(Job, pk=job_id)
             if customer == job.client:
-                serializer.save(customer=customer,
-                                freelancer=freelancer,
-                                title=job.title,
-                                job=job)
+                chat = serializer.save(customer=customer,
+                                       freelancer=freelancer,
+                                       title=job.title,
+                                       job=job)
             else:
                 return Response({'detail': err},
                                 status=status.HTTP_403_FORBIDDEN)
         else:
-            serializer.save(customer=customer,
-                            freelancer=freelancer,
-                            title='Без задания')
-        return Response({'detail': 'Что-то пошло не так.'},
-                        status=status.HTTP_400_BAD_REQUEST)
+            chat = serializer.save(customer=customer,
+                                   freelancer=freelancer,
+                                   title='Без задания')
+        try:
+            Message.objects.create(chat=chat,
+                                   content=message_text,
+                                   sender=self.request.user)
+        except Exception as e:
+            return Response({'detail': str(e)},
+                            status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Чат и сообщение успешно созданы.'},
+                        status=status.HTTP_201_CREATED)
 
 
 class MessageViewSet(CreateListViewSet):
