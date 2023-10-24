@@ -34,12 +34,15 @@ class UserViewSet(viewsets.ModelViewSet):
         action in ['retrieve', 'me']  дополнительно проверяет роль
         пользователя и в зависимости от этого возвращает требуемый queryset
         """
-        if self.action == 'retrieve':
+        key = self.action
+        if key == 'partial_update':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if key == 'retrieve':
             user = get_object_or_404(
                 User,
                 id=self.kwargs.get('pk')
             )
-        elif self.action == 'me':
+        elif key == 'me':
             if self.request.user.is_authenticated:
                 user = self.request._user
             else:
@@ -59,6 +62,8 @@ class UserViewSet(viewsets.ModelViewSet):
         пользователя и в зависимости от этого возвращает требуемый serializer
         """
         key = self.action
+        if key == 'partial_update':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if key == 'create':
             return UserCreateSerializer
         if key == 'reset_password':
@@ -102,7 +107,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(obj)
         return Response(serializer.data)
 
-    def partial_update():
+    def partial_update(self, request, pk=None):
         """
         Метод PATCH разрешён только для endpoint /me/
         """
@@ -140,7 +145,10 @@ class UserViewSet(viewsets.ModelViewSet):
             if user.is_worker:
                 fields = None
             elif user.is_customer:
-                fields = ('user', 'photo', 'name', 'industry', 'web')
+                fields = (
+                    'user', 'account_email', 'is_worker', 'is_customer',
+                    'photo', 'name', 'industry', 'about', 'web'
+                )
             serializer = self.get_serializer(
                 data=request.data,
                 fields=fields
@@ -151,7 +159,10 @@ class UserViewSet(viewsets.ModelViewSet):
             if user.is_worker:
                 fields = None
             elif user.is_customer:
-                fields = ('user', 'photo', 'name', 'industry', 'web')
+                fields = (
+                    'user', 'account_email', 'is_worker', 'is_customer',
+                    'photo', 'name', 'industry', 'about', 'web'
+                )
             serializer = self.get_serializer(
                 request._user,
                 data=request.data,

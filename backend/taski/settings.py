@@ -123,6 +123,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'users.validators.UppercaseValidator',
+    },
+    {
+        'NAME': 'users.validators.SpecialCharValidator',
+    },
+    {
+        'NAME': 'users.validators.DigitValidator',
+    },
 ]
 
 AUTH_USER_MODEL = 'users.Member'

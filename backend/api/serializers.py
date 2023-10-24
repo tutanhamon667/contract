@@ -5,11 +5,11 @@ from api.utils import CustomBase64ImageField
 from chat.models import Chat, Message
 from orders.models import (CATEGORY_CHOICES, Job, JobCategory, JobFile,
                            JobResponse, StackJob)
+from users.clients import GetCustomerProfileSerializer
+from users.freelancers import GetWorkerProfileSerializer
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
-from users.clients import GetCustomerProfileSerializer
-from users.freelancers import GetWorkerProfileSerializer
 
 # File requiremnts
 MAX_FILE_SIZE_MB = 50
