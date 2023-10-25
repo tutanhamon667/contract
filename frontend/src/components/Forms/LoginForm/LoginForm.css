@@ -23,11 +23,12 @@
   line-height: 24px;
   text-decoration-line: underline;
   text-underline-offset: 4px;
-  margin: 20px 0 52px;
-  transition: all 0.2s ease-in-out;
+  margin: 14px 0 46px;
+  transition: all .2s ease-in-out;
 }
+
 .login__forgotLink:hover{
-  opacity: 0.8;
+  opacity: .8;
 }
 
 .login__footerLinkContainer {
@@ -40,16 +41,19 @@
   font-weight: 400;
   line-height: normal;
 }
+
 .login__footerLinkDescription {
   margin: 0 12px 0 0;
 }
+
 .login__footerLink {
   text-decoration: underline;
   cursor: pointer;
   color: #3F3F3F;
   text-underline-offset: 4px;
-  transition: all 0.2s ease-in-out;
+  transition: all .2s ease-in-out;
 }
+
 .login__footerLink:hover {
- opacity: 0.8;
+ opacity: .8;
 }

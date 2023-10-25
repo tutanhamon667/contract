@@ -9,12 +9,12 @@ const ResetPass = () => {
   const location = useLocation();
 
   if (isAuthenticated) {
-    return <Navigate to={"/"} state={{ from: location }} />;
+    return <Navigate to="/" state={{ from: location }} />;
   }
   return (
-    <div className="wrapper">
-      <div className="container">
-        <h1 className="title">Новый пароль</h1>
+    <div className="resetPass__wrapper">
+      <div className="resetPass__container">
+        <h1 className="resetPass__title">Новый пароль</h1>
           <SetNewPassForm />
       </div>
     </div>

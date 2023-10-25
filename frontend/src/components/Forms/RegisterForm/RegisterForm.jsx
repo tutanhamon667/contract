@@ -4,7 +4,6 @@ import { Context } from "../../../context/context";
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import Button from "../../Button/Button";
 import InputText from "../../Inputs/InputText/InputText";
-// import SocialLinksBar from "../../SocialLinksBar/SocialLinksBar";
 import "./RegisterForm.css";
 
 const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
@@ -112,10 +111,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
       onSubmitHandler(values);
     }
     setButtonClicked(true);
-
-
   };
-
 
   return (
     <form className="register" onSubmit={handleSubmit}>
@@ -150,9 +146,8 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
         </div>
         <InputText
           placeholder="Имя"
-          marginTop={20}
+          marginTop={40}
           width={400}
-          height={60}
           type="text"
           name="first_name"
           autoComplete="given-name"
@@ -163,9 +158,8 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
         />
         <InputText
           placeholder="Фамилия"
-          marginTop={20}
+          marginTop={32}
           width={400}
-          height={60}
           type="text"
           name="last_name"
           autoComplete="family-name"
@@ -176,7 +170,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
         />
         <InputText
           placeholder="Эл. почта"
-          marginTop={20}
+          marginTop={32}
           width={400}
           type="email"
           name="email"
@@ -189,9 +183,8 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
         <InputText
           placeholder="Пароль"
           pass={togglePasswordVisibility}
-          marginTop={20}
+          marginTop={32}
           width={400}
-          height={60}
           type={showPassword ? "text" : "password"}
           autoComplete="new-password"
           name="password"
@@ -202,9 +195,8 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
         />
         <InputText
           placeholder="Повторите пароль"
-          marginTop={20}
+          marginTop={32}
           width={400}
-          height={60}
           type={showPassword ? "text" : "password"}
           autoComplete="new-password"
           name="re_password"
@@ -214,7 +206,6 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
           errorMessage={errors.re_password}
         />
         <div style={{ marginBottom: 60 }} />
-        {/* <SocialLinksBar /> */}
         <Button
           text="Создать аккаунт"
           width={400}

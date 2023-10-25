@@ -1,16 +1,16 @@
-.wrapper {
+.resetPass__wrapper {
   margin: 0 auto;
   width: 100%;
 }
 
-.container {
+.resetPass__container {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 68px;
 }
 
-.title {
+.resetPass__title {
   color: #3f3f3f;
   text-align: center;
   font-size: 36px;

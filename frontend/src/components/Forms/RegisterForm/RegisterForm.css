@@ -8,7 +8,7 @@
   align-items: center;
 }
 
-.register__formRoleContainer{
+.register__formRoleContainer {
   display: flex;
   max-width: 610px;
   width: 100%;
@@ -16,7 +16,7 @@
 }
 
 .register__footerLinkContainer {
-  margin: 22px 0 110px;
+  margin: 24px 0 110px;
   display: flex;
   align-items: center;
   color: #585858;
@@ -24,16 +24,19 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  text-underline-offset: 4px;
 }
+
 .register__footerLinkDescription {
   margin: 0 12px 0 0;
 }
-.register__footerLink{
+
+.register__footerLink {
   text-decoration: underline;
-  cursor: pointer;
   color: #585858;
-  transition: all 0.2s ease-in-out;
+  transition: all .2s ease-in-out;
 }
+
 .register__footerLink:hover {
   opacity: 0.8;
- }
+}

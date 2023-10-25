@@ -8,13 +8,13 @@ export default function Layout() {
 
   let { pathname } = useLocation();
   const { isAuthenticated } = useContext(Context);
-  const mainPageStyle = `wrapper ${(pathname === '/') ? 'wrapper_type_background-image ' : ''}`;
-  const mainPageStyleAuthorized = `${isAuthenticated ? `wrapper_type_background-image-none ` : ''}`;
+  const mainPageStyle = `layout__wrapper${(pathname === '/') ? ' layout__wrapper_type_background-image' : ''}`;
+  const mainPageStyleAuthorized = `${isAuthenticated ? ` layout__wrapper_type_background-image-none` : ''}`;
 
   return (
     <div className={mainPageStyle + mainPageStyleAuthorized}>
       <Header />
-      <main className="outlet">
+      <main className="layout__outlet">
         <Outlet />
       </main>
     </div>
