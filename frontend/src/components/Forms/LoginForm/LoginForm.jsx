@@ -26,14 +26,9 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
           return res.json();
         } else if (res.status === 401) {
           return res.json().then(error => {
-            setErrors({ email: 'Пользователь с таким email не зарегистрирован.' });
+            setErrors({ password: 'Неправильный адрес эл. почты или пароль' });
             return Promise.reject(error.detail);
           });
-        // } else if (res.status === 404) {
-        //   return res.json().then(error => {
-        //     setErrors({ password: 'Неправильный адрес эл. почты или пароль.' });
-        //     return Promise.reject(error.detail);
-        //   });
         } else {
           return res.json().then(error => {
             setErrors({ password: error.detail });

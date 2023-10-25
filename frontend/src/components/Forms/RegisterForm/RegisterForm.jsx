@@ -48,7 +48,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
 
       if (errorRequest.email) {
         if (errorRequest.email.includes('member с таким email address уже существует.')) {
-          newErrors = { ...newErrors, email: "Пользователь с таким Email уже существует" };
+          newErrors = { ...newErrors, email: "Пользователь с такой эл. почтой уже зарегистрирован" };
           setErrors({ ...errors, ...newErrors });
         }
 
@@ -96,16 +96,16 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
       values.first_name &&
       values.last_name
     ) {
-      setValues({
-        ...values,
-        first_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        re_password: "",
-        is_customer: role.is_customer,
-        is_worker: role.is_worker,
-      });
+      // setValues({
+      //   ...values,
+      //   first_name: "",
+      //   last_name: "",
+      //   email: "",
+      //   password: "",
+      //   re_password: "",
+      //   is_customer: role.is_customer,
+      //   is_worker: role.is_worker,
+      // });
 
       logIn();
 

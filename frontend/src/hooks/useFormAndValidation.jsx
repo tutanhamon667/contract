@@ -36,22 +36,46 @@ export default function useFormAndValidation() {
         });
         setIsValid(false);
       } else {
-        const passwordRequirement = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
+        // const passwordRequirement = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
+        const passwordRequirement = /^[a-zA-Z0-9@#$%!^&*]+$/.test(value);
 
         if (!passwordRequirement) {
           setErrors({
             ...errors,
             [name]: "Пароль должен содержать только латинские буквы и цифры, и следующие спецсимволы: " +
-            "!#$%&'*+-/=?^_`{|}~,\"(),:;<>@[\\]",
+            // "!#$%&'*+-/=?^_`{|}~,\"(),:;<>@[\\]",
+            "@#$%!^&*"
           });
           setIsValid(false);
         } else {
+          const hasLowerCase = /[a-z]/.test(value);
+          const hasUpperCase = /[A-Z]/.test(value);
           const hasDigit = /\d/.test(value);
+          // const hasSpecial = /[!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]/.test(value);
+          const hasSpecial = /[@#$%!^&*]/.test(value);
 
-          if (!hasDigit) {
+          if (!hasLowerCase) {
+            setErrors({
+              ...errors,
+              [name]: "Пароль должен содержать хотя бы одну строчную букву",
+            });
+            setIsValid(false);
+          } else if (!hasUpperCase) {
+            setErrors({
+              ...errors,
+              [name]: "Пароль должен содержать хотя бы одну заглавную букву",
+            });
+            setIsValid(false);
+          } else if (!hasDigit) {
             setErrors({
               ...errors,
               [name]: "Пароль должен содержать хотя бы одну цифру",
+            });
+            setIsValid(false);
+          } else if (!hasSpecial) {
+            setErrors({
+              ...errors,
+              [name]: "Пароль должен содержать хотя бы один спецсимвол из списка: @#$%!^&*",
             });
             setIsValid(false);
           } else {
