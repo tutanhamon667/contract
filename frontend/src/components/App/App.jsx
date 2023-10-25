@@ -28,6 +28,8 @@ function App() {
   const [orderFilter, setOrderFilter] = useState(true);
   // обект со значениями фильтров фильтров
   const [freelanceFilter, setFreelanceFilter] = useState({});
+  // временное решение для ререндеринга
+  const [rerender, setRerender] = useState(true);
   const [errorRequest, setErrorRequest] = useState({});
   const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
@@ -137,11 +139,6 @@ function App() {
     setIsAuthenticated(false);
   };
 
-  const handleFreelanceFilter = (filter) => {
-    setFreelanceFilter(filter);
-    console.log(freelanceFilter);
-  }
-
   return (
     <Context.Provider value={{
       currentUser,
@@ -151,7 +148,9 @@ function App() {
       logOut,
       handleOrderFilter,
       freelanceFilter,
-      handleFreelanceFilter
+      setFreelanceFilter,
+      rerender,
+      setRerender
     }}>
       <Routes>
         <Route path="/" element={<Layout setIsAuthenticated={setIsAuthenticated} setCurrentUser={setCurrentUser} />}>

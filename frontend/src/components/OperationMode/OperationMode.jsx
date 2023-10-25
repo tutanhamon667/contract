@@ -15,7 +15,7 @@ function OperationMode({ operationMode, setOperationMode }) {
         }
         onClick={() => setOperationMode(true)}
       >
-        {currentUser.is_worker ? 'Tаски' : currentUser.is_customer && 'Фрилансеры' }
+        {currentUser.is_worker ? 'Tаски' : currentUser.is_customer ? 'Фрилансеры' : 'Tаски' }
       </button>
       <button
         className={
