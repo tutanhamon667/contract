@@ -15,7 +15,11 @@
   transition: box-shadow .3s ease-in-out;
 }
 
-.tags:hover {
+.tags:hover:not(:has(input:disabled)) {
+  box-shadow: 2px 2px 0 0 #C6C6C6;
+}
+
+.tags:has(input:focus) {
   box-shadow: 2px 2px 0 0 #C6C6C6;
 }
 
@@ -26,4 +30,5 @@
   color: #292D32;
   font-size: 16px;
   font-weight: 400;
+  background-color: inherit;
 }

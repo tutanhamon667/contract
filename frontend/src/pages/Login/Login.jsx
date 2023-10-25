@@ -5,24 +5,26 @@ import { Context } from '../../context/context';
 import "./Login.css";
 
 
-const Login = ({ setAuthenticated, setCurrentUser }) => {
-  const { authenticated } = React.useContext(Context);
+const Login = ({ setIsAuthenticated, setCurrentUser, currentUser }) => {
+  const { isAuthenticated } = React.useContext(Context);
   const location = useLocation();
 
-  if (authenticated) {
+  if (isAuthenticated) {
     return <Navigate to={"/"} state={{ from: location }} />;
   }
+
   return (
     <div className="wrapper">
       <div className="container">
         <h1 className="title">Вход в профиль</h1>
         <LoginForm
-          setAuthenticated={setAuthenticated}
+          setIsAuthenticated={setIsAuthenticated}
           setCurrentUser={setCurrentUser}
+          currentUser={currentUser}
         />
       </div>
     </div>
   )
 }
 
-export default Login
+export default Login;

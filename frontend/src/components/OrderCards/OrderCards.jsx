@@ -1,32 +1,34 @@
 import React, { useContext, useEffect, useState } from "react";
-import "./OrderCards.css";
 import { tasks } from "../../utils/tasks";
 import { freelance } from "../../utils/freelance";
-import { order } from "../../utils/order";
 import OrderCard from "../OrderCard/OrderCard"
 import { Context } from "../../context/context";
+import "./OrderCards.css";
 
 const OrderCards = ({ operationMode, freelanceFilter }) => {
 
-  const { currentUser, authenticated } = useContext(Context);
+  const { currentUser, isAuthenticated } = useContext(Context);
   const [area2, setArea2] = useState(false);
   const { handleOrderFilter } = useContext(Context);
   // const area2 = currentUser.role === 'Фрилансер' && authenticated ? order : freelance;
   useEffect((() => {
-    if (currentUser.role === 'Фрилансер' && !operationMode) {
+    // if (currentUser.role === 'Фрилансер' && !operationMode) {
+    if (currentUser.is_worker && !operationMode) {
       handleOrderFilter(true);
     } else {
-      handleOrderFilter(false)
+      handleOrderFilter(false);
     }
-    if (currentUser.role === 'Заказчик' && authenticated) {
-      setArea2(false)
+    // if (currentUser.role === 'Заказчик' && isAuthenticated ) {
+    if (currentUser.is_customer && isAuthenticated ) {
+      setArea2(false);
     } else {
-      setArea2(true)
+      setArea2(true);
     }
-  }), [currentUser, authenticated, operationMode, handleOrderFilter, freelanceFilter])
+  }), [currentUser, isAuthenticated, operationMode, handleOrderFilter, freelanceFilter])
 
 
-  const arrayOfTasks = JSON.parse(localStorage.getItem('taskValues'))
+
+  const arrayOfTasks = JSON.parse(localStorage.getItem('taskValues'));
 
   return (
     <div className="orderCards">

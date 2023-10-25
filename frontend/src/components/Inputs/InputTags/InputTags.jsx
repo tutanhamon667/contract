@@ -4,7 +4,7 @@ import { useState } from 'react';
 import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
-function InputTags({setStacksValues}) {
+function InputTags({ setStacksValues, isDisabled }) {
   const [tags, setTags] = useState([]);
   const [isEditMode, setIsEditMode] = useState(true);
 
@@ -14,7 +14,7 @@ function InputTags({setStacksValues}) {
     if (!value.trim()) return;
 
     setTags([...tags, value]);
-    setStacksValues([...tags, value])
+    setStacksValues([...tags, value]);
 
     e.target.value = '';
     e.preventDefault();
@@ -33,6 +33,7 @@ function InputTags({setStacksValues}) {
           onKeyDown={handleKeyDown}
           className="tag__input"
           placeholder="Начните вводить"
+          disabled={isDisabled}
         />
       )}
       {tags.map((tag, index) => (

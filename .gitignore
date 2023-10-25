@@ -36,7 +36,7 @@ db.sqlite3
 db.sqlite3-journal
 
 # migrations
-*/migrations/*
+*/migrations/
 
 # Media
 media/

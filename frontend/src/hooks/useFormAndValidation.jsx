@@ -36,12 +36,13 @@ export default function useFormAndValidation() {
         });
         setIsValid(false);
       } else {
-        const isLatinAndDigitsOnly = /^[a-zA-Z0-9]+$/.test(value);
+        const passwordRequirement = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
 
-        if (!isLatinAndDigitsOnly) {
+        if (!passwordRequirement) {
           setErrors({
             ...errors,
-            [name]: "Пароль должен содержать только латинские буквы и цифры",
+            [name]: "Пароль должен содержать только латинские буквы и цифры, и следующие спецсимволы: " +
+            "!#$%&'*+-/=?^_`{|}~,\"(),:;<>@[\\]",
           });
           setIsValid(false);
         } else {

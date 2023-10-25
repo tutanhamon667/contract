@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { Context } from "../../../context/context"
 import { activityOptions } from '../../../utils/constants';
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
-import InputMultipleSelect from "../../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
 import "../Profile.css";
 import "../ProfileFreelancer/ProfileFreelancer.css";
 import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css";
 import "./ProfileCustomer.css";
 import InputText from '../../../components/Inputs/InputText/InputText';
 import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
+import InputSelect from '../../../components/Inputs/InputSelect/InputSelect';
 
 export default function ProfileCustomer() {
   const [isEditable, setIsEditable] = useState(false);
@@ -27,13 +27,15 @@ export default function ProfileCustomer() {
       <div className="profile_left-column">
 
         <div className="profile_block profile__user-info">
-          <InputImage name="photo" width={80} height={80} value={values.photo || ''} error={errors.photo}
-                      errorMessage={errors.photo} onChange={handleChange}
+          <InputImage name="photo" width={80} height={80} value={values.photo || currentUser?.photo || ''} error={errors.photo}
+                      errorMessage={errors.photo} onChange={handleChange} isDisabled={!isEditable}
           />
-          <h2 className="profile__title">
-            {currentUser.first_name}&nbsp;{currentUser.last_name}
+          <h2 className="profile__title profile__title_place_aside">
+            {currentUser?.name}
           </h2>
-          <p className="profile__main-text">{currentUser.role}</p>
+          <p className="profile__main-text">
+            Заказчик
+          </p>
         </div>
 
         <div className="profile__separate-line"></div>
@@ -85,8 +87,8 @@ export default function ProfileCustomer() {
               Электронная почта
             </label>
             <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
-                       value={values.email || ''} error={errors.email} errorMessage={errors.email}
-                       onChange={handleChange} id="email"
+                       value={values.email || currentUser?.account_email || ''} error={errors.email}
+                       errorMessage={errors.email} onChange={handleChange} id="email" isDisabled={!isEditable}
             />
           </div>
 
@@ -99,15 +101,18 @@ export default function ProfileCustomer() {
               htmlFor="companyName">
               Название компании или ваше имя
             </label>
-            <InputText type="text" placeholder="Название компании или ваше имя" autoComplete="given-name" name="first_name" width="100%"
-                       value={values.first_name || ''} error={errors.first_name} errorMessage={errors.first_name}
-                       onChange={handleChange} id="companyName"
+            <InputText type="text" placeholder="Название компании или ваше имя" autoComplete="name" name="name"
+                       width="100%" value={values.name || currentUser?.name || ''} error={errors.name}
+                       errorMessage={errors.name} onChange={handleChange} id="companyName" isDisabled={!isEditable}
             />
           </div>
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Сфера деятельности</h2>
-            <InputMultipleSelect name="activity" options={activityOptions} />
+            <InputSelect name="activity" placeholder="Выберите из списка" width="100%"
+                         value={values.activity || currentUser.industry?.name || ''} options={activityOptions}
+                         isDisabled={!isEditable}
+            />
           </div>
 
           <div className="profile__main-text form-profile__input-container">
@@ -117,8 +122,8 @@ export default function ProfileCustomer() {
               О компании
             </label>
             <InputText type="textarea" placeholder="Расскажите чем занимается ваша компания" name="about" width="100%"
-                       height={150} value={values.about || ''} error={errors.about} errorMessage={errors.about}
-                       onChange={handleChange} id="aboutMe"
+                       height={150} value={values.about || currentUser?.about || ''} error={errors.about} errorMessage={errors.about}
+                       onChange={handleChange} id="aboutMe" isDisabled={!isEditable}
             />
           </div>
 
@@ -128,8 +133,9 @@ export default function ProfileCustomer() {
               htmlFor="portfolioLink">
               Ссылка на портфолио
             </label>
-            <InputText type="url" placeholder="www.example.com" name="web" width="100%" value={values.web || ''}
-                       error={errors.web} errorMessage={errors.web} onChange={handleChange} id="portfolioLink"
+            <InputText type="url" placeholder="www.example.com" name="web" width="100%"
+                       value={values.web || currentUser?.web || ''} error={errors.web} errorMessage={errors.web}
+                       onChange={handleChange} id="portfolioLink" isDisabled={!isEditable}
             />
             {isEditable && (
               <button

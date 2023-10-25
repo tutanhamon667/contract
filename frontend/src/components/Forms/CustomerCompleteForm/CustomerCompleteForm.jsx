@@ -6,8 +6,8 @@ import { InputImage } from '../../Inputs/InputImage/InputImage';
 import InputText from '../../Inputs/InputText/InputText';
 import Button from '../../Button/Button';
 import "./CustomerCompleteForm.css";
-import InputMultipleSelect from '../../Inputs/InputMultipleSelect/InputMultipleSelect';
 import { activityOptions } from '../../../utils/constants';
+import InputSelect from '../../Inputs/InputSelect/InputSelect';
 
 function CustomerCompleteForm() {
   const {
@@ -63,8 +63,8 @@ function CustomerCompleteForm() {
       </label>
       <label>
         <p className="employer-complete-form__input-text">Сфера деятельности</p>
-        <InputMultipleSelect name="activity" value={values.activity || ''} error={errors.activity}
-                             errorMessage={errors.activity} onChange={handleChange} options={activityOptions}
+        <InputSelect name="activity" placeholder="Выберите из списка"
+                     value={values.activity || ''} error={errors.activity} errorMessage={errors.activity} onChange={handleChange} options={activityOptions}
         />
       </label>
       <label>

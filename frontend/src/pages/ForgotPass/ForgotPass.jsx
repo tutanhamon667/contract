@@ -6,7 +6,7 @@ import { Context } from "../../context/context";
 import "./ForgotPass.css";
 
 const ForgotPass = () => {
-  const { authenticated } = React.useContext(Context);
+  const { isAuthenticated } = React.useContext(Context);
   const location = useLocation();
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
 
@@ -14,7 +14,7 @@ const ForgotPass = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
-  if (authenticated) {
+  if (isAuthenticated) {
     return <Navigate to={"/"} state={{ from: location }} />;
   }
   return (

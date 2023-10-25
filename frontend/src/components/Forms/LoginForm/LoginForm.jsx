@@ -1,22 +1,72 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Context } from "../../../context/context";
+import { Link, useNavigate } from 'react-router-dom';
 import Button from "../../Button/Button";
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import InputText from "../../Inputs/InputText/InputText";
 // import SocialLinksBar from "../../SocialLinksBar/SocialLinksBar";
 import "./LoginForm.css";
-import { userCustomer, userFreelancer } from "../../../utils/constants";
+import * as Api from '../../../utils/Api';
 
-const LoginForm = ({ setAuthenticated, setCurrentUser }) => {
-  const { logIn } = React.useContext(Context);
+const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
+  // const { handleLogin } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
   const [buttonClicked, setButtonClicked] = React.useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } =
     useFormAndValidation();
+  const navigate = useNavigate();
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const handleLogin = (values) => {
+    Api.authenticateUser(values)
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else if (res.status === 401) {
+          return res.json().then(error => {
+            setErrors({ email: 'Пользователь с таким email не зарегистрирован.' });
+            return Promise.reject(error.detail);
+          });
+        // } else if (res.status === 404) {
+        //   return res.json().then(error => {
+        //     setErrors({ password: 'Неправильный адрес эл. почты или пароль.' });
+        //     return Promise.reject(error.detail);
+        //   });
+        } else {
+          return res.json().then(error => {
+            setErrors({ password: error.detail });
+            return Promise.reject(error.detail);
+        });
+        }
+      })
+      .then(response => {
+        if (response['refresh'] && response['access']) {
+          localStorage.setItem('refresh', response['refresh']);
+          sessionStorage.setItem('access', response['access']);
+        }
+      })
+      .then(() => {
+        Api.getUserInfo()
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            }
+
+            return res.json().then(error => {
+              return Promise.reject(error.detail);
+            });
+          })
+          .then((res) => {
+            setCurrentUser(res);
+            setIsAuthenticated(true);
+            navigate('/', {replace: true});
+          })
+          .catch(console.error);
+      })
+      .catch(console.error);
+  }
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -34,25 +84,12 @@ const LoginForm = ({ setAuthenticated, setCurrentUser }) => {
     setErrors({ ...errors, ...newErrors });
 
     if (isValid && values.email && values.password) {
-      console.log(values);
-      setValues({ ...values, email: "", password: "" });
-      logIn();
+      // console.log(values);
+      // setValues({ ...values, email: "", password: "" });
+      setValues(values);
+      handleLogin(values);
     }
     setButtonClicked(true);
-
-    // временное решение входа в аккаунт
-    if (values.email === 'email@mail.ru' && values.password === 'topSecret1') {
-      setAuthenticated(true);
-      setCurrentUser(userFreelancer)
-      console.log('Вход выполнен в роли Фрилансер')
-    } else if (values.email === 'boss@mail.ru' && values.password === 'imsuperboss1') {
-      setAuthenticated(true);
-      setCurrentUser(userCustomer)
-    } else {
-      setAuthenticated(false);
-      console.log('Не правильные почта или пароль')
-    }
-    // ----------------------------------
   };
 
   return (

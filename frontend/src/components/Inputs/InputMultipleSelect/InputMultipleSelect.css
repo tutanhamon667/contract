@@ -23,7 +23,12 @@
   position: relative;
 }
 
-.list__container:hover {
+.list__container:hover:not(:disabled) {
+  box-shadow: 2px 2px 0 0 #C6C6C6;
+}
+
+.list__container:focus {
+  outline: none;
   box-shadow: 2px 2px 0 0 #C6C6C6;
 }
 

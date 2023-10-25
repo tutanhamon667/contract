@@ -1,33 +1,33 @@
 import React, { useContext, useEffect } from "react";
-import { Link } from 'react-router-dom'
-import "./OrderCard.css";
+import { Link } from 'react-router-dom';
 import { Context } from "../../context/context";
+import "./OrderCard.css";
 
 const OrderCard = ({ cards, orderArea, operationMode, freelanceFilter, isTasks }) => {
   // eslint-disable-next-line array-callback-return
-  const { currentUser, authenticated } = useContext(Context);
+  const { currentUser, isAuthenticated } = useContext(Context);
   const filter = one();
 
   useEffect(() => {
-    console.log("тут111111")
-  }, [freelanceFilter])
+    // console.log("тут111111");
+  }, [freelanceFilter]);
 
 
   function one() {
     for (const key in freelanceFilter) {
       if (freelanceFilter[key]) {
-        return false
+        return false;
       }
     }
-    return true
+    return true;
   }
 
-  return cards.map((item, index) => {
+  return cards?.map((item, index) => {
     // eslint-disable-next-line no-lone-blocks
     {
       return (freelanceFilter[`${item.direction}`] || !operationMode || filter) && (
-        <Link to={isTasks ? `order/${item.orderId}` : ''}>
-          <div key={index} className="orderCard">
+        <Link key={index} to={isTasks ? `order/${item.orderId}` : ''}>
+          <div className="orderCard">
             <div className="orderCard__header-container">
               <div className="orderCard__avatar-container">
                 {item.avatar && (
@@ -70,7 +70,7 @@ const OrderCard = ({ cards, orderArea, operationMode, freelanceFilter, isTasks }
             </div>
             {orderArea && (
               <div className="orderCard__respond-button-container">
-                {currentUser.role === "Фрилансер" && authenticated ? (
+                {currentUser.is_worker && isAuthenticated ? (
                   <button className="orderCard__respond-button">
                     Откликнуться
                   </button>
@@ -85,4 +85,5 @@ const OrderCard = ({ cards, orderArea, operationMode, freelanceFilter, isTasks }
     }
   });
 };
+
 export default OrderCard;

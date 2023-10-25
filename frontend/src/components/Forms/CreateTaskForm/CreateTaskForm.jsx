@@ -13,9 +13,12 @@ const MAX_ATTACHED_DOCS = 8;
 function CreateTaskForm() {
   const [docKeys, setDocKeys] = useState([Date.now()]);
   const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
-  const [activityValues, setActivityValues] = useState([])
-  const [stacksValues, setStacksValues] = useState([])
-  const [isChecked, setIsChecked] = useState({ budgetDiscussion: false, deadlineDiscussion: false })
+  const [activityValues, setActivityValues] = useState([]);
+  const [stacksValues, setStacksValues] = useState([]);
+  const [isChecked, setIsChecked] = useState({
+    budgetDiscussion: false,
+    deadlineDiscussion: false
+  });
   const [allTaskValues, setAllTaskValues] = useState([])
 
   // временное решение: сохранение значений формы в локальное хранилище

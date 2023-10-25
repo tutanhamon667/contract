@@ -5,7 +5,6 @@ import useFormAndValidation from '../../../hooks/useFormAndValidation';
 import InputText from '../../Inputs/InputText/InputText';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
-import InputMultipleSelect from '../../Inputs/InputMultipleSelect/InputMultipleSelect';
 import InputTags from '../../Inputs/InputTags/InputTags';
 import Button from '../../Button/Button';
 import './FreelancerCompleteForm.css';
@@ -14,7 +13,7 @@ import InputSelect from '../../Inputs/InputSelect/InputSelect';
 
 const MAX_ATTACHED_DOCS = 8;
 
-function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
+function FreelancerCompleteForm({ setIsAuthenticated, setCurrentUser }) {
   const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
   const [docKeysEdu, setDocKeysEdu] = useState([Date.now()]);
   const {
@@ -22,6 +21,7 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
   } = useFormAndValidation();
   const navigate = useNavigate();
   const freelancerId = useContext(Context).currentUser.id;
+  const [stacksValues, setStacksValues] = useState([]);
 
   const handleDocPortfolioChange = (event) => {
     handleChange(event);
@@ -78,19 +78,19 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
         email: '',
       });
 
-      setAuthenticated(true)
-      setCurrentUser({
-        id: "1",
-        first_name: values.first_name,
-        last_name: values.last_name,
-        email: values.email,
-        password: "topSecret1",
-        role: "Фрилансер",
-        rate: "300",
-        portfolio: "https://myportfolio.ru",
-        skills: ['CSS', 'HTML', 'JavaScript'],
-        education: 'МГУ имени М.В. Ломоносова',
-      })
+      setIsAuthenticated(true)
+      // setCurrentUser({
+      //   id: "1",
+      //   first_name: values.first_name,
+      //   last_name: values.last_name,
+      //   email: values.email,
+      //   password: "topSecret1",
+      //   role: "Фрилансер",
+      //   rate: "300",
+      //   portfolio: "https://myportfolio.ru",
+      //   skills: ['CSS', 'HTML', 'JavaScript'],
+      //   education: 'МГУ имени М.В. Ломоносова',
+      // })
 
       navigate(`/freelancer/${freelancerId}`);
     }
@@ -144,13 +144,14 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
       </div>
       <label>
         <p className="freelancer-complete-form__input-text">Специализация</p>
-        <InputMultipleSelect name="activity" value={values.activity || ''} error={errors.activity}
-          errorMessage={errors.activity} onChange={handleChange} options={activityOptions}
+        <InputSelect name="activity" placeholder="Выберите из списка" value={values.activity || ''}
+                     error={errors.activity} errorMessage={errors.activity} onChange={handleChange}
+                     options={activityOptions}
         />
       </label>
       <label>
         <p className="freelancer-complete-form__input-text">Навыки</p>
-        <InputTags name="stacks" onChange={handleChange} />
+        <InputTags name="stacks" onChange={handleChange} setStacksValues={setStacksValues} />
       </label>
       <label>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>
@@ -194,17 +195,19 @@ function FreelancerCompleteForm({ setAuthenticated, setCurrentUser }) {
       <div>
         <p className="freelancer-complete-form__input-text">Годы учебы</p>
         <div className="freelancer-complete-form__input-year-wrapper">
-          <InputText type="month" placeholder="Начало" name="start_year" width={295} value={values.start_year || ''}
+          <InputText type="number" placeholder="Начало" name="start_year" width={295} value={values.start_year || ''}
             error={errors.start_year} errorMessage={errors.start_year} onChange={handleChange}
           />
-          <InputText type="month" placeholder="Окончание" name="end_year" width={295} value={values.end_year || ''}
-            error={errors.end_year} errorMessage={errors.end_year} onChange={handleChange}
+          <InputText type="number" placeholder="Окончание" name="finish_year" width={295} value={values.finish_year || ''}
+            error={errors.finish_year} errorMessage={errors.finish_year} onChange={handleChange}
           />
         </div>
       </div>
       <label>
         <p className="freelancer-complete-form__input-text">Степень</p>
-        <InputSelect options={degreeOptions} placeholder="Выберите из списка" />
+        <InputSelect name="degree" placeholder="Выберите из списка" value={values.degree || ''} error={errors.degree}
+                     errorMessage={errors.degree} onChange={handleChange} options={degreeOptions}
+        />
       </label>
       <label>
         <p className="freelancer-complete-form__input-text">Факультет</p>

@@ -5,10 +5,10 @@ import { Context } from "../../context/context";
 import "./ResetPass.css";
 
 const ResetPass = () => {
-  const { authenticated } = React.useContext(Context);
+  const { isAuthenticated } = React.useContext(Context);
   const location = useLocation();
 
-  if (authenticated) {
+  if (isAuthenticated) {
     return <Navigate to={"/"} state={{ from: location }} />;
   }
   return (

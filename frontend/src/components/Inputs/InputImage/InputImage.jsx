@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./InputImage.css";
 
-const InputImage = ({ name, value, onChange, width, height }) => {
+const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const inputStyle = file && {
@@ -40,6 +40,7 @@ const InputImage = ({ name, value, onChange, width, height }) => {
           name={name}
           accept=".png,.jpg,.jpeg"
           onChange={handleChange}
+          disabled={isDisabled}
         />
       </label>
       <span className="input-image__error-text">{error}</span>

@@ -15,15 +15,12 @@
   justify-content: space-between;
 }
 
-
-
-
 .register__footerLinkContainer {
-  margin-top: 24px;
+  margin: 22px 0 110px;
   display: flex;
   align-items: center;
   color: #585858;
-  font-size: 20px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;

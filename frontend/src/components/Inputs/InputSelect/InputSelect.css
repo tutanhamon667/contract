@@ -10,17 +10,22 @@
   font-size: 16px;
   line-height: 1.25;
   transition: box-shadow .3s ease-in-out, border .3s ease-in-out;
-  cursor: pointer;
 }
 
 .select_type_placeholder {
   color: #7B7B7B;
 }
 
-.select:hover {
+.select:hover:not(:disabled) {
+  cursor: pointer;
   box-shadow: 2px 2px 0 0 #C6C6C6;
+}
+
+.select:disabled {
+  opacity: 1;
 }
 
 .select:focus {
   outline: none;
+  box-shadow: 2px 2px 0 0 #C6C6C6;
 }

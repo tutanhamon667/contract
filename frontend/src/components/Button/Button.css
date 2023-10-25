@@ -30,6 +30,11 @@
   box-shadow: none;
 }
 
+.button:focus {
+  outline: none;
+  box-shadow: 4px 4px 0 0 #C6C6C6;
+}
+
 .buttonDisabled{
   background-color: #B3B3B3;
   color: #3F3F3F;

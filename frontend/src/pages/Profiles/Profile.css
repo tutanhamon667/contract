@@ -87,6 +87,10 @@
   margin: 0;
 }
 
+.profile__title_place_aside {
+  text-align: center;
+}
+
 .profile__main-text {
   color: #3F3F3F;
   font-size: 16px;

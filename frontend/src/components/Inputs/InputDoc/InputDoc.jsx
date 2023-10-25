@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./InputDoc.css";
 
-const InputDoc = ({ name, onChange, onDeleteDocClick, error, errorMessage }) => {
+const InputDoc = ({ name, onChange, onDeleteDocClick, error, errorMessage, isDisabled }) => {
   const [file, setFile] = useState(null);
 
   const handleChange = (event) => {
@@ -17,6 +17,7 @@ const InputDoc = ({ name, onChange, onDeleteDocClick, error, errorMessage }) => 
         name={name}
         accept=".pdf,.png,.jpg,.jpeg"
         onChange={handleChange}
+        disabled={isDisabled}
       />
       <div>
         <span className="input-doc__input-text">Загрузить</span>

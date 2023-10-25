@@ -6,13 +6,26 @@ import HeaderAuth from "../HeaderAuth/HeaderAuth";
 import "../Header/Header.css";
 import "../../pages/Profiles/Profile.css";
 
-function Header({ setAuthenticated, setCurrentUser }) {
+function Header({ setIsAuthenticated, setCurrentUser }) {
   const [showSetting, setShowSetting] = useState(false);
-  const { currentUser, authenticated } = useContext(Context);
+  const { currentUser, isAuthenticated } = useContext(Context);
   let { pathname } = useLocation();
 
-  function giveOutNameInHeader(currentUser) {
-    return `${currentUser.first_name} ${currentUser.last_name.slice(0, 1)}.`
+  function formatNameForHeader() {
+    if (!currentUser) {
+      return '';
+    }
+
+    const { is_worker, is_customer, user, name } = currentUser;
+
+    if (is_worker) {
+      const shortLastName = user?.last_name.slice(0, 1);
+      return `${user?.first_name} ${shortLastName}.`;
+    } else if (is_customer) {
+      return name;
+    }
+
+    return '';
   }
 
   const completeFormPaths = (
@@ -28,16 +41,14 @@ function Header({ setAuthenticated, setCurrentUser }) {
     pathname === '/reset-password'
   );
 
-  const profilePaths = (currentUser.role === 'Заказчик')
-    ? 'customer'
-    : 'freelancer';
+  const profilePaths = currentUser.is_worker ? '/freelancer' : currentUser.is_customer && '/customer';
 
   function handleSetting() {
     setShowSetting(!showSetting);
   }
 
   function signout() {
-    setAuthenticated(false);
+    setIsAuthenticated(false);
     setCurrentUser({});
     setShowSetting(false);
   }
@@ -45,17 +56,17 @@ function Header({ setAuthenticated, setCurrentUser }) {
   const popStyle = `profile__popup profile_block ${showSetting ? 'profile__popup_show' : ''}`
 
   return (
-    <header className={`header${authenticated && !completeFormPaths ? ' header-with-background' : ''}`}>
+    <header className={`header${isAuthenticated && !completeFormPaths ? ' header-with-background' : ''}`}>
       <div className="header__container">
         <Link to="/" className={`header__logo${authPaths || completeFormPaths ? ' header__logo-black' : ''}`}></Link>
-        {authenticated ? (
+        {isAuthenticated ? (
           <div
             onClick={handleSetting}
             className="header__profile-container"
             role="button"
             tabIndex="0"
           >
-            <p className="header__name">{giveOutNameInHeader(currentUser)}</p>
+            <p className="header__name">{formatNameForHeader()}</p>
             <div className="header__avatar"></div>
           </div>
         ) : (<HeaderAuth />)

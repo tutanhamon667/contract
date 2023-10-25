@@ -3,7 +3,7 @@ import "./OperationMode.css";
 import { Context } from "../../context/context";
 
 function OperationMode({ operationMode, setOperationMode }) {
-  const { currentUser, authenticated } = useContext(Context);
+  const { currentUser, isAuthenticated } = useContext(Context);
 
   return (
     <section className="operation-mode">
@@ -15,8 +15,7 @@ function OperationMode({ operationMode, setOperationMode }) {
         }
         onClick={() => setOperationMode(true)}
       >
-        { currentUser.role === 'Заказчик' ? 'Фрилансеры' : 'Tаски'}
-
+        {currentUser.is_worker ? 'Tаски' : currentUser.is_customer && 'Фрилансеры' }
       </button>
       <button
         className={
@@ -26,7 +25,7 @@ function OperationMode({ operationMode, setOperationMode }) {
         }
         onClick={() => setOperationMode(false)}
       >
-        { authenticated ? 'Мои заказы' : 'Фрилансеры'}
+        { isAuthenticated ? 'Мои заказы' : 'Фрилансеры'}
 
       </button>
     </section>

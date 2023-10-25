@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
-import { Link, useParams } from "react-router-dom"
-
+import { Link, useParams } from "react-router-dom";
+import { Context } from "../../context/context";
+import InputMultipleSelect from "../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
+import InputTags from "../../components/Inputs/InputTags/InputTags";
 import "./Order.css";
 import "../Profiles/Profile.css";
 import "../Profiles/ProfileFreelancer/ProfileFreelancer.css";
@@ -8,45 +10,46 @@ import "../Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly.css";
 import "../../components/Forms/CreateTaskForm/CreateTaskForm.css";
 import "../ForgotPass/ForgotPass.css";
 
-import { Context } from "../../context/context";
-
-import InputMultipleSelect from "../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
-import InputTags from "../../components/Inputs/InputTags/InputTags";
-
 export default function Order() {
   const [responded, setResponded] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const { currentUser } = useContext(Context);
-  // Стили
-  const userIsCustomer = (currentUser.role === 'Заказчик');
+  const [stacksValues, setStacksValues] = useState([]);
+  const [activityValues, setActivityValues] = useState([]);
 
-  const freelancerBtnStyle = `
-  form-profile__bottom-buttons form-profile__bottom-buttons_type_submit
-  ${responded ? 'form-profile__bottom-buttons-hide' : ''}`
-  const customerBtnStyle = `form-profile__bottom-buttons ${isEditable ? 'form-profile__bottom-buttons-hide' : ''}`
+  // Стили
+  const userIsCustomer = (currentUser.is_customer);
+
+  const freelancerBtnStyle = `form-profile__bottom-buttons form-profile__bottom-buttons_type_submit${responded
+    ? ' form-profile__bottom-buttons-hide'
+    : ''
+  }`;
+  const customerBtnStyle = `form-profile__bottom-buttons${isEditable
+    ? ' form-profile__bottom-buttons-hide'
+    : ''
+  }`;
   // Получаю данные заказа
-  let { id } = useParams()
-  const tasks = JSON.parse(localStorage.getItem('taskValues'))
+  let { id } = useParams();
+  const tasks = JSON.parse(localStorage.getItem('taskValues'));
   const task = tasks.find((item) => {
-    return item.orderId == id
-  })
+    return item.orderId == id;
+  });
   // Записываю значения в переменные
-  const stacksList = task.stacks.map((item, index) =>
-  <li
+  const stacksList = task.stacks.map((item, index) => (
+    <li
       key={index}
       className="order__list-item">
       {item}
     </li>
-  )
-  const stacksList2 = task.stacks.join(', ')
-  const specialization = task.direction.join(', ')
-  const budgetMoney = task.budget
-  const budgetDiscussion = task.budgetDiscussion.toString()
-  const deadline = task.deadline
-  const deadlineDiscussion = task.deadlineDiscussion.toString()
+  ));
+  const stacksList2 = task.stacks.join(', ');
+  const specialization = task.direction.join(', ');
+  const budgetMoney = task.budget;
+  const budgetDiscussion = task.budgetDiscussion.toString();
+  const deadline = task.deadline;
+  const deadlineDiscussion = task.deadlineDiscussion.toString();
   // -----------
-
 
   return (
     <>
@@ -121,17 +124,19 @@ export default function Order() {
 
                     Разработать дизайн лендинга для продвижения нового продукта/услуги.
                     Следовать брендбуку компании (цвета, шрифты и т.д.).
-                    Создать адаптивный дизайн, который будет хорошо выглядеть на всех устройствах (десктоп, таблет, смартфон).
+                    Создать адаптивный дизайн, который будет хорошо выглядеть на всех устройствах (десктоп, таблет,
+                     смартфон).
                     Интеграция с формами для сбора контактной информации, подписки на новости и т.д.a
 
                   ТЗ предоставляю в виде:
                   Прототип в Фигме, примеры страниц с нужным стилем дизайна и созвон в Zoom для уточнения ТЗ.
-                  Потребуется немного вникнуть в специфику услуг и целевой аудитории. Готов рассказать подробнее при созвоне.
+                  Потребуется немного вникнуть в специфику услуг и целевой аудитории. Готов рассказать подробнее
+                   при созвоне.
                   Результат нужен в Figma, чтобы передать веб-разработчику.
                   Сроки: Прототип готов.
-                  Созвониться готов сегодня до конца дня или завтра вечером. Макет нужен оперативно до конца дня понедельника
-                  18 сентября 2023.Прошу в отклике указать стоимость и прислать 1 – 3 примеров ваших работ, наиболее
-                  релевантных ТЗ (ссылку или вложением, например PDF).
+                  Созвониться готов сегодня до конца дня или завтра вечером. Макет нужен оперативно до конца
+                   дня понедельника 18 сентября 2023. Прошу в отклике указать стоимость и прислать 1 – 3 примеров
+                    ваших работ, наиболее релевантных ТЗ (ссылку или вложением, например PDF).
                   И указать, есть ли у вас опыт дизайна для ИТ или для B2B тематики. Предпочтение дизайнерам с опытом
                   веб-дизайна сайтов/лендингов для ИТ или для B2B тематики. Рассматриваю исключительно самостоятельных
                   специалистов дизайнеров, не студии, не агентства.
@@ -141,12 +146,12 @@ export default function Order() {
 
                 <div className="form-profile__input-container">
                   <h2 className="profile__main-text">Специализация</h2>
-                  <InputMultipleSelect />
+                  <InputMultipleSelect setActivityValues={setActivityValues} />
                 </div>
 
                 <div className="form-profile__input-container">
                   <h2 className="profile__main-text">Навыки</h2>
-                  <InputTags />
+                  <InputTags setStacksValues={setStacksValues} />
                 </div>
 
                 <div className="form-profile__input-container">
@@ -199,7 +204,8 @@ export default function Order() {
                   <button
                     type="submit"
                     onClick={() => setIsEditable(false)}
-                    className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit">
+                    className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
+                  >
                     Сохранить
                   </button>
                 </div>
@@ -237,8 +243,10 @@ export default function Order() {
                     <p className="profile__main-text">
                       AndyClass полноценное маркетинговое агентство с более чем 10-летним опытом на рынке.
                       Мы специализируемся на создании и реализации комплексных стратегий для продвижения брендов
-                      и товаров в интернете и оффлайн. Наша команда профессионалов охватывает все аспекты современного маркетинга: от SEO и контент-маркетинга до проведения рекламных кампаний и анализа данных.
-                      Мы стремимся предоставлять нашим клиентам высококачественные и результативные решения для достижения их бизнес-целей.
+                      и товаров в интернете и оффлайн. Наша команда профессионалов охватывает все аспекты современного
+                      маркетинга: от SEO и контент-маркетинга до проведения рекламных кампаний и анализа данных.
+                      Мы стремимся предоставлять нашим клиентам высококачественные и результативные решения
+                      для достижения их бизнес-целей.
                     </p>
                   </div>
                 )}

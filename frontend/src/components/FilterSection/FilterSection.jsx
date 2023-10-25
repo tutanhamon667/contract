@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 function FilterSection({ freelanceFilter, handleFreelanceFilter }) {
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
-  const { currentUser, orderFilter, authenticated } = useContext(Context);
+  const { currentUser, orderFilter, isAuthenticated } = useContext(Context);
   const navigate = useNavigate();
   let localFreelanceFilter = {};
 
@@ -41,21 +41,15 @@ function FilterSection({ freelanceFilter, handleFreelanceFilter }) {
   }
 
   const filtersContainerStyle = `filters-container  ${
-    orderFilter && authenticated ? "filters-conteiner__freelance " : ""
+    orderFilter && isAuthenticated ? "filters-conteiner__freelance " : ""
   }`;
 
   return (
     <section className="filters">
-      {authenticated && currentUser.role === "Заказчик" ? (
-        <Button
-          text="Создать заказ"
-          width={289}
-          marginBottom={24}
-          onClick={() => navigate("/create-task")}
-        />
-      ) : (
-        <></>
-      )}
+      {/*{isAuthenticated && currentUser.role === 'Заказчик' ? (*/}
+      {isAuthenticated && currentUser.name ? (
+        <Button text="Создать заказ" width={289} marginBottom={24} onClick={() => navigate('/create-task')} />
+      ) : (<></>)}
       <div className={filtersContainerStyle}>
         <h2 className="filters-container__title">Специализация</h2>
         <div>

@@ -19,7 +19,7 @@
   color: #7B7B7B;
 }
 
-.input:hover {
+.input:hover:not(:disabled) {
   box-shadow: 2px 2px 0 0 #C6C6C6;
 }
 
@@ -38,12 +38,12 @@
 }
 
 /* start: hide default browser arrow for number  */
-.input_type_number {
+.input[type='number'] {
   appearance: textfield;
 }
 
-.input_type_number::-webkit-outer-spin-button,
-.input_type_number::-webkit-inner-spin-button {
+.input[type='number']::-webkit-outer-spin-button,
+.input[type='number']::-webkit-inner-spin-button {
   appearance: none;
 }
 /* end: hide default browser arrow for number */

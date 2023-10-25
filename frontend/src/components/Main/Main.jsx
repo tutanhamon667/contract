@@ -6,12 +6,12 @@ import FreelanceOrder from "../FreelanceOrder/FreelanceOrder";
 import { Context } from "../../context/context";
 
 function Main() {
-  const { authenticated } = useContext(Context);
-  const contentBorderAuthorized = `content__border ${authenticated ? 'content__border-authorized' : ''}`
+  const { isAuthenticated } = useContext(Context);
+  const contentBorderAuthorized = `content__border ${isAuthenticated ? 'content__border-authorized' : ''}`
 
   return (
     <main className="content">
-      { !authenticated && <>
+      { !isAuthenticated && <>
         <StartWork />
         <Marquee>
           <div className="content__image-decorate">//       контент       //       дизайн       //       разработка       //      тестирование       //        маркетинг        //       контент       //       дизайн       //       разработка       //      тестирование       //        маркетинг        //       контент       //       дизайн       //       разработка       //      тестирование       //        маркетинг        //       контент       //       дизайн       //       разработка       //      тестирование       //        маркетинг        //       контент       //       дизайн       //       разработка       //      тестирование       //        маркетинг        //       контент       //       дизайн       //       разработка       //      тестирование       //        маркетинг        //       контент       //       дизайн       //       разработка       //      тестирование       //        маркетинг        //       контент       //       дизайн       //       разработка       //      тестирование       //        маркетинг        </div>
