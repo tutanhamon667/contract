@@ -145,10 +145,6 @@ function App() {
     setIsAuthenticated(true);
   };
 
-  const logOut = () => {
-    setIsAuthenticated(false);
-  };
-
   if (isLoading) {
     return;
   }
@@ -159,7 +155,6 @@ function App() {
       isAuthenticated,
       orderFilter,
       logIn,
-      logOut,
       handleOrderFilter,
       freelanceFilter,
       setFreelanceFilter,
@@ -167,7 +162,7 @@ function App() {
       setRerender
     }}>
       <Routes>
-        <Route path="/" element={<Layout setIsAuthenticated={setIsAuthenticated} setCurrentUser={setCurrentUser} />}>
+        <Route path="/" element={<Layout />}>
           <Route element={<ProtectedRoute />}>
             <Route path="freelancer" element={<ProfileFreelancer />} />
             <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
@@ -186,7 +181,9 @@ function App() {
           } />
           <Route path="forgot-password" element={<ForgotPass />} />
           <Route path="reset-password" element={<ResetPass />} />
-          <Route path="signout" element={<SignOut />} />
+          <Route path="signout" element={
+            <SignOut setCurrentUser={setCurrentUser} setIsAuthenticated={setIsAuthenticated} />
+          } />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

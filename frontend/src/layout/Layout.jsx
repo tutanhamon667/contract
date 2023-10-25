@@ -4,7 +4,7 @@ import { Context } from "../context/context";
 import Header from "../components/Header/Header";
 import "./Layout.css";
 
-export default function Layout({ setIsAuthenticated, setCurrentUser }) {
+export default function Layout() {
 
   let { pathname } = useLocation();
   const { isAuthenticated } = useContext(Context);
@@ -13,10 +13,7 @@ export default function Layout({ setIsAuthenticated, setCurrentUser }) {
 
   return (
     <div className={mainPageStyle + mainPageStyleAuthorized}>
-      <Header
-        setIsAuthenticated={setIsAuthenticated}
-        setCurrentUser={setCurrentUser}
-      />
+      <Header />
       <main className="outlet">
         <Outlet />
       </main>
