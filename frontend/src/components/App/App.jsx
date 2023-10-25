@@ -102,13 +102,15 @@ function App() {
     }
   }, [])
 
-  function handleRegisterSubmit({ first_name, last_name, email, password, re_password, is_customer, is_worker }){
-    Api.register({ first_name, last_name, email, password, re_password, is_customer, is_worker })
+  function handleRegisterSubmit(values){
+    Api.register(values)
     .then((data) => {
-      console.log(data);
+      // console.log(data);
       setIsError(false);
       setErrorRequest({});
-      navigate(`/${globalThis.role}/complete`, {replace: true});
+
+      const role = data.is_customer ? "customer" : data.is_worker && "freelancer";
+      navigate(`/${role}/complete`, {replace: true});
     })
     .catch((err) => {
       setErrorRequest(err);
@@ -127,9 +129,9 @@ function App() {
     setOrderFilter(state);
   }
 
-  // const logIn = () => {
-  //   setIsAuthenticated(true);
-  // };
+  const logIn = () => {
+    setIsAuthenticated(true);
+  };
 
   const logOut = () => {
     setIsAuthenticated(false);
@@ -145,7 +147,7 @@ function App() {
       currentUser,
       isAuthenticated,
       orderFilter,
-      // logIn,
+      logIn,
       logOut,
       handleOrderFilter,
       freelanceFilter,

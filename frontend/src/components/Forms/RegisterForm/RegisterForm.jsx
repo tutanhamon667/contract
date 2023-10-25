@@ -16,9 +16,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
     is_worker: false,
   });
 
-  const {
-    values, errors, isValid, handleChange, setValues, setErrors
-  } = useFormAndValidation();
+  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
