@@ -1,20 +1,18 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
-import { Context } from '../../../context/context';
+import { activityOptions } from '../../../utils/constants';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import InputText from '../../Inputs/InputText/InputText';
 import Button from '../../Button/Button';
-import "./CustomerCompleteForm.css";
-import { activityOptions } from '../../../utils/constants';
 import InputSelect from '../../Inputs/InputSelect/InputSelect';
+import "./CustomerCompleteForm.css";
 
 function CustomerCompleteForm() {
   const {
     values, errors, isValid, handleChange, setValues, setErrors
   } = useFormAndValidation();
   const navigate = useNavigate();
-  const employerId = useContext(Context).currentUser.id;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -43,7 +41,7 @@ function CustomerCompleteForm() {
         email: '',
       });
 
-      navigate(`/customer/${employerId}`);
+      navigate(`/customer`);
     }
   };
 

@@ -32,6 +32,7 @@ function App() {
   const [rerender, setRerender] = useState(true);
   const [errorRequest, setErrorRequest] = useState({});
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -52,6 +53,7 @@ function App() {
         .then((res) => {
           setCurrentUser(res);
           setIsAuthenticated(true);
+          setIsLoading(false);
         })
         .catch((error) => {
           refreshTokenHandler();
@@ -89,11 +91,13 @@ function App() {
                 .then((res) => {
                   setCurrentUser(res);
                   setIsAuthenticated(true);
+                  setIsLoading(false);
                 })
                 .catch((error) => {
                   setIsAuthenticated(false);
                   sessionStorage.removeItem('access');
                   console.error(error);
+                  setIsLoading(false);
                 })
             }
           })
@@ -101,9 +105,11 @@ function App() {
             setIsAuthenticated(false);
             sessionStorage.removeItem('access');
             console.error(error);
+            setIsLoading(false);
           })
       } else {
         setIsAuthenticated(false);
+        setIsLoading(false);
       }
     }
   }, [])
@@ -142,6 +148,10 @@ function App() {
   const logOut = () => {
     setIsAuthenticated(false);
   };
+
+  if (isLoading) {
+    return;
+  }
 
   return (
     <Context.Provider value={{
