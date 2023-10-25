@@ -139,8 +139,8 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset()
 
         if request.method == 'GET':
-            # obj = get_object_or_404(queryset, user_id=user.id)
-            obj, result = queryset.get_or_create(user=user)
+            obj = get_object_or_404(queryset, user_id=user.id)
+            # obj, result = queryset.get_or_create(user=user)
             serializer = self.get_serializer(obj)
         if request.method == 'POST':
             if user.is_worker:
