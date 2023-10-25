@@ -54,53 +54,57 @@ function App() {
           setIsAuthenticated(true);
         })
         .catch((error) => {
-          setIsAuthenticated(false);
+          refreshTokenHandler();
           console.error(error);
         });
-    } else if (refreshToken) {
-      Api.getNewAccessToken()
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            return res.json().then(error => {
-              return Promise.reject(error.detail);
-            })
-          }
-        })
-        .then(response => {
-          if (response['refresh'] && response['access']) {
-            localStorage.setItem('refresh', response['refresh']);
-            sessionStorage.setItem('access', response['access']);
-          }
-        })
-        .then(() => {
-          Api.getUserInfo()
-            .then((res) => {
-              if (res.ok) {
-                return res.json();
-              }
+    } else {
+      refreshTokenHandler();
+    }
+
+    function refreshTokenHandler() {
+      if (refreshToken) {
+        Api.getNewAccessToken()
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            } else {
               return res.json().then(error => {
                 return Promise.reject(error.detail);
-              });
-            })
-            .then((res) => {
-              setCurrentUser(res);
-              setIsAuthenticated(true);
-            })
-            .catch((error) => {
-              setIsAuthenticated(false);
-              sessionStorage.removeItem('access');
-              console.error(error);
-            })
-        })
-        .catch((error) => {
-          setIsAuthenticated(false);
-          sessionStorage.removeItem('access');
-          console.error(error);
-        })
-    } else {
-      setIsAuthenticated(false);
+              })
+            }
+          })
+          .then((res) => {
+            if (res['access']) {
+              sessionStorage.setItem('access', res['access']);
+
+              Api.getUserInfo()
+                .then((res) => {
+                  if (res.ok) {
+                    return res.json();
+                  }
+                  return res.json().then(error => {
+                    return Promise.reject(error.detail);
+                  });
+                })
+                .then((res) => {
+                  setCurrentUser(res);
+                  setIsAuthenticated(true);
+                })
+                .catch((error) => {
+                  setIsAuthenticated(false);
+                  sessionStorage.removeItem('access');
+                  console.error(error);
+                })
+            }
+          })
+          .catch((error) => {
+            setIsAuthenticated(false);
+            sessionStorage.removeItem('access');
+            console.error(error);
+          })
+      } else {
+        setIsAuthenticated(false);
+      }
     }
   }, [])
 
