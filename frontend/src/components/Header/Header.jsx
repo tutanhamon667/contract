@@ -6,7 +6,7 @@ import HeaderAuth from "../HeaderAuth/HeaderAuth";
 import "../Header/Header.css";
 import "../../pages/Profiles/Profile.css";
 
-function Header({ setIsAuthenticated, setCurrentUser }) {
+function Header() {
   const [showSetting, setShowSetting] = useState(false);
   const { currentUser, isAuthenticated } = useContext(Context);
   let { pathname } = useLocation();
@@ -47,12 +47,6 @@ function Header({ setIsAuthenticated, setCurrentUser }) {
     setShowSetting(!showSetting);
   }
 
-  function signout() {
-    setIsAuthenticated(false);
-    setCurrentUser({});
-    setShowSetting(false);
-  }
-
   const popStyle = `profile__popup profile_block ${showSetting ? 'profile__popup_show' : ''}`
 
   return (
@@ -76,14 +70,17 @@ function Header({ setIsAuthenticated, setCurrentUser }) {
         <Link
           to={profilePaths}
           onClick={() => setShowSetting(false)}
-          className="profile__title">
+          className="profile__title"
+        >
           Настройки
         </Link>
-        <button
+        <Link
+          to="/signout"
+          onClick={() => setShowSetting(false)}
           className="profile__title profile__popup-signout"
-          onClick={signout}>
+        >
           Выйти
-        </button>
+        </Link>
       </div>
     </header>
   );

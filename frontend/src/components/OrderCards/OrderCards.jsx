@@ -5,7 +5,7 @@ import OrderCard from "../OrderCard/OrderCard"
 import { Context } from "../../context/context";
 import "./OrderCards.css";
 
-const OrderCards = ({ operationMode, freelanceFilter }) => {
+const OrderCards = ({ operationMode }) => {
 
   const { currentUser, isAuthenticated } = useContext(Context);
   const [area2, setArea2] = useState(false);
@@ -24,9 +24,7 @@ const OrderCards = ({ operationMode, freelanceFilter }) => {
     } else {
       setArea2(true);
     }
-  }), [currentUser, isAuthenticated, operationMode, handleOrderFilter, freelanceFilter])
-
-
+  }), [currentUser, isAuthenticated, operationMode, handleOrderFilter])
 
   const arrayOfTasks = JSON.parse(localStorage.getItem('taskValues'));
 
@@ -37,11 +35,9 @@ const OrderCards = ({ operationMode, freelanceFilter }) => {
           cards={area2 ? tasks : freelance}
           orderArea={area2}
           operationMode={operationMode}
-          freelanceFilter={freelanceFilter}
         />
         : <OrderCard
           cards={arrayOfTasks}
-          freelanceFilter={freelanceFilter}
           isTasks={true}
         />}
     </div>

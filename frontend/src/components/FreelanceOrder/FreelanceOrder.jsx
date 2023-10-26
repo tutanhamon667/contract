@@ -1,19 +1,18 @@
 import "./FreelanceOrder.css";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useContext, useState } from 'react';
 import SearchMain from "../SearchMain/SearchMain";
 import FilterSection from "../FilterSection/FilterSection";
 import OrderCards from "../OrderCards/OrderCards";
 import OperationMode from "../OperationMode/OperationMode";
+import { Context } from '../../context/context';
 
 function FreelanceOrder() {
   const [operationMode, setOperationMode] = useState(true);
-  const [freelanceFilter, setFreelanceFilter] = useState([]);
-
+  const { setFreelanceFilter } = useContext(Context);
 
   const handleFreelanceFilter = (filter) => {
     setFreelanceFilter(filter);
   }
-
 
   return (
     <section className="freelance-order">
@@ -23,10 +22,10 @@ function FreelanceOrder() {
           setOperationMode={setOperationMode}
         />
         <SearchMain />
-        <OrderCards operationMode={operationMode}  freelanceFilter={freelanceFilter} />
+        <OrderCards operationMode={operationMode} />
       </div>
       <div className="freelance-order__column-filter">
-        <FilterSection freelanceFilter={freelanceFilter} handleFreelanceFilter={handleFreelanceFilter}/>
+        <FilterSection handleFreelanceFilter={handleFreelanceFilter} />
       </div>
     </section>
   );

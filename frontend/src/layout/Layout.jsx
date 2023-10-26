@@ -4,20 +4,17 @@ import { Context } from "../context/context";
 import Header from "../components/Header/Header";
 import "./Layout.css";
 
-export default function Layout({ setIsAuthenticated, setCurrentUser }) {
+export default function Layout() {
 
   let { pathname } = useLocation();
   const { isAuthenticated } = useContext(Context);
-  const mainPageStyle = `wrapper ${(pathname === '/') ? 'wrapper_type_background-image ' : ''}`;
-  const mainPageStyleAuthorized = `${isAuthenticated ? `wrapper_type_background-image-none ` : ''}`;
+  const mainPageStyle = `layout__wrapper${(pathname === '/') ? ' layout__wrapper_type_background-image' : ''}`;
+  const mainPageStyleAuthorized = `${isAuthenticated ? ` layout__wrapper_type_background-image-none` : ''}`;
 
   return (
     <div className={mainPageStyle + mainPageStyleAuthorized}>
-      <Header
-        setIsAuthenticated={setIsAuthenticated}
-        setCurrentUser={setCurrentUser}
-      />
-      <main className="outlet">
+      <Header />
+      <main className="layout__outlet">
         <Outlet />
       </main>
     </div>

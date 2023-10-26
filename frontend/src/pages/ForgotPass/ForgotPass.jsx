@@ -20,9 +20,9 @@ const ForgotPass = () => {
   return (
     <>
       {!isPopupOpen && (
-        <div className="wrapper">
-          <div className="container">
-            <h1 className="title">Забыли пароль?</h1>
+        <div className="forgotPass__wrapper">
+          <div className="forgotPass__container">
+            <h1 className="forgotPass__title">Забыли пароль?</h1>
             <ForgotPassForm func={togglePopup} />
           </div>
         </div>
