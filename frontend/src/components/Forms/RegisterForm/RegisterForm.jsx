@@ -74,7 +74,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
       newErrors = { ...newErrors, password: "Введите пароль" };
     }
     if (!values.re_password) {
-      newErrors = { ...newErrors, re_password: "Повторите пароль" };
+      newErrors = { ...newErrors, re_password: "Введите пароль повторно" };
     }
 
     if (!values.first_name) {
