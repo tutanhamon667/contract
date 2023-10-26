@@ -18,7 +18,7 @@ const SetNewPassForm = () => {
     }
 
     if (!values.re_password) {
-      newErrors = { ...newErrors, re_password: "Повторите пароль" };
+      newErrors = { ...newErrors, re_password: "Введите пароль повторно" };
     }
 
     setErrors({ ...errors, ...newErrors });

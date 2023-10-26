@@ -28,8 +28,11 @@ function App() {
   const [orderFilter, setOrderFilter] = useState(true);
   // обект со значениями фильтров фильтров
   const [freelanceFilter, setFreelanceFilter] = useState({});
+  // временное решение для ререндеринга
+  const [rerender, setRerender] = useState(true);
   const [errorRequest, setErrorRequest] = useState({});
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -50,55 +53,64 @@ function App() {
         .then((res) => {
           setCurrentUser(res);
           setIsAuthenticated(true);
+          setIsLoading(false);
         })
         .catch((error) => {
-          setIsAuthenticated(false);
+          refreshTokenHandler();
           console.error(error);
         });
-    } else if (refreshToken) {
-      Api.getNewAccessToken()
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            return res.json().then(error => {
-              return Promise.reject(error.detail);
-            })
-          }
-        })
-        .then(response => {
-          if (response['refresh'] && response['access']) {
-            localStorage.setItem('refresh', response['refresh']);
-            sessionStorage.setItem('access', response['access']);
-          }
-        })
-        .then(() => {
-          Api.getUserInfo()
-            .then((res) => {
-              if (res.ok) {
-                return res.json();
-              }
+    } else {
+      refreshTokenHandler();
+    }
+
+    function refreshTokenHandler() {
+      if (refreshToken) {
+        Api.getNewAccessToken()
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            } else {
               return res.json().then(error => {
                 return Promise.reject(error.detail);
-              });
-            })
-            .then((res) => {
-              setCurrentUser(res);
-              setIsAuthenticated(true);
-            })
-            .catch((error) => {
-              setIsAuthenticated(false);
-              sessionStorage.removeItem('access');
-              console.error(error);
-            })
-        })
-        .catch((error) => {
-          setIsAuthenticated(false);
-          sessionStorage.removeItem('access');
-          console.error(error);
-        })
-    } else {
-      setIsAuthenticated(false);
+              })
+            }
+          })
+          .then((res) => {
+            if (res['access']) {
+              sessionStorage.setItem('access', res['access']);
+
+              Api.getUserInfo()
+                .then((res) => {
+                  if (res.ok) {
+                    return res.json();
+                  }
+                  return res.json().then(error => {
+                    return Promise.reject(error.detail);
+                  });
+                })
+                .then((res) => {
+                  setCurrentUser(res);
+                  setIsAuthenticated(true);
+                  setIsLoading(false);
+                })
+                .catch((error) => {
+                  setIsAuthenticated(false);
+                  sessionStorage.removeItem('access');
+                  console.error(error);
+                  setIsLoading(false);
+                })
+            }
+          })
+          .catch((error) => {
+            setIsAuthenticated(false);
+            sessionStorage.removeItem('access');
+            console.error(error);
+            setIsLoading(false);
+          })
+      } else {
+        setIsAuthenticated(false);
+        setIsLoading(false);
+      }
     }
   }, [])
 
@@ -133,13 +145,8 @@ function App() {
     setIsAuthenticated(true);
   };
 
-  const logOut = () => {
-    setIsAuthenticated(false);
-  };
-
-  const handleFreelanceFilter = (filter) => {
-    setFreelanceFilter(filter);
-    console.log(freelanceFilter);
+  if (isLoading) {
+    return;
   }
 
   return (
@@ -148,13 +155,14 @@ function App() {
       isAuthenticated,
       orderFilter,
       logIn,
-      logOut,
       handleOrderFilter,
       freelanceFilter,
-      handleFreelanceFilter
+      setFreelanceFilter,
+      rerender,
+      setRerender
     }}>
       <Routes>
-        <Route path="/" element={<Layout setIsAuthenticated={setIsAuthenticated} setCurrentUser={setCurrentUser} />}>
+        <Route path="/" element={<Layout />}>
           <Route element={<ProtectedRoute />}>
             <Route path="freelancer" element={<ProfileFreelancer />} />
             <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
@@ -173,7 +181,9 @@ function App() {
           } />
           <Route path="forgot-password" element={<ForgotPass />} />
           <Route path="reset-password" element={<ResetPass />} />
-          <Route path="signout" element={<SignOut />} />
+          <Route path="signout" element={
+            <SignOut setCurrentUser={setCurrentUser} setIsAuthenticated={setIsAuthenticated} />
+          } />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

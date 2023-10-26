@@ -4,10 +4,10 @@ import Button from "../Button/Button";
 import { Context } from "../../context/context";
 import { useNavigate } from "react-router-dom";
 
-function FilterSection({ freelanceFilter, handleFreelanceFilter }) {
+function FilterSection({ handleFreelanceFilter }) {
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
-  const { currentUser, orderFilter, isAuthenticated } = useContext(Context);
+  const { currentUser, orderFilter, isAuthenticated, freelanceFilter, setRerender, rerender } = useContext(Context);
   const navigate = useNavigate();
   let localFreelanceFilter = {};
 
@@ -38,6 +38,7 @@ function FilterSection({ freelanceFilter, handleFreelanceFilter }) {
     localFreelanceFilter[`${checkbox.value}`] = checkbox.checked;
     localStorage.setItem(`freelance-item${n}`, checkbox.checked);
     handleFreelanceFilter(localFreelanceFilter);
+    setRerender(!rerender);
   }
 
   const filtersContainerStyle = `filters-container  ${

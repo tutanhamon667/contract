@@ -1,26 +1,24 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Context } from '../../../context/context';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
+import { activityOptions, degreeOptions } from '../../../utils/constants';
 import InputText from '../../Inputs/InputText/InputText';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
 import InputTags from '../../Inputs/InputTags/InputTags';
 import Button from '../../Button/Button';
-import './FreelancerCompleteForm.css';
-import { activityOptions, degreeOptions } from '../../../utils/constants';
 import InputSelect from '../../Inputs/InputSelect/InputSelect';
+import './FreelancerCompleteForm.css';
 
 const MAX_ATTACHED_DOCS = 8;
 
-function FreelancerCompleteForm({ setIsAuthenticated, setCurrentUser }) {
+function FreelancerCompleteForm({ setIsAuthenticated }) {
   const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
   const [docKeysEdu, setDocKeysEdu] = useState([Date.now()]);
   const {
     values, errors, isValid, handleChange, setValues, setErrors
   } = useFormAndValidation();
   const navigate = useNavigate();
-  const freelancerId = useContext(Context).currentUser.id;
   const [stacksValues, setStacksValues] = useState([]);
 
   const handleDocPortfolioChange = (event) => {
@@ -92,7 +90,7 @@ function FreelancerCompleteForm({ setIsAuthenticated, setCurrentUser }) {
       //   education: 'МГУ имени М.В. Ломоносова',
       // })
 
-      navigate(`/freelancer/${freelancerId}`);
+      navigate(`/freelancer`);
     }
   };
 

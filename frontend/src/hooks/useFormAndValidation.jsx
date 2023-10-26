@@ -5,8 +5,10 @@ export default function useFormAndValidation() {
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(true);
 
-  const emailRegEx = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
-  const nameRegEx = /^[a-zA-Zа-яА-Я\u0621-\u064A\-_@.]{1,80}$/; // \u0621-\u064A — это арабские буквы
+  const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+  // const passwordRegex = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
+  const passwordRegex = /^[a-zA-Z0-9@#$%!^&*]+$/;
+  const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,80}$/;
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -16,9 +18,12 @@ export default function useFormAndValidation() {
     setIsValid(e.target.closest("form").checkValidity());
 
     if (name === "email") {
-      if (!emailRegEx.test(value)) {
+      if (!emailRegex.test(value)) {
         setErrors({ ...errors, [name]: "Введите корректную эл. почту" });
         setIsValid(false);
+      } else {
+        setErrors({ ...errors, [name]: "" });
+        setIsValid(true);
       }
     }
 
@@ -36,22 +41,43 @@ export default function useFormAndValidation() {
         });
         setIsValid(false);
       } else {
-        const passwordRequirement = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
-
-        if (!passwordRequirement) {
+        if (!passwordRegex.test(value)) {
           setErrors({
             ...errors,
-            [name]: "Пароль должен содержать только латинские буквы и цифры, и следующие спецсимволы: " +
-            "!#$%&'*+-/=?^_`{|}~,\"(),:;<>@[\\]",
+            [name]: "Пароль должен содержать только латинские буквы, цифры и следующие символы: " +
+            // "!#$%&'*+-/=?^_`{|}~,\"(),:;<>@[\\]",
+            "@#$%!^&*"
           });
           setIsValid(false);
         } else {
+          const hasLowerCase = /[a-z]/.test(value);
+          const hasUpperCase = /[A-Z]/.test(value);
           const hasDigit = /\d/.test(value);
+          // const hasSpecial = /[!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]/.test(value);
+          const hasSpecial = /[@#$%!^&*]/.test(value);
 
-          if (!hasDigit) {
+          if (!hasLowerCase) {
+            setErrors({
+              ...errors,
+              [name]: "Пароль должен содержать хотя бы одну строчную букву",
+            });
+            setIsValid(false);
+          } else if (!hasUpperCase) {
+            setErrors({
+              ...errors,
+              [name]: "Пароль должен содержать хотя бы одну заглавную букву",
+            });
+            setIsValid(false);
+          } else if (!hasDigit) {
             setErrors({
               ...errors,
               [name]: "Пароль должен содержать хотя бы одну цифру",
+            });
+            setIsValid(false);
+          } else if (!hasSpecial) {
+            setErrors({
+              ...errors,
+              [name]: "Пароль должен содержать хотя бы один следующий символ: @#$%!^&*",
             });
             setIsValid(false);
           } else {
@@ -63,7 +89,12 @@ export default function useFormAndValidation() {
     }
 
     if (name === "re_password") {
-      if (value !== values.password) {
+      if (value.length < 1) {
+        setErrors({
+          ...errors,
+          [name]: `Введите пароль повторно` });
+        setIsValid(false);
+      } else if (value !== values.password) {
         setErrors({ ...errors, [name]: "Пароли не совпадают" });
         setIsValid(false);
       } else {
@@ -72,29 +103,29 @@ export default function useFormAndValidation() {
       }
     }
 
-    if (name === "first_name") {
-      if (value.length < 1) {
-        setErrors({ ...errors, [name]: "Введите имя" });
-        setIsValid(false);
-      } else if (!nameRegEx.test(value)) {
-        setErrors({
-          ...errors,
-          [name]: 'Имя не длиннее 80 символов. Латиница, кириллица, арабица'
-        });
-        setIsValid(false);
-      }
-    }
+    if (name === "first_name" || name === "last_name") {
+      const title = name === "first_name" ? "Имя" : "Фамилия";
 
-    if (name === "last_name") {
       if (value.length < 1) {
-        setErrors({ ...errors, [name]: "Введите фамилию" });
-        setIsValid(false);
-      } else if (!nameRegEx.test(value)) {
         setErrors({
           ...errors,
-          [name]: 'Фамилия не длиннее 80 символов. Латиница, кириллица, арабица'
+          [name]: `Введите ${name === "first_name" ? 'имя' : 'фамилию'}` });
+        setIsValid(false);
+      } else if (value.length > 80) {
+        setErrors({
+          ...errors,
+          [name]: `${title} не может быть длиннее 80 символов`,
         });
         setIsValid(false);
+      } else if (!nameRegex.test(value)) {
+        setErrors({
+          ...errors,
+          [name]: `${title} может состоять только из латинских и кириллических букв, цифр и следующих символов: .-_@`
+        });
+        setIsValid(false);
+      } else {
+        setErrors({ ...errors, [name]: "" });
+        setIsValid(true);
       }
     }
   }

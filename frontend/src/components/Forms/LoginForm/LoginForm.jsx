@@ -1,11 +1,10 @@
 import React from "react";
 import { Link, useNavigate } from 'react-router-dom';
-import Button from "../../Button/Button";
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
-import InputText from "../../Inputs/InputText/InputText";
-// import SocialLinksBar from "../../SocialLinksBar/SocialLinksBar";
-import "./LoginForm.css";
 import * as Api from '../../../utils/Api';
+import InputText from "../../Inputs/InputText/InputText";
+import Button from "../../Button/Button";
+import "./LoginForm.css";
 
 const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
   // const { handleLogin } = React.useContext(Context);
@@ -26,14 +25,9 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
           return res.json();
         } else if (res.status === 401) {
           return res.json().then(error => {
-            setErrors({ email: 'Пользователь с таким email не зарегистрирован.' });
+            setErrors({ password: 'Неправильный адрес эл. почты или пароль' });
             return Promise.reject(error.detail);
           });
-        // } else if (res.status === 404) {
-        //   return res.json().then(error => {
-        //     setErrors({ password: 'Неправильный адрес эл. почты или пароль.' });
-        //     return Promise.reject(error.detail);
-        //   });
         } else {
           return res.json().then(error => {
             setErrors({ password: error.detail });
@@ -100,7 +94,7 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
             placeholder="Эл. почта"
             type="email"
             autoComplete="email"
-            marginTop={20}
+            marginTop={32}
             width={400}
             height={60}
             name="email"
@@ -113,7 +107,7 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
             placeholder="Пароль"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
-            marginTop={20}
+            marginTop={32}
             width={400}
             height={60}
             pass={togglePasswordVisibility}
@@ -127,7 +121,6 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
             Восстановить пароль
           </Link>
         </div>
-        {/* <SocialLinksBar /> */}
         <Button
           text="Войти"
           width={400}

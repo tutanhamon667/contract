@@ -8,9 +8,9 @@ const Register = ({ handleRegister, error, isError }) => {
   }
 
   return (
-    <div className="wrapper">
-      <div className="container">
-        <h1 className="title">Регистрация</h1>
+    <div className="register__wrapper">
+      <div className="register__container">
+        <h1 className="register__title">Регистрация</h1>
         <RegisterForm onSubmitHandler={onSubmit} errorRequest={error} isError={isError}/>
       </div>
     </div>

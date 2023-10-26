@@ -10,12 +10,6 @@ from .serializers import DynamicFieldsModelSerializer
 User = get_user_model()
 
 
-class UserViewSerialiser(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
 class IndustrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Industry

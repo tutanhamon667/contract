@@ -1,6 +1,6 @@
 .header {
   background-color: transparent;
-  margin: 16px 76px 0 76px;
+  margin: 14px 76px 0 76px;
   border-radius: 12px;
   position: relative;
 }
@@ -96,10 +96,4 @@
 .profile__popup_show {
   opacity: 1;
   z-index: 5;
-}
-
-.profile__popup-signout {
-  border: none;
-  background-color: white;
-  cursor: pointer;
 }

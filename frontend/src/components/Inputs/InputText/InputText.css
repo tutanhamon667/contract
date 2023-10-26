@@ -37,6 +37,10 @@
   padding: 19px 49px 19px 19px;
 }
 
+.input_type_password {
+  padding-right: 61px;
+}
+
 /* start: hide default browser arrow for number  */
 .input[type='number'] {
   appearance: textfield;
@@ -50,23 +54,23 @@
 
 .input__showPass {
   position: absolute;
-  top: 46%;
-  left: 91%;
+  top: 54%;
+  left: 89%;
   width: 24px;
   height: 24px;
+  border: none;
   background-image: url(../../../images/showPass.svg);
   background-position: center;
+  background-color: transparent;
   opacity: .15;
   cursor: pointer;
 }
 
 .input__errorText {
   position: absolute;
-  /* так по макету, но сейчас пока не хватает места */
-  /*top: calc(100% + 4px);*/
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   color: #EB5757;
   font-size: 12px;
-  line-height: 1;
+  line-height: 1.1;
 }
