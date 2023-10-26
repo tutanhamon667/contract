@@ -6,24 +6,8 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from PIL import Image
 
-from .usermanager import UserManager
-
-THUMBNAIL_SIZE = (100, 100)
-CATEGORY_CHOICES = (
-    ('design', 'дизайн'),
-    ('development', 'разработка'),
-    ('testing', 'тестирование'),
-    ('administration', 'администрирование'),
-    ('marketing', 'маркетинг'),
-    ('content', 'контент'),
-    ('other', 'разное'),
-)
-CONTACT_TYPE = (
-    ('phone', 'Phone number'),
-    ('email', 'E-mail'),
-    ('telegram', 'Telegram'),
-    ('other', 'Other')
-)
+from taski.settings import CATEGORY_CHOICES, CONTACT_TYPE, THUMBNAIL_SIZE
+from users.usermanager import UserManager
 
 
 class Member(PermissionsMixin, AbstractBaseUser):
