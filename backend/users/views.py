@@ -118,7 +118,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 'web'
             )
         serializer = self.get_serializer(obj, fields=fields)
-        #serializer.is_valid(raise_exception=True)
+        # serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
     def partial_update(self, request, pk=None):
