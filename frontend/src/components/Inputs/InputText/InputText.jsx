@@ -28,7 +28,8 @@ const InputText = (
   return (
     <div className="inputContainer">
       <InputType
-        className={`input${name === 'payrate' ? ' input_type_number' : ''}${error ? ' input_type_error' : ''}`}
+        className={`input${name === 'payrate' ? ' input_type_number'
+          : name.includes('password') ? ' input_type_password' : ''}${error ? ' input_type_error' : ''}`}
         type={type !== 'textarea' ? type : ''}
         placeholder={placeholder}
         autoComplete={autoComplete}
@@ -39,7 +40,7 @@ const InputText = (
         id={id}
         disabled={isDisabled}
       />
-      {pass && <div className="input__showPass" onClick={pass} role="button" tabIndex={0} />}
+      {pass && <button className="input__showPass" type="button" onClick={pass} />}
       <span className="input__errorText">{errorMessage}</span>
     </div>
   );
