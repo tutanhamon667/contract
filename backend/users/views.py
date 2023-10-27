@@ -118,7 +118,6 @@ class UserViewSet(viewsets.ModelViewSet):
                 'web'
             )
         serializer = self.get_serializer(obj, fields=fields)
-        # serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
     def partial_update(self, request, pk=None):
@@ -153,8 +152,8 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset()
 
         if request.method == 'GET':
-            obj = get_object_or_404(queryset, user_id=user.id)
-            # obj, result = queryset.get_or_create(user=user)
+            # obj = get_object_or_404(queryset, user_id=user.id)
+            obj, result = queryset.get_or_create(user=user)
             serializer = self.get_serializer(obj)
         if request.method == 'POST':
             if user.is_worker:

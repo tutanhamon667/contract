@@ -18,6 +18,7 @@ from api.serializers import (ChatCreateSerializer, ChatReadSerializer,
                              MessageSerializer, RespondedSerializer)
 from chat.models import Chat, Message
 from orders.models import Job, JobCategory, JobResponse
+from taski.settings import OTHER_TASK_CHAT_ERR, SELECTED_FOR_JOB_MSG
 from users.models import WorkerProfile
 
 
@@ -38,7 +39,6 @@ class JobViewSet(ModelViewSet):
     0 - по умполчанию все задания
     Отображение списка заказов заказчика
     используется фильтр client.
-
     """
     queryset = Job.objects.all()
     search_fields = ('name',)
@@ -138,13 +138,12 @@ class ChatViewSet(CreateListViewSet):
         """
         Задание может создвать с привязкой к заданию.
         """
-        err = 'Вы не можете создать чат по чужому заданию.'
-        default_message = 'Вас выбрали в качестве исполнителя'
         customer = self.request.user.customerprofile
         freelancer_id = self.request.data.get('freelancer')
         freelancer = get_object_or_404(WorkerProfile, pk=freelancer_id)
         job_id = self.request.data.get('job_id')
-        message_text = self.request.data.get('message_text', default_message)
+        message_text = self.request.data.get('message_text',
+                                             SELECTED_FOR_JOB_MSG)
         if job_id:
             job = get_object_or_404(Job, pk=job_id)
             if customer == job.client:
@@ -153,7 +152,7 @@ class ChatViewSet(CreateListViewSet):
                                        title=job.title,
                                        job=job)
             else:
-                return Response({'detail': err},
+                return Response({'detail': OTHER_TASK_CHAT_ERR},
                                 status=status.HTTP_403_FORBIDDEN)
         else:
             chat = serializer.save(customer=customer,
@@ -166,8 +165,7 @@ class ChatViewSet(CreateListViewSet):
         except Exception as e:
             return Response({'detail': str(e)},
                             status=status.HTTP_400_BAD_REQUEST)
-        return Response({'detail': 'Чат и сообщение успешно созданы.'},
-                        status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class MessageViewSet(CreateListViewSet):
