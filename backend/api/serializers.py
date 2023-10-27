@@ -137,7 +137,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
         many=True
     )
     stack = JobStackSerializer(many=True,)
-    job_files = JobFileSerializer(many=True,)
+    job_files = JobFileSerializer(many=True, required=False)
 
     class Meta:
         model = Job
