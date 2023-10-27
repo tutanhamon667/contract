@@ -4,10 +4,11 @@ from django.core.validators import RegexValidator
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from .models import (Category, Contact, DiplomaFile, Education,
-                     EducationDiploma, FreelancerCategory, FreelancerContact,
-                     FreelancerEducation, FreelancerPortfolio, FreelancerStack,
-                     PortfolioFile, Stack, WorkerProfile)
+from .models import (CATEGORY_CHOICES, Category, Contact, DiplomaFile,
+                     Education, EducationDiploma, FreelancerCategory,
+                     FreelancerContact, FreelancerEducation,
+                     FreelancerPortfolio, FreelancerStack, PortfolioFile,
+                     Stack, WorkerProfile)
 from .serializers import DynamicFieldsModelSerializer
 
 User = get_user_model()
@@ -33,6 +34,7 @@ class StackSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    name = serializers.ChoiceField(choices=CATEGORY_CHOICES, required=True)
     """Стэк технологий."""
     class Meta:
         model = Category
@@ -57,6 +59,7 @@ class PortfolioFileSerializer(serializers.ModelSerializer):
 
 class EducationSerializer(serializers.ModelSerializer):
     diploma = DiplomaFileSerializer(many=True, required=False)
+    name = serializers.CharField(required=True)
 
     class Meta:
         model = Education
@@ -100,11 +103,11 @@ class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
 
 
 class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
-    user = FreelancerField(queryset=User.objects.all())
+    user = FreelancerField(queryset=User.objects.all(), required=False)
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
     account_email = serializers.ReadOnlyField(source='user.email')
-    contacts = ContactSerializer(many=True, required=True)
+    contacts = ContactSerializer(many=True, required=False)
     stacks = StackSerializer(many=True, required=False)
     categories = CategorySerializer(many=True, required=True)
     education = EducationSerializer(many=True, required=False)
@@ -113,6 +116,17 @@ class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = WorkerProfile
         fields = '__all__'
+
+    def validate(self, attrs):
+        user = self.context.get('request')._user
+        if (
+            WorkerProfile.objects.filter(user_id=user.id)
+            and self.context.get('request').method == 'POST'
+        ):
+            raise ValidationError(
+                'Профиль уже существует!'
+            )
+        return super().validate(attrs)
 
     def validate_user(self, freelancer):
         user = self.context.get('request').user
@@ -125,6 +139,40 @@ class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
             )
         return user
 
+    def validate_contacts(self, contacts):
+        if len(contacts) == 0:
+            raise ValidationError('Укажите Ваши контактные данные!')
+        for contact in contacts:
+            if 'type' not in contact:
+                raise ValidationError('Укажите Ваши контактные данные!')
+        return contacts
+
+    def validate_stacs(self, stacs):
+        if len(stacs) == 0:
+            raise ValidationError('Укажите Ваш стэк технологий!')
+        for stack in stacs:
+            if 'name' not in stack:
+                raise ValidationError('Укажите Ваш стэк технологий!')
+        return stacs
+
+    def validate_categories(self, categories):
+        if len(categories) == 0:
+            raise ValidationError('Укажите Вашу специализацию!')
+        for category in categories:
+            if 'name' not in category:
+                raise ValidationError('Укажите Вашу специализацию!')
+        return categories
+
+    def validate_education(self, education):
+        if len(education) == 0:
+            raise ValidationError('Укажите Ваше образование!')
+        for record in education:
+            if 'name' not in record:
+                raise ValidationError('Укажите название учебного заведения!')
+            if 'faculty' not in record:
+                raise ValidationError('Укажите название факультета!')
+        return education
+
     def create(self, validated_data):
         if 'contacts' in self.initial_data:
             contacts = validated_data.pop('contacts')
@@ -136,6 +184,8 @@ class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
             education = validated_data.pop('education')
         if 'portfolio' in self.initial_data:
             portfolio = validated_data.pop('portfolio')
+        if 'user' not in self.initial_data:
+            validated_data['user'] = self.context.get('request')._user
         profile = WorkerProfile.objects.create(**validated_data)
 
         if 'contacts' in locals():
