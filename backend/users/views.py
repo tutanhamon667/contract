@@ -1,12 +1,15 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserView
-from rest_framework import permissions, status, viewsets
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
 from .clients import (GetCustomerProfileSerializer,
                       PostCustomerProfileSerializer)
+from .filters import FreelancerFilter
 from .freelancers import (GetWorkerProfileSerializer,
                           PostWorkerProfileSerializer, UserViewSerialiser)
 from .models import CustomerProfile, WorkerProfile
@@ -18,8 +21,25 @@ from .serializers import (NewEmailSerializer, PasswordResetConfirmSerializer,
 User = get_user_model()
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(is_worker=True).order_by('last_name')
+class OnlyListView(mixins.ListModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class UserView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
+               mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class FreelancerFirstPage(OnlyListView):
+    queryset = WorkerProfile.objects.all().order_by('user')
+    serializer_class = UserViewSerialiser
+    permission_classes = (permissions.AllowAny,)
+    filter_backends = (SearchFilter, DjangoFilterBackend,)
+    filterset_class = FreelancerFilter
+
+
+class UserViewSet(UserView):
+    queryset = User.objects.all().order_by('last_name')
     http_method_names = ['get', 'post', 'patch']
     token_generator = DjoserView.token_generator
     permission_classes = (permissions.AllowAny,)
@@ -35,8 +55,6 @@ class UserViewSet(viewsets.ModelViewSet):
         пользователя и в зависимости от этого возвращает требуемый queryset
         """
         key = self.action
-        if key == 'partial_update':
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if key == 'retrieve':
             user = get_object_or_404(
                 User,
@@ -62,8 +80,6 @@ class UserViewSet(viewsets.ModelViewSet):
         пользователя и в зависимости от этого возвращает требуемый serializer
         """
         key = self.action
-        if key == 'partial_update':
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if key == 'create':
             return UserCreateSerializer
         if key == 'reset_password':
@@ -75,8 +91,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if key == 'new_password':
             return SetPasswordSerializer
 
-        if key in ['retrieve', 'me']:
-            if key == 'retrieve':
+        if key in ['retrieve', 'me', 'partial_update']:
+            if key in ['retrieve', 'partial_update']:
                 user = get_object_or_404(
                     User,
                     id=self.kwargs.get('pk')

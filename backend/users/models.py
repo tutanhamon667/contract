@@ -1,5 +1,6 @@
 from io import BytesIO
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import MinValueValidator, RegexValidator
@@ -74,6 +75,9 @@ class Member(PermissionsMixin, AbstractBaseUser):
     @property
     def is_superuser(self):
         return self.is_admin
+
+
+User = get_user_model()
 
 
 class Contact(models.Model):
@@ -246,7 +250,7 @@ class Education(models.Model):
 
 class WorkerProfile(models.Model):
     user = models.OneToOneField(
-        Member,
+        User,
         on_delete=models.PROTECT
     )
     photo = models.ImageField(
@@ -380,7 +384,7 @@ class Industry(models.Model):
 
 class CustomerProfile(models.Model):
     user = models.OneToOneField(
-        Member,
+        User,
         on_delete=models.PROTECT
     )
     photo = models.ImageField(
