@@ -1,6 +1,7 @@
 from io import BytesIO
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from PIL import Image
@@ -123,6 +124,15 @@ class StackJob(models.Model):
 
     def __str__(self):
         return f"{self.job.title} - {self.stack.name}"
+
+    def clean(self):
+        num_stacks_for_job = self.job.stackjob_set.count()
+        if num_stacks_for_job >= 20:
+            raise ValidationError("Максимальное количество тэгов - 20")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super(StackJob, self).save(*args, **kwargs)
 
 
 class JobFile(models.Model):
