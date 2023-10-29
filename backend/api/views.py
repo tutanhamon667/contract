@@ -18,6 +18,7 @@ from api.serializers import (ChatCreateSerializer, ChatReadSerializer,
                              MessageSerializer, RespondedSerializer)
 from chat.models import Chat, Message
 from orders.models import Job, JobCategory, JobResponse
+from taski.settings import OTHER_TASK_CHAT_ERR, SELECTED_FOR_JOB_MSG
 from users.models import WorkerProfile
 
 

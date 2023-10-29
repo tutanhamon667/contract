@@ -3,25 +3,16 @@ from rest_framework import serializers
 
 from api.utils import CustomBase64ImageField
 from chat.models import Chat, Message
-from orders.models import (CATEGORY_CHOICES, Job, JobCategory, JobFile,
-                           JobResponse, StackJob)
+from orders.models import Job, JobCategory, JobFile, JobResponse, StackJob
+from taski.settings import (CATEGORY_CHOICES, CHAT_ALREADY_EXISTS_ERR,
+                            CURRENT_DATE_ERR, FILE_OVERSIZE_ERR,
+                            JOB_ALREADY_APPLIED_ERR, MAX_FILE_SIZE,
+                            PUB_DATE_ERR, STACK_ERR_MSG)
 from users.clients import GetCustomerProfileSerializer
 from users.freelancers import GetWorkerProfileSerializer
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
-
-# File requiremnts
-MAX_FILE_SIZE_MB = 50
-MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024
-ALLOWED_FILE_EXT = ['.jpg', '.jpeg', '.png']
-
-# Error messages
-FILE_OVERSIZE_ERR = f"Превышен размер файла: {MAX_FILE_SIZE_MB} МБ."
-FILE_EXT_ERR = 'Допустимые типы файлов:' + ', '.join(ALLOWED_FILE_EXT)
-STACK_ERR_MSG = 'Укажите минимум 1 навык'
-CURRENT_DATE_ERR = 'Срок выполнения не может быть раньше сегодняшней даты.'
-PUB_DATE_ERR = 'Срок выполнения не может быть раньше даты создания заказа.'
 
 
 class ClientSerializer(serializers.ModelSerializer):

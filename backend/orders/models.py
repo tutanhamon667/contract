@@ -1,24 +1,15 @@
 from io import BytesIO
 
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import MinValueValidator
 from django.db import models
 from PIL import Image
 
+from taski.settings import CATEGORY_CHOICES, THUMBNAIL_SIZE
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
-
-THUMBNAIL_SIZE = (100, 100)
-CATEGORY_CHOICES = (
-    ('design', 'дизайн'),
-    ('development', 'разработка'),
-    ('testing', 'тестирование'),
-    ('administration', 'администрирование'),
-    ('marketing', 'маркетинг'),
-    ('content', 'контент'),
-    ('other', 'разное'),
-)
 
 
 class JobCategory(models.Model):

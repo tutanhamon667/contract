@@ -22,6 +22,7 @@ DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1',
                  'localhost',
+                 'localhost:5173',
                  'taski.servebeer.com',
                  '62.84.127.171',
                  '45.86.180.105',
@@ -86,7 +87,7 @@ WSGI_APPLICATION = 'taski.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
@@ -105,7 +106,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-'''
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -239,3 +240,46 @@ CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
 ]
+
+
+# APPS CONSTANTS
+
+# Требования к размерам файлов в задании - используется в api/serializers.py
+MAX_FILE_SIZE_MB = 50
+MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024
+ALLOWED_FILE_EXT = ['.jpg', '.jpeg', '.png']
+
+# Размер миниатюры (api/utils.py)
+THUMBNAIL_SIZE = (100, 100)
+
+# Cообщения ошибок валидации в api/serializers.py
+FILE_OVERSIZE_ERR = f"Превышен размер файла: {MAX_FILE_SIZE_MB} МБ."
+FILE_EXT_ERR = 'Допустимые типы файлов:' + ', '.join(ALLOWED_FILE_EXT)
+STACK_ERR_MSG = 'Укажите минимум 1 навык'
+CURRENT_DATE_ERR = 'Срок выполнения не может быть раньше сегодняшней даты.'
+PUB_DATE_ERR = 'Срок выполнения не может быть раньше даты создания заказа.'
+CHAT_ALREADY_EXISTS_ERR = 'Вы уже создали чат с фрилансером по этому заданию.'
+JOB_ALREADY_APPLIED_ERR = 'Вы уже откликнулись на задание.'
+
+# Cообщения в api/views.py
+OTHER_TASK_CHAT_ERR = 'Вы не можете создать чат по чужому заданию.'
+SELECTED_FOR_JOB_MSG = 'Вас выбрали в качестве исполнителя'
+
+# Перечень специализаций для моделей
+CATEGORY_CHOICES = (
+    ('design', 'дизайн'),
+    ('development', 'разработка'),
+    ('testing', 'тестирование'),
+    ('administration', 'администрирование'),
+    ('marketing', 'маркетинг'),
+    ('content', 'контент'),
+    ('other', 'разное'),
+)
+
+# Перечень контактов для моделей в users
+CONTACT_TYPE = (
+    ('phone', 'Phone number'),
+    ('email', 'E-mail'),
+    ('telegram', 'Telegram'),
+    ('other', 'Other')
+)

@@ -4,7 +4,7 @@ from drf_extra_fields.fields import Base64ImageField
 from pdf2image import convert_from_bytes, convert_from_path
 from PIL import Image
 
-THUMBNAIL_SIZE = (100, 100)
+from taski.settings import THUMBNAIL_SIZE
 
 
 def generate_thumbnail(file):
