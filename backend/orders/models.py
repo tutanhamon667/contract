@@ -126,7 +126,7 @@ class StackJob(models.Model):
         return f"{self.job.title} - {self.stack.name}"
 
     def clean(self):
-        num_stacks_for_job = self.job.stackjob_set.count()
+        num_stacks_for_job = self.job.stack.count()
         if num_stacks_for_job >= 20:
             raise ValidationError("Максимальное количество тэгов - 20")
 
