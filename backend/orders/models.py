@@ -2,7 +2,6 @@ from io import BytesIO
 
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from PIL import Image
