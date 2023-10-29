@@ -178,7 +178,6 @@ class UserViewSet(UserView):
             # obj = get_object_or_404(queryset, user_id=user.id)
             obj, result = queryset.get_or_create(user=user)
             serializer = self.get_serializer(obj)
-            print(obj.categories.values())
         if request.method == 'POST':
             if user.is_worker:
                 fields = None
