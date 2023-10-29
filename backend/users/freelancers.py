@@ -13,11 +13,24 @@ from .serializers import DynamicFieldsModelSerializer
 
 User = get_user_model()
 
-
+'''
 class UserViewSerialiser(serializers.ModelSerializer):
+    payrate = serializers.ReadOnlyField(source='workerprofile.payrate')
+    about = serializers.StringRelatedField(source='workerprofile.about')
+    categories = serializers.StringRelatedField(
+        source='workerprofile.categories', many=True
+    )
+    stacks = serializers.StringRelatedField(
+        source='workerprofile.stacks', many=True
+    )
+
     class Meta:
         model = User
-        fields = ('first_name', 'last_name')
+        fields = (
+            'first_name', 'last_name',
+            'about', 'payrate', 'categories', 'stacks'
+        )
+'''
 
 
 class ContactSerializer(serializers.ModelSerializer):
@@ -100,6 +113,16 @@ class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = WorkerProfile
         fields = '__all__'
+
+
+class UserViewSerialiser(serializers.ModelSerializer):
+    user = FreelancerField(queryset=User.objects.all())
+    stacks = StackSerializer(many=True)
+    categories = CategorySerializer(many=True)
+
+    class Meta:
+        model = WorkerProfile
+        fields = ('user', 'stacks', 'categories', 'about', 'payrate')
 
 
 class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
