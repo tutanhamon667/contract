@@ -11,8 +11,8 @@ class FreelancerFilter(FilterSet):
         field_name='payrate', lookup_expr='lte', label='до'
     )
     categories = filters.ModelMultipleChoiceFilter(
-        field_name='categories__slug',
-        to_field_name='slug',
+        field_name='categories__name',
+        to_field_name='name',
         queryset=Category.objects.all(),
         label='Категории',
     )

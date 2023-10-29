@@ -31,7 +31,7 @@ class UserView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 
 
 class FreelancerFirstPage(OnlyListView):
-    queryset = WorkerProfile.objects.all().order_by('user')
+    queryset = WorkerProfile.objects.all().order_by('user__last_name')
     serializer_class = UserViewSerialiser
     permission_classes = (permissions.AllowAny,)
     filter_backends = (SearchFilter, DjangoFilterBackend,)
@@ -56,6 +56,8 @@ class UserViewSet(UserView):
         """
         key = self.action
         if key == 'retrieve':
+            if getattr(self, 'swagger_fake_view', False):
+                return WorkerProfile.objects.none()
             user = get_object_or_404(
                 User,
                 id=self.kwargs.get('pk')
@@ -92,6 +94,9 @@ class UserViewSet(UserView):
             return SetPasswordSerializer
 
         if key in ['retrieve', 'me', 'partial_update']:
+            if getattr(self, 'swagger_fake_view', False):
+                return GetWorkerProfileSerializer
+
             if key in ['retrieve', 'partial_update']:
                 user = get_object_or_404(
                     User,
@@ -103,6 +108,9 @@ class UserViewSet(UserView):
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
 
+            if user.is_customer == user.is_worker:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
             if self.request.method in ['POST', 'PATCH']:
                 if user.is_customer:
                     return PostCustomerProfileSerializer
@@ -113,7 +121,6 @@ class UserViewSet(UserView):
                     return GetCustomerProfileSerializer
                 if user.is_worker:
                     return GetWorkerProfileSerializer
-        #    return Response(status=status.HTTP_400_BAD_REQUEST)
         return UserViewSerialiser
 
     def retrieve(self, request, pk=None):
@@ -171,6 +178,7 @@ class UserViewSet(UserView):
             # obj = get_object_or_404(queryset, user_id=user.id)
             obj, result = queryset.get_or_create(user=user)
             serializer = self.get_serializer(obj)
+            print(obj.categories.values())
         if request.method == 'POST':
             if user.is_worker:
                 fields = None

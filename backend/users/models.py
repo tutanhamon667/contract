@@ -10,7 +10,7 @@ from PIL import Image
 from .usermanager import UserManager
 
 THUMBNAIL_SIZE = (100, 100)
-CATEGORY_CHOICES = (
+CATEGORY_CHOICES = [
     ('design', 'дизайн'),
     ('development', 'разработка'),
     ('testing', 'тестирование'),
@@ -18,13 +18,13 @@ CATEGORY_CHOICES = (
     ('marketing', 'маркетинг'),
     ('content', 'контент'),
     ('other', 'разное'),
-)
-CONTACT_TYPE = (
+]
+CONTACT_TYPE = [
     ('phone', 'Phone number'),
     ('email', 'E-mail'),
     ('telegram', 'Telegram'),
     ('other', 'Other')
-)
+]
 
 
 class Member(PermissionsMixin, AbstractBaseUser):
