@@ -50,6 +50,7 @@ jobs:
         with:
           context: ./backend/
           push: true
+          build-args: --no-cache
           tags: ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_backend:latest
 
   build_frontend_and_push_to_docker_hub:
