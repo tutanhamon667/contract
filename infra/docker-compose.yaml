@@ -16,7 +16,7 @@ services:
   backend:
     image: taskiproject/freelancing-platform-project_backend:latest
     restart: always
-    command: cp -r /app/zohoverify/* /static/
+    command: cp -r /zohoverify/* /static/
     volumes:
       - static:/app/static/
       - media:/app/media/
