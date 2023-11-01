@@ -17,6 +17,9 @@ export default function useFormAndValidation() {
     setErrors({ ...errors, [name]: e.target.validationMessage });
     setIsValid(e.target.closest("form").checkValidity());
 
+
+    console.log(values);
+
     if (name === "email") {
       if (!emailRegex.test(value)) {
         setErrors({ ...errors, [name]: "Введите корректную эл. почту" });
@@ -128,6 +131,7 @@ export default function useFormAndValidation() {
         setIsValid(true);
       }
     }
+
   }
 
   return {

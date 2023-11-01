@@ -1,12 +1,12 @@
 import React from 'react';
 import './InputSelect.css';
 
-export default function InputSelect({ options, placeholder, width, isDisabled, value, onChange }) {
+export default function InputSelect({ name, options, placeholder, width, isDisabled, value, onChange }) {
 
   return (
     <select
       className={`select${value === '' ? ' select_type_placeholder' : ''}`}
-      name="degree"
+      name={name}
       value={value}
       onChange={onChange}
       style={{width}}

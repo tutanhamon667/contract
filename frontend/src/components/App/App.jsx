@@ -22,7 +22,7 @@ import "./App.css";
 
 function App() {
   // const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentUser, setCurrentUser] = useState({});
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
@@ -94,7 +94,7 @@ function App() {
                   setIsLoading(false);
                 })
                 .catch((error) => {
-                  setIsAuthenticated(false);
+                             setIsAuthenticated(false);
                   sessionStorage.removeItem('access');
                   console.error(error);
                   setIsLoading(false);
@@ -102,32 +102,78 @@ function App() {
             }
           })
           .catch((error) => {
-            setIsAuthenticated(false);
+                setIsAuthenticated(false);
             sessionStorage.removeItem('access');
             console.error(error);
             setIsLoading(false);
           })
       } else {
-        setIsAuthenticated(false);
+            setIsAuthenticated(false);
         setIsLoading(false);
       }
     }
   }, [])
 
-  function handleRegisterSubmit(values){
+  function handleRegisterSubmit(values) {
     Api.register(values)
-    .then((data) => {
-      // console.log(data);
-      setIsError(false);
-      setErrorRequest({});
+      .then((data) => {
+        // console.log(data);
+        setIsError(false);
+        setErrorRequest({});
 
-      const role = data.is_customer ? "customer" : data.is_worker && "freelancer";
-      navigate(`/${role}/complete`, {replace: true});
-    })
-    .catch((err) => {
-      setErrorRequest(err);
-      setIsError(true);
-    })
+        const role = data.is_customer ? "customer" : data.is_worker && "freelancer";
+        navigate(`/${role}/complete`, { replace: true });
+console.log(values)
+        Api.authenticateUser(values)
+        .then(res => {
+          if (res.ok) {
+            return res.json();
+          } else if (res.status === 401) {
+            return res.json().then(error => {
+
+              return Promise.reject(error.detail);
+            });
+          } else {
+            return res.json().then(error => {
+
+              return Promise.reject(error.detail);
+          });
+          }
+        })
+        .then(response => {
+          if (response['refresh'] && response['access']) {
+            localStorage.setItem('refresh', response['refresh']);
+            sessionStorage.setItem('access', response['access']);
+          }
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
+      })
+      .catch((err) => {
+        setErrorRequest(err);
+        setIsError(true);
+      })
+  }
+
+  function handleCustomerSubmit(data) {
+    console.log(data)
+    const array = {
+      "photo": data.photo.photo,
+      "name": data.values.name,
+      "activity": data.values.activity,
+      "about": data.values.about,
+      "web": data.values.web
+    }
+    console.log(array)
+    Api.sendCustomerInfo(array)
+      .then((data) => {
+        console.log(data)
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+
   }
 
   // function updateUser(userEmail) {
@@ -168,7 +214,7 @@ function App() {
             <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
             <Route path="freelancer/complete" element={<FreelancerCompleteForm />} />
             <Route path="customer" element={<ProfileCustomer />} />
-            <Route path="customer/complete" element={<CustomerCompleteForm />} />
+            <Route path="customer/complete" element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />} />
             <Route path="create-task" element={<CreateTaskForm />} />
           </Route>
           <Route index element={<Main />} />
