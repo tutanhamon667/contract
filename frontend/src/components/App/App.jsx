@@ -171,6 +171,7 @@ function App() {
     Api.sendCustomerInfo(array)
       .then((data) => {
         console.log(data)
+        navigate('/customer', { replace: true });
       })
       .catch((err)=>{
         console.error(err)

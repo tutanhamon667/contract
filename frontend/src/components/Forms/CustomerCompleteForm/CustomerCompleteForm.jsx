@@ -9,7 +9,6 @@ import InputSelect from '../../Inputs/InputSelect/InputSelect';
 import "./CustomerCompleteForm.css";
 
 function CustomerCompleteForm({handleCustomerSubmit}) {
-
   const [photo, setPhoto] = useState(null);
 
   const {
