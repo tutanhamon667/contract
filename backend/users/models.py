@@ -382,6 +382,7 @@ class CustomerProfile(models.Model):
         verbose_name='публичный email для связи',
         max_length=254,
         db_index=True,
+        null=True,
         blank=True,
         unique=True,
     )

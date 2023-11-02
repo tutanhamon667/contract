@@ -127,6 +127,7 @@ class UserViewSerialiser(serializers.ModelSerializer):
 
 class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
     user = FreelancerField(queryset=User.objects.all(), required=False)
+    photo = Base64ImageField(required=False)
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
     account_email = serializers.ReadOnlyField(source='user.email')
