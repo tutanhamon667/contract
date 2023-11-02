@@ -1,0 +1,82 @@
+.inputSwitch__container {
+  position: relative;
+}
+
+.inputSwitch__label {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  color: #7B7B7B;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.inputSwitch__input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #C6C6C6;
+  background-color: #FFF;
+  appearance: none;
+  transition: border .3s ease-in-out;
+}
+
+.inputSwitch__input:focus {
+  outline: none;
+  border-color: #3F3F3F;
+}
+
+.inputSwitch__input_type_radio {
+  border-radius: 50%;
+}
+
+.inputSwitch__input_type_radio:hover:not(:disabled) {
+  border-color: #3F3F3F;
+}
+
+.inputSwitch__input:focus {
+  outline: none;
+  border-color: #3F3F3F;
+}
+
+.inputSwitch__input_type_radio:checked {
+  border-color: #3F3F3F;
+}
+
+.inputSwitch__input_type_radio:checked::after {
+  content: '';
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  background-color: #3F3F3F;
+}
+
+.inputSwitch__input_type_checkbox {
+  border-radius: 8px;
+  transition: background-color .3s ease-in-out, box-shadow .3s ease-in-out, border .3s ease-in-out;
+}
+
+.inputSwitch__input_type_checkbox:hover:not(:disabled) {
+  box-shadow: 2px 2px 0 0 #C6C6C6;
+}
+
+.inputSwitch__input_type_checkbox:checked {
+  background: #3F3F3F url(../../../images/check.svg) no-repeat center / 14px;
+}
+
+.inputSwitch__input_type_error {
+  border: 1px solid #EB5757;
+}
+
+.inputSwitch__errorText {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  color: #EB5757;
+  font-size: 12px;
+  line-height: 1.1;
+}

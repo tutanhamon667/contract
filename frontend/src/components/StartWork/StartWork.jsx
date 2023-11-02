@@ -8,10 +8,10 @@ function StartWork() {
     <section className="start-work">
       <h1 className="start-work__title">Найдем айти талант под каждую таску</h1>
       <div className="start-work__buttons-container">
-        <Link to="signin">
+        <Link to="signup">
           <Button text="Cоздать таску" width={193} buttonSecondary />
         </Link>
-        <Link to="signin">
+        <Link to="signup">
           <Button text="Cтать фрилансером" width={160} buttonSecondary buttonBlack/>
         </Link>
       </div>

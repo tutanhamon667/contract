@@ -36,27 +36,6 @@
   cursor: pointer;
 }
 
-.create-task-form__input-checkbox {
-  box-sizing: border-box;
-  position: relative;
-  width: 24px;
-  height: 24px;
-  border: 1px solid #C6C6C6;
-  border-radius: 8px;
-  background-color: #FFF;
-  appearance: none;
-  transition: background-color .3s ease-in-out, box-shadow .3s ease-in-out;
-}
-
-.create-task-form__input-checkbox:hover {
-  box-shadow: 2px 2px 0 0 #C6C6C6;
-  cursor: pointer;
-}
-
-.create-task-form__input-checkbox:checked {
-  background: #3F3F3F url(../../../images/check.svg) no-repeat center / 14px;
-}
-
 .create-task-form__input-doc-wrapper {
   display: flex;
   gap: 8px;

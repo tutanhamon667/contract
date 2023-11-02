@@ -4,8 +4,8 @@ import { useState } from 'react';
 import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
-function InputTags({ setStacksValues, isDisabled }) {
-  const [tags, setTags] = useState([]);
+function InputTags({ setStacksValues, isDisabled, tags, setTags }) {
+  // const [tags, setTags] = useState([]);
   const [isEditMode, setIsEditMode] = useState(true);
 
   function handleKeyDown(e) {
@@ -14,7 +14,7 @@ function InputTags({ setStacksValues, isDisabled }) {
     if (!value.trim()) return;
 
     setTags([...tags, value]);
-    setStacksValues([...tags, value]);
+    // setStacksValues([...tags, value]);
 
     e.target.value = '';
     e.preventDefault();
@@ -38,11 +38,11 @@ function InputTags({ setStacksValues, isDisabled }) {
       )}
       {tags.map((tag, index) => (
         <div
-          className="list__title"
+          className={`tag__title${isDisabled ? ' tag__title_disabled' : ''}`}
           key={index}
-          onClick={() => removeTag(index)}>
+          onClick={() => !isDisabled && removeTag(index)}>
           {tag}
-          {isEditMode && <span className="list__item-close"></span>}
+          {isEditMode && !isDisabled && <span className="tag__item-close"></span>}
         </div>
       ))}
     </div>

@@ -9,6 +9,7 @@ import InputTags from '../../Inputs/InputTags/InputTags';
 import Button from '../../Button/Button';
 import InputSelect from '../../Inputs/InputSelect/InputSelect';
 import './FreelancerCompleteForm.css';
+import { InputSwitch } from '../../Inputs/InputSwitch/InputSwitch';
 
 const MAX_ATTACHED_DOCS = 8;
 
@@ -115,29 +116,23 @@ function FreelancerCompleteForm({ setIsAuthenticated }) {
       <div>
         <p className="freelancer-complete-form__input-text">Контакты</p>
         <div className="freelancer-complete-form__contacts-wrapper">
-          <InputText type="tel" placeholder="+7" autoComplete="tel" name="tel" width={328} value={values.tel || ''}
+          <InputText type="tel" placeholder="+7" autoComplete="tel" name="phone" width={328} value={values.tel || ''}
             error={errors.tel} errorMessage={errors.tel} onChange={handleChange}
           />
-          <label className="freelancer-complete-form__input-radio-text">
-            <input type="radio" className="freelancer-complete-form__input-radio" name="contact-prefer" />
-            Предпочтительный вид связи
-          </label>
+          <InputSwitch type="radio" name="preferred" label="Предпочтительный вид связи" value="phone"
+                       onChange={handleChange} />
           <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width={328}
             value={values.email || ''} error={errors.email} errorMessage={errors.email}
             onChange={handleChange}
           />
-          <label className="freelancer-complete-form__input-radio-text">
-            <input type="radio" className="freelancer-complete-form__input-radio" name="contact-prefer" />
-            Предпочтительный вид связи
-          </label>
+          <InputSwitch type="radio" name="preferred" label="Предпочтительный вид связи" value="email"
+                       onChange={handleChange} />
           <InputText type="text" placeholder="Телеграм" autoComplete="telegram" name="telegram" width={328}
             value={values.telegram || ''} error={errors.telegram} errorMessage={errors.telegram}
             onChange={handleChange}
           />
-          <label className="freelancer-complete-form__input-radio-text">
-            <input type="radio" className="freelancer-complete-form__input-radio" name="contact-prefer" />
-            Предпочтительный вид связи
-          </label>
+          <InputSwitch type="radio" name="preferred" label="Предпочтительный вид связи" value="telegram"
+                       onChange={handleChange} />
         </div>
       </div>
       <label>
@@ -149,7 +144,8 @@ function FreelancerCompleteForm({ setIsAuthenticated }) {
       </label>
       <label>
         <p className="freelancer-complete-form__input-text">Навыки</p>
-        <InputTags name="stacks" onChange={handleChange} setStacksValues={setStacksValues} />
+        {/* TODO: исправить работу тегов также, как на странице просмотра профиля */}
+        {/*<InputTags name="stacks" onChange={handleChange} setStacksValues={setStacksValues} />*/}
       </label>
       <label>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>

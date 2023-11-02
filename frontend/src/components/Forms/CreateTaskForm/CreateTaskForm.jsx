@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import './CreateTaskForm.css';
 import { activityOptions } from '../../../utils/constants';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
+import { InputSwitch } from '../../Inputs/InputSwitch/InputSwitch';
 
 const MAX_ATTACHED_DOCS = 8;
 
@@ -60,9 +61,9 @@ function CreateTaskForm() {
 
   const dateString = "Tue Oct 24 2023 23:46:30 GMT+0600 (Kyrgyzstan Time)";
   const trimmedDateString = dateString.split(":").slice(0, 2).join(":");
-  console.log(dateString.split(":"));
-  console.log(dateString.split(":").slice(0, 2));
-  console.log(trimmedDateString);
+  // console.log(dateString.split(":"));
+  // console.log(dateString.split(":").slice(0, 2));
+  // console.log(trimmedDateString);
 
   return (
     <form className="create-task-form" onSubmit={handleSubmit}>
@@ -87,10 +88,11 @@ function CreateTaskForm() {
       </label>
       <label>
         <p className="create-task-form__input-text">Навыки</p>
-        <InputTags
-          name="stacks"
-          setStacksValues={setStacksValues}
-        />
+        {/* TODO: исправить работу тегов также, как на странице просмотра профиля */}
+        {/*<InputTags*/}
+        {/*  name="stacks"*/}
+        {/*  setStacksValues={setStacksValues}*/}
+        {/*/>*/}
       </label>
       <label>
         <p className="create-task-form__input-text">Бюджет</p>
@@ -103,21 +105,16 @@ function CreateTaskForm() {
           value={values.budget || ''}
         />
       </label>
-      <label className="create-task-form__input-checkbox-text">
-        <input
-          type="checkbox"
-          className="create-task-form__input-checkbox"
-          name="budgetDiscussion"
-          checked={isChecked.budgetDiscussion}
-          onChange={() => {
-            setIsChecked((prev) => ({
-              ...prev,
-              budgetDiscussion: !prev.budgetDiscussion
-            }))
-          }}
-        />
-        Жду предложений от фрилансеров
-      </label>
+      <InputSwitch type="checkbox" name="budgetDiscussion" label="Жду предложений от фрилансеров" marginTop={12}
+                   // onChange={handleChange}
+                   checked={isChecked.budgetDiscussion}
+                   onChange={() => {
+                     setIsChecked((prev) => ({
+                       ...prev,
+                       budgetDiscussion: !prev.budgetDiscussion
+                     }))
+                   }}
+      />
       <div>
         <p className="create-task-form__input-text">Сроки</p>
         <div className="create-task-form__input-year-wrapper">
@@ -131,21 +128,16 @@ function CreateTaskForm() {
           />
         </div>
       </div>
-      <label className="create-task-form__input-checkbox-text">
-        <input
-          type="checkbox"
-          className="create-task-form__input-checkbox"
-          name="deadlineDiscussion"
-          checked={isChecked.deadlineDiscussion}
-          onChange={() => {
-            setIsChecked((prev) => ({
-              ...prev,
-              deadlineDiscussion: !prev.deadlineDiscussion
-            }))
-          }}
-        />
-        Жду предложений от фрилансеров
-      </label>
+      <InputSwitch type="checkbox" name="deadlineDiscussion" label="Жду предложений от фрилансеров" marginTop={12}
+                   // onChange={handleChange}
+                   checked={isChecked.budgetDiscussion}
+                   onChange={() => {
+                     setIsChecked((prev) => ({
+                       ...prev,
+                       budgetDiscussion: !prev.budgetDiscussion
+                     }))
+                   }}
+      />
       <label>
         <p className="create-task-form__input-text">Описание</p>
         <InputText

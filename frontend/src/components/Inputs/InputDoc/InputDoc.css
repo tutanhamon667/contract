@@ -79,6 +79,10 @@
   transition: all .3s;
 }
 
-.input-doc__close-button:hover {
+.input-doc__close-button:hover:not(:disabled) {
   opacity: .8;
+}
+
+.input-doc__close-button:disabled {
+  cursor: default;
 }

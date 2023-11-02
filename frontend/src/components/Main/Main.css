@@ -4,7 +4,7 @@
 
 .content__order-container {
   padding: 0 100px 80px;
-  background: #f2f1ee;
+  background: #F7F7F7;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -15,7 +15,7 @@
   height: 60px;
   border-top-left-radius: 60px;
   border-top-right-radius: 60px;
-  background: #f2f1ee;
+  background: #F7F7F7;
 }
 
 .content__border-authorized {

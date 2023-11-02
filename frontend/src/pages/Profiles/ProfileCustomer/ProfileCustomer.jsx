@@ -23,12 +23,11 @@ export default function ProfileCustomer() {
 
   return (
     <div className="profile">
-
       <div className="profile_left-column">
 
         <div className="profile_block profile__user-info">
-          <InputImage name="photo" width={80} height={80} value={values.photo || currentUser?.photo || ''} error={errors.photo}
-                      errorMessage={errors.photo} onChange={handleChange} isDisabled={!isEditable}
+          <InputImage name="photo" width={80} height={80} value={values.photo || currentUser?.photo || ''}
+                      error={errors.photo} errorMessage={errors.photo} onChange={handleChange} isDisabled={!isEditable}
           />
           <h2 className="profile__title profile__title_place_aside">
             {currentUser?.name}
@@ -40,7 +39,7 @@ export default function ProfileCustomer() {
 
         <div className="profile__separate-line"></div>
 
-        <div className="profile_block profile__setting ">
+        <div className="profile_block profile__setting">
           <h3 className="profile__title">Настройки</h3>
           <div className="profile__separate-line"></div>
           <Link className="profile__main-text" to="#">Информация</Link>
@@ -49,7 +48,6 @@ export default function ProfileCustomer() {
       </div>
 
       <div className="profile_block profile__form-container">
-
         <form
           className="form-profile"
           onSubmit={handleSubmit}
@@ -61,20 +59,23 @@ export default function ProfileCustomer() {
               <>
                 <button
                   onClick={() => setIsEditable(false)}
-                  className="form-top-buttons form-top-buttons_type_cansel">
+                  className="form-top-buttons form-top-buttons_type_cansel"
+                >
                   Отмена
                 </button>
                 <button
                   type="submit"
                   onClick={handleSubmit}
-                  className="form-top-buttons form-top-buttons_type_submit">
+                  className="form-top-buttons form-top-buttons_type_submit"
+                >
                   Сохранить
                 </button>
               </>
             ) : (
               <button
                 onClick={() => setIsEditable(true)}
-                className="form-top-buttons form-top-buttons_type_submit">
+                className="form-top-buttons form-top-buttons_type_submit"
+              >
                 Редактировать
               </button>
             )}
@@ -83,7 +84,8 @@ export default function ProfileCustomer() {
           <div className="form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="email">
+              htmlFor="email"
+            >
               Электронная почта
             </label>
             <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
@@ -98,10 +100,11 @@ export default function ProfileCustomer() {
           <div className="form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="companyName">
-              Название компании или ваше имя
+              htmlFor="companyName"
+            >
+              Название компании
             </label>
-            <InputText type="text" placeholder="Название компании или ваше имя" autoComplete="name" name="name"
+            <InputText type="text" placeholder="Название компании" autoComplete="name" name="name"
                        width="100%" value={values.name || currentUser?.name || ''} error={errors.name}
                        errorMessage={errors.name} onChange={handleChange} id="companyName" isDisabled={!isEditable}
             />
@@ -118,29 +121,32 @@ export default function ProfileCustomer() {
           <div className="profile__main-text form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="aboutMe">
+              htmlFor="aboutMe"
+            >
               О компании
             </label>
             <InputText type="textarea" placeholder="Расскажите чем занимается ваша компания" name="about" width="100%"
-                       height={150} value={values.about || currentUser?.about || ''} error={errors.about} errorMessage={errors.about}
-                       onChange={handleChange} id="aboutMe" isDisabled={!isEditable}
+                       height={150} value={values.about || currentUser?.about || ''} error={errors.about}
+                       errorMessage={errors.about} onChange={handleChange} id="aboutMe" isDisabled={!isEditable}
             />
           </div>
 
           <div className="form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="portfolioLink">
-              Ссылка на портфолио
+              htmlFor="website"
+            >
+              Сайт
             </label>
             <InputText type="url" placeholder="www.example.com" name="web" width="100%"
                        value={values.web || currentUser?.web || ''} error={errors.web} errorMessage={errors.web}
-                       onChange={handleChange} id="portfolioLink" isDisabled={!isEditable}
+                       onChange={handleChange} id="website" isDisabled={!isEditable}
             />
             {isEditable && (
               <button
                 type="button"
-                className="form__add-info">
+                className="form__add-info"
+              >
                 Добавить ещё сайт или социальные сети +
               </button>
             )}
@@ -150,7 +156,8 @@ export default function ProfileCustomer() {
             <div className="form-profile__bottom-buttons-container">
               <button
                 className="profile__main-text form-profile__bottom-buttons"
-                onClick={() => setIsEditable(false)}>
+                onClick={() => setIsEditable(false)}
+              >
                 Отмена
               </button>
               <button
@@ -163,7 +170,6 @@ export default function ProfileCustomer() {
           )}
 
         </form>
-
       </div>
     </div>
   )

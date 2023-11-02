@@ -28,7 +28,7 @@ export function register({ first_name, last_name, email, password, re_password, 
 }
 
 export function authenticateUser({ email, password }) {
-  console.log({email, password})
+  // console.log({email, password})
   return fetch(`${BACKEND_BASE_URL}/login/jwt/create/`, {
     method: 'POST',
     headers: {
@@ -57,7 +57,7 @@ export function getUserInfo() {
 }
 
 export function sendCustomerInfo({photo, name, activity, about, web}){
-  console.log({photo, name, activity, about, web})
+  // console.log({photo, name, activity, about, web})
   return fetch(`${BACKEND_BASE_URL}/users/me/`,{
     method: 'POST',
     headers: {

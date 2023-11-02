@@ -32,3 +32,27 @@
   font-weight: 400;
   background-color: inherit;
 }
+
+.tag__title {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid #C6C6C6;
+  padding: 7px 15px;
+  column-gap: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.tag__title_disabled {
+  cursor: default;
+}
+
+.tag__item-close {
+  width: 12px;
+  height: 12px;
+  background-image: url(../../../images/close-button.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
+}

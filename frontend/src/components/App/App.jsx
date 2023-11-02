@@ -39,7 +39,7 @@ function App() {
     const accessToken = sessionStorage.getItem('access');
     const refreshToken = localStorage.getItem('refresh');
 
-    if (accessToken) {
+    if (accessToken && refreshToken) {
       Api.getUserInfo()
         .then((res) => {
           if (res.ok) {
@@ -123,7 +123,9 @@ function App() {
 
         const role = data.is_customer ? "customer" : data.is_worker && "freelancer";
         navigate(`/${role}/complete`, { replace: true });
-console.log(values)
+
+        console.log(values)
+
         Api.authenticateUser(values)
         .then(res => {
           if (res.ok) {
@@ -147,7 +149,7 @@ console.log(values)
           }
         })
         .catch((err)=>{
-          console.log(err)
+          console.error(err)
         })
       })
       .catch((err) => {
@@ -171,7 +173,7 @@ console.log(values)
         console.log(data)
       })
       .catch((err)=>{
-        console.log(err)
+        console.error(err)
       })
 
   }

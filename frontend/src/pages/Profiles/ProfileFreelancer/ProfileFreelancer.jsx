@@ -13,20 +13,32 @@ import { activityOptions, degreeOptions } from '../../../utils/constants';
 import InputSelect from '../../../components/Inputs/InputSelect/InputSelect';
 import InputText from '../../../components/Inputs/InputText/InputText';
 import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
-// import { freelancerData } from "../../utils/freelance"; // заглушка для проверки обработки данных формы
 import Button from "../../../components/Button/Button";
+import { InputSwitch } from '../../../components/Inputs/InputSwitch/InputSwitch';
 
 // переиспользуемые элементы с Forms/FreelancerCompleteForm
 const MAX_ATTACHED_DOCS = 8;
 
 export default function ProfileFreelancer() {
+  const { currentUser } = useContext(Context);
   const [isEditable, setIsEditable] = useState(false);
   // переиспользуемый хук с Forms/FreelancerCompleteForm
-  const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
+  const [docKeysEdu, setDocKeysEdu] = useState([...currentUser.education[0].diploma?.map((element) => element.id), Date.now()] || [Date.now()]);
+  const [docKeysPortfolio, setDocKeysPortfolio] = useState([...currentUser.portfolio?.map((element) => element.id), Date.now()] || [Date.now()]);
   // ------------------------------------------
-  const { currentUser } = useContext(Context);
   const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
-  const [stacksValues, setStacksValues] = useState([]);
+  const [tags, setTags] = useState(currentUser?.stacks?.map(obj => obj.name) || []);
+
+  const handleDocEduChange = (event) => {
+    handleChange(event);
+    if (event.currentTarget.files[0]) {
+      setDocKeysEdu(prevKeys => [...prevKeys, Date.now()]);
+    }
+  };
+
+  const onDeleteDocEduClick = (key) => {
+    setDocKeysEdu(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
+  }
 
   const handleDocPortfolioChange = (event) => {
     handleChange(event);
@@ -85,20 +97,23 @@ export default function ProfileFreelancer() {
               <>
                 <button
                   onClick={() => setIsEditable(false)}
-                  className="form-top-buttons form-top-buttons_type_cansel">
+                  className="form-top-buttons form-top-buttons_type_cansel"
+                >
                   Отмена
                 </button>
                 <button
                   type="submit"
                   onClick={handleSubmit}
-                  className="form-top-buttons form-top-buttons_type_submit">
+                  className="form-top-buttons form-top-buttons_type_submit"
+                >
                   Сохранить
                 </button>
               </>
             ) : (
               <button
                 onClick={() => setIsEditable(true)}
-                className="form-top-buttons form-top-buttons_type_submit">
+                className="form-top-buttons form-top-buttons_type_submit"
+              >
                 Редактировать
               </button>
             )}
@@ -118,7 +133,8 @@ export default function ProfileFreelancer() {
           <div className="form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="firstName">
+              htmlFor="firstName"
+            >
               Имя Фамилия
             </label>
             <InputText type="text" placeholder="Имя" autoComplete="given-name" name="first_name" width="100%"
@@ -143,15 +159,14 @@ export default function ProfileFreelancer() {
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Навыки</h2>
-            <InputTags setStacksValues={setStacksValues} isDisabled={!isEditable}
-                       value={currentUser?.stacks}
-            />
+            <InputTags tags={tags} setTags={setTags} isDisabled={!isEditable} />
           </div>
 
           <div className="form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="workingRate">
+              htmlFor="workingRate"
+            >
               Ставка в час
             </label>
             <InputText type="number" placeholder="Ставка" name="payrate" width={295}
@@ -163,7 +178,8 @@ export default function ProfileFreelancer() {
           <div className="profile__main-text form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="aboutMe">
+              htmlFor="aboutMe"
+            >
               О себе
             </label>
             <InputText type="textarea" placeholder="Расскажите о себе как о специалисте и чем вы можете быть полезны"
@@ -208,18 +224,17 @@ export default function ProfileFreelancer() {
             <h2 className="profile__main-text">Сертификаты, грамоты, дипломы</h2>
             {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <div className="freelancer-complete-form__input-doc-wrapper">
-              {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key) => (
-                <InputDoc key={key} name="diploma" value={values.diploma || currentUser.education[0]?.diploma || ''} error={errors.diploma}
-                  errorMessage={errors.diploma}
-                  onChange={(event) => handleDocPortfolioChange(event, key)}
-                  onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+              {docKeysEdu.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (
+                <InputDoc key={key} name="diploma" value={values.diploma || currentUser.education[0]?.diploma[index] || ''}
+                          error={errors.diploma} errorMessage={errors.diploma}
+                          onChange={(event) => handleDocEduChange(event, key)}
+                          onDeleteDocClick={() => onDeleteDocEduClick(key)}
                           isDisabled={!isEditable}
                 />
               ))}
             </div>
             {/* --------------------------------------------- */}
           </div>
-
 
           <div className="profile__separate-line"></div>
 
@@ -228,7 +243,8 @@ export default function ProfileFreelancer() {
           <div className="form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="phoneForContacts">
+              htmlFor="phoneForContacts"
+            >
               Номер телефона
             </label>
             <InputText type="tel" placeholder="+7" autoComplete="tel" name="phone" width="100%"
@@ -238,38 +254,35 @@ export default function ProfileFreelancer() {
                        error={errors.tel} errorMessage={errors.tel} onChange={handleChange} id="phoneForContacts"
                        isDisabled={!isEditable}
             />
-            <label className="freelancer-complete-form__input-radio-text">
-              <input type="radio" className="freelancer-complete-form__input-radio" name="contact-prefer"
-                     disabled={!isEditable}
-              />
-              Предпочтительный вид связи
-            </label>
+            <InputSwitch type="radio" name="preferred" label="Предпочтительный вид связи" value="phone"
+                         onChange={handleChange} isDisabled={!isEditable}
+                         defaultChecked={currentUser.contacts.find((item) => item.type === 'phone')?.preferred}
+            />
 
             <label
               className="profile__main-text"
-              htmlFor="emailForContacts">
+              htmlFor="emailForContacts"
+            >
               Эл. почта
             </label>
             <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
-              value={values.email || currentUser.contacts.find((item) => item.type === 'email')?.value || ''}
-                       error={errors.email} errorMessage={errors.email}
-              onChange={handleChange} id="emailForContacts"
+                       value={values.email
+                         || currentUser.contacts.find((item) => item.type === 'email')?.value
+                         || ''}
+                       error={errors.email} errorMessage={errors.email} onChange={handleChange} id="emailForContacts"
                        isDisabled={!isEditable}
             />
-            {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
-            <label className="freelancer-complete-form__input-radio-text">
-              <input type="radio" className="freelancer-complete-form__input-radio" name="contact-prefer"
-                     disabled={!isEditable}
-              />
-              Предпочтительный вид связи
-            </label>
-            {/* --------------------------------------------- */}
+            <InputSwitch type="radio" name="preferred" label="Предпочтительный вид связи" value="email"
+                         onChange={handleChange} isDisabled={!isEditable}
+                         defaultChecked={currentUser.contacts.find((item) => item.type === 'email')?.preferred}
+            />
           </div>
 
           <div className="form-profile__input-container">
             <label
               className="profile__main-text"
-              htmlFor="telegram">
+              htmlFor="telegram"
+            >
               Телеграм
             </label>
             <InputText type="text" placeholder="Телеграм" autoComplete="telegram" name="telegram" width="100%"
@@ -279,14 +292,10 @@ export default function ProfileFreelancer() {
                        error={errors.telegram} errorMessage={errors.telegram} onChange={handleChange} id="telegram"
                        isDisabled={!isEditable}
             />
-            {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
-            <label className="freelancer-complete-form__input-radio-text">
-              <input type="radio" className="freelancer-complete-form__input-radio" name="contact-prefer"
-                     disabled={!isEditable}
-              />
-              Предпочтительный вид связи
-            </label>
-            {/* --------------------------------------------- */}
+            <InputSwitch type="radio" name="preferred" label="Предпочтительный вид связи" value="telegram"
+                         onChange={handleChange} isDisabled={!isEditable}
+                         defaultChecked={currentUser.contacts.find((item) => item.type === 'telegram')?.preferred}
+            />
           </div>
 
           <div className="profile__separate-line"></div>
@@ -295,11 +304,11 @@ export default function ProfileFreelancer() {
             <h2 className="profile__title">Портфолио</h2>
             {/* // переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <div className="freelancer-complete-form__input-doc-wrapper">
-              {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key) => (
-                <InputDoc key={key} name="portfolio" value={values.portfolio || currentUser?.portfolio || ''} error={errors.portfolio}
-                  errorMessage={errors.portfolio}
-                  onChange={(event) => handleDocPortfolioChange(event, key)}
-                  onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+              {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (
+                <InputDoc key={key} name="portfolio" value={values.portfolio || currentUser?.portfolio[index] || ''}
+                          error={errors.portfolio} errorMessage={errors.portfolio}
+                          onChange={(event) => handleDocPortfolioChange(event, key)}
+                          onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
                           isDisabled={!isEditable}
                 />
               ))}
@@ -309,7 +318,8 @@ export default function ProfileFreelancer() {
             <div className="form-profile__input-container">
               <label
                 className="profile__main-text"
-                htmlFor="portfolioLink">
+                htmlFor="portfolioLink"
+              >
                 Ссылка на портфолио
               </label>
               <InputText type="url" placeholder="www.example.com" name="web" width="100%"
@@ -330,14 +340,13 @@ export default function ProfileFreelancer() {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit">
+                className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
+              >
                 Сохранить
               </button>
             </div>
           )}
-
         </form>
-
       </div>
     </div>
   )

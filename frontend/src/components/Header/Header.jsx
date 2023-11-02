@@ -47,7 +47,7 @@ function Header() {
     setShowSetting(!showSetting);
   }
 
-  const popStyle = `profile__popup profile_block ${showSetting ? 'profile__popup_show' : ''}`
+  const popStyle = `profile__popup profile_block${showSetting ? ' profile__popup_show' : ''}`
 
   return (
     <header className={`header${isAuthenticated && !completeFormPaths ? ' header-with-background' : ''}`}>
@@ -61,7 +61,14 @@ function Header() {
             tabIndex="0"
           >
             <p className="header__name">{formatNameForHeader()}</p>
-            <div className="header__avatar"></div>
+            <div
+              className="header__avatar"
+              style={{
+                backgroundImage: `url(${currentUser?.photo})`,
+                backgroundSize: 'contain',
+                // backgroundPosition: 'center'
+              }}
+            ></div>
           </div>
         ) : (<HeaderAuth />)
         }

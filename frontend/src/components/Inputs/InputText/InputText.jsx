@@ -22,8 +22,8 @@ const InputText = (
 ) => {
   const InputType = type === 'textarea' ? 'textarea' : 'input';
   const inputStyle = type === 'textarea'
-    ? {width, height, marginTop, resize: 'none'}
-    : {width, height, marginTop};
+    ? { width, height, marginTop, resize: 'none' }
+    : { width, height, marginTop };
 
   return (
     <div className="inputContainer">
@@ -36,6 +36,7 @@ const InputText = (
         style={inputStyle}
         value={value}
         onChange={onChange}
+        onWheel={(e) => e.target.blur()}
         name={name}
         id={id}
         disabled={isDisabled}

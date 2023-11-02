@@ -9,6 +9,7 @@ import "../Profiles/ProfileFreelancer/ProfileFreelancer.css";
 import "../Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly.css";
 import "../../components/Forms/CreateTaskForm/CreateTaskForm.css";
 import "../ForgotPass/ForgotPass.css";
+import { order } from '../../utils/order';
 
 export default function Order() {
   const [responded, setResponded] = useState(false);
@@ -31,24 +32,26 @@ export default function Order() {
   }`;
   // Получаю данные заказа
   let { id } = useParams();
-  const tasks = JSON.parse(localStorage.getItem('taskValues'));
+  // const tasks = JSON.parse(localStorage.getItem('taskValues'));
+  const tasks = order;
   const task = tasks.find((item) => {
-    return item.orderId == id;
+    return String(item.id) === id;
   });
+  // console.log(task);
   // Записываю значения в переменные
-  const stacksList = task.stacks.map((item, index) => (
+  const stacksList = task.stack.map((item, index) => (
     <li
       key={index}
       className="order__list-item">
       {item}
     </li>
   ));
-  const stacksList2 = task.stacks.join(', ');
-  const specialization = task.direction.join(', ');
+  const stacksList2 = task.stack?.join(', ');
+  const specialization = task.direction?.join(', ');
   const budgetMoney = task.budget;
-  const budgetDiscussion = task.budgetDiscussion.toString();
+  const budgetDiscussion = task.budgetDiscussion?.toString();
   const deadline = task.deadline;
-  const deadlineDiscussion = task.deadlineDiscussion.toString();
+  const deadlineDiscussion = task.deadlineDiscussion?.toString();
   // -----------
 
   return (
@@ -282,39 +285,40 @@ export default function Order() {
               </>
             )}
 
-
-            <div className="profile_block profile__left-column-info">
-              <div>
-                <h2 className="profile__title">Дата публикации</h2>
-                <p className="profile__main-text profile__info-main-text">
-                  {task.orderCreationDate}
-                </p>
+            {!isEditable && (
+              <div className="profile_block profile__left-column-info">
+                <div>
+                  <h2 className="profile__title">Дата публикации</h2>
+                  <p className="profile__main-text profile__info-main-text">
+                    {task.orderCreationDate}
+                  </p>
+                </div>
+                <div>
+                  <h2 className="profile__title">Специализация</h2>
+                  <p className="profile__main-text profile__info-main-text">
+                    {specialization}
+                  </p>
+                </div>
+                <div>
+                  <h2 className="profile__title">Навыки</h2>
+                  <p className="profile__main-text profile__info-main-text">
+                    {stacksList2}
+                  </p>
+                </div>
+                <div>
+                  <h2 className="profile__title">Бюджет</h2>
+                  <p className="profile__main-text profile__info-main-text">
+                    {budgetMoney}, ожидает предложений: {budgetDiscussion}
+                  </p>
+                </div>
+                <div>
+                  <h2 className="profile__title">Срок</h2>
+                  <p className="profile__main-text profile__info-main-text">
+                    {deadline}, по договорённости: {deadlineDiscussion}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="profile__title">Специализация</h2>
-                <p className="profile__main-text profile__info-main-text">
-                  {specialization}
-                </p>
-              </div>
-              <div>
-                <h2 className="profile__title">Навыки</h2>
-                <p className="profile__main-text profile__info-main-text">
-                  {stacksList2}
-                </p>
-              </div>
-              <div>
-                <h2 className="profile__title">Бюджет</h2>
-                <p className="profile__main-text profile__info-main-text">
-                  {budgetMoney}, ожидает предложений: {budgetDiscussion}
-                </p>
-              </div>
-              <div>
-                <h2 className="profile__title">Срок</h2>
-                <p className="profile__main-text profile__info-main-text">
-                  {deadline}, по договорённости: {deadlineDiscussion}
-                </p>
-              </div>
-            </div>
+            )}
 
           </div>
 
