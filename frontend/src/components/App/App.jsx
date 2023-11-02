@@ -94,7 +94,7 @@ function App() {
                   setIsLoading(false);
                 })
                 .catch((error) => {
-                             setIsAuthenticated(false);
+                  setIsAuthenticated(false);
                   sessionStorage.removeItem('access');
                   console.error(error);
                   setIsLoading(false);
@@ -102,13 +102,13 @@ function App() {
             }
           })
           .catch((error) => {
-                setIsAuthenticated(false);
+            setIsAuthenticated(false);
             sessionStorage.removeItem('access');
             console.error(error);
             setIsLoading(false);
           })
       } else {
-            setIsAuthenticated(false);
+        setIsAuthenticated(false);
         setIsLoading(false);
       }
     }
@@ -132,12 +132,10 @@ function App() {
             return res.json();
           } else if (res.status === 401) {
             return res.json().then(error => {
-
               return Promise.reject(error.detail);
             });
           } else {
             return res.json().then(error => {
-
               return Promise.reject(error.detail);
           });
           }
@@ -170,7 +168,8 @@ function App() {
     console.log(array)
     Api.sendCustomerInfo(array)
       .then((data) => {
-        console.log(data)
+        console.log(data);
+        setCurrentUser(data);
         navigate('/customer', { replace: true });
       })
       .catch((err)=>{
