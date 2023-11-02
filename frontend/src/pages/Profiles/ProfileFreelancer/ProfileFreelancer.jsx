@@ -23,7 +23,12 @@ export default function ProfileFreelancer() {
   const { currentUser } = useContext(Context);
   const [isEditable, setIsEditable] = useState(false);
   // переиспользуемый хук с Forms/FreelancerCompleteForm
-  const [docKeysEdu, setDocKeysEdu] = useState([...currentUser.education[0].diploma?.map((element) => element.id), Date.now()] || [Date.now()]);
+  // const [docKeysEdu, setDocKeysEdu] = useState([...currentUser.education[0]?.diploma?.map((element) => element.id), Date.now()] || [Date.now()]);
+  const [docKeysEdu, setDocKeysEdu] = useState(() => {
+    const education = currentUser?.education[0];
+    const diplomaIds = education?.diploma?.map((element) => element.id) || [];
+    return [...diplomaIds, Date.now()];
+  });
   const [docKeysPortfolio, setDocKeysPortfolio] = useState([...currentUser.portfolio?.map((element) => element.id), Date.now()] || [Date.now()]);
   // ------------------------------------------
   const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
