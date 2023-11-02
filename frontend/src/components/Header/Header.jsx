@@ -63,11 +63,7 @@ function Header() {
             <p className="header__name">{formatNameForHeader()}</p>
             <div
               className="header__avatar"
-              style={{
-                backgroundImage: `url(${currentUser?.photo})`,
-                backgroundSize: 'contain',
-                // backgroundPosition: 'center'
-              }}
+              style={{ backgroundImage: `url(${currentUser?.photo})` }}
             ></div>
           </div>
         ) : (<HeaderAuth />)
