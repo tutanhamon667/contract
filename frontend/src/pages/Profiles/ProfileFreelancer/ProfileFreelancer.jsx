@@ -9,7 +9,7 @@ import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import { Context } from "../../../context/context"
 import InputTags from "../../../components/Inputs/InputTags/InputTags";
 import { InputDoc } from "../../../components/Inputs/InputDoc/InputDoc";
-import { activityOptions, degreeOptions } from '../../../utils/constants';
+import { industryOptions, degreeOptions } from '../../../utils/constants';
 import InputSelect from '../../../components/Inputs/InputSelect/InputSelect';
 import InputText from '../../../components/Inputs/InputText/InputText';
 import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
@@ -157,7 +157,7 @@ export default function ProfileFreelancer() {
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Специализация</h2>
             <InputSelect name="activity" placeholder="Выберите из списка" width="100%"
-                         value={values.activity || currentUser.categories[0]?.name || ''} options={activityOptions}
+                         value={values.activity || currentUser.categories[0]?.name || ''} options={industryOptions}
                          isDisabled={!isEditable}
             />
           </div>

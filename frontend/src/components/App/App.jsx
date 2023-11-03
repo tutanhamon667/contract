@@ -22,7 +22,7 @@ import "./App.css";
 
 function App() {
   // const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
@@ -124,7 +124,7 @@ function App() {
         const role = data.is_customer ? "customer" : data.is_worker && "freelancer";
         navigate(`/${role}/complete`, { replace: true });
 
-        console.log(values)
+        // console.log(values)
 
         Api.authenticateUser(values)
         .then(res => {
@@ -157,25 +157,26 @@ function App() {
   }
 
   function handleCustomerSubmit(data) {
-    console.log(data)
-    const array = {
-      "photo": data.photo.photo,
-      "name": data.values.name,
-      "activity": data.values.activity,
-      "about": data.values.about,
-      "web": data.values.web
+    // console.log(data);
+    const req = {
+      photo: data.photo?.photo,
+      name: data.values?.name,
+      industry: {
+        name: data.values?.industry
+      },
+      about: data.values?.about,
+      web: data.values?.web
     }
-    console.log(array)
-    Api.sendCustomerInfo(array)
-      .then((data) => {
-        console.log(data);
-        setCurrentUser(data);
+    // console.log(array);
+    Api.createCustomerProfile(req)
+      .then((res) => {
+        // console.log(data);
+        setCurrentUser(res);
         navigate('/customer', { replace: true });
       })
       .catch((err)=>{
-        console.error(err)
+        console.error(err);
       })
-
   }
 
   // function updateUser(userEmail) {
@@ -215,7 +216,7 @@ function App() {
             <Route path="freelancer" element={<ProfileFreelancer />} />
             <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
             <Route path="freelancer/complete" element={<FreelancerCompleteForm />} />
-            <Route path="customer" element={<ProfileCustomer />} />
+            <Route path="customer" element={<ProfileCustomer setCurrentUser={setCurrentUser} />} />
             <Route path="customer/complete" element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />} />
             <Route path="create-task" element={<CreateTaskForm />} />
           </Route>

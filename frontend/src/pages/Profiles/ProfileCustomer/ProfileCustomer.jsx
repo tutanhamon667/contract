@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from 'react';
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/context"
-import { activityOptions } from '../../../utils/constants';
+import { industryOptions } from '../../../utils/constants';
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import "../Profile.css";
 import "../ProfileFreelancer/ProfileFreelancer.css";
@@ -10,15 +10,60 @@ import "./ProfileCustomer.css";
 import InputText from '../../../components/Inputs/InputText/InputText';
 import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
 import InputSelect from '../../../components/Inputs/InputSelect/InputSelect';
+import * as Api from '../../../utils/Api';
 
-export default function ProfileCustomer() {
-  const [isEditable, setIsEditable] = useState(false);
+export default function ProfileCustomer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
-  const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
+  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
+  const [isEditable, setIsEditable] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const formRef = useRef(null);
+
+  function addPhoto(url) {
+    setPhoto({ photo: url })
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
-    setIsEditable(false)
+
+    setValues({
+      name: currentUser?.name || '',
+      industry: currentUser?.industry?.name || ''
+    })
+    // console.log(values);
+
+    let newErrors = {};
+
+    // if (!values.name) {
+    //   newErrors = {...newErrors, name: 'Введите название компании'};
+    // }
+
+    setErrors({...errors, ...newErrors});
+
+    if (
+      isValid
+      && values.name
+      // && values.email
+    ) {
+      const newData = {
+        photo: photo?.photo,
+        name: values?.name || currentUser?.name,
+        industry: {
+          name: values?.industry || currentUser?.industry?.name
+        },
+        about: values?.about,
+        web: values?.web
+      }
+      Api.updateCustomerProfile(newData)
+        .then((res) => {
+          setCurrentUser(res);
+          setIsEditable(false);
+        })
+        .catch((err)=>{
+          console.error(err);
+        })
+    }
+
   }
 
   return (
@@ -27,7 +72,7 @@ export default function ProfileCustomer() {
 
         <div className="profile_block profile__user-info">
           <InputImage name="photo" width={80} height={80} value={values.photo || currentUser?.photo || ''}
-                      error={errors.photo} errorMessage={errors.photo} onChange={handleChange} isDisabled={!isEditable}
+                      error={errors.photo} errorMessage={errors.photo} onChange={addPhoto} isDisabled={!isEditable}
           />
           <h2 className="profile__title profile__title_place_aside">
             {currentUser?.name}
@@ -51,6 +96,7 @@ export default function ProfileCustomer() {
         <form
           className="form-profile"
           onSubmit={handleSubmit}
+          ref={formRef}
         >
 
           <div className="form-profile__top-container">
@@ -58,14 +104,16 @@ export default function ProfileCustomer() {
             {isEditable ? (
               <>
                 <button
-                  onClick={() => setIsEditable(false)}
+                  type="button"
+                  onClick={() => {
+                    // formRef.current.reset();
+                    setIsEditable(false);
+                  }}
                   className="form-top-buttons form-top-buttons_type_cansel"
                 >
                   Отмена
                 </button>
                 <button
-                  type="submit"
-                  onClick={handleSubmit}
                   className="form-top-buttons form-top-buttons_type_submit"
                 >
                   Сохранить
@@ -90,7 +138,7 @@ export default function ProfileCustomer() {
             </label>
             <InputText type="email" placeholder="Эл. почта" autoComplete="email" name="email" width="100%"
                        value={values.email || currentUser?.account_email || ''} error={errors.email}
-                       errorMessage={errors.email} onChange={handleChange} id="email" isDisabled={!isEditable}
+                       errorMessage={errors.email} onChange={handleChange} id="email" isDisabled={true}
             />
           </div>
 
@@ -112,8 +160,8 @@ export default function ProfileCustomer() {
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Сфера деятельности</h2>
-            <InputSelect name="activity" placeholder="Выберите из списка" width="100%"
-                         value={values.activity || currentUser.industry?.name || ''} options={activityOptions}
+            <InputSelect name="industry" placeholder="Выберите из списка" width="100%" onChange={handleChange}
+                         value={values.industry || currentUser.industry?.name || ''} options={industryOptions}
                          isDisabled={!isEditable}
             />
           </div>
@@ -155,14 +203,13 @@ export default function ProfileCustomer() {
           {isEditable && (
             <div className="form-profile__bottom-buttons-container">
               <button
+                type="button"
                 className="profile__main-text form-profile__bottom-buttons"
                 onClick={() => setIsEditable(false)}
               >
                 Отмена
               </button>
               <button
-                type="submit"
-                onClick={handleSubmit}
                 className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit">
                 Сохранить
               </button>

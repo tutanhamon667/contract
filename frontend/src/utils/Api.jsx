@@ -2,27 +2,19 @@ import { BACKEND_BASE_URL } from './constants';
 
 function _checkResponse(res) {
   if (res.ok) {
-    return res.json()
+    return res.json();
   } else {
-    return res.json().then((err) => Promise.reject(err))
+    return res.json().then((err) => Promise.reject(err));
   }
 }
 
-export function register({ first_name, last_name, email, password, re_password, is_customer, is_worker }) {
+export function register(data) {
   return fetch(`${BACKEND_BASE_URL}/users/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      first_name,
-      last_name,
-      email,
-      password,
-      re_password,
-      is_customer,
-      is_worker
-    })
+    body: JSON.stringify(data)
   })
     .then((res) => _checkResponse(res));
 }
@@ -56,21 +48,26 @@ export function getUserInfo() {
   })
 }
 
-export function sendCustomerInfo({photo, name, activity, about, web}){
-  // console.log({photo, name, activity, about, web})
+export function createCustomerProfile(data){
   return fetch(`${BACKEND_BASE_URL}/users/me/`,{
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${sessionStorage.getItem('access')}`
     },
-    body: JSON.stringify({
-      "photo": photo,
-      "name": name,
-      "industry": {"name" : activity},
-      "about": about,
-      "web": web
-    })
+    body: JSON.stringify(data)
   })
-  .then((res) => _checkResponse(res));
+    .then((res) => _checkResponse(res));
+}
+
+export function updateCustomerProfile(data){
+  return fetch(`${BACKEND_BASE_URL}/users/me/`,{
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('access')}`
+    },
+    body: JSON.stringify(data)
+  })
+    .then((res) => _checkResponse(res));
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
-import { activityOptions, degreeOptions } from '../../../utils/constants';
+import { industryOptions, degreeOptions } from '../../../utils/constants';
 import InputText from '../../Inputs/InputText/InputText';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
@@ -139,7 +139,7 @@ function FreelancerCompleteForm({ setIsAuthenticated }) {
         <p className="freelancer-complete-form__input-text">Специализация</p>
         <InputSelect name="activity" placeholder="Выберите из списка" value={values.activity || ''}
                      error={errors.activity} errorMessage={errors.activity} onChange={handleChange}
-                     options={activityOptions}
+                     options={industryOptions}
         />
       </label>
       <label>

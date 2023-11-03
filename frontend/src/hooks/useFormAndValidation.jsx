@@ -18,7 +18,7 @@ export default function useFormAndValidation() {
     setIsValid(e.target.closest("form").checkValidity());
 
 
-    console.log(values);
+    // console.log(values);
 
     if (name === "email") {
       if (!emailRegex.test(value)) {

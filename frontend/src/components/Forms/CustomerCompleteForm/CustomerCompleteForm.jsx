@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
-import { activityOptions } from '../../../utils/constants';
+import { industryOptions } from '../../../utils/constants';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import InputText from '../../Inputs/InputText/InputText';
 import Button from '../../Button/Button';
@@ -14,10 +14,9 @@ function CustomerCompleteForm({handleCustomerSubmit}) {
   const {
     values, errors, isValid, handleChange, setValues, setErrors
   } = useFormAndValidation();
-  const navigate = useNavigate();
 
-  function addPhoto(url){
-    setPhoto({"photo": url})
+  function addPhoto(url) {
+    setPhoto({ photo: url });
   }
 
  // console.log(photo)
@@ -37,22 +36,21 @@ function CustomerCompleteForm({handleCustomerSubmit}) {
 
     setErrors({...errors, ...newErrors});
 
-    handleCustomerSubmit({values, photo})
-
-    if (
-      isValid &&
-      values.first_name &&
-      values.email
-    ) {
-   //   console.log(values);
-    //  setValues({
-    //    ...values,
-    //    first_name: '',
-     //   email: '',
-     //
-     // });
-
-     // navigate(`/customer`);
+    if (isValid) {
+    // if (
+    //   isValid &&
+    //   values.first_name &&
+    //   values.email
+    // ) {
+      handleCustomerSubmit({values, photo})
+      // console.log(values);
+      // setValues({
+      //  ...values,
+      //  first_name: '',
+      //  email: '',
+      // });
+      //
+      // navigate(`/customer`);
     }
   };
 
@@ -72,8 +70,9 @@ function CustomerCompleteForm({handleCustomerSubmit}) {
       </div>
       <div>
         <p className="employer-complete-form__input-text">Сфера деятельности</p>
-        <InputSelect name="activity" placeholder="Выберите из списка"
-                     value={values.activity || ''} error={errors.activity} errorMessage={errors.activity} onChange={handleChange} options={activityOptions}
+        <InputSelect name="industry" placeholder="Выберите из списка"
+                     value={values.industry || ''} error={errors.industry} errorMessage={errors.industry}
+                     onChange={handleChange} options={industryOptions}
         />
       </div>
       <div>

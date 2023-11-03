@@ -5,7 +5,7 @@ import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
 import Button from '../../Button/Button';
 import React, { useState, useEffect } from 'react';
 import './CreateTaskForm.css';
-import { activityOptions } from '../../../utils/constants';
+import { industryOptions } from '../../../utils/constants';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
 import { InputSwitch } from '../../Inputs/InputSwitch/InputSwitch';
 
@@ -82,7 +82,7 @@ function CreateTaskForm() {
         <p className="create-task-form__input-text">Специализация</p>
         <InputMultipleSelect
           name="activity"
-          options={activityOptions}
+          options={industryOptions}
           setActivityValues={setActivityValues}
         />
       </label>
