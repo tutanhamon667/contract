@@ -4,6 +4,7 @@
   border-radius: 50%;
   background: #3F3F3F url(../../../images/profile-circle.svg) no-repeat center / 50px;
   transition: background-color .3s ease-in-out;
+
 }
 
 .input-image__real-input_small {

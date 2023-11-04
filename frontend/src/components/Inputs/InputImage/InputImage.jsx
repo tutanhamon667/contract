@@ -7,7 +7,7 @@ const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
   // const inputStyle = file && {
   const inputStyle = {
     backgroundImage: `url(${file ? URL.createObjectURL(file) : value})`,
-    backgroundSize: 'contain'
+    backgroundSize: 'cover'
   };
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 

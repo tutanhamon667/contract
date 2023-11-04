@@ -13,19 +13,40 @@ import { InputSwitch } from '../../Inputs/InputSwitch/InputSwitch';
 
 const MAX_ATTACHED_DOCS = 8;
 
-function FreelancerCompleteForm({ setIsAuthenticated }) {
+function FreelancerCompleteForm({ setIsAuthenticated, onSubmit }) {
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [portfolioFile, setPortfolioFile] = useState(null);
+  const [document, setDocument] = useState(null);
   const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
   const [docKeysEdu, setDocKeysEdu] = useState([Date.now()]);
   const {
     values, errors, isValid, handleChange, setValues, setErrors
   } = useFormAndValidation();
   const navigate = useNavigate();
+
+  function addProfilePhoto(url) {
+    setProfilePhoto({ photo: url });
+
+  }
+//  console.log(profilePhoto)
+ // console.log(portfolioFile)
+
+  function addPortfolioFile(url, name){
+    setPortfolioFile({file: url, file_name: name});
+  }
+
+  function addDocument(url, name){
+    setDocument({diploma: url, diploma_name: name})
+  }
+console.log(document)
+
   const [stacksValues, setStacksValues] = useState([]);
 
   const handleDocPortfolioChange = (event) => {
     handleChange(event);
     if (event.currentTarget.files[0]) {
       setDocKeysPortfolio(prevKeys => [...prevKeys, Date.now()]);
+      console.log(Date.now())
     }
   };
 
@@ -77,7 +98,7 @@ function FreelancerCompleteForm({ setIsAuthenticated }) {
         email: '',
       });
 
-      setIsAuthenticated(true)
+    //  setIsAuthenticated(true)
       // setCurrentUser({
       //   id: "1",
       //   first_name: values.first_name,
@@ -91,18 +112,18 @@ function FreelancerCompleteForm({ setIsAuthenticated }) {
       //   education: 'МГУ имени М.В. Ломоносова',
       // })
 
-      navigate(`/freelancer`);
+      onSubmit({profilePhoto, portfolioFile, document, values})
     }
   };
 
   return (
     <form className="freelancer-complete-form" onSubmit={handleSubmit}>
       <div className="freelancer-complete-form__image-input">
-        <InputImage name="photo" value={values.photo || ''} error={errors.photo} errorMessage={errors.photo}
-          onChange={handleChange}
+        <InputImage name="profilePhoto" value={values.profilePhoto || ''} error={errors.profilePhoto} errorMessage={errors.profilePhoto}
+          onChange={addProfilePhoto}
         />
       </div>
-      <label>
+      <div>
         <p className="freelancer-complete-form__input-text">Имя Фамилия</p>
         <InputText type="text" placeholder="Имя" autoComplete="given-name" name="first_name" width={610}
           value={values.first_name || ''} error={errors.first_name} errorMessage={errors.first_name}
@@ -112,12 +133,12 @@ function FreelancerCompleteForm({ setIsAuthenticated }) {
           marginTop={12} value={values.last_name || ''} error={errors.last_name}
           errorMessage={errors.last_name} onChange={handleChange}
         />
-      </label>
+      </div>
       <div>
         <p className="freelancer-complete-form__input-text">Контакты</p>
         <div className="freelancer-complete-form__contacts-wrapper">
-          <InputText type="tel" placeholder="+7" autoComplete="tel" name="phone" width={328} value={values.tel || ''}
-            error={errors.tel} errorMessage={errors.tel} onChange={handleChange}
+          <InputText type="tel" placeholder="+7" autoComplete="tel" name="phone" width={328} value={values.phone || ''}
+            error={errors.phone} errorMessage={errors.phone} onChange={handleChange}
           />
           <InputSwitch type="radio" name="preferred" label="Предпочтительный вид связи" value="phone"
                        onChange={handleChange} />
@@ -135,42 +156,42 @@ function FreelancerCompleteForm({ setIsAuthenticated }) {
                        onChange={handleChange} />
         </div>
       </div>
-      <label>
+      <div>
         <p className="freelancer-complete-form__input-text">Специализация</p>
         <InputSelect name="activity" placeholder="Выберите из списка" value={values.activity || ''}
                      error={errors.activity} errorMessage={errors.activity} onChange={handleChange}
                      options={industryOptions}
         />
-      </label>
-      <label>
+      </div>
+      <div>
         <p className="freelancer-complete-form__input-text">Навыки</p>
         {/* TODO: исправить работу тегов также, как на странице просмотра профиля */}
         {/*<InputTags name="stacks" onChange={handleChange} setStacksValues={setStacksValues} />*/}
-      </label>
-      <label>
+      </div>
+      <div>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>
         <InputText type="number" placeholder="Ставка" name="payrate" width={295} value={values.payrate || ''}
           error={errors.payrate} errorMessage={errors.payrate} onChange={handleChange}
         />
-      </label>
-      <label>
+      </div>
+      <div>
         <p className="freelancer-complete-form__input-text">О себе</p>
         <InputText type="textarea" placeholder="Расскажите о себе как о специалисте и чем вы можете быть полезны"
           name="about" width={610} height={150} value={values.about || ''} error={errors.about}
           errorMessage={errors.about} onChange={handleChange}
         />
-      </label>
+      </div>
 
       <div>
         <p className="freelancer-complete-form__input-text">Примеры работ, портфолио</p>
         <div className="freelancer-complete-form__input-doc-wrapper">
-          {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key) => (
-            <InputDoc key={key} name="portfolio" value={values.portfolio || ''} error={errors.portfolio}
+
+            <InputDoc name="portfolio" value={values.portfolio || ''} error={errors.portfolio}
               errorMessage={errors.portfolio}
-              onChange={(event) => handleDocPortfolioChange(event, key)}
-              onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+             onChange={addPortfolioFile}
+             // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
             />
-          ))}
+
         </div>
       </div>
 
@@ -216,7 +237,7 @@ function FreelancerCompleteForm({ setIsAuthenticated }) {
           {docKeysEdu.slice(0, MAX_ATTACHED_DOCS).map((key) => (
             <InputDoc
               key={key} name="diploma" value={values.diploma || ''} error={errors.diploma} errorMessage={errors.diploma}
-              onChange={(event) => handleDocEduChange(event, key)}
+              onChange={addDocument}
               onDeleteDocClick={() => onDeleteDocEduClick(key)}
             />
           ))}

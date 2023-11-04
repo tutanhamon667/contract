@@ -19,6 +19,28 @@ export function register(data) {
     .then((res) => _checkResponse(res));
 }
 
+/*
+export function sendCustomerInfo({photo, name, activity, about, web}){
+  console.log({photo, name, activity, about, web})
+  return fetch(`${BACKEND_BASE_URL}/users/me/`,{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('access')}`
+    },
+    body: JSON.stringify({
+      "photo": photo,
+      "name": name,
+      "industry": {"name" : activity},
+      "about": about,
+      "web": web
+    })
+  })
+  .then((res) => _checkResponse(res));
+}
+
+*/
+
 export function authenticateUser({ email, password }) {
   // console.log({email, password})
   return fetch(`${BACKEND_BASE_URL}/login/jwt/create/`, {
@@ -70,4 +92,16 @@ export function updateCustomerProfile(data){
     body: JSON.stringify(data)
   })
     .then((res) => _checkResponse(res));
+}
+
+export function createFreelancerProfile(data){
+  return fetch(`${BACKEND_BASE_URL}/users/me/`,{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('access')}`
+    },
+    body: JSON.stringify(data)
+  })
+  .then((res) => _checkResponse(res));
 }

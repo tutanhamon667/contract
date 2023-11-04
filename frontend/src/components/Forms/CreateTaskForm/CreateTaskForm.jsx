@@ -67,7 +67,7 @@ function CreateTaskForm() {
 
   return (
     <form className="create-task-form" onSubmit={handleSubmit}>
-      <label>
+      <div>
         <p className="create-task-form__input-text">Название заказа</p>
         <InputText
           type="text"
@@ -77,24 +77,24 @@ function CreateTaskForm() {
           onChange={handleChange}
           value={values.task_name || ''}
         />
-      </label>
-      <label>
+      </div>
+      <div>
         <p className="create-task-form__input-text">Специализация</p>
         <InputMultipleSelect
           name="activity"
           options={industryOptions}
           setActivityValues={setActivityValues}
         />
-      </label>
-      <label>
+      </div>
+      <div>
         <p className="create-task-form__input-text">Навыки</p>
         {/* TODO: исправить работу тегов также, как на странице просмотра профиля */}
         {/*<InputTags*/}
         {/*  name="stacks"*/}
         {/*  setStacksValues={setStacksValues}*/}
         {/*/>*/}
-      </label>
-      <label>
+      </div>
+      <div>
         <p className="create-task-form__input-text">Бюджет</p>
         <InputText
           type="number"
@@ -104,7 +104,7 @@ function CreateTaskForm() {
           onChange={handleChange}
           value={values.budget || ''}
         />
-      </label>
+      </div>
       <InputSwitch type="checkbox" name="budgetDiscussion" label="Жду предложений от фрилансеров" marginTop={12}
                    // onChange={handleChange}
                    checked={isChecked.budgetDiscussion}
@@ -138,7 +138,7 @@ function CreateTaskForm() {
                      }))
                    }}
       />
-      <label>
+      <div>
         <p className="create-task-form__input-text">Описание</p>
         <InputText
           type="textarea"
@@ -149,7 +149,7 @@ function CreateTaskForm() {
           onChange={handleChange}
           value={values.about || ''}
         />
-      </label>
+      </div>
       <div>
         <p className="create-task-form__input-text">Загрузить файл</p>
         <div className="create-task-form__input-doc-wrapper">

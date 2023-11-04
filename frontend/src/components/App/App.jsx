@@ -65,6 +65,7 @@ function App() {
 
     function refreshTokenHandler() {
       if (refreshToken) {
+        console.log('refresh');
         Api.getNewAccessToken()
           .then((res) => {
             if (res.ok) {
@@ -75,8 +76,9 @@ function App() {
               })
             }
           })
-          .then((res) => {
+          .then(res => {
             if (res['access']) {
+              console.log(res)
               sessionStorage.setItem('access', res['access']);
 
               Api.getUserInfo()
@@ -94,7 +96,7 @@ function App() {
                   setIsLoading(false);
                 })
                 .catch((error) => {
-                  setIsAuthenticated(false);
+                 setIsAuthenticated(false);
                   sessionStorage.removeItem('access');
                   console.error(error);
                   setIsLoading(false);
@@ -102,13 +104,13 @@ function App() {
             }
           })
           .catch((error) => {
-            setIsAuthenticated(false);
-            sessionStorage.removeItem('access');
+               setIsAuthenticated(false);
+           sessionStorage.removeItem('access');
             console.error(error);
             setIsLoading(false);
           })
       } else {
-        setIsAuthenticated(false);
+           setIsAuthenticated(false);
         setIsLoading(false);
       }
     }
@@ -167,16 +169,87 @@ function App() {
       about: data.values?.about,
       web: data.values?.web
     }
-    // console.log(array);
+   // console.log(array)
     Api.createCustomerProfile(req)
       .then((res) => {
-        // console.log(data);
-        setCurrentUser(res);
-        navigate('/customer', { replace: true });
+       // console.log(data)
+       setCurrentUser(res);
+       navigate('/customer', { replace: true });
       })
       .catch((err)=>{
         console.error(err);
       })
+  }
+
+  function handleFreelancerSubmit(data){
+    console.log(data)
+
+    const req = {
+      contacts:[
+        {
+        type: 'phone',
+        value: data.values.phone,
+        preferred: false
+        },
+        {
+          type: 'email',
+          value: data.values.email,
+          preferred: true
+        },
+        {
+          type: 'telegram',
+          value: data.values.telegram,
+          preferred: false
+        }
+      ],
+      stacks: [
+        {
+        name: data.values.activity
+        }
+      ],
+      categories: [
+        {
+        name: data.values.activity
+        }
+      ],
+      education: [
+        {
+          diploma:[
+            {
+              file: data.document.diploma,
+              name: data.document.diploma_name
+            }
+          ],
+          name: data.values.education,
+          faculty: data.values.faculty,
+          start_year: data.values.start_year,
+          finish_year: data.values.finish_year,
+          degree: data.values.degree
+        }
+      ],
+      portfolio:[
+        {
+          file: data.portfolioFile.file,
+          name: data.portfolioFile.file_name
+        }
+      ],
+      photo: data.profilePhoto.photo,
+      payrate: data.values.payrate,
+      about: data.values.about,
+      web: data.values.web
+    }
+
+
+
+    Api.createFreelancerProfile(req)
+    .then((res) => {
+      console.log(res)
+      setCurrentUser(res);
+    })
+    .catch((err)=>{
+      console.error(err);
+    })
+
   }
 
   // function updateUser(userEmail) {
@@ -215,7 +288,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="freelancer" element={<ProfileFreelancer />} />
             <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
-            <Route path="freelancer/complete" element={<FreelancerCompleteForm />} />
+            <Route path="freelancer/complete" element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit}/>} />
             <Route path="customer" element={<ProfileCustomer setCurrentUser={setCurrentUser} />} />
             <Route path="customer/complete" element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />} />
             <Route path="create-task" element={<CreateTaskForm />} />
