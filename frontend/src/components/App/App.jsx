@@ -245,6 +245,7 @@ function App() {
     .then((res) => {
       console.log(res)
       setCurrentUser(res);
+      navigate('/', { replace: true });
     })
     .catch((err)=>{
       console.error(err);
