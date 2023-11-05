@@ -138,7 +138,7 @@ class UserViewSet(UserView):
             fields = (
                 'photo', 'user', 'is_customer', 'is_worker', 'stacks',
                 'categories', 'education', 'portfolio', 'payrate', 'about',
-                'web'
+                'web', 'contacts'
             )
         serializer = self.get_serializer(obj, fields=fields)
         return Response(serializer.data)
@@ -184,7 +184,8 @@ class UserViewSet(UserView):
             elif user.is_customer:
                 fields = (
                     'user', 'account_email', 'is_worker', 'is_customer',
-                    'photo', 'name', 'industry', 'about', 'web'
+                    'first_name', 'last_name', 'photo', 'name', 'industry',
+                    'about', 'web'
                 )
             serializer = self.get_serializer(
                 data=request.data,
@@ -198,7 +199,8 @@ class UserViewSet(UserView):
             elif user.is_customer:
                 fields = (
                     'user', 'account_email', 'is_worker', 'is_customer',
-                    'photo', 'name', 'industry', 'about', 'web'
+                    'first_name', 'last_name', 'photo', 'name', 'industry',
+                    'about', 'web'
                 )
             serializer = self.get_serializer(
                 request._user,
