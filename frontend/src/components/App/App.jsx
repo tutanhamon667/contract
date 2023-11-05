@@ -183,6 +183,8 @@ function App() {
 
   function handleFreelancerSubmit(data){
     console.log(data)
+    let tags = data.tags.toString();
+    console.log(tags)
 
     const req = {
       contacts:[
@@ -204,7 +206,7 @@ function App() {
       ],
       stacks: [
         {
-        name: data.values.activity
+        name: tags
         }
       ],
       categories: [

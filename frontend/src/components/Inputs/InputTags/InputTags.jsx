@@ -5,16 +5,18 @@ import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
 function InputTags({ setStacksValues, isDisabled, tags, setTags }) {
-  // const [tags, setTags] = useState([]);
+  const [isTags, setIsTags] = useState(false)
+//  const [tags, setTags] = useState([]);
   const [isEditMode, setIsEditMode] = useState(true);
 
   function handleKeyDown(e) {
+    setIsTags(true)
     if (e.key !== 'Enter') return;
     const value = e.target.value;
     if (!value.trim()) return;
 
     setTags([...tags, value]);
-    // setStacksValues([...tags, value]);
+   setStacksValues([...tags, value]);
 
     e.target.value = '';
     e.preventDefault();
@@ -36,7 +38,7 @@ function InputTags({ setStacksValues, isDisabled, tags, setTags }) {
           disabled={isDisabled}
         />
       )}
-      {tags.map((tag, index) => (
+      {tags ? tags.map((tag, index) => (
         <div
           className={`tag__title${isDisabled ? ' tag__title_disabled' : ''}`}
           key={index}
@@ -44,7 +46,8 @@ function InputTags({ setStacksValues, isDisabled, tags, setTags }) {
           {tag}
           {isEditMode && !isDisabled && <span className="tag__item-close"></span>}
         </div>
-      ))}
+      ))
+      : ''}
     </div>
   )
 }

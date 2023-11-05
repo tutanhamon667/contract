@@ -13,7 +13,7 @@ import { InputSwitch } from '../../Inputs/InputSwitch/InputSwitch';
 
 const MAX_ATTACHED_DOCS = 8;
 
-function FreelancerCompleteForm({ setIsAuthenticated, onSubmit }) {
+function FreelancerCompleteForm({ setIsAuthenticated, onSubmit, currentUser }) {
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [portfolioFile, setPortfolioFile] = useState(null);
   const [document, setDocument] = useState(null);
@@ -24,8 +24,13 @@ function FreelancerCompleteForm({ setIsAuthenticated, onSubmit }) {
   } = useFormAndValidation();
   const navigate = useNavigate();
 
+  const [tags, setTags] = useState(currentUser?.stacks?.map(obj => obj.name) || []);
+
+console.log(tags)
+
   function addProfilePhoto(url) {
     setProfilePhoto({ photo: url });
+
 
   }
 //  console.log(profilePhoto)
@@ -33,6 +38,7 @@ function FreelancerCompleteForm({ setIsAuthenticated, onSubmit }) {
 
   function addPortfolioFile(url, name){
     setPortfolioFile({file: url, file_name: name});
+    console.log(stacksValues)
   }
 
   function addDocument(url, name){
@@ -112,7 +118,7 @@ console.log(document)
       //   education: 'МГУ имени М.В. Ломоносова',
       // })
 
-      onSubmit({profilePhoto, portfolioFile, document, values})
+      onSubmit({profilePhoto, portfolioFile, document, tags, values})
     }
   };
 
@@ -164,9 +170,11 @@ console.log(document)
         />
       </div>
       <div>
+
         <p className="freelancer-complete-form__input-text">Навыки</p>
-        {/* TODO: исправить работу тегов также, как на странице просмотра профиля */}
-        {/*<InputTags name="stacks" onChange={handleChange} setStacksValues={setStacksValues} />*/}
+
+       < InputTags name="stacks" tags={tags} setTags={setTags} onChange={handleChange} setStacksValues={setStacksValues} />
+
       </div>
       <div>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>
