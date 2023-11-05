@@ -19,22 +19,26 @@ class IndustrySerializer(serializers.ModelSerializer):
 class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     account_email = serializers.ReadOnlyField(source='user.email')
+    first_name = serializers.ReadOnlyField(source='user.first_name')
+    last_name = serializers.ReadOnlyField(source='user.last_name')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
-    photo = Base64ImageField(required=False)
+    photo = Base64ImageField()
     industry = IndustrySerializer(many=False, read_only=True)
 
     class Meta:
         model = CustomerProfile
         fields = (
             'user', 'account_email', 'is_worker', 'is_customer', 'photo',
-            'name', 'about', 'industry', 'web'
+            'first_name', 'last_name', 'name', 'about', 'industry', 'web'
         )
 
 
 class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     account_email = serializers.ReadOnlyField(source='user.email')
+    first_name = serializers.ReadOnlyField(source='user.first_name')
+    last_name = serializers.ReadOnlyField(source='user.last_name')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
     photo = Base64ImageField(required=False)
@@ -44,7 +48,7 @@ class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
         model = CustomerProfile
         fields = (
             'user', 'account_email', 'is_worker', 'is_customer', 'photo',
-            'name', 'about', 'industry', 'web'
+            'first_name', 'last_name', 'name', 'about', 'industry', 'web'
         )
 
     def validate_user(self, user):
