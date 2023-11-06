@@ -1,4 +1,5 @@
 from django.utils import timezone
+import datetime
 from rest_framework import serializers
 
 from api.utils import CustomBase64ImageField
@@ -82,6 +83,11 @@ class RespondedSerializer(serializers.ModelSerializer):
 class JobListSerializer(serializers.ModelSerializer):
     """Получение списка заказов."""
     stack = JobStackSerializer(many=True)
+    category = serializers.SlugRelatedField(
+        read_only=True,
+        many=True,
+        slug_field='slug'
+    )
     client = ClientSerializer()
     is_responded = serializers.SerializerMethodField()
 
@@ -132,9 +138,14 @@ class JobCreateSerializer(serializers.ModelSerializer):
         source='user.id',
         read_only=True
     )
-    category = serializers.PrimaryKeyRelatedField(
+    # category = serializers.PrimaryKeyRelatedField(
+    #     queryset=JobCategory.objects.all(),
+    #     many=True
+    # )
+    category = serializers.SlugRelatedField(
         queryset=JobCategory.objects.all(),
-        many=True
+        many=True,
+        slug_field='slug'
     )
     stack = JobStackSerializer(many=True,)
     job_files = JobFileSerializer(many=True, required=False)
@@ -151,10 +162,10 @@ class JobCreateSerializer(serializers.ModelSerializer):
         return data
 
     def validate_deadline(self, value):
-        if value < timezone.now().date():
+        if value < timezone.now():
             raise serializers.ValidationError(CURRENT_DATE_ERR)
-        if value < self.instance.pub_date.date():
-            raise serializers.ValidationError(PUB_DATE_ERR)
+#        if value < self.instance.pub_date.date():
+#            raise serializers.ValidationError(PUB_DATE_ERR)
         return value
 
     def create(self, validated_data):
