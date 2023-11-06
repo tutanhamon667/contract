@@ -1,5 +1,7 @@
+from datetime import datetime
+from datetime import timezone as tz
+
 from django.utils import timezone
-import datetime
 from rest_framework import serializers
 
 from api.utils import CustomBase64ImageField
@@ -80,6 +82,21 @@ class RespondedSerializer(serializers.ModelSerializer):
                   'client', 'job_files', 'description',)
 
 
+class JobFileSerializer(serializers.ModelSerializer):
+    """Изображения в профайлах"""
+    file = CustomBase64ImageField(required=True)
+
+    class Meta:
+        model = JobFile
+        fields = ('file', 'name')
+
+    def validate_file(self, value):
+        if value:
+            if value.size > MAX_FILE_SIZE:
+                raise serializers.ValidationError(FILE_OVERSIZE_ERR)
+        return value
+
+
 class JobListSerializer(serializers.ModelSerializer):
     """Получение списка заказов."""
     stack = JobStackSerializer(many=True)
@@ -89,6 +106,8 @@ class JobListSerializer(serializers.ModelSerializer):
         slug_field='slug'
     )
     client = ClientSerializer()
+    job_files = JobFileSerializer(
+        read_only=True, many=True)
     is_responded = serializers.SerializerMethodField()
 
     class Meta:
@@ -117,31 +136,12 @@ class JobListSerializer(serializers.ModelSerializer):
         return data
 
 
-class JobFileSerializer(serializers.ModelSerializer):
-    """Изображения в профайлах"""
-    file = CustomBase64ImageField(required=True)
-
-    class Meta:
-        model = JobFile
-        fields = ('file', 'name')
-
-    def validate_file(self, value):
-        if value:
-            if value.size > MAX_FILE_SIZE:
-                raise serializers.ValidationError(FILE_OVERSIZE_ERR)
-        return value
-
-
 class JobCreateSerializer(serializers.ModelSerializer):
     """Создание задания."""
     client_id = serializers.IntegerField(
         source='user.id',
         read_only=True
     )
-    # category = serializers.PrimaryKeyRelatedField(
-    #     queryset=JobCategory.objects.all(),
-    #     many=True
-    # )
     category = serializers.SlugRelatedField(
         queryset=JobCategory.objects.all(),
         many=True,
@@ -161,11 +161,24 @@ class JobCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(STACK_ERR_MSG)
         return data
 
+    def validate_budget(self, value):
+        if value is not None and value != "Жду предложений":
+            try:
+                int(value)
+            except (ValueError, TypeError):
+                raise serializers.ValidationError(
+                    'Бюджет должен быть числом или "Жду предложений"')
+        return value
+
     def validate_deadline(self, value):
-        if value < timezone.now():
-            raise serializers.ValidationError(CURRENT_DATE_ERR)
-#        if value < self.instance.pub_date.date():
-#            raise serializers.ValidationError(PUB_DATE_ERR)
+        if value is not None and value != "Жду предложений":
+            try:
+                deadline = datetime.strptime(
+                    value, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=tz.utc)
+                if deadline < timezone.now():
+                    raise serializers.ValidationError(PUB_DATE_ERR)
+            except ValueError:
+                raise serializers.ValidationError("Некорректный формат даты")
         return value
 
     def create(self, validated_data):
