@@ -110,12 +110,18 @@ class JobListSerializer(serializers.ModelSerializer):
     job_files = JobFileSerializer(
         read_only=True, many=True)
     is_responded = serializers.SerializerMethodField()
+    budget = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
         fields = ('id', 'title', 'category', 'stack', 'client',
                   'budget', 'deadline', 'description', 'job_files',
                   'is_responded', 'pub_date')
+
+    def get_budget(self, obj):
+        if obj.budget == "Жду предложений" or not obj.budget.isdigit():
+            return None
+        return int(obj.budget)
 
     def get_is_responded(self, obj):
         """
