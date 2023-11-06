@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
-import { industryOptions } from '../../../utils/constants';
+import { industryCategoryOptions } from '../../../utils/constants';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import InputText from '../../Inputs/InputText/InputText';
 import Button from '../../Button/Button';
@@ -72,7 +71,7 @@ function CustomerCompleteForm({handleCustomerSubmit}) {
         <p className="employer-complete-form__input-text">Сфера деятельности</p>
         <InputSelect name="industry" placeholder="Выберите из списка"
                      value={values.industry || ''} error={errors.industry} errorMessage={errors.industry}
-                     onChange={handleChange} options={industryOptions}
+                     onChange={handleChange} options={industryCategoryOptions}
         />
       </div>
       <div>
@@ -84,7 +83,7 @@ function CustomerCompleteForm({handleCustomerSubmit}) {
       </div>
       <div>
         <p className="employer-complete-form__input-text">Укажите ссылку на сайт компании</p>
-        <InputText type="url" placeholder="www.example.com" name="web" width={610} value={values.web || ''}
+        <InputText type="url" placeholder="https://example.com" name="web" width={610} value={values.web || ''}
                    error={errors.web} errorMessage={errors.web} onChange={handleChange}
         />
         <button type="button" className="employer-complete-form__add-link-button">

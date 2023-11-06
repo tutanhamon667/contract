@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
-import { industryOptions, degreeOptions } from '../../../utils/constants';
+import { industryCategoryOptions, degreeOptions } from '../../../utils/constants';
 import InputText from '../../Inputs/InputText/InputText';
 import { InputImage } from '../../Inputs/InputImage/InputImage';
 import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
@@ -11,65 +10,38 @@ import InputSelect from '../../Inputs/InputSelect/InputSelect';
 import './FreelancerCompleteForm.css';
 import { InputSwitch } from '../../Inputs/InputSwitch/InputSwitch';
 
-const MAX_ATTACHED_DOCS = 8;
+// const MAX_ATTACHED_DOCS = 8;
 
-function FreelancerCompleteForm({ setIsAuthenticated, onSubmit, currentUser }) {
+function FreelancerCompleteForm({ onSubmit }) {
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [portfolioFile, setPortfolioFile] = useState(null);
   const [document, setDocument] = useState(null);
-  const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
-  const [docKeysEdu, setDocKeysEdu] = useState([Date.now()]);
-  const {
-    values, errors, isValid, handleChange, setValues, setErrors
-  } = useFormAndValidation();
-  const navigate = useNavigate();
-
-  const [tags, setTags] = useState(currentUser?.stacks?.map(obj => obj.name) || []);
-
-console.log(tags)
+  // const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
+  const { values, errors, handleChange, setErrors } = useFormAndValidation();
+  const [tags, setTags] = useState([]);
 
   function addProfilePhoto(url) {
     setProfilePhoto({ photo: url });
-
-
   }
-//  console.log(profilePhoto)
- // console.log(portfolioFile)
 
   function addPortfolioFile(url, name){
-    setPortfolioFile({file: url, file_name: name});
-    console.log(stacksValues)
+    setPortfolioFile({ file: url, file_name: name });
   }
 
   function addDocument(url, name){
-    setDocument({diploma: url, diploma_name: name})
-  }
-console.log(document)
-
-  const [stacksValues, setStacksValues] = useState([]);
-
-  const handleDocPortfolioChange = (event) => {
-    handleChange(event);
-    if (event.currentTarget.files[0]) {
-      setDocKeysPortfolio(prevKeys => [...prevKeys, Date.now()]);
-      console.log(Date.now())
-    }
-  };
-
-  const onDeleteDocPortfolioClick = (key) => {
-    setDocKeysPortfolio(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
+    setDocument({ diploma: url, diploma_name: name });
   }
 
-  const handleDocEduChange = (event) => {
-    handleChange(event);
-    if (event.currentTarget.files[0]) {
-      setDocKeysEdu(prevKeys => [...prevKeys, Date.now()]);
-    }
-  };
-
-  const onDeleteDocEduClick = (key) => {
-    setDocKeysEdu(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
-  }
+  // const handleDocPortfolioChange = (event) => {
+  //   handleChange(event);
+  //   if (event.currentTarget.files[0]) {
+  //     setDocKeysPortfolio(prevKeys => [...prevKeys, Date.now()]);
+  //   }
+  // };
+  //
+  // const onDeleteDocPortfolioClick = (key) => {
+  //   setDocKeysPortfolio(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
+  // }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -90,19 +62,18 @@ console.log(document)
 
     setErrors({ ...errors, ...newErrors });
 
-    if (
-      isValid &&
-      values.first_name &&
-      values.last_name &&
-      values.email
-    ) {
-      console.log(values);
-      setValues({
-        ...values,
-        first_name: '',
-        last_name: '',
-        email: '',
-      });
+    // if (
+    //   isValid &&
+    //   values.first_name &&
+    //   values.last_name &&
+    //   values.email
+    // ) {
+    //   setValues({
+    //     ...values,
+    //     first_name: '',
+    //     last_name: '',
+    //     email: '',
+    //   });
 
     //  setIsAuthenticated(true)
       // setCurrentUser({
@@ -118,8 +89,8 @@ console.log(document)
       //   education: 'МГУ имени М.В. Ломоносова',
       // })
 
-      onSubmit({profilePhoto, portfolioFile, document, tags, values})
-    }
+      onSubmit({ profilePhoto, portfolioFile, document, values, tags })
+    // }
   };
 
   return (
@@ -166,15 +137,12 @@ console.log(document)
         <p className="freelancer-complete-form__input-text">Специализация</p>
         <InputSelect name="activity" placeholder="Выберите из списка" value={values.activity || ''}
                      error={errors.activity} errorMessage={errors.activity} onChange={handleChange}
-                     options={industryOptions}
+                     options={industryCategoryOptions}
         />
       </div>
       <div>
-
         <p className="freelancer-complete-form__input-text">Навыки</p>
-
-       < InputTags name="stacks" tags={tags} setTags={setTags} onChange={handleChange} setStacksValues={setStacksValues} />
-
+        <InputTags name="stacks" tags={tags} setTags={setTags} />
       </div>
       <div>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>
@@ -193,19 +161,20 @@ console.log(document)
       <div>
         <p className="freelancer-complete-form__input-text">Примеры работ, портфолио</p>
         <div className="freelancer-complete-form__input-doc-wrapper">
-
+          {/*{docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key) => (*/}
             <InputDoc name="portfolio" value={values.portfolio || ''} error={errors.portfolio}
-              errorMessage={errors.portfolio}
-             onChange={addPortfolioFile}
-             // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+                      errorMessage={errors.portfolio} onChange={addPortfolioFile}
+                      // isDisabled={false}
+                      // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
+                      // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
             />
-
+          {/*))}*/}
         </div>
       </div>
 
       <label>
         <p className="freelancer-complete-form__input-text">Укажите ссылку на портфолио</p>
-        <InputText type="url" placeholder="www.example.com" name="web" width={610} value={values.web || ''}
+        <InputText type="url" placeholder="https://example.com" name="web" width={610} value={values.web || ''}
           error={errors.web} errorMessage={errors.web} onChange={handleChange}
         />
       </label>
@@ -242,13 +211,10 @@ console.log(document)
       <label>
         <p className="freelancer-complete-form__input-text">Загрузить сертификаты, грамоты, дипломы</p>
         <div className="freelancer-complete-form__input-doc-wrapper">
-          {docKeysEdu.slice(0, MAX_ATTACHED_DOCS).map((key) => (
-            <InputDoc
-              key={key} name="diploma" value={values.diploma || ''} error={errors.diploma} errorMessage={errors.diploma}
-              onChange={addDocument}
-              onDeleteDocClick={() => onDeleteDocEduClick(key)}
-            />
-          ))}
+          <InputDoc
+            name="diploma" value={values.diploma || ''} error={errors.diploma} errorMessage={errors.diploma}
+            onChange={addDocument}
+          />
         </div>
       </label>
 

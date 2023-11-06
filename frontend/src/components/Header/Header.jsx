@@ -16,13 +16,14 @@ function Header() {
       return '';
     }
 
-    const { is_worker, is_customer, user, name } = currentUser;
+    const { is_worker, is_customer, user } = currentUser;
 
     if (is_worker) {
       const shortLastName = user?.last_name.slice(0, 1);
       return `${user?.first_name} ${shortLastName}.`;
     } else if (is_customer) {
-      return name;
+      const shortLastName = currentUser?.last_name.slice(0, 1);
+      return `${currentUser?.first_name} ${shortLastName}.`;
     }
 
     return '';
@@ -60,7 +61,9 @@ function Header() {
             role="button"
             tabIndex="0"
           >
-            <p className="header__name">{formatNameForHeader()}</p>
+            <p className={`header__name${completeFormPaths ? ' header__name_dark' : ''}`}>
+              {formatNameForHeader()}
+            </p>
             <div
               className="header__avatar"
               style={{ backgroundImage: `url(${currentUser?.photo})` }}

@@ -170,7 +170,7 @@ function FilterSection({ handleFreelanceFilter }) {
         </form>
       </div>
       <div className="filters-buttons">
-        <Button text="Применить фильтр" width={289} />
+        <Button text="Применить фильтры" width={289} />
         <Button
           text="Очистить фильтры"
           width={289}

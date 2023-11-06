@@ -1,7 +1,10 @@
 import "./SearchMain.css";
-import React from "react";
+import React, { useContext } from 'react';
+import { Context } from '../../context/context';
 
 function SearchMain() {
+  const { currentUser } = useContext(Context);
+
   function handleFormSubmit(evt) {
     evt.preventDefault();
   }
@@ -15,7 +18,9 @@ function SearchMain() {
           </button>
           <input
             className="search__input"
-            placeholder="Поиск задач и проектов по навыкам, ключевым словам, технологиям..."
+            placeholder={currentUser.is_worker
+              ? "Поиск задач и проектов по навыкам, ключевым словам, технологиям..."
+              : "Поиск фрилансеров по специальности, навыкам, ключевым словам..."}
             minLength="2"
             maxLength="30"
             type="text"

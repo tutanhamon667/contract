@@ -28,7 +28,6 @@ const SetNewPassForm = () => {
         password: "",
         re_password: "",
       });
-      console.log(values);
     }
     setButtonClicked(true);
   };

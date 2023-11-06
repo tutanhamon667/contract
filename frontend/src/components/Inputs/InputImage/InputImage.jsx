@@ -5,11 +5,16 @@ const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   // const inputStyle = file && {
-  const inputStyle = {
-    backgroundImage: `url(${file ? URL.createObjectURL(file) : value})`,
-    backgroundSize: 'cover'
-  };
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+  const inputStyle = {};
+
+  if (file) {
+    inputStyle.backgroundImage = `url(${URL.createObjectURL(file)})`;
+    inputStyle.backgroundSize = 'cover';
+  } else if (value) {
+    inputStyle.backgroundImage = `url(${value})`;
+    inputStyle.backgroundSize = 'cover';
+  }
 
   const handleChange = (event) => {
     // setFile(event.currentTarget.files[0]);
@@ -18,11 +23,10 @@ const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
     // console.log('ok')
 
     const reader = new FileReader();
-    reader.readAsDataURL(selectedFile)
+    reader.readAsDataURL(selectedFile);
 
     reader.onload = function () {
-      // console.log(reader.result)
-      onChange(reader.result)
+      onChange(reader.result);
     }
 
     reader.onerror = function () {

@@ -65,7 +65,6 @@ function App() {
 
     function refreshTokenHandler() {
       if (refreshToken) {
-        console.log('refresh');
         Api.getNewAccessToken()
           .then((res) => {
             if (res.ok) {
@@ -78,7 +77,6 @@ function App() {
           })
           .then(res => {
             if (res['access']) {
-              console.log(res)
               sessionStorage.setItem('access', res['access']);
 
               Api.getUserInfo()
@@ -96,7 +94,7 @@ function App() {
                   setIsLoading(false);
                 })
                 .catch((error) => {
-                 setIsAuthenticated(false);
+                  setIsAuthenticated(false);
                   sessionStorage.removeItem('access');
                   console.error(error);
                   setIsLoading(false);
@@ -104,13 +102,13 @@ function App() {
             }
           })
           .catch((error) => {
-               setIsAuthenticated(false);
-           sessionStorage.removeItem('access');
+            setIsAuthenticated(false);
+            sessionStorage.removeItem('access');
             console.error(error);
             setIsLoading(false);
           })
       } else {
-           setIsAuthenticated(false);
+        setIsAuthenticated(false);
         setIsLoading(false);
       }
     }
@@ -160,7 +158,7 @@ function App() {
 
   function handleCustomerSubmit(data) {
     // console.log(data);
-    const req = {
+    const formValues = {
       photo: data.photo?.photo,
       name: data.values?.name,
       industry: {
@@ -170,7 +168,7 @@ function App() {
       web: data.values?.web
     }
    // console.log(array)
-    Api.createCustomerProfile(req)
+    Api.createUserProfile(formValues)
       .then((res) => {
        // console.log(data)
        setCurrentUser(res);
@@ -181,42 +179,34 @@ function App() {
       })
   }
 
-  function handleFreelancerSubmit(data){
-    console.log(data)
-    let tags = data.tags.toString();
-    console.log(tags)
-
-    const req = {
-      contacts:[
+  function handleFreelancerSubmit(data) {
+    const formValues = {
+      contacts: [
         {
-        type: 'phone',
-        value: data.values.phone,
-        preferred: false
+          type: 'phone',
+          value: data.values.phone,
+          preferred: data.values.preferred === 'phone'
         },
         {
           type: 'email',
           value: data.values.email,
-          preferred: true
+          preferred: data.values.preferred === 'email'
         },
         {
           type: 'telegram',
           value: data.values.telegram,
-          preferred: false
+          preferred: data.values.preferred === 'telegram'
         }
       ],
-      stacks: [
-        {
-        name: tags
-        }
-      ],
+      stacks: data.tags.map((tag) => ({ name: tag })),
       categories: [
         {
-        name: data.values.activity
+          name: data.values.activity
         }
       ],
       education: [
         {
-          diploma:[
+          diploma: [
             {
               file: data.document.diploma,
               name: data.document.diploma_name
@@ -229,7 +219,7 @@ function App() {
           degree: data.values.degree
         }
       ],
-      portfolio:[
+      portfolio: [
         {
           file: data.portfolioFile.file,
           name: data.portfolioFile.file_name
@@ -241,26 +231,15 @@ function App() {
       web: data.values.web
     }
 
-
-
-    Api.createFreelancerProfile(req)
-    .then((res) => {
-      console.log(res)
-      setCurrentUser(res);
-      navigate('/', { replace: true });
-    })
-    .catch((err)=>{
-      console.error(err);
-    })
-
+    Api.createUserProfile(formValues)
+      .then((res) => {
+        setCurrentUser(res);
+        navigate('/', { replace: true });
+      })
+      .catch((err)=>{
+        console.error(err);
+      })
   }
-
-  // function updateUser(userEmail) {
-  //   setCurrentUser({
-  //     ...currentUser,
-  //     email: userEmail.email
-  //   })
-  // }
 
   const handleOrderFilter = (state) => {
     setOrderFilter(state);
@@ -289,7 +268,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route element={<ProtectedRoute />}>
-            <Route path="freelancer" element={<ProfileFreelancer />} />
+            <Route path="freelancer" element={<ProfileFreelancer setCurrentUser={setCurrentUser} />} />
             <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
             <Route path="freelancer/complete" element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit}/>} />
             <Route path="customer" element={<ProfileCustomer setCurrentUser={setCurrentUser} />} />

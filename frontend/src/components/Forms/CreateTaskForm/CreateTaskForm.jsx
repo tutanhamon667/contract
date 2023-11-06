@@ -5,7 +5,7 @@ import { InputDoc } from '../../Inputs/InputDoc/InputDoc';
 import Button from '../../Button/Button';
 import React, { useState, useEffect } from 'react';
 import './CreateTaskForm.css';
-import { industryOptions } from '../../../utils/constants';
+import { industryCategoryOptions } from '../../../utils/constants';
 import useFormAndValidation from '../../../hooks/useFormAndValidation';
 import { InputSwitch } from '../../Inputs/InputSwitch/InputSwitch';
 
@@ -59,8 +59,8 @@ function CreateTaskForm() {
 
   // console.log(new Date().toString());
 
-  const dateString = "Tue Oct 24 2023 23:46:30 GMT+0600 (Kyrgyzstan Time)";
-  const trimmedDateString = dateString.split(":").slice(0, 2).join(":");
+  // const dateString = "Tue Oct 24 2023 23:46:30 GMT+0600 (Kyrgyzstan Time)";
+  // const trimmedDateString = dateString.split(":").slice(0, 2).join(":");
   // console.log(dateString.split(":"));
   // console.log(dateString.split(":").slice(0, 2));
   // console.log(trimmedDateString);
@@ -82,7 +82,7 @@ function CreateTaskForm() {
         <p className="create-task-form__input-text">Специализация</p>
         <InputMultipleSelect
           name="activity"
-          options={industryOptions}
+          options={industryCategoryOptions}
           setActivityValues={setActivityValues}
         />
       </div>

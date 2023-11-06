@@ -7,59 +7,184 @@ import "../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.
 
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import { Context } from "../../../context/context"
+import { industryCategoryOptions, degreeOptions } from '../../../utils/constants';
 import InputTags from "../../../components/Inputs/InputTags/InputTags";
 import { InputDoc } from "../../../components/Inputs/InputDoc/InputDoc";
-import { industryOptions, degreeOptions } from '../../../utils/constants';
 import InputSelect from '../../../components/Inputs/InputSelect/InputSelect';
 import InputText from '../../../components/Inputs/InputText/InputText';
 import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
 import Button from "../../../components/Button/Button";
 import { InputSwitch } from '../../../components/Inputs/InputSwitch/InputSwitch';
+import * as Api from '../../../utils/Api';
 
-// переиспользуемые элементы с Forms/FreelancerCompleteForm
-const MAX_ATTACHED_DOCS = 8;
+// const MAX_ATTACHED_DOCS = 8;
 
-export default function ProfileFreelancer() {
+export default function ProfileFreelancer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
+  const { values, errors, handleChange, setErrors } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
-  // переиспользуемый хук с Forms/FreelancerCompleteForm
-  // const [docKeysEdu, setDocKeysEdu] = useState([...currentUser.education[0]?.diploma?.map((element) => element.id), Date.now()] || [Date.now()]);
-  const [docKeysEdu, setDocKeysEdu] = useState(() => {
-    const education = currentUser?.education[0];
-    const diplomaIds = education?.diploma?.map((element) => element.id) || [];
-    return [...diplomaIds, Date.now()];
-  });
-  const [docKeysPortfolio, setDocKeysPortfolio] = useState([...currentUser.portfolio?.map((element) => element.id), Date.now()] || [Date.now()]);
-  // ------------------------------------------
-  const { values, errors, isValid, handleChange, setValues } = useFormAndValidation();
   const [tags, setTags] = useState(currentUser?.stacks?.map(obj => obj.name) || []);
+  const [photo, setPhoto] = useState(null);
+  const [diploma, setDiploma] = useState(null);
+  const [portfolio, setPortfolio] = useState(null);
 
-  const handleDocEduChange = (event) => {
-    handleChange(event);
-    if (event.currentTarget.files[0]) {
-      setDocKeysEdu(prevKeys => [...prevKeys, Date.now()]);
-    }
-  };
+  // const [docKeysEdu, setDocKeysEdu] = useState([...currentUser.education[0]?.diploma?.map((element) => element.id), Date.now()] || [Date.now()]);
+  // const [docKeysEdu, setDocKeysEdu] = useState(() => {
+  //   const education = currentUser?.education[0];
+  //   const diplomaIds = education?.diploma?.map((element) => element.id) || [];
+  //   return [...diplomaIds, Date.now()];
+  // });
+  // const [docKeysPortfolio, setDocKeysPortfolio] = useState([...currentUser.portfolio?.map((element) => element.id), Date.now()] || [Date.now()]);
 
-  const onDeleteDocEduClick = (key) => {
-    setDocKeysEdu(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
+  // const handleDocEduChange = (event) => {
+  //   handleChange(event);
+  //   if (event.currentTarget.files[0]) {
+  //     setDocKeysEdu(prevKeys => [...prevKeys, Date.now()]);
+  //   }
+  // };
+  //
+  // const onDeleteDocEduClick = (key) => {
+  //   setDocKeysEdu(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
+  // }
+  //
+  // const handleDocPortfolioChange = (event) => {
+  //   handleChange(event);
+  //   if (event.currentTarget.files[0]) {
+  //     setDocKeysPortfolio(prevKeys => [...prevKeys, Date.now()]);
+  //   }
+  // };
+  //
+  // const onDeleteDocPortfolioClick = (key) => {
+  //   setDocKeysPortfolio(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
+  // }
+
+  function handleAvatar(file) {
+    setPhoto({ file })
   }
 
-  const handleDocPortfolioChange = (event) => {
-    handleChange(event);
-    if (event.currentTarget.files[0]) {
-      setDocKeysPortfolio(prevKeys => [...prevKeys, Date.now()]);
-    }
-  };
-
-  const onDeleteDocPortfolioClick = (key) => {
-    setDocKeysPortfolio(prevKeys => prevKeys.filter(prevKey => prevKey !== key));
+  function handlePortfolio(file, name){
+    setPortfolio({ file, name });
   }
-  // ------------------------------------------
+
+  function handleDiploma(file, name){
+    setDiploma({ file, name });
+  }
 
   function handleSubmit(e) {
-    e.preventDefault()
-    setIsEditable(false)
+    e.preventDefault();
+
+    // if (currentUser.education[0]) {}
+
+    // console.log(currentUser?.education[0]?.name);
+
+    // setValues({
+      // user: {
+      //   first_name: currentUser?.user?.first_name,
+      //   last_name: currentUser?.user?.last_name
+      // },
+      // categories: [{
+      //   name: currentUser?.categories[0]?.name
+      // }],
+      // education: [{
+      //   diploma: [{
+      //     file: currentUser?.education[0]?.diploma[0]?.file,
+      //     name: currentUser?.education[0]?.diploma[0]?.name
+      //   }],
+      //   name: currentUser?.education[0]?.name,
+      //   faculty: currentUser?.education[0]?.faculty,
+      //   start_year: currentUser?.education[0]?.start_year,
+      //   finish_year: currentUser?.education[0]?.finish_year,
+      //   degree: currentUser?.education[0]?.degree
+      // }],
+    // })
+
+    let newErrors = {};
+
+    // if (!values.name) {
+    //   newErrors = {...newErrors, name: 'Введите название компании'};
+    // }
+
+    setErrors({...errors, ...newErrors});
+
+    // if (
+    //   isValid
+    //   // && values.name
+    //   // && values.email
+    // ) {
+
+      const newData = {
+        user: {
+          first_name: values?.first_name || currentUser?.user?.first_name,
+          last_name: values?.last_name || currentUser?.user?.last_name
+        },
+        stacks: tags.map((tag) => ({ name: tag })),
+        categories: [{
+          name: values?.categories || currentUser?.categories[0]?.name
+        }],
+        photo: photo?.file,
+        payrate: values?.payrate,
+        about: values?.about,
+        web: values?.web
+      }
+
+    const isEdu = diploma?.file && diploma?.name && values?.education && values?.faculty && values?.start_year && values?.finish_year && values?.degree;
+
+    if (isEdu) {
+      newData.education = [{
+        diploma: [{
+          file: diploma?.file || currentUser?.education[0]?.diploma[0]?.file,
+          name: diploma?.name || currentUser?.education[0]?.diploma[0]?.name
+        }],
+        name: values?.education || currentUser?.education[0]?.name,
+        faculty: values?.faculty || currentUser?.education[0]?.faculty,
+        start_year: values?.start_year || currentUser?.education[0]?.start_year,
+        finish_year: values?.finish_year || currentUser?.education[0]?.finish_year,
+        degree: values?.degree || currentUser?.education[0]?.degree
+      }];
+    }
+
+    if (values?.phone || values?.email || values?.telegram || values?.preferred) {
+      newData.contacts = newData.contacts || [];
+
+      if (values?.phone || currentUser.contacts.find((item) => item.type === 'phone')) {
+        newData.contacts.push({
+          type: 'phone',
+          value: values?.phone,
+          preferred: values?.preferred === 'phone'
+        });
+      }
+      if (values?.email || currentUser.contacts.find((item) => item.type === 'email')) {
+        newData.contacts.push({
+          type: 'email',
+          value: values?.email,
+          preferred: values?.preferred === 'email'
+        });
+      }
+      if (values?.telegram || currentUser.contacts.find((item) => item.type === 'telegram')) {
+        newData.contacts.push({
+          type: 'telegram',
+          value: values?.telegram,
+          preferred: values?.preferred === 'telegram'
+        });
+      }
+    }
+
+    if (portfolio?.file && portfolio?.name) {
+      newData.portfolio = [{
+        file: portfolio?.file,
+        name: portfolio?.name
+      }];
+    }
+
+      Api.updateUserProfile(newData)
+        .then((res) => {
+          setCurrentUser(res);
+          setIsEditable(false);
+        })
+        .catch((err)=>{
+          console.error(err);
+        })
+    // }
   }
 
   return (
@@ -69,7 +194,7 @@ export default function ProfileFreelancer() {
 
         <div className="profile_block profile__user-info">
           <InputImage name="photo" width={80} height={80} value={values.photo || currentUser.photo || ''}
-                      error={errors.photo} errorMessage={errors.photo} onChange={handleChange} isDisabled={!isEditable}
+                      error={errors.photo} errorMessage={errors.photo} onChange={handleAvatar} isDisabled={!isEditable}
           />
           <h2 className="profile__title profile__title_place_aside">
             {currentUser.user?.first_name} {currentUser.user?.last_name}
@@ -103,12 +228,11 @@ export default function ProfileFreelancer() {
                 <button
                   onClick={() => setIsEditable(false)}
                   className="form-top-buttons form-top-buttons_type_cansel"
+                  type="button"
                 >
                   Отмена
                 </button>
                 <button
-                  type="submit"
-                  onClick={handleSubmit}
                   className="form-top-buttons form-top-buttons_type_submit"
                 >
                   Сохранить
@@ -156,15 +280,15 @@ export default function ProfileFreelancer() {
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Специализация</h2>
-            <InputSelect name="activity" placeholder="Выберите из списка" width="100%"
-                         value={values.activity || currentUser.categories[0]?.name || ''} options={industryOptions}
-                         isDisabled={!isEditable}
+            <InputSelect name="categories" placeholder="Выберите из списка" width="100%"
+                         value={values.categories || currentUser.categories[0]?.name || ''} onChange={handleChange}
+                         options={industryCategoryOptions} isDisabled={!isEditable}
             />
           </div>
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Навыки</h2>
-            <InputTags tags={tags} setTags={setTags} isDisabled={!isEditable} />
+            <InputTags name="stacks" tags={tags} setTags={setTags} isDisabled={!isEditable} />
           </div>
 
           <div className="form-profile__input-container">
@@ -215,7 +339,7 @@ export default function ProfileFreelancer() {
               />
             </div>
 
-            <InputSelect options={degreeOptions} placeholder="Степень" width="100%"
+            <InputSelect name="degree" options={degreeOptions} placeholder="Степень" width="100%"
                          value={values.degree || currentUser.education[0]?.degree || ''}
                          onChange={handleChange} isDisabled={!isEditable} />
 
@@ -227,18 +351,20 @@ export default function ProfileFreelancer() {
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Сертификаты, грамоты, дипломы</h2>
-            {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <div className="freelancer-complete-form__input-doc-wrapper">
-              {docKeysEdu.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (
-                <InputDoc key={key} name="diploma" value={values.diploma || currentUser.education[0]?.diploma[index] || ''}
-                          error={errors.diploma} errorMessage={errors.diploma}
-                          onChange={(event) => handleDocEduChange(event, key)}
-                          onDeleteDocClick={() => onDeleteDocEduClick(key)}
-                          isDisabled={!isEditable}
-                />
-              ))}
+              {/*{docKeysEdu.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (*/}
+              {/*  <InputDoc key={key} name="diploma" value={values.diploma || currentUser.education[0]?.diploma[index] || ''}*/}
+              {/*            error={errors.diploma} errorMessage={errors.diploma}*/}
+              {/*            onChange={(event) => handleDocEduChange(event, key)}*/}
+              {/*            onDeleteDocClick={() => onDeleteDocEduClick(key)}*/}
+              {/*            isDisabled={!isEditable}*/}
+              {/*  />*/}
+              {/*))}*/}
+              <InputDoc name="diploma" value={values.diploma || currentUser.education[0]?.diploma[0] || ''}
+                        error={errors.diploma} errorMessage={errors.diploma}
+                        onChange={handleDiploma} isDisabled={!isEditable}
+              />
             </div>
-            {/* --------------------------------------------- */}
           </div>
 
           <div className="profile__separate-line"></div>
@@ -253,10 +379,10 @@ export default function ProfileFreelancer() {
               Номер телефона
             </label>
             <InputText type="tel" placeholder="+7" autoComplete="tel" name="phone" width="100%"
-                       value={values.tel
+                       value={values.phone
                          || currentUser.contacts.find((item) => item.type === 'phone')?.value
                          || ''}
-                       error={errors.tel} errorMessage={errors.tel} onChange={handleChange} id="phoneForContacts"
+                       error={errors.phone} errorMessage={errors.phone} onChange={handleChange} id="phoneForContacts"
                        isDisabled={!isEditable}
             />
             <InputSwitch type="radio" name="preferred" label="Предпочтительный вид связи" value="phone"
@@ -307,18 +433,19 @@ export default function ProfileFreelancer() {
 
           <div className="form-profile__input-container">
             <h2 className="profile__title">Портфолио</h2>
-            {/* // переиспользуемый компонент с Forms/FreelancerCompleteForm */}
             <div className="freelancer-complete-form__input-doc-wrapper">
-              {docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (
-                <InputDoc key={key} name="portfolio" value={values.portfolio || currentUser?.portfolio[index] || ''}
-                          error={errors.portfolio} errorMessage={errors.portfolio}
-                          onChange={(event) => handleDocPortfolioChange(event, key)}
-                          onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
-                          isDisabled={!isEditable}
-                />
-              ))}
-            </div>
-            {/* --------------------------------------------- */}
+              {/*{docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (*/}
+              {/*  <InputDoc key={key} name="portfolio" value={values.portfolio || currentUser?.portfolio[index] || ''}*/}
+              {/*            error={errors.portfolio} errorMessage={errors.portfolio}*/}
+              {/*            onChange={(event) => handleDocPortfolioChange(event, key)}*/}
+              {/*            onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}*/}
+              {/*            isDisabled={!isEditable}*/}
+              {/*  />*/}
+              {/*))}*/}
+              <InputDoc name="portfolio" value={values.portfolio || currentUser?.portfolio[0] || ''} error={errors.portfolio}
+                        onChange={handlePortfolio} isDisabled={!isEditable}
+              />
+              </div>
 
             <div className="form-profile__input-container">
               <label
@@ -327,7 +454,7 @@ export default function ProfileFreelancer() {
               >
                 Ссылка на портфолио
               </label>
-              <InputText type="url" placeholder="www.example.com" name="web" width="100%"
+              <InputText type="url" placeholder="https://example.com" name="web" width="100%"
                          value={values.web || currentUser?.web || ''} error={errors.web} errorMessage={errors.web}
                          onChange={handleChange} id="portfolioLink" isDisabled={!isEditable}
               />
@@ -341,10 +468,10 @@ export default function ProfileFreelancer() {
                 text='Отмена'
                 buttonSecondary={true}
                 width={289}
+                type="button"
+                onClick={() => setIsEditable(false)}
               />
               <button
-                type="submit"
-                onClick={handleSubmit}
                 className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
               >
                 Сохранить

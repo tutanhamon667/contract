@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef } from 'react';
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/context"
-import { industryOptions } from '../../../utils/constants';
+import { industryCategoryOptions } from '../../../utils/constants';
 import useFormAndValidation from "../../../hooks/useFormAndValidation";
 import "../Profile.css";
 import "../ProfileFreelancer/ProfileFreelancer.css";
@@ -14,7 +14,7 @@ import * as Api from '../../../utils/Api';
 
 export default function ProfileCustomer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
-  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
+  const { values, errors, handleChange, setValues, setErrors } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [photo, setPhoto] = useState(null);
   const formRef = useRef(null);
@@ -40,11 +40,12 @@ export default function ProfileCustomer({ setCurrentUser }) {
 
     setErrors({...errors, ...newErrors});
 
-    if (
-      isValid
-      && values.name
+    // if (
+      // isValid
+      // &&
+      // values.name
       // && values.email
-    ) {
+    // ) {
       const newData = {
         photo: photo?.photo,
         name: values?.name || currentUser?.name,
@@ -54,7 +55,7 @@ export default function ProfileCustomer({ setCurrentUser }) {
         about: values?.about,
         web: values?.web
       }
-      Api.updateCustomerProfile(newData)
+      Api.updateUserProfile(newData)
         .then((res) => {
           setCurrentUser(res);
           setIsEditable(false);
@@ -62,7 +63,7 @@ export default function ProfileCustomer({ setCurrentUser }) {
         .catch((err)=>{
           console.error(err);
         })
-    }
+    // }
 
   }
 
@@ -161,7 +162,7 @@ export default function ProfileCustomer({ setCurrentUser }) {
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Сфера деятельности</h2>
             <InputSelect name="industry" placeholder="Выберите из списка" width="100%" onChange={handleChange}
-                         value={values.industry || currentUser.industry?.name || ''} options={industryOptions}
+                         value={values.industry || currentUser.industry?.name || ''} options={industryCategoryOptions}
                          isDisabled={!isEditable}
             />
           </div>
@@ -186,7 +187,7 @@ export default function ProfileCustomer({ setCurrentUser }) {
             >
               Сайт
             </label>
-            <InputText type="url" placeholder="www.example.com" name="web" width="100%"
+            <InputText type="url" placeholder="https://example.com" name="web" width="100%"
                        value={values.web || currentUser?.web || ''} error={errors.web} errorMessage={errors.web}
                        onChange={handleChange} id="website" isDisabled={!isEditable}
             />

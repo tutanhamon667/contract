@@ -1,7 +1,7 @@
 export const BACKEND_BASE_URL = 'https://taski.ddns.net/api';
 // export const BACKEND_BASE_URL = 'http://127.0.0.1:8000/api';
 
-export const industryOptions = [
+export const industryCategoryOptions = [
   { label: 'Дизайн', value: 'design' },
   { label: 'Разработка', value: 'development' },
   { label: 'Тестирование', value: 'testing' },

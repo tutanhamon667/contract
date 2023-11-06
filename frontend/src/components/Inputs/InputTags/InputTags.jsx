@@ -1,36 +1,30 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useState } from 'react';
 import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
-function InputTags({ setStacksValues, isDisabled, tags, setTags }) {
-  const [isTags, setIsTags] = useState(false)
-//  const [tags, setTags] = useState([]);
-  const [isEditMode, setIsEditMode] = useState(true);
-
+function InputTags({ name, isDisabled, tags, setTags }) {
   function handleKeyDown(e) {
-    setIsTags(true)
     if (e.key !== 'Enter') return;
     const value = e.target.value;
     if (!value.trim()) return;
 
     setTags([...tags, value]);
-   setStacksValues([...tags, value]);
 
     e.target.value = '';
     e.preventDefault();
   }
 
   function removeTag(index) {
-    if (!isEditMode) return;
+    if (isDisabled) return;
     setTags(tags.filter((el, i) => i !== index));
   }
 
   return (
-    <div className="tags">
-      {isEditMode && (
+    <div className={`tags${isDisabled ? ' tags_disabled' : ''}`}>
+      {(!isDisabled || tags.length === 0) && (
         <input
+          name={name}
           type="text"
           onKeyDown={handleKeyDown}
           className="tag__input"
@@ -38,16 +32,15 @@ function InputTags({ setStacksValues, isDisabled, tags, setTags }) {
           disabled={isDisabled}
         />
       )}
-      {tags ? tags.map((tag, index) => (
+      {tags.map((tag, index) => (
         <div
           className={`tag__title${isDisabled ? ' tag__title_disabled' : ''}`}
           key={index}
           onClick={() => !isDisabled && removeTag(index)}>
           {tag}
-          {isEditMode && !isDisabled && <span className="tag__item-close"></span>}
+          {!isDisabled && <span className="tag__item-close"></span>}
         </div>
-      ))
-      : ''}
+      ))}
     </div>
   )
 }

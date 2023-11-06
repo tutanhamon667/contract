@@ -16,7 +16,6 @@ const ForgotPassForm = ({ func }) => {
       return
     }
     if (isValid) {
-      console.log(values);
       setValues({
         ...values,
         email: "",
