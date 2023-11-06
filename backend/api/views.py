@@ -44,7 +44,7 @@ class JobViewSet(ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter, DjangoFilterBackend,)
     filterset_class = JobFilter
-    search_fields = ['@title', '@description']
+    search_fields = ['title', 'description']
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -183,7 +183,7 @@ class MessageViewSet(CreateListViewSet):
     serializer_class = MessageSerializer
     permission_classes = [MessagePermission]
     filter_backends = (SearchFilter,)
-    search_fields = ['@content',]
+    search_fields = ['@content']
 
     def get_queryset(self):
         chat_id = self.kwargs.get('chat_id')
