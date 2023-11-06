@@ -41,7 +41,6 @@ class JobViewSet(ModelViewSet):
     используется фильтр client.
     """
     queryset = Job.objects.all()
-    search_fields = ('name',)
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter, DjangoFilterBackend,)
     filterset_class = JobFilter
