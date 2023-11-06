@@ -7,10 +7,11 @@ from rest_framework import serializers
 from api.utils import CustomBase64ImageField
 from chat.models import Chat, Message
 from orders.models import Job, JobCategory, JobFile, JobResponse, StackJob
-from taski.settings import (CATEGORY_CHOICES, CHAT_ALREADY_EXISTS_ERR,
-                            CURRENT_DATE_ERR, FILE_OVERSIZE_ERR,
-                            JOB_ALREADY_APPLIED_ERR, MAX_FILE_SIZE,
-                            PUB_DATE_ERR, STACK_ERR_MSG)
+from taski.settings import (ASK_MSG, BUDGET_DATA_ERR, CATEGORY_CHOICES,
+                            CHAT_ALREADY_EXISTS_ERR, CURRENT_DATE_ERR,
+                            DATE_FORMAT_ERR, DATETIME_FORMAT,
+                            FILE_OVERSIZE_ERR, JOB_ALREADY_APPLIED_ERR,
+                            MAX_FILE_SIZE, STACK_ERR_MSG)
 from users.clients import GetCustomerProfileSerializer
 from users.freelancers import GetWorkerProfileSerializer
 from users.models import CustomerProfile as Client
@@ -162,23 +163,22 @@ class JobCreateSerializer(serializers.ModelSerializer):
         return data
 
     def validate_budget(self, value):
-        if value is not None and value != "Жду предложений":
+        if value is not None and value != ASK_MSG:
             try:
                 int(value)
             except (ValueError, TypeError):
-                raise serializers.ValidationError(
-                    'Бюджет должен быть числом или "Жду предложений"')
+                raise serializers.ValidationError(BUDGET_DATA_ERR)
         return value
 
     def validate_deadline(self, value):
-        if value is not None and value != "Жду предложений":
+        if value is not None and value != ASK_MSG:
             try:
                 deadline = datetime.strptime(
-                    value, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=tz.utc)
+                    value, DATETIME_FORMAT).replace(tzinfo=tz.utc)
                 if deadline < timezone.now():
-                    raise serializers.ValidationError(PUB_DATE_ERR)
+                    raise serializers.ValidationError(CURRENT_DATE_ERR)
             except ValueError:
-                raise serializers.ValidationError("Некорректный формат даты")
+                raise serializers.ValidationError(DATE_FORMAT_ERR)
         return value
 
     def create(self, validated_data):
@@ -188,9 +188,9 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_budget = validated_data.pop('ask_budget', False)
         ask_deadline = validated_data.pop('ask_deadline', False)
         if ask_budget:
-            validated_data['budget'] = 'Жду предложений'
+            validated_data['budget'] = ASK_MSG
         if ask_deadline:
-            validated_data['deadline'] = 'Жду предложений'
+            validated_data['deadline'] = ASK_MSG
         job = Job.objects.create(**validated_data)
         for file in job_files_data:
             JobFile.objects.create(job=job, file=file['file'])
@@ -215,7 +215,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_budget = validated_data.get('ask_budget',
                                         instance.ask_budget)
         if ask_budget:
-            instance.budget = 'Жду предложений'
+            instance.budget = ASK_MSG
         else:
             instance.budget = validated_data.get('budget',
                                                  instance.budget)
@@ -223,7 +223,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_deadline = validated_data.get('ask_deadline',
                                           instance.ask_deadline)
         if ask_deadline:
-            instance.deadline = 'Жду предложений'
+            instance.deadline = ASK_MSG
         else:
             instance.deadline = validated_data.get('deadline',
                                                    instance.deadline)
