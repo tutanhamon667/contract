@@ -37,16 +37,16 @@ const OrderCard = ({ cards, orderArea, operationMode, isTasks }) => {
               )}
               <div className="orderCard__title-container">
                 <h3 className="orderCard__title">{item.title || item.task_name}</h3>
-                {/* <p className="orderCard__direction">{item.direction || ''}</p> */}
-                <div className="orderCard__tag-container">
-                  {item.direction.map((item, index) => {
-                    return (
-                      <p key={index} className="orderCard__direction">
-                        {item}
-                      </p>
-                    );
-                  })}
-                </div>
+                <p className="orderCard__direction">{item.direction[0] || ''}</p>
+                {/*<div className="orderCard__tag-container">*/}
+                {/*  {item.direction.map((item, index) => {*/}
+                {/*    return (*/}
+                {/*      <p key={index} className="orderCard__direction">*/}
+                {/*        {item}*/}
+                {/*      </p>*/}
+                {/*    );*/}
+                {/*  })}*/}
+                {/*</div>*/}
               </div>
             </div>
             <p className="orderCard__price">{item.price || item.budget}</p>

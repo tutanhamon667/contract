@@ -241,9 +241,8 @@ function App() {
       })
   }
 
-  function handleTaskSubmit(data){
-console.log(data)
-     const formValues ={
+  function handleTaskSubmit(data) {
+    const formValues = {
       title: data.task_name,
       category: [ data.activity ],
       stack: data.stacks.map((stack) => ({ name: stack })),
@@ -261,8 +260,7 @@ console.log(data)
      }
 
      Api.createTask(formValues)
-     .then((res) => {
-      //console.log()
+     .then(() => {
       navigate('/', { replace: true });
      })
      .catch((err)=>{
@@ -296,14 +294,6 @@ console.log(data)
     }}>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route element={<ProtectedRoute />}>
-            <Route path="freelancer" element={<ProfileFreelancer setCurrentUser={setCurrentUser} />} />
-            <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
-            <Route path="freelancer/complete" element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit}/>} />
-            <Route path="customer" element={<ProfileCustomer setCurrentUser={setCurrentUser} />} />
-            <Route path="customer/complete" element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />} />
-            <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit}/>} />
-          </Route>
           <Route index element={<Main />} />
           <Route path="order/:id" element={<Order />} />
           <Route path="signup" element={
@@ -318,6 +308,15 @@ console.log(data)
             <SignOut setCurrentUser={setCurrentUser} setIsAuthenticated={setIsAuthenticated} />
           } />
           <Route path="*" element={<NotFound />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="freelancer" element={<ProfileFreelancer setCurrentUser={setCurrentUser} />} />
+            <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
+            <Route path="freelancer/complete" element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit}/>} />
+            <Route path="customer" element={<ProfileCustomer setCurrentUser={setCurrentUser} />} />
+            <Route path="customer/complete" element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />} />
+            <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit}/>} />
+          </Route>
         </Route>
       </Routes>
     </Context.Provider>
