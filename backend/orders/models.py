@@ -7,7 +7,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from PIL import Image
 
-from taski.settings import CATEGORY_CHOICES, THUMBNAIL_SIZE
+from taski.settings import CATEGORY_CHOICES, DATETIME_FORMAT, THUMBNAIL_SIZE
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
@@ -113,7 +113,7 @@ class Job(models.Model):
             return None
         if self.deadline == "Жду предложений":
             return None
-        return self.deadline.strftime("%Y-%m-%dT%H:%M:%SZ")
+        return self.deadline.strftime(DATETIME_FORMAT)
 
     def get_deadline_text(self):
         """

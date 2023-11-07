@@ -120,7 +120,7 @@ class JobListSerializer(serializers.ModelSerializer):
 
     def get_budget(self, obj):
         if obj.budget == "Жду предложений" or not obj.budget.isdigit():
-            return None
+            return obj.budget
         return int(obj.budget)
 
     def get_is_responded(self, obj):
