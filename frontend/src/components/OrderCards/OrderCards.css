@@ -30,7 +30,7 @@
 
 .orderCard__title {
   margin: 0;
-  color: #606060;
+  color: #3F3F3F;
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
@@ -39,7 +39,7 @@
 
 .orderCard__direction {
   margin: 8px 0 0;
-  color: #a8a8a8;
+  color: #7B7B7B;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -57,7 +57,7 @@
 
 .orderCard__description {
   margin: 12px 0 0;
-  color: #606060;
+  color: #3F3F3F;
   font-size: 18px;
   font-style: normal;
   font-weight: 400;
@@ -76,8 +76,8 @@
   margin: 0;
   padding: 8px 16px;
   border-radius: 10px;
-  border: 1px solid #606060;
-  color: #888;
+  border: 1px solid #C6C6C6;
+  color: #3F3F3F;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;

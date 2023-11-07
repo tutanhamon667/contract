@@ -10,8 +10,6 @@ export default function useFormAndValidation() {
   const passwordRegex = /^[a-zA-Z0-9@#$%!^&*]+$/;
   const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,80}$/;
 
-  console.log(values)
-
   function handleChange(e) {
     const { name, value } = e.target;
 
@@ -130,8 +128,6 @@ export default function useFormAndValidation() {
         setIsValid(true);
       }
     }
-
-
   }
 
   return {

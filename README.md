@@ -79,7 +79,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Выполнить миграции:
+Выполнить миграции и загрузить данные:
 
 ```sh
 python manage.py makemigrations users
@@ -87,6 +87,7 @@ python manage.py makemigrations api
 python manage.py makemigrations orders
 python manage.py makemigrations chat
 python manage.py migrate
+python manage.py loaddata
 ```
 
 Запустить бэкенд-сервер:
