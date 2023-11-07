@@ -124,7 +124,7 @@ class Job(models.Model):
         return self.deadline
 
     class Meta:
-        ordering = ('-pub_date',)
+        ordering = ('-id',)
         verbose_name = 'Задание'
         verbose_name_plural = 'Задания'
 
