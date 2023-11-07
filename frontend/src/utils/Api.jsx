@@ -71,3 +71,15 @@ export function updateUserProfile(data) {
   })
     .then((res) => _checkResponse(res));
 }
+
+export function createTask(data){
+  return fetch(`${BACKEND_BASE_URL}/jobs/`,{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('access')}`
+    },
+    body: JSON.stringify(data)
+  })
+  .then((res) => _checkResponse(res));
+}

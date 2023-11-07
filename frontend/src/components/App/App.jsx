@@ -241,6 +241,35 @@ function App() {
       })
   }
 
+  function handleTaskSubmit(data){
+console.log(data)
+     const formValues ={
+      title: data.task_name,
+      category: [ data.activity ],
+      stack: data.stacks.map((stack) => ({ name: stack })),
+      budget: data.budget?.budget,
+      ask_budget: data.budgetDiscussion,
+      deadline: data.deadline?.deadline,
+      ask_deadline: data.deadlineDiscussion,
+      description: data.about,
+      job_files: [
+        {
+        file: data.file.document,
+        name: data.file.document_name
+        }
+      ]
+     }
+
+     Api.createTask(formValues)
+     .then((res) => {
+      //console.log()
+      navigate('/', { replace: true });
+     })
+     .catch((err)=>{
+      console.error(err);
+    })
+  }
+
   const handleOrderFilter = (state) => {
     setOrderFilter(state);
   }
@@ -273,7 +302,7 @@ function App() {
             <Route path="freelancer/complete" element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit}/>} />
             <Route path="customer" element={<ProfileCustomer setCurrentUser={setCurrentUser} />} />
             <Route path="customer/complete" element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />} />
-            <Route path="create-task" element={<CreateTaskForm />} />
+            <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit}/>} />
           </Route>
           <Route index element={<Main />} />
           <Route path="order/:id" element={<Order />} />

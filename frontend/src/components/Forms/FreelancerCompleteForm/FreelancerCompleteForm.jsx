@@ -172,18 +172,18 @@ function FreelancerCompleteForm({ onSubmit }) {
         </div>
       </div>
 
-      <label>
+      <div>
         <p className="freelancer-complete-form__input-text">Укажите ссылку на портфолио</p>
         <InputText type="url" placeholder="https://example.com" name="web" width={610} value={values.web || ''}
           error={errors.web} errorMessage={errors.web} onChange={handleChange}
         />
-      </label>
-      <label>
+      </div>
+      <div>
         <p className="freelancer-complete-form__input-text">Образование</p>
         <InputText type="text" placeholder="Начните вводить" name="education" width={610} value={values.education || ''}
           error={errors.education} errorMessage={errors.education} onChange={handleChange}
         />
-      </label>
+      </div>
       <div>
         <p className="freelancer-complete-form__input-text">Годы учебы</p>
         <div className="freelancer-complete-form__input-year-wrapper">
@@ -195,20 +195,20 @@ function FreelancerCompleteForm({ onSubmit }) {
           />
         </div>
       </div>
-      <label>
+      <div>
         <p className="freelancer-complete-form__input-text">Степень</p>
         <InputSelect name="degree" placeholder="Выберите из списка" value={values.degree || ''} error={errors.degree}
                      errorMessage={errors.degree} onChange={handleChange} options={degreeOptions}
         />
-      </label>
-      <label>
+      </div>
+      <div>
         <p className="freelancer-complete-form__input-text">Факультет</p>
         <InputText type="text" placeholder="Начните вводить" name="faculty" width={610} value={values.faculty || ''}
           error={errors.faculty} errorMessage={errors.faculty} onChange={handleChange}
         />
-      </label>
+      </div>
 
-      <label>
+      <div>
         <p className="freelancer-complete-form__input-text">Загрузить сертификаты, грамоты, дипломы</p>
         <div className="freelancer-complete-form__input-doc-wrapper">
           <InputDoc
@@ -216,7 +216,7 @@ function FreelancerCompleteForm({ onSubmit }) {
             onChange={addDocument}
           />
         </div>
-      </label>
+      </div>
 
       <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200}></Button>
     </form>
