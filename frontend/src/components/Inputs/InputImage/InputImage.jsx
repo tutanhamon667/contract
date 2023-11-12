@@ -9,18 +9,22 @@ const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
   const inputStyle = {};
 
   if (file) {
-    inputStyle.backgroundImage = `url(${URL.createObjectURL(file)})`;
+    inputStyle.backgroundImage = `url(${file})`; //`url(${URL.createObjectURL(file)})`;`url(${file})`
     inputStyle.backgroundSize = 'cover';
-  } else if (value) {
+  }  else if (value) {
     inputStyle.backgroundImage = `url(${value})`;
     inputStyle.backgroundSize = 'cover';
   }
 
   const handleChange = (event) => {
-    // setFile(event.currentTarget.files[0]);
+
+
+
     const selectedFile = event.currentTarget.files[0];
 
-    // console.log('ok')
+    setFile(URL.createObjectURL(selectedFile));
+
+
 
     const reader = new FileReader();
     reader.readAsDataURL(selectedFile);
@@ -35,7 +39,7 @@ const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
 
     if (selectedFile) {
       if (allowedFileTypes.includes(selectedFile.type) && selectedFile.size < 52428800) {
-        setFile(selectedFile);
+    //    setFile(selectedFile);
         setError('');
         // console.log(selectedFile)
       } else {
