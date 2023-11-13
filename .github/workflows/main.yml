@@ -87,8 +87,8 @@ jobs:
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
+          host: ${{ secrets.HOST_NEW }}
+          username: ${{ secrets.USER_NEW }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: | 
@@ -97,6 +97,7 @@ jobs:
             sudo docker-compose down
             touch .env
             echo DEBUG=False >> .env
+            echo HOST_NEW=${{ secrets.HOST_NEW }} >> .env
             echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
