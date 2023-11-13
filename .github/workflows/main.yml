@@ -7,7 +7,7 @@ on:
       - '.gitignore'
       - 'setup.cfg'
     branches:
-      - develop
+      - cicd/new-host
 
 jobs:
 
@@ -87,8 +87,8 @@ jobs:
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
+          host: ${{ secrets.HOST_NEW }}
+          username: ${{ secrets.USER_NEW }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: | 
