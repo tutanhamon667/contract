@@ -7,7 +7,7 @@ on:
       - '.gitignore'
       - 'setup.cfg'
     branches:
-      - cicd/new-host
+      - develop
 
 jobs:
 
@@ -97,6 +97,7 @@ jobs:
             sudo docker-compose down
             touch .env
             echo DEBUG=False >> .env
+            echo HOST_NEW=${{ secrets.HOST_NEW }} >> .env
             echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env

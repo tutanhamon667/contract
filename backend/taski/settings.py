@@ -23,10 +23,7 @@ DEBUG = os.getenv('DEBUG', default='True') == 'True'
 ALLOWED_HOSTS = ['127.0.0.1',
                  'localhost',
                  'localhost:5173',
-                 'taski.servebeer.com',
-                 '62.84.127.171',
-                 '45.86.180.105',
-                 '212.233.123.202',
+                 os.getenv('HOST_NEW'),
                  'taski.ddns.net']
 
 
