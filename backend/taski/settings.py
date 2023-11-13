@@ -26,6 +26,7 @@ ALLOWED_HOSTS = ['127.0.0.1',
                  'taski.servebeer.com',
                  '62.84.127.171',
                  '45.86.180.105',
+                 '212.233.123.202',
                  'taski.ddns.net']
 
 
