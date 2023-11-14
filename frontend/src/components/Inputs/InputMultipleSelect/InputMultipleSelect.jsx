@@ -1,13 +1,9 @@
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState } from "react";
-import "../../../pages/Profiles/Profile.css"
-import "../../../pages/Profiles/ProfileFreelancer/ProfileFreelancer.css"
-import "./InputMultipleSelect.css";
+import React, { useState } from 'react';
+import '../../../pages/Profiles/ProfileFreelancer/ProfileFreelancer.css';
+import '../../../pages/Profiles/Profile.css';
+import './InputMultipleSelect.css';
 
-export default function InputMultipleSelect({ options, setActivityValues, isDisabled }) {
+function InputMultipleSelect({ options, setActivityValues, isDisabled }) {
   const [value, setValue] = useState([]);
   const [isOpen, setIsopen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -17,8 +13,8 @@ export default function InputMultipleSelect({ options, setActivityValues, isDisa
     if (!isEditMode) return;
 
     if (value.includes(option)) {
-      setValue(value.filter(o => o !== option));
-      setActivityValues(value.filter(o => o !== option));
+      setValue(value.filter((o) => o !== option));
+      setActivityValues(value.filter((o) => o !== option));
     } else {
       setValue([...value, option]);
       setActivityValues([...value, option]);
@@ -31,11 +27,11 @@ export default function InputMultipleSelect({ options, setActivityValues, isDisa
 
   function exposeList() {
     if (!isEditMode || isDisabled) return;
-    setIsopen(prev => !prev);
+    setIsopen((prev) => !prev);
   }
 
   const listContainerStyle = `list__container${isOpen ? ' list__container-open' : ''}`;
-  const listPreviewStyle = `list__preview${(value.length < 1) ? ' list__preview_show' : ''}`;
+  const listPreviewStyle = `list__preview${value.length < 1 ? ' list__preview_show' : ''}`;
   const listOptionsStyle = `list__options${isOpen ? ' list__options_show' : ''}`;
 
   return (
@@ -49,11 +45,16 @@ export default function InputMultipleSelect({ options, setActivityValues, isDisa
       <span className={listPreviewStyle}>Выберите из списка</span>
       <div className="list__value">
         {value.map((value, index) => (
-          <div className="list__title"
+          <div
+            className="list__title"
             key={index}
-            onClick={e => { e.stopPropagation(); selectOption(value) }}>
+            onClick={(e) => {
+              e.stopPropagation();
+              selectOption(value);
+            }}
+          >
             {value.label}
-            {isEditMode && <span className="list__item-close"></span>}
+            {isEditMode && <span className="list__item-close" />}
           </div>
         ))}
       </div>
@@ -61,15 +62,26 @@ export default function InputMultipleSelect({ options, setActivityValues, isDisa
         {options.map((option, index) => (
           <li
             key={index}
-            onClick={e => { e.stopPropagation(); selectOption(option) }}
+            onClick={(e) => {
+              e.stopPropagation();
+              selectOption(option);
+            }}
             onMouseEnter={() => setHighlightedIndex(index)}
-            className={`list__option${index === highlightedIndex ? ' list__option-highlighted' : ''}`}
+            className={`list__option${
+              index === highlightedIndex ? ' list__option-highlighted' : ''
+            }`}
           >
-            <div className={`list__checkbox${isOptionSelected(option) ? ' list__checkbox-highlighted' : ''}`}></div>
+            <div
+              className={`list__checkbox${
+                isOptionSelected(option) ? ' list__checkbox-highlighted' : ''
+              }`}
+            />
             {option.label}
           </li>
         ))}
       </ul>
     </div>
-  )
+  );
 }
+
+export { InputMultipleSelect };

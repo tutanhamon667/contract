@@ -4,9 +4,9 @@
   font-weight: 400;
   font-display: swap;
   src:
-    local("Inter"),
-    local("Inter-Regular"),
-    url("Inter-Regular.woff2?v=3.19") format("woff2");
+    local('Inter'),
+    local('Inter-Regular'),
+    url('Inter-Regular.woff2?v=3.19') format('woff2');
 }
 
 @font-face {
@@ -15,7 +15,7 @@
   font-weight: 600;
   font-display: swap;
   src:
-    local("Inter"),
-    local("Inter-SemiBold"),
-    url("Inter-SemiBold.woff2?v=3.19") format("woff2");
+    local('Inter'),
+    local('Inter-SemiBold'),
+    url('Inter-SemiBold.woff2?v=3.19') format('woff2');
 }

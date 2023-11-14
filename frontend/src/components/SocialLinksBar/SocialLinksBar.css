@@ -1,4 +1,4 @@
-.linkBar {
+.link-bar {
   margin: 28px 0 32px;
   min-width: 308px;
   min-height: 100px;
@@ -7,60 +7,62 @@
   align-items: center;
 }
 
-.linkBar__text {
+.link-bar__text {
   color: #585858;
   font-size: 20px;
   font-weight: 600;
   margin: 0;
 }
 
-.linkBar__menu {
+.link-bar__menu {
   width: 100%;
   display: flex;
   margin-top: 28px;
 }
 
-.linkBar__item {
+.link-bar__item {
   margin-right: 40px;
   height: 47px;
   box-sizing: border-box;
   transition: all 0.1s ease-in-out;
 }
-.linkBar__item:hover {
-    opacity: 0.8;
-    transform: scale(1.05);
-}
-.linkBar__item:active {
-    opacity: 0.6;
-  }
 
-.linkBar__item:last-child {
+.link-bar__item:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.link-bar__item:active {
+  opacity: 0.6;
+}
+
+.link-bar__item:last-child {
   margin-right: 0;
 }
 
-.linkBar__item__vk{
-  background-image: url(../../images/vk.svg);
+.link-bar__item_type_vk {
+  background-image: url('../../images/vk.svg');
   background-position: center;
   width: 46px;
   height: 46px;
 }
 
-.linkBar__item__google{
-  background-image: url(../../images/google.svg);
+.link-bar__item_type_google {
+  background-image: url('../../images/google.svg');
   background-position: center;
   width: 46px;
   height: 46px;
 }
 
-.linkBar__item__github{
-  background-image: url(../../images/github.svg);
+.link-bar__item_type_github {
+  background-image: url('../../images/github.svg');
   background-position: center;
   width: 46px;
   height: 46px;
 }
 
-.linkBar__item__yandex{
-  background-image: url(../../images/yandex.svg);
+.link-bar__item_type_yandex {
+  background-image: url('../../images/yandex.svg');
   background-position: center;
   width: 46px;
   height: 46px;

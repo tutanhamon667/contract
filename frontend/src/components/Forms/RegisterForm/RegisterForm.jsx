@@ -1,12 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Context } from "../../../context/context";
-import useFormAndValidation from "../../../hooks/useFormAndValidation";
-import Button from "../../Button/Button";
-import InputText from "../../Inputs/InputText/InputText";
-import "./RegisterForm.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Context } from '../../../context/context';
+import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
+import { Button } from '../../Button/Button';
+import { InputText } from '../../Inputs/InputText/InputText';
+import './RegisterForm.css';
 
-const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
+function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
   const { logIn } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
   const [buttonClicked, setButtonClicked] = React.useState(false);
@@ -14,7 +14,6 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
     is_customer: true,
     is_worker: false,
   });
-
   const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
 
   const togglePasswordVisibility = () => {
@@ -47,19 +46,19 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
 
       if (errorRequest.email) {
         if (errorRequest.email.includes('member с таким email address уже существует.')) {
-          newErrors = { ...newErrors, email: "Пользователь с такой эл. почтой уже зарегистрирован" };
+          newErrors = {
+            ...newErrors,
+            email: 'Пользователь с такой эл. почтой уже зарегистрирован',
+          };
           setErrors({ ...errors, ...newErrors });
         }
-
-      }
-      else if (errorRequest.password) {
+      } else if (errorRequest.password) {
         newErrors = { ...newErrors, password: `${errorRequest.password}` };
-        setErrors({ ...errors, ...newErrors })
+        setErrors({ ...errors, ...newErrors });
       }
-
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buttonClicked, isError])
+  }, [buttonClicked, isError]);
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -67,22 +66,22 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
     let newErrors = {};
 
     if (!values.email) {
-      newErrors = { ...newErrors, email: "Введите эл. почту" };
+      newErrors = { ...newErrors, email: 'Введите эл. почту' };
     }
 
     if (!values.password) {
-      newErrors = { ...newErrors, password: "Введите пароль" };
+      newErrors = { ...newErrors, password: 'Введите пароль' };
     }
     if (!values.re_password) {
-      newErrors = { ...newErrors, re_password: "Введите пароль повторно" };
+      newErrors = { ...newErrors, re_password: 'Введите пароль повторно' };
     }
 
     if (!values.first_name) {
-      newErrors = { ...newErrors, first_name: "Введите имя" };
+      newErrors = { ...newErrors, first_name: 'Введите имя' };
     }
 
     if (!values.last_name) {
-      newErrors = { ...newErrors, last_name: "Введите фамилию" };
+      newErrors = { ...newErrors, last_name: 'Введите фамилию' };
     }
 
     setErrors({ ...errors, ...newErrors });
@@ -116,7 +115,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
   return (
     <form className="register" onSubmit={handleSubmit}>
       <div className="register__form">
-        <div className="register__formRoleContainer">
+        <div className="register__form-role-container">
           <Button
             text="Я заказчик"
             width={200}
@@ -152,7 +151,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
           name="first_name"
           autoComplete="given-name"
           onChange={handleChange}
-          value={values.first_name || ""}
+          value={values.first_name || ''}
           error={errors.first_name}
           errorMessage={errors.first_name}
         />
@@ -164,7 +163,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
           name="last_name"
           autoComplete="family-name"
           onChange={handleChange}
-          value={values.last_name || ""}
+          value={values.last_name || ''}
           error={errors.last_name}
           errorMessage={errors.last_name}
         />
@@ -176,7 +175,7 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
           name="email"
           autoComplete="email"
           onChange={handleChange}
-          value={values.email || ""}
+          value={values.email || ''}
           error={errors.email}
           errorMessage={errors.email}
         />
@@ -185,11 +184,11 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
           pass={togglePasswordVisibility}
           marginTop={32}
           width={400}
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           autoComplete="new-password"
           name="password"
           onChange={handleChange}
-          value={values.password || ""}
+          value={values.password || ''}
           error={errors.password}
           errorMessage={errors.password}
         />
@@ -197,11 +196,11 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
           placeholder="Повторите пароль"
           marginTop={32}
           width={400}
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           autoComplete="new-password"
           name="re_password"
           onChange={handleChange}
-          value={values.re_password || ""}
+          value={values.re_password || ''}
           error={errors.re_password}
           errorMessage={errors.re_password}
         />
@@ -210,23 +209,25 @@ const RegisterForm = ({ onSubmitHandler, errorRequest, isError }) => {
           text="Создать аккаунт"
           width={400}
           type="submit"
-          disabled={(!isValid ||
-            !values.email ||
-            !values.password ||
-            !values.re_password ||
-            !values.first_name ||
-            !values.last_name) &&
-            buttonClicked}
+          disabled={
+            (!isValid ||
+              !values.email ||
+              !values.password ||
+              !values.re_password ||
+              !values.first_name ||
+              !values.last_name) &&
+            buttonClicked
+          }
         />
-        <div className="register__footerLinkContainer">
-          <p className="register__footerLinkDescription">Уже есть аккаунт?</p>
-          <Link className="register__footerLink" to="/signin">
+        <div className="register__footer-link-container">
+          <p className="register__footer-link-description">Уже есть аккаунт?</p>
+          <Link className="register__footer-link" to="/signin">
             Войти
           </Link>
         </div>
       </div>
     </form>
   );
-};
+}
 
-export default RegisterForm;
+export { RegisterForm };

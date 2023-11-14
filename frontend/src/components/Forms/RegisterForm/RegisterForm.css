@@ -8,14 +8,14 @@
   align-items: center;
 }
 
-.register__formRoleContainer {
+.register__form-role-container {
   display: flex;
   max-width: 610px;
   width: 100%;
   justify-content: space-between;
 }
 
-.register__footerLinkContainer {
+.register__footer-link-container {
   margin: 24px 0 110px;
   display: flex;
   align-items: center;
@@ -27,16 +27,16 @@
   text-underline-offset: 4px;
 }
 
-.register__footerLinkDescription {
+.register__footer-link-description {
   margin: 0 12px 0 0;
 }
 
-.register__footerLink {
+.register__footer-link {
   text-decoration: underline;
   color: #585858;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
-.register__footerLink:hover {
+.register__footer-link:hover {
   opacity: 0.8;
 }

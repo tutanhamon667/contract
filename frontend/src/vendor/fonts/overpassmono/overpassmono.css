@@ -1,10 +1,10 @@
 @font-face {
-  font-family: "Overpass Mono";
+  font-family: 'Overpass Mono';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
   src:
-    local("Overpass Mono"),
-    local("OverpassMono-Medium"),
-    url("OverpassMono-Medium.woff2?v=4.00") format("woff2");
+    local('Overpass Mono'),
+    local('OverpassMono-Medium'),
+    url('OverpassMono-Medium.woff2?v=4.00') format('woff2');
 }

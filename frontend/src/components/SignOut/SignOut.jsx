@@ -10,6 +10,7 @@ function SignOut({ setCurrentUser, setIsAuthenticated }) {
     setCurrentUser({});
     setIsAuthenticated(false);
     navigate('/');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return null;

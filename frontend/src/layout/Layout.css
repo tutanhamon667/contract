@@ -9,7 +9,7 @@
 }
 
 .layout__wrapper_type_background-image {
-  background-image: url(../images/background_main_page.png);
+  background-image: url('../images/background_main_page.png');
   background-size: contain;
 }
 

@@ -1,10 +1,10 @@
-import React from 'react'
+import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Context } from '../../context/context';
-import LoginForm from '../../components/Forms/LoginForm/LoginForm';
-import "./Login.css";
+import { LoginForm } from '../../components/Forms/LoginForm/LoginForm';
+import './Login.css';
 
-const Login = ({ setIsAuthenticated, setCurrentUser, currentUser }) => {
+function Login({ setIsAuthenticated, setCurrentUser, currentUser }) {
   const { isAuthenticated } = React.useContext(Context);
   const location = useLocation();
 
@@ -23,7 +23,7 @@ const Login = ({ setIsAuthenticated, setCurrentUser, currentUser }) => {
         />
       </div>
     </div>
-  )
+  );
 }
 
-export default Login;
+export { Login };

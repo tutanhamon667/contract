@@ -1,45 +1,38 @@
-import React, { useState } from "react";
-import "./InputImage.css";
+import React, { useState } from 'react';
+import './InputImage.css';
 
-const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
+function InputImage({ name, value, onChange, width, height, isDisabled }) {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
-  // const inputStyle = file && {
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
   const inputStyle = {};
 
   if (file) {
-    inputStyle.backgroundImage = `url(${file})`; //`url(${URL.createObjectURL(file)})`;`url(${file})`
+    inputStyle.backgroundImage = `url('${file}')`; // `url('${URL.createObjectURL(file)}')`;
     inputStyle.backgroundSize = 'cover';
-  }  else if (value) {
+  } else if (value) {
     inputStyle.backgroundImage = `url(${value})`;
     inputStyle.backgroundSize = 'cover';
   }
 
   const handleChange = (event) => {
-
-
-
     const selectedFile = event.currentTarget.files[0];
-
     setFile(URL.createObjectURL(selectedFile));
-
-
 
     const reader = new FileReader();
     reader.readAsDataURL(selectedFile);
 
-    reader.onload = function () {
+    reader.onload = () => {
       onChange(reader.result);
-    }
+    };
 
-    reader.onerror = function () {
+    reader.onerror = () => {
       console.error(reader.error);
     };
 
     if (selectedFile) {
       if (allowedFileTypes.includes(selectedFile.type) && selectedFile.size < 52428800) {
-    //    setFile(selectedFile);
+        // setFile(selectedFile);
         setError('');
         // console.log(selectedFile)
       } else {
@@ -52,7 +45,9 @@ const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
   return (
     <>
       <label
-        className={`input-image__real-input${width === 80 ? ' input-image__real-input_small' : ''}${error ? ' input-image__error' : ''}`}
+        className={`input-image__real-input${width === 80 ? ' input-image__real-input_small' : ''}${
+          error ? ' input-image__error' : ''
+        }`}
         style={{ ...inputStyle, width, height }}
       >
         <input
@@ -68,6 +63,6 @@ const InputImage = ({ name, value, onChange, width, height, isDisabled }) => {
       <span className="input-image__error-text">{error}</span>
     </>
   );
-};
+}
 
 export { InputImage };

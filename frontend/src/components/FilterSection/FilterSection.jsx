@@ -1,13 +1,14 @@
-import "./FilterSection.css";
-import React, { useState, useContext, useEffect } from "react";
-import Button from "../Button/Button";
-import { Context } from "../../context/context";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Context } from '../../context/context';
+import { Button } from '../Button/Button';
+import './FilterSection.css';
 
 function FilterSection({ handleFreelanceFilter }) {
   const [budgetStart, setBudgetStart] = useState(null);
   const [budgetEnd, setBudgetEnd] = useState(null);
-  const { currentUser, orderFilter, isAuthenticated, freelanceFilter, setRerender, rerender } = useContext(Context);
+  const { currentUser, orderFilter, isAuthenticated, freelanceFilter, setRerender, rerender } =
+    useContext(Context);
   const navigate = useNavigate();
   let localFreelanceFilter = {};
 
@@ -17,14 +18,14 @@ function FilterSection({ handleFreelanceFilter }) {
   }, []);
 
   const handleBudgetClean = () => {
-    setBudgetStart("");
-    setBudgetEnd("");
+    setBudgetStart('');
+    setBudgetEnd('');
   };
 
   function load(n) {
     while (n) {
       let checked = JSON.parse(localStorage.getItem(`freelance-item${n}`));
-      let profession = document.getElementById(`freelance-item${n}`).value
+      let profession = document.getElementById(`freelance-item${n}`).value;
       localFreelanceFilter[`${profession}`] = checked;
       document.getElementById(`freelance-item${n}`).checked = checked;
       n--;
@@ -39,18 +40,23 @@ function FilterSection({ handleFreelanceFilter }) {
     localStorage.setItem(`freelance-item${n}`, checkbox.checked);
     handleFreelanceFilter(localFreelanceFilter);
     setRerender(!rerender);
-  }
+  };
 
   const filtersContainerStyle = `filters-container  ${
-    orderFilter && isAuthenticated ? "filters-conteiner__freelance " : ""
+    orderFilter && isAuthenticated ? 'filters-conteiner__freelance ' : ''
   }`;
 
   return (
     <section className="filters">
       {/*{isAuthenticated && currentUser.role === 'Заказчик' ? (*/}
-      {isAuthenticated && currentUser.name ? (
-        <Button text="Создать заказ" width={289} marginBottom={24} onClick={() => navigate('/create-task')} />
-      ) : (<></>)}
+      {isAuthenticated && currentUser.name && (
+        <Button
+          text="Создать заказ"
+          width={289}
+          marginBottom={24}
+          onClick={() => navigate('/create-task')}
+        />
+      )}
       <div className={filtersContainerStyle}>
         <h2 className="filters-container__title">Специализация</h2>
         <div>
@@ -153,7 +159,7 @@ function FilterSection({ handleFreelanceFilter }) {
             type="text"
             id="filters-budget__start"
             className="filters-budget"
-            value={budgetStart || ""}
+            value={budgetStart || ''}
             placeholder="от"
             onChange={(e) => setBudgetStart(e.target.value)}
             required
@@ -162,7 +168,7 @@ function FilterSection({ handleFreelanceFilter }) {
             type="text"
             id="filters-budget__end"
             className="filters-budget"
-            value={budgetEnd || ""}
+            value={budgetEnd || ''}
             placeholder="до"
             onChange={(e) => setBudgetEnd(e.target.value)}
             required
@@ -171,15 +177,10 @@ function FilterSection({ handleFreelanceFilter }) {
       </div>
       <div className="filters-buttons">
         <Button text="Применить фильтры" width={289} />
-        <Button
-          text="Очистить фильтры"
-          width={289}
-          buttonSecondary
-          onClick={handleBudgetClean}
-        />
+        <Button text="Очистить фильтры" width={289} buttonSecondary onClick={handleBudgetClean} />
       </div>
     </section>
   );
 }
 
-export default FilterSection;
+export { FilterSection };

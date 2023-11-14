@@ -8,15 +8,15 @@
   align-items: center;
 }
 
-.login__inputContainer {
+.login__input-container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
-.login__forgotLink {
+.login__forgot-link {
   text-align: end;
-  color: #3F3F3F;
+  color: #3f3f3f;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -24,36 +24,36 @@
   text-decoration-line: underline;
   text-underline-offset: 4px;
   margin: 14px 0 46px;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
-.login__forgotLink:hover{
-  opacity: .8;
+.login__forgot-link:hover {
+  opacity: 0.8;
 }
 
-.login__footerLinkContainer {
+.login__footer-link-container {
   margin: 24px 0 110px;
   display: flex;
   align-items: center;
-  color: #3F3F3F;
+  color: #3f3f3f;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 
-.login__footerLinkDescription {
+.login__footer-link-description {
   margin: 0 12px 0 0;
 }
 
-.login__footerLink {
+.login__footer-link {
   text-decoration: underline;
   cursor: pointer;
-  color: #3F3F3F;
+  color: #3f3f3f;
   text-underline-offset: 4px;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
-.login__footerLink:hover {
- opacity: .8;
+.login__footer-link:hover {
+  opacity: 0.8;
 }

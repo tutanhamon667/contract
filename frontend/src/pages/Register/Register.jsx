@@ -1,8 +1,8 @@
-import React from "react";
-import RegisterForm from "../../components/Forms/RegisterForm/RegisterForm";
-import "./Register.css";
+import React from 'react';
+import { RegisterForm } from '../../components/Forms/RegisterForm/RegisterForm';
+import './Register.css';
 
-const Register = ({ handleRegister, error, isError }) => {
+function Register({ handleRegister, error, isError }) {
   function onSubmit(values) {
     handleRegister(values);
   }
@@ -11,10 +11,10 @@ const Register = ({ handleRegister, error, isError }) => {
     <div className="register__wrapper">
       <div className="register__container">
         <h1 className="register__title">Регистрация</h1>
-        <RegisterForm onSubmitHandler={onSubmit} errorRequest={error} isError={isError}/>
+        <RegisterForm onSubmitHandler={onSubmit} errorRequest={error} isError={isError} />
       </div>
     </div>
   );
-};
+}
 
-export default Register;
+export { Register };

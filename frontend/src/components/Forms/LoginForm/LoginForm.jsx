@@ -1,44 +1,44 @@
-import React from "react";
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useFormAndValidation from "../../../hooks/useFormAndValidation";
+import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
 import * as Api from '../../../utils/Api';
-import InputText from "../../Inputs/InputText/InputText";
-import Button from "../../Button/Button";
-import "./LoginForm.css";
+import { InputText } from '../../Inputs/InputText/InputText';
+import { Button } from '../../Button/Button';
+import './LoginForm.css';
 
-const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
+function LoginForm({ setIsAuthenticated, setCurrentUser }) {
   // const { handleLogin } = React.useContext(Context);
   const [showPassword, setShowPassword] = React.useState(false);
   const [buttonClicked, setButtonClicked] = React.useState(false);
-  const { values, errors, isValid, handleChange, setValues, setErrors } =
-    useFormAndValidation();
+  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = (values) => {
-    Api.authenticateUser(values)
-      .then(res => {
+  const handleLogin = (formValues) => {
+    Api.authenticateUser(formValues)
+      .then((res) => {
         if (res.ok) {
           return res.json();
-        } else if (res.status === 401) {
-          return res.json().then(error => {
+        }
+        if (res.status === 401) {
+          return res.json().then((error) => {
             setErrors({ password: 'Неправильный адрес эл. почты или пароль' });
             return Promise.reject(error.detail);
           });
-        } else {
-          return res.json().then(error => {
-            setErrors({ password: error.detail });
-            return Promise.reject(error.detail);
-        });
         }
+
+        return res.json().then((error) => {
+          setErrors({ password: error.detail });
+          return Promise.reject(error.detail);
+        });
       })
-      .then(response => {
-        if (response['refresh'] && response['access']) {
-          localStorage.setItem('refresh', response['refresh']);
-          sessionStorage.setItem('access', response['access']);
+      .then((response) => {
+        if (response.refresh && response.access) {
+          localStorage.setItem('refresh', response.refresh);
+          sessionStorage.setItem('access', response.access);
         }
       })
       .then(() => {
@@ -48,19 +48,17 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
               return res.json();
             }
 
-            return res.json().then(error => {
-              return Promise.reject(error.detail);
-            });
+            return res.json().then((error) => Promise.reject(error.detail));
           })
           .then((res) => {
             setCurrentUser(res);
             setIsAuthenticated(true);
-            navigate('/', {replace: true});
+            navigate('/', { replace: true });
           })
           .catch(console.error);
       })
       .catch(console.error);
-  }
+  };
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -68,11 +66,11 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
     let newErrors = {};
 
     if (!values.email) {
-      newErrors = { ...newErrors, email: "Введите эл. почту" };
+      newErrors = { ...newErrors, email: 'Введите эл. почту' };
     }
 
     if (!values.password) {
-      newErrors = { ...newErrors, password: "Введите пароль" };
+      newErrors = { ...newErrors, password: 'Введите пароль' };
     }
 
     setErrors({ ...errors, ...newErrors });
@@ -89,7 +87,7 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
   return (
     <form className="login" onSubmit={handleSubmit}>
       <div className="login__form">
-        <div className="login__inputContainer">
+        <div className="login__input-container">
           <InputText
             placeholder="Эл. почта"
             type="email"
@@ -99,13 +97,13 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
             height={60}
             name="email"
             onChange={handleChange}
-            value={values.email || ""}
+            value={values.email || ''}
             error={errors.email}
             errorMessage={errors.email}
           />
           <InputText
             placeholder="Пароль"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             autoComplete="current-password"
             marginTop={32}
             width={400}
@@ -113,11 +111,11 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
             pass={togglePasswordVisibility}
             name="password"
             onChange={handleChange}
-            value={values.password || ""}
+            value={values.password || ''}
             error={errors.password}
             errorMessage={errors.password}
           />
-          <Link className="login__forgotLink" to="/forgot-password">
+          <Link className="login__forgot-link" to="/forgot-password">
             Восстановить пароль
           </Link>
         </div>
@@ -125,19 +123,17 @@ const LoginForm = ({ setIsAuthenticated, setCurrentUser }) => {
           text="Войти"
           width={400}
           type="submit"
-          disabled={
-            (!isValid || !values.email || !values.password) && buttonClicked
-          }
+          disabled={(!isValid || !values.email || !values.password) && buttonClicked}
         />
-        <div className="login__footerLinkContainer">
-          <p className="login__footerLinkDescription">Нет аккаунта?</p>
-          <Link className="login__footerLink" to="/signup">
+        <div className="login__footer-link-container">
+          <p className="login__footer-link-description">Нет аккаунта?</p>
+          <Link className="login__footer-link" to="/signup">
             Зарегистрируйтесь
           </Link>
         </div>
       </div>
     </form>
   );
-};
+}
 
-export default LoginForm;
+export { LoginForm };

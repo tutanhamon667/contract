@@ -1,12 +1,11 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
+import React from 'react';
 import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
 function InputTags({ name, isDisabled, tags, setTags }) {
   function handleKeyDown(e) {
     if (e.key !== 'Enter') return;
-    const value = e.target.value;
+    const { value } = e.target;
     if (!value.trim()) return;
 
     setTags([...tags, value]);
@@ -36,13 +35,14 @@ function InputTags({ name, isDisabled, tags, setTags }) {
         <div
           className={`tag__title${isDisabled ? ' tag__title_disabled' : ''}`}
           key={index}
-          onClick={() => !isDisabled && removeTag(index)}>
+          onClick={() => !isDisabled && removeTag(index)}
+        >
           {tag}
-          {!isDisabled && <span className="tag__item-close"></span>}
+          {!isDisabled && <span className="tag__item-close" />}
         </div>
       ))}
     </div>
-  )
+  );
 }
 
-export default InputTags;
+export { InputTags };

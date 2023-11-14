@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
 import './InputDoc.css';
 
-function InputDoc (
-  {
-    name,
-    value,
-    onChange,
-    // onDeleteDocClick,
-    errorMessage,
-    isDisabled
-  }
-  ) {
+function InputDoc({
+  name,
+  value,
+  onChange,
+  // onDeleteDocClick,
+  errorMessage,
+  isDisabled,
+}) {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 
-  const handleChange = (event) => {
+  React.useEffect(() => {
+    if (value) {
+      setFile(value);
+      console.log(value);
+    }
+  }, []);
+
+  function handleChange(event) {
     const selectedFile = event.currentTarget.files[0];
 
     const reader = new FileReader();
     reader.readAsDataURL(selectedFile);
 
-
-    reader.onload = function () {
+    reader.onload = () => {
       onChange(reader.result, selectedFile.name);
       if (allowedFileTypes.includes(selectedFile.type) && selectedFile.size < 52428800) {
         setFile({ file: reader.result, name: selectedFile.name });
@@ -31,19 +35,12 @@ function InputDoc (
         setFile(null);
         setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
       }
-    }
+    };
 
-    reader.onerror = function () {
+    reader.onerror = () => {
       console.error(reader.error);
     };
-  };
-
-  React.useEffect(() => {
-    if (value) {
-      setFile(value);
-      console.log(value);
-    }
-  }, []);
+  }
 
   return !file ? (
     <label className="input-doc__real-input">
@@ -57,17 +54,21 @@ function InputDoc (
       />
       <div>
         <span className="input-doc__input-text">Загрузить</span>
-        <span className="input-doc__input-text input-doc__input-text_type_tooltip">макс. 50 MB</span>
+        <span className="input-doc__input-text input-doc__input-text_type_tooltip">
+          макс. 50 MB
+        </span>
       </div>
-      <span className="input-doc__input-text input-doc__input-text_type_tooltip">.jpg .jpeg .png</span>
+      <span className="input-doc__input-text input-doc__input-text_type_tooltip">
+        .jpg .jpeg .png
+      </span>
     </label>
   ) : (
     <div className="input-doc__real-input input-doc__real-input_uploaded">
-      <input className="input-doc__fake-input" name={name} disabled={true} />
+      <input className="input-doc__fake-input" name={name} disabled />
       <span className="input-doc__input-text input-doc__input-text_uploaded">{file.name}</span>
-      {!isDisabled &&
+      {!isDisabled && (
         <button className="input-doc__close-button" onClick={() => setFile(null)} type="button" />
-      }
+      )}
     </div>
   );
 }

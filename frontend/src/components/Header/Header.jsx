@@ -1,10 +1,9 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useContext, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Context } from "../../context/context";
-import HeaderAuth from "../HeaderAuth/HeaderAuth";
-import "../Header/Header.css";
-import "../../pages/Profiles/Profile.css";
+import React, { useContext, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Context } from '../../context/context';
+import { HeaderAuth } from '../HeaderAuth/HeaderAuth';
+import '../../pages/Profiles/Profile.css';
+import './Header.css';
 
 function Header() {
   const [showSetting, setShowSetting] = useState(false);
@@ -21,7 +20,8 @@ function Header() {
     if (is_worker) {
       const shortLastName = user?.last_name.slice(0, 1);
       return `${user?.first_name} ${shortLastName}.`;
-    } else if (is_customer) {
+    }
+    if (is_customer) {
       const shortLastName = currentUser?.last_name.slice(0, 1);
       return `${currentUser?.first_name} ${shortLastName}.`;
     }
@@ -29,31 +29,36 @@ function Header() {
     return '';
   }
 
-  const completeFormPaths = (
+  const completeFormPaths =
     pathname === '/freelancer/complete' ||
     pathname === '/customer/complete' ||
-    pathname === '/create-task'
-  );
+    pathname === '/create-task';
 
-  const authPaths = (
+  const authPaths =
     pathname === '/signin' ||
     pathname === '/signup' ||
     pathname === '/forgot-password' ||
-    pathname === '/reset-password'
-  );
+    pathname === '/reset-password';
 
-  const profilePaths = currentUser.is_worker ? '/freelancer' : currentUser.is_customer && '/customer';
+  const profilePaths = currentUser.is_worker
+    ? '/freelancer'
+    : currentUser.is_customer && '/customer';
 
   function handleSetting() {
     setShowSetting(!showSetting);
   }
 
-  const popStyle = `profile__popup profile_block${showSetting ? ' profile__popup_show' : ''}`
+  const popStyle = `profile__popup profile_block${showSetting ? ' profile__popup_show' : ''}`;
 
   return (
-    <header className={`header${isAuthenticated && !completeFormPaths ? ' header-with-background' : ''}`}>
+    <header
+      className={`header${isAuthenticated && !completeFormPaths ? ' header-with-background' : ''}`}
+    >
       <div className="header__container">
-        <Link to="/" className={`header__logo${authPaths || completeFormPaths ? ' header__logo-black' : ''}`}></Link>
+        <Link
+          to="/"
+          className={`header__logo${authPaths || completeFormPaths ? ' header__logo-black' : ''}`}
+        />
         {isAuthenticated ? (
           <div
             onClick={handleSetting}
@@ -66,18 +71,15 @@ function Header() {
             </p>
             <div
               className="header__avatar"
-              style={{ backgroundImage: `url(${currentUser?.photo})` }}
-            ></div>
+              style={{ backgroundImage: `url('${currentUser?.photo}')` }}
+            />
           </div>
-        ) : (<HeaderAuth />)
-        }
+        ) : (
+          <HeaderAuth />
+        )}
       </div>
       <div className={popStyle}>
-        <Link
-          to={profilePaths}
-          onClick={() => setShowSetting(false)}
-          className="profile__title"
-        >
+        <Link to={profilePaths} onClick={() => setShowSetting(false)} className="profile__title">
           Настройки
         </Link>
         <Link
@@ -92,4 +94,4 @@ function Header() {
   );
 }
 
-export default Header;
+export { Header };

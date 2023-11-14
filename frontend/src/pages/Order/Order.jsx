@@ -1,17 +1,17 @@
-import React, { useState, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Context } from "../../context/context";
-import InputMultipleSelect from "../../components/Inputs/InputMultipleSelect/InputMultipleSelect";
-import InputTags from "../../components/Inputs/InputTags/InputTags";
-import "./Order.css";
-import "../Profiles/Profile.css";
-import "../Profiles/ProfileFreelancer/ProfileFreelancer.css";
-import "../Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly.css";
-import "../../components/Forms/CreateTaskForm/CreateTaskForm.css";
-import "../ForgotPass/ForgotPass.css";
+import React, { useState, useContext } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { Context } from '../../context/context';
 import { order } from '../../utils/order';
+import { InputMultipleSelect } from '../../components/Inputs/InputMultipleSelect/InputMultipleSelect';
+import { InputTags } from '../../components/Inputs/InputTags/InputTags';
+import '../../components/Forms/CreateTaskForm/CreateTaskForm.css';
+import '../ForgotPass/ForgotPass.css';
+import '../Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly.css';
+import '../Profiles/ProfileFreelancer/ProfileFreelancer.css';
+import '../Profiles/Profile.css';
+import './Order.css';
 
-export default function Order() {
+function Order() {
   const [responded, setResponded] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
@@ -20,29 +20,23 @@ export default function Order() {
   const [activityValues, setActivityValues] = useState([]);
 
   // Стили
-  const userIsCustomer = (currentUser.is_customer);
+  const userIsCustomer = currentUser.is_customer;
 
-  const freelancerBtnStyle = `form-profile__bottom-buttons form-profile__bottom-buttons_type_submit${responded
-    ? ' form-profile__bottom-buttons-hide'
-    : ''
+  const freelancerBtnStyle = `form-profile__bottom-buttons form-profile__bottom-buttons_type_submit${
+    responded ? ' form-profile__bottom-buttons-hide' : ''
   }`;
-  const customerBtnStyle = `form-profile__bottom-buttons${isEditable
-    ? ' form-profile__bottom-buttons-hide'
-    : ''
+  const customerBtnStyle = `form-profile__bottom-buttons${
+    isEditable ? ' form-profile__bottom-buttons-hide' : ''
   }`;
   // Получаю данные заказа
   let { id } = useParams();
   // const tasks = JSON.parse(localStorage.getItem('taskValues'));
   const tasks = order;
-  const task = tasks.find((item) => {
-    return String(item.id) === id;
-  });
+  const task = tasks.find((item) => String(item.id) === id);
   // console.log(task);
   // Записываю значения в переменные
   const stacksList = task.stack.map((item, index) => (
-    <li
-      key={index}
-      className="order__list-item">
+    <li key={index} className="order__list-item">
       {item}
     </li>
   ));
@@ -50,7 +44,7 @@ export default function Order() {
   const specialization = task.direction?.join(', ');
   const budgetMoney = task.budget;
   const budgetDiscussion = task.budgetDiscussion?.toString();
-  const deadline = task.deadline;
+  const { deadline } = task;
   const deadlineDiscussion = task.deadlineDiscussion?.toString();
   // -----------
 
@@ -59,19 +53,21 @@ export default function Order() {
       {isPopupOpen && (
         <div className="popup-overlay">
           <div className="popup">
-            <h2 className="popupTitle">Вы действительно хотите удалить заказ?</h2>
-            <p className="popupDescription">
-              Отменить это действие будет невозможно
-            </p>
+            <h2 className="popup-title">Вы действительно хотите удалить заказ?</h2>
+            <p className="popup-description">Отменить это действие будет невозможно</p>
             <button
+              type="button"
               style={{ marginBottom: 12 }}
               onClick={() => setIsPopupOpen(false)}
-              className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit">
+              className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
+            >
               Удалить
             </button>
             <button
+              type="button"
               onClick={() => setIsPopupOpen(false)}
-              className="form-profile__bottom-buttons">
+              className="form-profile__bottom-buttons"
+            >
               Отменить
             </button>
           </div>
@@ -79,25 +75,19 @@ export default function Order() {
       )}
 
       <section className="profile order">
-
         <Link to=".." className="order__back-container">
-          <div className="order__back"></div>
+          <div className="order__back" />
           Назад
         </Link>
 
         <div className="order_block">
-
           <div className="profile_block profile_right-column left-column">
-
             {isEditable ? (
               <form className="form-profile">
-
                 <h1 className="profile__title">Редактирование заказа</h1>
 
                 <div className="form-profile__input-container">
-                  <label
-                    className="profile__main-text"
-                    htmlFor="name">
+                  <label className="profile__main-text" htmlFor="name">
                     Название
                   </label>
                   <input
@@ -111,9 +101,7 @@ export default function Order() {
                 </div>
 
                 <div className="form-profile__input-container">
-                  <label
-                    className="profile__main-text"
-                    htmlFor="name">
+                  <label className="profile__main-text" htmlFor="name">
                     Описание
                   </label>
                   <textarea
@@ -143,8 +131,8 @@ export default function Order() {
                   И указать, есть ли у вас опыт дизайна для ИТ или для B2B тематики. Предпочтение дизайнерам с опытом
                   веб-дизайна сайтов/лендингов для ИТ или для B2B тематики. Рассматриваю исключительно самостоятельных
                   специалистов дизайнеров, не студии, не агентства.
-                  Бюджет готов обсудить. Ориентируюсь на примерно 15 000р.">
-                  </textarea>
+                  Бюджет готов обсудить. Ориентируюсь на примерно 15 000р."
+                  />
                 </div>
 
                 <div className="form-profile__input-container">
@@ -158,9 +146,7 @@ export default function Order() {
                 </div>
 
                 <div className="form-profile__input-container">
-                  <label
-                    className="profile__main-text"
-                    htmlFor="workingRate">
+                  <label className="profile__main-text" htmlFor="workingRate">
                     Бюджет
                   </label>
                   <input
@@ -172,19 +158,22 @@ export default function Order() {
                   />
                   {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
                   <label className="freelancer-complete-form__input-radio-text">
-                    <input type="radio" className="freelancer-complete-form__input-radio" name="contact-prefer" />
+                    <input
+                      type="radio"
+                      className="freelancer-complete-form__input-radio"
+                      name="contact-prefer"
+                    />
                     Жду предложений от фрилансеров
                   </label>
                   {/* --------------------------------------------- */}
                 </div>
 
                 <div className="form-profile__input-container">
-                  <label
-                    className="profile__main-text"
-                    htmlFor="projectTimeline">
+                  <label className="profile__main-text" htmlFor="projectTimeline">
                     Сроки
                   </label>
-                  <input type="month"
+                  <input
+                    type="month"
                     name="projectTimeline"
                     id="projectTimeline"
                     placeholder="Дедлайн задачи"
@@ -192,7 +181,11 @@ export default function Order() {
                   />
                   {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
                   <label className="freelancer-complete-form__input-radio-text">
-                    <input type="radio" className="freelancer-complete-form__input-radio" name="contact-prefer" />
+                    <input
+                      type="radio"
+                      className="freelancer-complete-form__input-radio"
+                      name="contact-prefer"
+                    />
                     Жду предложений от фрилансеров
                   </label>
                   {/* --------------------------------------------- */}
@@ -200,8 +193,10 @@ export default function Order() {
 
                 <div className="form-profile__bottom-buttons-container">
                   <button
+                    type="button"
                     className="profile__main-text form-profile__bottom-buttons"
-                    onClick={() => setIsEditable(false)}>
+                    onClick={() => setIsEditable(false)}
+                  >
                     Отмена
                   </button>
                   <button
@@ -212,7 +207,6 @@ export default function Order() {
                     Сохранить
                   </button>
                 </div>
-
               </form>
             ) : (
               <>
@@ -225,8 +219,8 @@ export default function Order() {
                 <div className="form-profile__input-container">
                   <h3 className="profile__title">Файлы</h3>
                   <div className="profile__file-container">
-                    <div className="profile__file"></div>
-                    <div className="profile__file"></div>
+                    <div className="profile__file" />
+                    <div className="profile__file" />
                   </div>
                 </div>
 
@@ -234,7 +228,7 @@ export default function Order() {
                   <div className="form-profile__input-container">
                     <h3 className="profile__title">О заказчике</h3>
                     <div className="order__customer-container">
-                      <div className="order__client-logo"></div>
+                      <div className="order__client-logo" />
                       <div>
                         <p className="profile__main-text">AndyClass</p>
                         <div className="order__customer-container">
@@ -244,42 +238,49 @@ export default function Order() {
                       </div>
                     </div>
                     <p className="profile__main-text">
-                      AndyClass полноценное маркетинговое агентство с более чем 10-летним опытом на рынке.
-                      Мы специализируемся на создании и реализации комплексных стратегий для продвижения брендов
-                      и товаров в интернете и оффлайн. Наша команда профессионалов охватывает все аспекты современного
-                      маркетинга: от SEO и контент-маркетинга до проведения рекламных кампаний и анализа данных.
-                      Мы стремимся предоставлять нашим клиентам высококачественные и результативные решения
-                      для достижения их бизнес-целей.
+                      AndyClass полноценное маркетинговое агентство с более чем 10-летним опытом на
+                      рынке. Мы специализируемся на создании и реализации комплексных стратегий для
+                      продвижения брендов и товаров в интернете и оффлайн. Наша команда
+                      профессионалов охватывает все аспекты современного маркетинга: от SEO и
+                      контент-маркетинга до проведения рекламных кампаний и анализа данных. Мы
+                      стремимся предоставлять нашим клиентам высококачественные и результативные
+                      решения для достижения их бизнес-целей.
                     </p>
                   </div>
                 )}
               </>
             )}
-
           </div>
 
           <div className="profile_left-column">
-
             {!userIsCustomer ? (
               <button
+                type="button"
                 className={freelancerBtnStyle}
-                onClick={() => setResponded(true)}>
+                onClick={() => setResponded(true)}
+              >
                 Откликнуться
               </button>
             ) : (
               <>
                 <button
-                  className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit">
+                  type="button"
+                  className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
+                >
                   Отклики
                 </button>
                 <button
+                  type="button"
                   className={customerBtnStyle}
-                  onClick={() => setIsEditable(true)}>
+                  onClick={() => setIsEditable(true)}
+                >
                   Редактировать заказ
                 </button>
                 <button
+                  type="button"
                   onClick={() => setIsPopupOpen(true)}
-                  className="form-profile__bottom-buttons">
+                  className="form-profile__bottom-buttons"
+                >
                   Удалить заказ
                 </button>
               </>
@@ -295,15 +296,11 @@ export default function Order() {
                 </div>
                 <div>
                   <h2 className="profile__title">Специализация</h2>
-                  <p className="profile__main-text profile__info-main-text">
-                    {specialization}
-                  </p>
+                  <p className="profile__main-text profile__info-main-text">{specialization}</p>
                 </div>
                 <div>
                   <h2 className="profile__title">Навыки</h2>
-                  <p className="profile__main-text profile__info-main-text">
-                    {stacksList2}
-                  </p>
+                  <p className="profile__main-text profile__info-main-text">{stacksList2}</p>
                 </div>
                 <div>
                   <h2 className="profile__title">Бюджет</h2>
@@ -319,12 +316,11 @@ export default function Order() {
                 </div>
               </div>
             )}
-
           </div>
-
         </div>
-
       </section>
     </>
-  )
+  );
 }
+
+export { Order };

@@ -1,10 +1,10 @@
-import "./FreelanceOrder.css";
 import React, { useContext, useState } from 'react';
-import SearchMain from "../SearchMain/SearchMain";
-import FilterSection from "../FilterSection/FilterSection";
-import OrderCards from "../OrderCards/OrderCards";
-import OperationMode from "../OperationMode/OperationMode";
 import { Context } from '../../context/context';
+import { SearchMain } from '../SearchMain/SearchMain';
+import { FilterSection } from '../FilterSection/FilterSection';
+import { OrderCards } from '../OrderCards/OrderCards';
+import { OperationMode } from '../OperationMode/OperationMode';
+import './FreelanceOrder.css';
 
 function FreelanceOrder() {
   const [operationMode, setOperationMode] = useState(true);
@@ -12,15 +12,12 @@ function FreelanceOrder() {
 
   const handleFreelanceFilter = (filter) => {
     setFreelanceFilter(filter);
-  }
+  };
 
   return (
     <section className="freelance-order">
       <div className="freelance-order__column-order">
-        <OperationMode
-          operationMode={operationMode}
-          setOperationMode={setOperationMode}
-        />
+        <OperationMode operationMode={operationMode} setOperationMode={setOperationMode} />
         <SearchMain />
         <OrderCards operationMode={operationMode} />
       </div>
@@ -31,4 +28,4 @@ function FreelanceOrder() {
   );
 }
 
-export default FreelanceOrder;
+export { FreelanceOrder };

@@ -1,22 +1,22 @@
-.forgotPass {
+.forgot-pass {
   max-width: 400px;
 }
 
-.forgotPass__form {
+.forgot-pass__form {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.forgotPass__inputContainer {
+.forgot-pass__input-container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   margin-bottom: 48px;
 }
 
-.forgotPass__text {
-  color: #3F3F3F;
+.forgot-pass__text {
+  color: #3f3f3f;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;

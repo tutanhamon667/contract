@@ -6,8 +6,8 @@
   width: 140px;
   height: 140px;
   border-radius: 12px;
-  background-color: #C6C6C6;
-  transition: all .3s;
+  background-color: #c6c6c6;
+  transition: all 0.3s;
 }
 
 .input-doc__real-input:hover:not(:has(input:disabled)) {
@@ -19,11 +19,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #C2C2C2;
+  background-color: #c2c2c2;
 }
 
 .input-doc__real-input_uploaded:hover:not(:disabled) {
-  background-color: #C2C2C2;
+  background-color: #c2c2c2;
   cursor: default;
 }
 
@@ -44,7 +44,7 @@
   display: block;
   margin: 0 10px;
   text-align: center;
-  color: #FFF;
+  color: #fff;
   font-size: 16px;
   line-height: 1.25;
 }
@@ -63,7 +63,7 @@
   margin: 4px 0 12px;
   font-size: 14px;
   line-height: 1.42;
-  color: #7B7B7B;
+  color: #7b7b7b;
 }
 
 .input-doc__close-button {
@@ -73,16 +73,16 @@
   width: 20px;
   height: 20px;
   border: 0;
-  background-image: url(../../../images/close-icon.svg);
+  background-image: url('../../../images/close-icon.svg');
   background-color: transparent;
   cursor: pointer;
-  transition: all .3s;
-}
-
-.input-doc__close-button:hover:not(:disabled) {
-  opacity: .8;
+  transition: all 0.3s;
 }
 
 .input-doc__close-button:disabled {
   cursor: default;
+}
+
+.input-doc__close-button:hover:not(:disabled) {
+  opacity: 0.8;
 }

@@ -1,32 +1,31 @@
-import React from "react";
-import Button from "../../Button/Button";
-import useFormAndValidation from "../../../hooks/useFormAndValidation";
-import InputText from "../../Inputs/InputText/InputText";
-import "./SetNewPassForm.css";
+import React from 'react';
+import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
+import { Button } from '../../Button/Button';
+import { InputText } from '../../Inputs/InputText/InputText';
+import './SetNewPassForm.css';
 
-const SetNewPassForm = () => {
+function SetNewPassForm() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [buttonClicked, setButtonClicked] = React.useState(false);
-  const { values, errors, isValid, handleChange, setValues, setErrors } =
-    useFormAndValidation();
+  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
   const handleSubmit = (evt) => {
     evt.preventDefault();
     let newErrors = {};
 
     if (!values.password) {
-      newErrors = { ...newErrors, password: "Введите пароль" };
+      newErrors = { ...newErrors, password: 'Введите пароль' };
     }
 
     if (!values.re_password) {
-      newErrors = { ...newErrors, re_password: "Введите пароль повторно" };
+      newErrors = { ...newErrors, re_password: 'Введите пароль повторно' };
     }
 
     setErrors({ ...errors, ...newErrors });
     if (isValid && values.password && values.re_password) {
       setValues({
         ...values,
-        password: "",
-        re_password: "",
+        password: '',
+        re_password: '',
       });
     }
     setButtonClicked(true);
@@ -36,15 +35,15 @@ const SetNewPassForm = () => {
   };
 
   return (
-    <form className="setNewPass" onSubmit={handleSubmit}>
-      <div className="setNewPass__form">
-        <div className="setNewPass__inputContainer">
-          <p className="setNewPass__text">
+    <form className="set-new-password" onSubmit={handleSubmit}>
+      <div className="set-new-password__form">
+        <div className="set-new-password__input-container">
+          <p className="set-new-password__text">
             Придумайте новый пароль для восстановления доступа к аккаунту.
           </p>
           <InputText
             placeholder="Новый пароль"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
             marginTop={20}
             width={400}
@@ -52,20 +51,20 @@ const SetNewPassForm = () => {
             pass={togglePasswordVisibility}
             name="password"
             onChange={handleChange}
-            value={values.password || ""}
+            value={values.password || ''}
             error={errors.password}
             errorMessage={errors.password}
           />
           <InputText
             placeholder="Повторите пароль"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
             marginTop={20}
             width={400}
             height={60}
             name="re_password"
             onChange={handleChange}
-            value={values.re_password || ""}
+            value={values.re_password || ''}
             error={errors.re_password}
             errorMessage={errors.re_password}
           />
@@ -74,14 +73,11 @@ const SetNewPassForm = () => {
           text="Продолжить"
           width={400}
           type="submit"
-          disabled={
-            (!isValid || !values.password || !values.re_password) &&
-            buttonClicked
-          }
+          disabled={(!isValid || !values.password || !values.re_password) && buttonClicked}
         />
       </div>
     </form>
   );
-};
+}
 
-export default SetNewPassForm;
+export { SetNewPassForm };

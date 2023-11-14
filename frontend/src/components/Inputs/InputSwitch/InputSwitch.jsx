@@ -1,27 +1,28 @@
-import React from "react";
-import "./InputSwitch.css";
+import React from 'react';
+import './InputSwitch.css';
 
-export function InputSwitch(
-  {
-    id,
-    type,
-    label,
-    value,
-    onChange,
-    marginTop,
-    name,
-    error,
-    errorMessage,
-    isDisabled,
-    defaultChecked
-  }
-) {
+function InputSwitch({
+  id,
+  type,
+  label,
+  value,
+  onChange,
+  marginTop,
+  name,
+  error,
+  errorMessage,
+  isDisabled,
+  defaultChecked,
+}) {
   return (
-    <div className="inputSwitch__container">
-      <label className="inputSwitch__label" style={{ marginTop }}>
+    <div className="input-switch__container">
+      <label className="input-switch__label" style={{ marginTop }}>
         <input
-          className={`inputSwitch__input${type === 'radio' ? ' inputSwitch__input_type_radio'
-            : ' inputSwitch__input_type_checkbox'}${error ? ' input_type_error' : ''}`}
+          className={`input-switch__input${
+            type === 'radio'
+              ? ' input-switch__input_type_radio'
+              : ' input-switch__input_type_checkbox'
+          }${error ? ' input_type_error' : ''}`}
           type={type}
           value={value}
           onChange={onChange}
@@ -33,7 +34,9 @@ export function InputSwitch(
         />
         {label}
       </label>
-      <span className="inputSwitch__errorText">{errorMessage}</span>
+      <span className="input-switch__error-text">{errorMessage}</span>
     </div>
   );
 }
+
+export { InputSwitch };

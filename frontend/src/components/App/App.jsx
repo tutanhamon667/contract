@@ -1,24 +1,24 @@
-import React, { useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import { Context } from "../../context/context";
-import { ProtectedRoute } from "../../services/PotectedRouter";
+import React, { useState } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Context } from '../../context/context';
+import { Layout } from '../../layout/Layout';
+import { ProtectedRoute } from '../../services/PotectedRouter';
 import * as Api from '../../utils/Api';
-import Layout from "../../layout/Layout";
-import Main from "../Main/Main";
-import { SignOut } from "../SignOut/SignOut";
-import { FreelancerCompleteForm } from "../Forms/FreelancerCompleteForm/FreelancerCompleteForm";
+import { Main } from '../Main/Main';
+import { SignOut } from '../SignOut/SignOut';
+import { FreelancerCompleteForm } from '../Forms/FreelancerCompleteForm/FreelancerCompleteForm';
 import { CustomerCompleteForm } from '../Forms/CustomerCompleteForm/CustomerCompleteForm';
 import { CreateTaskForm } from '../Forms/CreateTaskForm/CreateTaskForm';
-import NotFound from "../../pages/NotFound/NotFound";
-import Register from "../../pages/Register/Register";
-import Login from "../../pages/Login/Login";
-import ForgotPass from "../../pages/ForgotPass/ForgotPass";
-import ProfileFreelancer from "../../pages/Profiles/ProfileFreelancer/ProfileFreelancer";
-import ResetPass from "../../pages/ResetPass/ResetPass";
-import ProfileCustomer from "../../pages/Profiles/ProfileCustomer/ProfileCustomer";
-import ProfileFreelancerViewOnly from "../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly";
-import Order from "../../pages/Order/Order";
-import "./App.css";
+import { NotFound } from '../../pages/NotFound/NotFound';
+import { Register } from '../../pages/Register/Register';
+import { Login } from '../../pages/Login/Login';
+import { ForgotPass } from '../../pages/ForgotPass/ForgotPass';
+import { ProfileFreelancer } from '../../pages/Profiles/ProfileFreelancer/ProfileFreelancer';
+import { ResetPass } from '../../pages/ResetPass/ResetPass';
+import { ProfileCustomer } from '../../pages/Profiles/ProfileCustomer/ProfileCustomer';
+import { ProfileFreelancerViewOnly } from '../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly';
+import { Order } from '../../pages/Order/Order';
+import './App.css';
 
 function App() {
   // const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -39,19 +39,64 @@ function App() {
     const accessToken = sessionStorage.getItem('access');
     const refreshToken = localStorage.getItem('refresh');
 
+    function refreshTokenHandler() {
+      if (refreshToken) {
+        Api.getNewAccessToken()
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            }
+
+            return response.json().then((error) => Promise.reject(error.detail));
+          })
+          .then((tokens) => {
+            if (tokens.access) {
+              sessionStorage.setItem('access', tokens.access);
+
+              Api.getUserInfo()
+                .then((res) => {
+                  if (res.ok) {
+                    return res.json();
+                  }
+
+                  return res.json().then((error) => Promise.reject(error.detail));
+                })
+                .then((userData) => {
+                  setCurrentUser(userData);
+                  setIsAuthenticated(true);
+                  setIsLoading(false);
+                })
+                .catch((error) => {
+                  setIsAuthenticated(false);
+                  sessionStorage.removeItem('access');
+                  console.error(error);
+                  setIsLoading(false);
+                });
+            }
+          })
+          .catch((error) => {
+            setIsAuthenticated(false);
+            sessionStorage.removeItem('access');
+            console.error(error);
+            setIsLoading(false);
+          });
+      } else {
+        setIsAuthenticated(false);
+        setIsLoading(false);
+      }
+    }
+
     if (accessToken && refreshToken) {
       Api.getUserInfo()
         .then((res) => {
           if (res.ok) {
             return res.json();
-          } else if (!res.ok) {
-            return res.json().then(error => {
-              return Promise.reject(error.detail);
-            })
           }
+
+          return res.json().then((error) => Promise.reject(error.detail));
         })
-        .then((res) => {
-          setCurrentUser(res);
+        .then((userData) => {
+          setCurrentUser(userData);
           setIsAuthenticated(true);
           setIsLoading(false);
         })
@@ -62,57 +107,7 @@ function App() {
     } else {
       refreshTokenHandler();
     }
-
-    function refreshTokenHandler() {
-      if (refreshToken) {
-        Api.getNewAccessToken()
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            } else {
-              return res.json().then(error => {
-                return Promise.reject(error.detail);
-              })
-            }
-          })
-          .then(res => {
-            if (res['access']) {
-              sessionStorage.setItem('access', res['access']);
-
-              Api.getUserInfo()
-                .then((res) => {
-                  if (res.ok) {
-                    return res.json();
-                  }
-                  return res.json().then(error => {
-                    return Promise.reject(error.detail);
-                  });
-                })
-                .then((res) => {
-                  setCurrentUser(res);
-                  setIsAuthenticated(true);
-                  setIsLoading(false);
-                })
-                .catch((error) => {
-                  setIsAuthenticated(false);
-                  sessionStorage.removeItem('access');
-                  console.error(error);
-                  setIsLoading(false);
-                })
-            }
-          })
-          .catch((error) => {
-            setIsAuthenticated(false);
-            sessionStorage.removeItem('access');
-            console.error(error);
-            setIsLoading(false);
-          })
-      } else {
-        setIsAuthenticated(false);
-        setIsLoading(false);
-      }
-    }
-  }, [])
+  }, []);
 
   function handleRegisterSubmit(values) {
     Api.register(values)
@@ -121,39 +116,36 @@ function App() {
         setIsError(false);
         setErrorRequest({});
 
-        const role = data.is_customer ? "customer" : data.is_worker && "freelancer";
+        const role = data.is_customer ? 'customer' : data.is_worker && 'freelancer';
         navigate(`/${role}/complete`, { replace: true });
 
         // console.log(values)
 
         Api.authenticateUser(values)
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          } else if (res.status === 401) {
-            return res.json().then(error => {
-              return Promise.reject(error.detail);
-            });
-          } else {
-            return res.json().then(error => {
-              return Promise.reject(error.detail);
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            }
+            if (res.status === 401) {
+              return res.json().then((error) => Promise.reject(error.detail));
+            }
+
+            return res.json().then((error) => Promise.reject(error.detail));
+          })
+          .then((response) => {
+            if (response.refresh && response.access) {
+              localStorage.setItem('refresh', response.refresh);
+              sessionStorage.setItem('access', response.access);
+            }
+          })
+          .catch((err) => {
+            console.error(err);
           });
-          }
-        })
-        .then(response => {
-          if (response['refresh'] && response['access']) {
-            localStorage.setItem('refresh', response['refresh']);
-            sessionStorage.setItem('access', response['access']);
-          }
-        })
-        .catch((err)=>{
-          console.error(err)
-        })
       })
       .catch((err) => {
         setErrorRequest(err);
         setIsError(true);
-      })
+      });
   }
 
   function handleCustomerSubmit(data) {
@@ -162,21 +154,21 @@ function App() {
       photo: data.photo?.photo,
       name: data.values?.name,
       industry: {
-        name: data.values?.industry
+        name: data.values?.industry,
       },
       about: data.values?.about,
-      web: data.values?.web
-    }
-   // console.log(array)
+      web: data.values?.web,
+    };
+    // console.log(array)
     Api.createUserProfile(formValues)
       .then((res) => {
-       // console.log(data)
-       setCurrentUser(res);
-       navigate('/customer', { replace: true });
+        // console.log(data)
+        setCurrentUser(res);
+        navigate('/customer', { replace: true });
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.error(err);
-      })
+      });
   }
 
   function handleFreelancerSubmit(data) {
@@ -185,66 +177,66 @@ function App() {
         {
           type: 'phone',
           value: data.values.phone,
-          preferred: data.values.preferred === 'phone'
+          preferred: data.values.preferred === 'phone',
         },
         {
           type: 'email',
           value: data.values.email,
-          preferred: data.values.preferred === 'email'
+          preferred: data.values.preferred === 'email',
         },
         {
           type: 'telegram',
           value: data.values.telegram,
-          preferred: data.values.preferred === 'telegram'
-        }
+          preferred: data.values.preferred === 'telegram',
+        },
       ],
       stacks: data.tags.map((tag) => ({ name: tag })),
       categories: [
         {
-          name: data.values.activity
-        }
+          name: data.values.activity,
+        },
       ],
       education: [
         {
           diploma: [
             {
               file: data.document.diploma,
-              name: data.document.diploma_name
-            }
+              name: data.document.diploma_name,
+            },
           ],
           name: data.values.education,
           faculty: data.values.faculty,
           start_year: data.values.start_year,
           finish_year: data.values.finish_year,
-          degree: data.values.degree
-        }
+          degree: data.values.degree,
+        },
       ],
       portfolio: [
         {
           file: data.portfolioFile.file,
-          name: data.portfolioFile.file_name
-        }
+          name: data.portfolioFile.file_name,
+        },
       ],
       photo: data.profilePhoto.photo,
       payrate: data.values.payrate,
       about: data.values.about,
-      web: data.values.web
-    }
+      web: data.values.web,
+    };
 
     Api.createUserProfile(formValues)
       .then((res) => {
         setCurrentUser(res);
         navigate('/', { replace: true });
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.error(err);
-      })
+      });
   }
 
   function handleTaskSubmit(data) {
     const formValues = {
       title: data.task_name,
-      category: [ data.activity ],
+      category: [data.activity],
       stack: data.stacks.map((stack) => ({ name: stack })),
       budget: data.budget?.budget,
       ask_budget: data.budgetDiscussion,
@@ -253,24 +245,24 @@ function App() {
       description: data.about,
       job_files: [
         {
-        file: data.file.document,
-        name: data.file.document_name
-        }
-      ]
-     }
+          file: data.file.document,
+          name: data.file.document_name,
+        },
+      ],
+    };
 
-     Api.createTask(formValues)
-     .then(() => {
-      navigate('/', { replace: true });
-     })
-     .catch((err)=>{
-      console.error(err);
-    })
+    Api.createTask(formValues)
+      .then(() => {
+        navigate('/', { replace: true });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   const handleOrderFilter = (state) => {
     setOrderFilter(state);
-  }
+  };
 
   const logIn = () => {
     setIsAuthenticated(true);
@@ -281,41 +273,69 @@ function App() {
   }
 
   return (
-    <Context.Provider value={{
-      currentUser,
-      isAuthenticated,
-      orderFilter,
-      logIn,
-      handleOrderFilter,
-      freelanceFilter,
-      setFreelanceFilter,
-      rerender,
-      setRerender
-    }}>
+    <Context.Provider
+      value={{
+        currentUser,
+        isAuthenticated,
+        orderFilter,
+        logIn,
+        handleOrderFilter,
+        freelanceFilter,
+        setFreelanceFilter,
+        rerender,
+        setRerender,
+      }}
+    >
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Main />} />
           <Route path="order/:id" element={<Order />} />
-          <Route path="signup" element={
-            <Register handleRegister={handleRegisterSubmit} error={errorRequest} isError={isError} />
-          } />
-          <Route path="signin" element={
-            <Login setIsAuthenticated={setIsAuthenticated} setCurrentUser={setCurrentUser} currentUser={currentUser} />
-          } />
+          <Route
+            path="signup"
+            element={
+              <Register
+                handleRegister={handleRegisterSubmit}
+                error={errorRequest}
+                isError={isError}
+              />
+            }
+          />
+          <Route
+            path="signin"
+            element={
+              <Login
+                setIsAuthenticated={setIsAuthenticated}
+                setCurrentUser={setCurrentUser}
+                currentUser={currentUser}
+              />
+            }
+          />
           <Route path="forgot-password" element={<ForgotPass />} />
           <Route path="reset-password" element={<ResetPass />} />
-          <Route path="signout" element={
-            <SignOut setCurrentUser={setCurrentUser} setIsAuthenticated={setIsAuthenticated} />
-          } />
+          <Route
+            path="signout"
+            element={
+              <SignOut setCurrentUser={setCurrentUser} setIsAuthenticated={setIsAuthenticated} />
+            }
+          />
           <Route path="*" element={<NotFound />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="freelancer" element={<ProfileFreelancer setCurrentUser={setCurrentUser} />} />
+            <Route
+              path="freelancer"
+              element={<ProfileFreelancer setCurrentUser={setCurrentUser} />}
+            />
             <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
-            <Route path="freelancer/complete" element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit}/>} />
+            <Route
+              path="freelancer/complete"
+              element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit} />}
+            />
             <Route path="customer" element={<ProfileCustomer setCurrentUser={setCurrentUser} />} />
-            <Route path="customer/complete" element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />} />
-            <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit}/>} />
+            <Route
+              path="customer/complete"
+              element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />}
+            />
+            <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit} />} />
           </Route>
         </Route>
       </Routes>
@@ -323,4 +343,4 @@ function App() {
   );
 }
 
-export default App;
+export { App };

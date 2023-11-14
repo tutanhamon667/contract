@@ -9,7 +9,7 @@
 
 .profile__info-main-text {
   margin-top: 8px;
-  color: #7b7b7b
+  color: #7b7b7b;
 }
 
 .profile_right-column {
@@ -27,7 +27,7 @@
 .profile__file {
   width: 140px;
   height: 140px;
-  background-color: #C6C6C6;
+  background-color: #c6c6c6;
   border-radius: 12px;
 }
 

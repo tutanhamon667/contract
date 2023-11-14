@@ -2,23 +2,20 @@
   box-sizing: border-box;
   width: 610px;
   padding: 19px 51px 19px 19px;
-  border: 1px solid #C6C6C6;
+  border: 1px solid #c6c6c6;
   border-radius: 12px;
   appearance: none;
-  color: #3F3F3F;
-  background: #fff url(../../../images/arrow-down.svg) no-repeat calc(100% - 19px) center / 24px;
+  color: #3f3f3f;
+  background: #fff url('../../../images/arrow-down.svg') no-repeat calc(100% - 19px) center / 24px;
   font-size: 16px;
   line-height: 1.25;
-  transition: box-shadow .3s ease-in-out, border .3s ease-in-out;
+  transition:
+    box-shadow 0.3s ease-in-out,
+    border 0.3s ease-in-out;
 }
 
 .select_type_placeholder {
-  color: #7B7B7B;
-}
-
-.select:hover:not(:disabled) {
-  cursor: pointer;
-  box-shadow: 2px 2px 0 0 #C6C6C6;
+  color: #7b7b7b;
 }
 
 .select:disabled {
@@ -27,5 +24,10 @@
 
 .select:focus {
   outline: none;
-  box-shadow: 2px 2px 0 0 #C6C6C6;
+  box-shadow: 2px 2px 0 0 #c6c6c6;
+}
+
+.select:hover:not(:disabled) {
+  cursor: pointer;
+  box-shadow: 2px 2px 0 0 #c6c6c6;
 }

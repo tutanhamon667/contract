@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-export default function useFormAndValidation() {
-  const [values, setValues] = useState([]);
+function useFormAndValidation() {
+  const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(true);
 
@@ -15,38 +15,39 @@ export default function useFormAndValidation() {
 
     setValues({ ...values, [name]: value });
     setErrors({ ...errors, [name]: e.target.validationMessage });
-    setIsValid(e.target.closest("form").checkValidity());
+    setIsValid(e.target.closest('form').checkValidity());
 
-    if (name === "email") {
+    if (name === 'email') {
       if (!emailRegex.test(value)) {
-        setErrors({ ...errors, [name]: "Введите корректную эл. почту" });
+        setErrors({ ...errors, [name]: 'Введите корректную эл. почту' });
         setIsValid(false);
       } else {
-        setErrors({ ...errors, [name]: "" });
+        setErrors({ ...errors, [name]: '' });
         setIsValid(true);
       }
     }
 
-    if (name === "password") {
+    if (name === 'password') {
       if (value.length < 8) {
         setErrors({
           ...errors,
-          [name]: "Пароль должен содержать не менее 8 символов",
+          [name]: 'Пароль должен содержать не менее 8 символов',
         });
         setIsValid(false);
       } else if (value.length > 20) {
         setErrors({
           ...errors,
-          [name]: "Пароль не должен быть длиннее 20 символов",
+          [name]: 'Пароль не должен быть длиннее 20 символов',
         });
         setIsValid(false);
       } else {
         if (!passwordRegex.test(value)) {
           setErrors({
             ...errors,
-            [name]: "Пароль должен содержать только латинские буквы, цифры и следующие символы: " +
-            // "!#$%&'*+-/=?^_`{|}~,\"(),:;<>@[\\]",
-            "@#$%!^&*"
+            [name]:
+              'Пароль должен содержать только латинские буквы, цифры и следующие символы: ' +
+              // "!#$%&'*+-/=?^_`{|}~,\"(),:;<>@[\\]",
+              '@#$%!^&*',
           });
           setIsValid(false);
         } else {
@@ -59,57 +60,59 @@ export default function useFormAndValidation() {
           if (!hasLowerCase) {
             setErrors({
               ...errors,
-              [name]: "Пароль должен содержать хотя бы одну строчную букву",
+              [name]: 'Пароль должен содержать хотя бы одну строчную букву',
             });
             setIsValid(false);
           } else if (!hasUpperCase) {
             setErrors({
               ...errors,
-              [name]: "Пароль должен содержать хотя бы одну заглавную букву",
+              [name]: 'Пароль должен содержать хотя бы одну заглавную букву',
             });
             setIsValid(false);
           } else if (!hasDigit) {
             setErrors({
               ...errors,
-              [name]: "Пароль должен содержать хотя бы одну цифру",
+              [name]: 'Пароль должен содержать хотя бы одну цифру',
             });
             setIsValid(false);
           } else if (!hasSpecial) {
             setErrors({
               ...errors,
-              [name]: "Пароль должен содержать хотя бы один следующий символ: @#$%!^&*",
+              [name]: 'Пароль должен содержать хотя бы один следующий символ: @#$%!^&*',
             });
             setIsValid(false);
           } else {
-            setErrors({ ...errors, [name]: "" });
+            setErrors({ ...errors, [name]: '' });
             setIsValid(true);
           }
         }
       }
     }
 
-    if (name === "re_password") {
+    if (name === 're_password') {
       if (value.length < 1) {
         setErrors({
           ...errors,
-          [name]: `Введите пароль повторно` });
+          [name]: 'Введите пароль повторно',
+        });
         setIsValid(false);
       } else if (value !== values.password) {
-        setErrors({ ...errors, [name]: "Пароли не совпадают" });
+        setErrors({ ...errors, [name]: 'Пароли не совпадают' });
         setIsValid(false);
       } else {
-        setErrors({ ...errors, [name]: "" });
+        setErrors({ ...errors, [name]: '' });
         setIsValid(true);
       }
     }
 
-    if (name === "first_name" || name === "last_name") {
-      const title = name === "first_name" ? "Имя" : "Фамилия";
+    if (name === 'first_name' || name === 'last_name') {
+      const title = name === 'first_name' ? 'Имя' : 'Фамилия';
 
       if (value.length < 1) {
         setErrors({
           ...errors,
-          [name]: `Введите ${name === "first_name" ? 'имя' : 'фамилию'}` });
+          [name]: `Введите ${name === 'first_name' ? 'имя' : 'фамилию'}`,
+        });
         setIsValid(false);
       } else if (value.length > 80) {
         setErrors({
@@ -120,11 +123,11 @@ export default function useFormAndValidation() {
       } else if (!nameRegex.test(value)) {
         setErrors({
           ...errors,
-          [name]: `${title} может состоять только из латинских и кириллических букв, цифр и следующих символов: .-_@`
+          [name]: `${title} может состоять только из латинских и кириллических букв, цифр и следующих символов: .-_@`,
         });
         setIsValid(false);
       } else {
-        setErrors({ ...errors, [name]: "" });
+        setErrors({ ...errors, [name]: '' });
         setIsValid(true);
       }
     }
@@ -139,3 +142,5 @@ export default function useFormAndValidation() {
     setErrors,
   };
 }
+
+export { useFormAndValidation };

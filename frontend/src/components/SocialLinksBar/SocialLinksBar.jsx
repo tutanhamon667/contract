@@ -1,27 +1,27 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "./SocialLinksBar.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './SocialLinksBar.css';
 
-const SocialLinksBar = () => {
+function SocialLinksBar() {
   return (
-    <div className="linkBar">
-      <p className="linkBar__text">или</p>
-      <nav className="linkBar__menu">
-        <Link className="linkBar__item" to="#">
-          <div className="linkBar__item__vk" />
+    <div className="link-bar">
+      <p className="link-bar__text">или</p>
+      <nav className="link-bar__menu">
+        <Link className="link-bar__item" to="#">
+          <div className="link-bar__item_type_vk" />
         </Link>
-        <Link className="linkBar__item" to="#">
-          <div className="linkBar__item__google" />
+        <Link className="link-bar__item" to="#">
+          <div className="link-bar__item_type_google" />
         </Link>
-        <Link className="linkBar__item" to="#">
-          <div className="linkBar__item__github" />
+        <Link className="link-bar__item" to="#">
+          <div className="link-bar__item_type_github" />
         </Link>
-        <Link className="linkBar__item" to="#">
-          <div className="linkBar__item__yandex" />
+        <Link className="link-bar__item" to="#">
+          <div className="link-bar__item_type_yandex" />
         </Link>
       </nav>
     </div>
   );
-};
+}
 
-export default SocialLinksBar;
+export { SocialLinksBar };

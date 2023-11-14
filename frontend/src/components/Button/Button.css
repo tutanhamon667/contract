@@ -14,51 +14,50 @@
 }
 
 .button:hover {
-  box-shadow: 4px 4px 0 0 #C6C6C6;
+  box-shadow: 4px 4px 0 0 #c6c6c6;
 }
 
 .button:active {
   background-color: #eee;
 }
 
-.button:disabled {
+.button:focus {
+  outline: none;
+  box-shadow: 4px 4px 0 0 #c6c6c6;
+}
+
+.button_type_disabled {
   background-color: #b3b3b3;
+  color: #3f3f3f;
   cursor: default;
 }
 
-.button:disabled:hover {
+.button_type_disabled:hover {
   box-shadow: none;
 }
 
-.button:focus {
-  outline: none;
-  box-shadow: 4px 4px 0 0 #C6C6C6;
+.button_type_disabled:active {
+  background-color: #b3b3b3;
 }
 
-.buttonDisabled{
-  background-color: #B3B3B3;
-  color: #3F3F3F;
-}
-
-.buttonSecondary {
+.button_type_secondary {
   border: 1px solid #c6c6c6;
-  background-color: #ffffff;
+  background-color: #fff;
   padding: 0;
 }
 
-.buttonBlack {
+.button_color_black {
   background-color: transparent;
   border: none;
 }
 
-.buttonBlack:hover {
-  opacity: .4;
+.button_color_black:hover {
+  opacity: 0.4;
   box-shadow: none;
 }
 
-
-.buttonWhite {
-  background-color: #FFF;
+.button_color_white {
+  background-color: #fff;
 }
 
 .button__text {
@@ -71,11 +70,15 @@
   color: #3f3f3f;
 }
 
-.buttonSecondary__text {
+.button_type_disabled:active > .button__text {
+  color: #fff;
+}
+
+.button_type_secondary__text {
   color: #3f3f3f;
 }
 
-.buttonBlack__text {
+.button_color_black__text {
   color: #fff;
 }
 

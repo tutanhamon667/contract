@@ -1,36 +1,35 @@
-import React from "react";
-import Button from "../../Button/Button";
-import useFormAndValidation from "../../../hooks/useFormAndValidation";
-import InputText from "../../Inputs/InputText/InputText";
-import "./ForgotPassForm.css";
+import React from 'react';
+import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
+import { Button } from '../../Button/Button';
+import { InputText } from '../../Inputs/InputText/InputText';
+import './ForgotPassForm.css';
 
-const ForgotPassForm = ({ func }) => {
+function ForgotPassForm({ func }) {
   const [buttonClicked, setButtonClicked] = React.useState(false);
-  const { values, errors, isValid, handleChange, setValues, setErrors } =
-    useFormAndValidation();
+  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (!values.email) {
-      setErrors({ ...errors, email: "Введите эл. почту" });
+      setErrors({ ...errors, email: 'Введите эл. почту' });
       setButtonClicked(true);
-      return
+      return;
     }
     if (isValid) {
       setValues({
         ...values,
-        email: "",
+        email: '',
       });
       func();
     }
     setButtonClicked(true);
   };
   return (
-    <form className="forgotPass" onSubmit={handleSubmit}>
-      <div className="forgotPass__form">
-        <div className="forgotPass__inputContainer">
-          <p className="forgotPass__text">
-            Введите адрес электронной почты, который вы использовали при
-            регистрации, и мы вышлем вам инструкции по сбросу пароля.
+    <form className="forgot-pass" onSubmit={handleSubmit}>
+      <div className="forgot-pass__form">
+        <div className="forgot-pass__input-container">
+          <p className="forgot-pass__text">
+            Введите адрес электронной почты, который вы использовали при регистрации, и мы вышлем
+            вам инструкции по сбросу пароля.
           </p>
           <InputText
             placeholder="Эл. почта"
@@ -41,7 +40,7 @@ const ForgotPassForm = ({ func }) => {
             height={60}
             name="email"
             onChange={handleChange}
-            value={values.email || ""}
+            value={values.email || ''}
             error={errors.email}
             errorMessage={errors.email}
           />
@@ -56,6 +55,6 @@ const ForgotPassForm = ({ func }) => {
       </div>
     </form>
   );
-};
+}
 
-export default ForgotPassForm;
+export { ForgotPassForm };

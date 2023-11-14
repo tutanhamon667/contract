@@ -15,14 +15,14 @@
   display: flex;
   justify-content: flex-start;
   align-self: start;
-  color: #3F3F3F;
+  color: #3f3f3f;
   font-size: 16px;
   text-decoration-line: underline;
-  margin: 0 0 20px 0;
+  margin: 0 0 20px;
 }
 
 .order__back {
-  background-image: url(../../images/arrow-left.svg);
+  background-image: url('../../images/arrow-left.svg');
   background-repeat: no-repeat;
   background-position: center;
   width: 24px;
@@ -39,9 +39,9 @@
 
 .order__list-item {
   padding: 8px 16px;
-  outline: 1px solid #C6C6C6;
+  outline: 1px solid #c6c6c6;
   border-radius: 8px;
-  color: #3F3F3F;
+  color: #3f3f3f;
 }
 
 .order__customer-container {
@@ -53,11 +53,11 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: #C6C6C6;
+  background-color: #c6c6c6;
 }
 
 .order__client-text {
-  color: #7B7B7B;
+  color: #7b7b7b;
 }
 
 .form-profile__bottom-buttons-hide {

@@ -12,7 +12,7 @@
 
 .create-task-form__input-text {
   margin: 32px 0 16px;
-  color: #3F3F3F;
+  color: #3f3f3f;
   font-size: 16px;
   line-height: 1.25;
 }
@@ -29,7 +29,7 @@
   align-items: center;
   column-gap: 8px;
   margin-top: 8px;
-  color: #7B7B7B;
+  color: #7b7b7b;
 }
 
 .create-task-form__input-checkbox-text:hover {

@@ -1,7 +1,7 @@
-import "./StartWork.css";
-import React from "react";
-import Button from "../Button/Button";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '../Button/Button';
+import './StartWork.css';
 
 function StartWork() {
   return (
@@ -12,11 +12,11 @@ function StartWork() {
           <Button text="Cоздать таску" width={193} buttonSecondary />
         </Link>
         <Link to="signup">
-          <Button text="Cтать фрилансером" width={160} buttonSecondary buttonBlack/>
+          <Button text="Cтать фрилансером" width={160} buttonSecondary buttonBlack />
         </Link>
       </div>
     </section>
   );
 }
 
-export default StartWork;
+export { StartWork };
