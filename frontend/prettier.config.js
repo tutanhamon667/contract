@@ -3,7 +3,10 @@ export default {
   printWidth: 100,
   overrides: [
     {
-      files: ['dist', 'vite.config.js'],
+      files: [
+        'dist',
+        'vite.config.js',
+      ],
       options: { requirePragma: true },
     },
   ],

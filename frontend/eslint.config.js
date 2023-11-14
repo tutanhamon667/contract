@@ -2,8 +2,8 @@ import globals from 'globals';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 import { FlatCompat } from '@eslint/eslintrc';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,10 +13,17 @@ const compat = new FlatCompat({
 });
 
 export default [
-  ...compat.extends('airbnb', 'airbnb/hooks'),
+  ...compat.extends(
+    'plugin:unicorn/recommended',
+    'airbnb',
+    'airbnb/hooks',
+  ),
   eslintConfigPrettier,
   {
-    files: ['**/*.jsx', '**/*.js'],
+    files: [
+      '**/*.js',
+      '**/*.jsx',
+    ],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -42,9 +49,20 @@ export default [
       ],
       'react/jsx-no-bind': 'off', // TODO [2023-12-01]: изучить useCallback и memo, и включить
       'spaced-comment': 'off', // TODO [2023-12-01]: изучить форматирование комментариев JSX в WebStorm и включить
+      'unicorn/filename-case': 'off',
     },
   },
   {
-    ignores: ['dist', 'node_modules', 'vite.config.js', 'eslint.config.js'],
+    files: ['eslint.config.js'],
+    rules: {
+      'import/no-extraneous-dependencies': 'off',
+      'no-underscore-dangle': 'off',
+    },
+  },
+  {
+    ignores: [
+      'dist',
+      'vite.config.js',
+    ],
   },
 ];

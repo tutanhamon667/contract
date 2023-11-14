@@ -1,6 +1,9 @@
-module.exports = {
+export default {
   extends: ['stylelint-config-standard'],
-  ignoreFiles: ['**/*.js', '**/normalize.css', 'dist/**/*.css'],
+  ignoreFiles: [
+    '**/normalize.css',
+    'dist/**/*.css',
+  ],
   rules: {
     'selector-class-pattern': [
       '^[a-z]([-]?[a-z0-9]+)*(_[a-z0-9]([-]?[a-z0-9]+)*)?(_[a-z0-9]([-]?[a-z0-9]+)*)?' +
