@@ -54,8 +54,8 @@ function CreateTaskForm({ onSubmit }) {
   }
 
   function handleDeadline(e) {
-    setDeadline(e.target.value + ':00');
-    // console.log(deadline);
+    setDeadline(e.target.value);
+    // console.log(e.target.value);
   }
 
   const handleSubmit = (event) => {
@@ -154,7 +154,7 @@ function CreateTaskForm({ onSubmit }) {
         <p className="create-task-form__input-text">Сроки</p>
         <div className="create-task-form__input-year-wrapper">
           <InputText
-            type="datetime-local"
+            type="date"
             placeholder="Окончание"
             name="deadline"
             width={295}
