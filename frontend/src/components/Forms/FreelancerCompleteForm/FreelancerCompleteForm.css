@@ -28,6 +28,8 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  flex-direction: row-reverse;
+  justify-content: start;
 }
 
 .freelancer-complete-form__input-year-wrapper {

@@ -55,8 +55,8 @@
   justify-content: center;
   width: 115px;
   height: 115px;
-  overflow: auto;
-  overflow-wrap: break-word;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .input-doc__input-text_type_tooltip {

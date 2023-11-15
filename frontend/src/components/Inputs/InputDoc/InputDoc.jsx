@@ -9,7 +9,8 @@ function InputDoc({
   errorMessage,
   isDisabled,
 }) {
-  const [file, setFile] = useState(null);
+  const [currentFile, setCurrentFile] = useState({});
+  const [files, setFile] = useState([]);
   const [error, setError] = useState('');
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 
@@ -19,6 +20,7 @@ function InputDoc({
       console.log(value);
     }
   }, []);
+  console.log(files.length, files)
 
   function handleChange(event) {
     const selectedFile = event.currentTarget.files[0];
@@ -27,9 +29,10 @@ function InputDoc({
     reader.readAsDataURL(selectedFile);
 
     reader.onload = () => {
-      onChange(reader.result, selectedFile.name);
+      onChange([...files, { file: reader.result, name : selectedFile.name}]);
       if (allowedFileTypes.includes(selectedFile.type) && selectedFile.size < 52428800) {
-        setFile({ file: reader.result, name: selectedFile.name });
+        setFile([ ...files, {file: reader.result, name: selectedFile.name }]);
+        setCurrentFile({file: reader.result, name: selectedFile.name })
         setError('');
       } else {
         setFile(null);
@@ -38,39 +41,59 @@ function InputDoc({
     };
 
     reader.onerror = () => {
-      console.error(reader.error);
+      console.error(reader.currentTarget);
     };
   }
 
-  return !file ? (
-    <label className="input-doc__real-input">
-      <input
-        className="input-doc__fake-input"
-        type="file"
-        name={name}
-        accept=".pdf,.png,.jpg,.jpeg"
-        onChange={handleChange}
-        disabled={isDisabled}
-      />
-      <div>
-        <span className="input-doc__input-text">Загрузить</span>
+  function handleDelete(item){
+    const newFiles = files.filter((file) => file.file !== item.file);
+    setFile(newFiles)
+    console.log(newFiles)
+    onChange(newFiles)
+
+  }
+
+  return (
+    <>
+    {files.length < 5 ?
+      <label className="input-doc__real-input">
+        <input
+          className="input-doc__fake-input"
+          type="file"
+          name={name}
+          accept=".pdf,.png,.jpg,.jpeg"
+          onChange={handleChange}
+          disabled={isDisabled}
+        />
+        <div>
+          <span className="input-doc__input-text">Загрузить</span>
+          <span className="input-doc__input-text input-doc__input-text_type_tooltip">
+            макс. 50 MB
+          </span>
+        </div>
         <span className="input-doc__input-text input-doc__input-text_type_tooltip">
-          макс. 50 MB
+          .jpg .jpeg .png
         </span>
-      </div>
-      <span className="input-doc__input-text input-doc__input-text_type_tooltip">
-        .jpg .jpeg .png
-      </span>
-    </label>
-  ) : (
-    <div className="input-doc__real-input input-doc__real-input_uploaded">
-      <input className="input-doc__fake-input" name={name} disabled />
-      <span className="input-doc__input-text input-doc__input-text_uploaded">{file.name}</span>
-      {!isDisabled && (
-        <button className="input-doc__close-button" onClick={() => setFile(null)} type="button" />
-      )}
-    </div>
-  );
+      </label>
+      : ''
+    }
+      {files.length > 0 ?
+        files.map((item, index) => {
+          return (
+            <div className="input-doc__real-input input-doc__real-input_uploaded" key={index}>
+              <input className="input-doc__fake-input" name={name} disabled />
+              <span className="input-doc__input-text input-doc__input-text_uploaded">{item.name}</span>
+              {!isDisabled && (
+                <button className="input-doc__close-button" onClick={(event) => handleDelete(item)} type="button" />
+              )}
+            </div>
+          )
+        })
+        : ''
+      }
+    </>
+  )
+
 }
 
 export { InputDoc };

@@ -24,12 +24,12 @@ function FreelancerCompleteForm({ onSubmit }) {
     setProfilePhoto({ photo: url });
   }
 
-  function addPortfolioFile(url, name) {
-    setPortfolioFile({ file: url, file_name: name });
+  function addPortfolioFile(items) {
+    setPortfolioFile(items);
   }
 
-  function addDocument(url, name) {
-    setDocument({ diploma: url, diploma_name: name });
+  function addDocument(items) {
+    setDocument(items);
   }
 
   // const handleDocPortfolioChange = (event) => {

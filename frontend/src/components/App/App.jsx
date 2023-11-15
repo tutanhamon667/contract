@@ -172,6 +172,7 @@ function App() {
   }
 
   function handleFreelancerSubmit(data) {
+    console.log(data)
     const formValues = {
       contacts: [
         {
@@ -198,12 +199,7 @@ function App() {
       ],
       education: [
         {
-          diploma: [
-            {
-              file: data.document.diploma,
-              name: data.document.diploma_name,
-            },
-          ],
+          diploma: data.document,
           name: data.values.education,
           faculty: data.values.faculty,
           start_year: data.values.start_year,
@@ -211,18 +207,13 @@ function App() {
           degree: data.values.degree,
         },
       ],
-      portfolio: [
-        {
-          file: data.portfolioFile.file,
-          name: data.portfolioFile.file_name,
-        },
-      ],
+      portfolio: data.portfolioFile,
       photo: data.profilePhoto.photo,
       payrate: data.values.payrate,
       about: data.values.about,
       web: data.values.web,
     };
-
+console.log(formValues)
     Api.createUserProfile(formValues)
       .then((res) => {
         setCurrentUser(res);
@@ -234,6 +225,7 @@ function App() {
   }
 
   function handleTaskSubmit(data) {
+    console.log(data)
     const formValues = {
       title: data.task_name,
       category: [data.activity],
@@ -243,14 +235,9 @@ function App() {
       deadline: data.deadline?.deadline,
       ask_deadline: data.deadlineDiscussion,
       description: data.about,
-      job_files: [
-        {
-          file: data.file.document,
-          name: data.file.document_name,
-        },
-      ],
+      job_files: data.file
     };
-
+console.log(formValues)
     Api.createTask(formValues)
       .then(() => {
         navigate('/', { replace: true });

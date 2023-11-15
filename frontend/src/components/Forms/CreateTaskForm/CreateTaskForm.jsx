@@ -25,8 +25,9 @@ function CreateTaskForm({ onSubmit }) {
   const [deadline, setDeadline] = useState('');
   const [allTaskValues, setAllTaskValues] = useState([]);
   // console.log(isChecked);
-  function addDocument(url, name) {
-    setDocument({ document: url, document_name: name });
+  function addDocument(items) {
+    setDocument(items);
+    console.log(items)
   }
 
   // временное решение: сохранение значений формы в локальное хранилище

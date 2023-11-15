@@ -40,6 +40,8 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  flex-direction: row-reverse;
+  justify-content: start;
 }
 
 .create-task-form__input-year-wrapper {
