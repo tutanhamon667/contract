@@ -6,9 +6,11 @@ import { OrderCards } from '../OrderCards/OrderCards';
 import { OperationMode } from '../OperationMode/OperationMode';
 import './FreelanceOrder.css';
 
-function FreelanceOrder() {
+function FreelanceOrder({freelancers}) {
   const [operationMode, setOperationMode] = useState(true);
   const { setFreelanceFilter } = useContext(Context);
+
+  console.log(operationMode)
 
   const handleFreelanceFilter = (filter) => {
     setFreelanceFilter(filter);
@@ -19,7 +21,7 @@ function FreelanceOrder() {
       <div className="freelance-order__column-order">
         <OperationMode operationMode={operationMode} setOperationMode={setOperationMode} />
         <SearchMain />
-        <OrderCards operationMode={operationMode} />
+        <OrderCards operationMode={operationMode} freelancers={freelancers} />
       </div>
       <div className="freelance-order__column-filter">
         <FilterSection handleFreelanceFilter={handleFreelanceFilter} />

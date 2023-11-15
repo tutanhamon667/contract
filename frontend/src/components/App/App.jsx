@@ -33,11 +33,20 @@ function App() {
   const [errorRequest, setErrorRequest] = useState({});
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [freelancers, setFreelancers] = useState([]);
   const navigate = useNavigate();
 
   React.useEffect(() => {
     const accessToken = sessionStorage.getItem('access');
     const refreshToken = localStorage.getItem('refresh');
+
+    Api.getFreelancers()
+    .then((data) => {
+      setFreelancers(data.results)
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 
     function refreshTokenHandler() {
       if (refreshToken) {
@@ -275,7 +284,7 @@ console.log(formValues)
     >
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Main />} />
+          <Route index element={<Main freelancers={freelancers} />} />
           <Route path="order/:id" element={<Order />} />
           <Route
             path="signup"

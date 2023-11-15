@@ -8,6 +8,16 @@ function checkResponse(res) {
   return res.json().then((err) => Promise.reject(err));
 }
 
+function getFreelancers(){
+  return fetch(`${BACKEND_BASE_URL}/main`,{
+    method: 'GET',
+    headers: {
+      "Content-Type": "application/json",
+  },
+  })
+  .then((res) => checkResponse(res));
+}
+
 function register(data) {
   return fetch(`${BACKEND_BASE_URL}/users/`, {
     method: 'POST',
@@ -88,4 +98,5 @@ export {
   createUserProfile,
   updateUserProfile,
   createTask,
+  getFreelancers
 };

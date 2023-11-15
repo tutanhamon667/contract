@@ -5,7 +5,7 @@ import { freelance } from '../../utils/freelance';
 import { OrderCard } from '../OrderCard/OrderCard';
 import './OrderCards.css';
 
-function OrderCards({ operationMode }) {
+function OrderCards({ operationMode, freelancers }) {
   const { currentUser, isAuthenticated } = useContext(Context);
   const [area2, setArea2] = useState(false);
   const { handleOrderFilter } = useContext(Context);
@@ -26,17 +26,17 @@ function OrderCards({ operationMode }) {
   }, [currentUser, isAuthenticated, operationMode, handleOrderFilter]);
 
   const arrayOfTasks = JSON.parse(localStorage.getItem('taskValues'));
-
+//console.log(area2)
   return (
     <div className="order-cards">
       {operationMode ? (
         <OrderCard
-          cards={area2 ? tasks : freelance}
+          cards={area2 ? tasks : freelancers}
           orderArea={area2}
           operationMode={operationMode}
         />
       ) : (
-        <OrderCard cards={arrayOfTasks} isTasks />
+        <OrderCard cards={freelancers} isTasks />
       )}
     </div>
   );

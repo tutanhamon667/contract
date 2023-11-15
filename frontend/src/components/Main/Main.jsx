@@ -5,7 +5,7 @@ import { StartWork } from '../StartWork/StartWork';
 import { FreelanceOrder } from '../FreelanceOrder/FreelanceOrder';
 import './Main.css';
 
-function Main() {
+function Main({freelancers}) {
   const { isAuthenticated } = useContext(Context);
   const contentBorderAuthorized = `content__border ${
     isAuthenticated ? 'content__border-authorized' : ''
@@ -32,7 +32,7 @@ function Main() {
       )}
       <div className={contentBorderAuthorized} />
       <div className="content__order-container">
-        <FreelanceOrder />
+        <FreelanceOrder freelancers={freelancers}/>
       </div>
     </main>
   );
