@@ -200,7 +200,8 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_RETYPE': 'True',
     'PASSWORD_RESET_CONFIRM_URL': 'api/v1/users/reset_password_confirm/{uid}/{token}/',
 
-    'EMAIL': {'password_reset': 'djoser.email.PasswordResetEmail'},
+    # 'EMAIL': {'password_reset': 'djoser.email.PasswordResetEmail'},
+    'EMAIL': {'password_reset': 'users.email.PasswordResetEmail'},
 
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.AllowAny'],
