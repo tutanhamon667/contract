@@ -103,6 +103,7 @@ class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
     user = FreelancerField(queryset=User.objects.all())
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
+    photo = Base64ImageField(required=False)
     account_email = serializers.ReadOnlyField(source='user.email')
     contacts = ContactSerializer(many=True)
     stacks = StackSerializer(many=True)
@@ -117,12 +118,13 @@ class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
 
 class UserViewSerialiser(serializers.ModelSerializer):
     user = FreelancerField(queryset=User.objects.all())
+    photo = Base64ImageField(required=False)
     stacks = StackSerializer(many=True)
     categories = CategorySerializer(many=True)
 
     class Meta:
         model = WorkerProfile
-        fields = ('user', 'stacks', 'categories', 'about', 'payrate')
+        fields = ('user', 'photo', 'stacks', 'categories', 'about', 'payrate')
 
 
 class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
