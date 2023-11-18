@@ -52,17 +52,3 @@ def create_message(sender, to, subject, message_text):
     s = message.as_string()
     b = base64.urlsafe_b64encode(s.encode('utf-8'))
     return {'raw': b.decode('utf-8')}
-
-
-'''
-if __name__ == '__main__':
-    try:
-        service = get_service()
-        message = create_message(
-            "me", "maksimka@inbox.ru", "Test subject", "Test body"
-        )
-        send_message(service, "me", message)
-    except HttpError as error:
-        print(F'An error occurred: {error}')
-        send_message = None
-'''
