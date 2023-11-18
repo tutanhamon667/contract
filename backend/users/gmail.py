@@ -11,9 +11,9 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 SCOPES = [
-        'https://mail.google.com/',
-        'https://www.googleapis.com/auth/gmail.send',
-    ]
+    'https://mail.google.com/',
+    'https://www.googleapis.com/auth/gmail.send',
+]
 
 
 def get_service():
@@ -52,6 +52,7 @@ def create_message(sender, to, subject, message_text):
     s = message.as_string()
     b = base64.urlsafe_b64encode(s.encode('utf-8'))
     return {'raw': b.decode('utf-8')}
+
 
 '''
 if __name__ == '__main__':

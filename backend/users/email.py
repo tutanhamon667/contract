@@ -82,8 +82,8 @@ class CustomEmailMessage(mail.EmailMultiAlternatives, ContextMixin):
         )
         for line in self.to:
             print(line)
-        message = create_message("me", "maksimka@inbox.ru", self.subject, self.body)
-        #send_message(service, 'me', message)
+# message = create_message("me", "maksimka@inbox.ru", self.subject, self.body)
+        # send_message(service, 'me', message)
 
     def _process_node(self, node, context):
         attr = self._node_map.get(getattr(node, 'name', ''))
@@ -107,5 +107,7 @@ class PasswordResetEmail(CustomEmailMessage):
         user = context.get("user")
         context["uid"] = utils.encode_uid(user.pk)
         context["token"] = default_token_generator.make_token(user)
-        context["url"] = djoser_settings.PASSWORD_RESET_CONFIRM_URL.format(**context)
+        context["url"] = djoser_settings.PASSWORD_RESET_CONFIRM_URL.format(
+            **context
+        )
         return context
