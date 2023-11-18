@@ -183,7 +183,7 @@ class UserViewSet(UserView):
                 fields = None
             elif user.is_customer:
                 fields = (
-                    'user', 'account_email', 'is_worker', 'is_customer',
+                    'id', 'user', 'account_email', 'is_worker', 'is_customer',
                     'first_name', 'last_name', 'photo', 'name', 'industry',
                     'about', 'web'
                 )
@@ -198,7 +198,7 @@ class UserViewSet(UserView):
                 fields = None
             elif user.is_customer:
                 fields = (
-                    'user', 'account_email', 'is_worker', 'is_customer',
+                    'id', 'user', 'account_email', 'is_worker', 'is_customer',
                     'first_name', 'last_name', 'photo', 'name', 'industry',
                     'about', 'web'
                 )

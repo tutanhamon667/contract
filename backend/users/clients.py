@@ -29,7 +29,7 @@ class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = (
-            'user', 'account_email', 'is_worker', 'is_customer', 'photo',
+            'id', 'user', 'account_email', 'is_worker', 'is_customer', 'photo',
             'first_name', 'last_name', 'name', 'about', 'industry', 'web'
         )
 
@@ -47,7 +47,7 @@ class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = (
-            'user', 'account_email', 'is_worker', 'is_customer', 'photo',
+            'id', 'user', 'account_email', 'is_worker', 'is_customer', 'photo',
             'first_name', 'last_name', 'name', 'about', 'industry', 'web'
         )
 
