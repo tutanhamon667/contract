@@ -10,7 +10,6 @@ function FreelanceOrder({freelancers}) {
   const [operationMode, setOperationMode] = useState(true);
   const { setFreelanceFilter } = useContext(Context);
 
-  console.log(operationMode)
 
   const handleFreelanceFilter = (filter) => {
     setFreelanceFilter(filter);

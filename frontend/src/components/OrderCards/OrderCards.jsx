@@ -31,12 +31,12 @@ function OrderCards({ operationMode, freelancers }) {
     <div className="order-cards">
       {operationMode ? (
         <OrderCard
-          cards={area2 ? tasks : freelancers}
+          cards={area2 ? tasks : freelance}
           orderArea={area2}
           operationMode={operationMode}
         />
       ) : (
-        <OrderCard cards={freelancers} isTasks />
+        <OrderCard cards={freelance} isTasks />
       )}
     </div>
   );

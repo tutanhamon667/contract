@@ -14,7 +14,7 @@ function OrderCard({ cards, orderArea, operationMode, isTasks }) {
     }
     return true;
   }
-console.log(cards)
+
   return (
     (rerender || !rerender) &&
     cards?.map(
