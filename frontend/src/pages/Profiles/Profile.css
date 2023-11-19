@@ -1,13 +1,13 @@
 .profile {
   display: flex;
-  column-gap: 20px;
   padding: 24px 100px 100px;
+  column-gap: 20px;
 }
 
 .profile_block {
-  background-color: #fff;
   border: 1px solid #c6c6c6;
   border-radius: 10px;
+  background-color: #fff;
 }
 
 .profile__separate-line {
@@ -28,8 +28,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  row-gap: 8px;
   padding: 24px 45px;
+  row-gap: 8px;
 }
 
 .profile__user-info > label:first-child {
@@ -39,19 +39,19 @@
 .profile__setting {
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
   padding: 24px;
+  row-gap: 20px;
 }
 
 .profile__avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-image: url('../../images/profile-circle.svg');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 21px 21px;
   background-color: #3f3f3f;
+  background-image: url('../../images/profile-circle.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
 }
 
 /* ----------------- */
@@ -80,10 +80,10 @@
 /* --- ТЕКСТЫ --- */
 
 .profile__title {
+  margin: 0;
   color: #3f3f3f;
   font-size: 20px;
   font-weight: 600;
-  margin: 0;
 }
 
 .profile__title_place_aside {
@@ -91,10 +91,10 @@
 }
 
 .profile__main-text {
+  margin: 0;
   color: #3f3f3f;
   font-size: 16px;
   font-weight: 400;
-  margin: 0;
   line-height: 24px;
 }
 
@@ -108,8 +108,8 @@
 }
 
 .form-top-buttons_type_cansel {
-  margin-left: auto;
   padding-right: 20px;
+  margin-left: auto;
   color: #a8a8a8;
 }
 
@@ -118,21 +118,21 @@
 }
 
 .form-profile__bottom-buttons {
+  display: flex;
   width: 289px;
   height: 52px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  border: 1px solid #c6c6c6;
-  background-color: #f7f7f7;
-  border-radius: 12px;
+  justify-content: center;
   padding: 20px 40px;
+  border: 1px solid #c6c6c6;
+  border-radius: 12px;
+  background-color: #f7f7f7;
   cursor: pointer;
 }
 
 .form-profile__bottom-buttons_type_submit {
-  background: #3f3f3f;
   border: none;
+  background: #3f3f3f;
   color: white;
 }
 
@@ -146,6 +146,6 @@
 
 .form-profile__input {
   padding: 12px 24px;
-  border-radius: 12px;
   border: 1px solid #c6c6c6;
+  border-radius: 12px;
 }

@@ -1,8 +1,8 @@
 @font-face {
+  font-display: swap;
   font-family: 'Overpass Mono';
   font-style: normal;
   font-weight: 500;
-  font-display: swap;
   src:
     local('Overpass Mono'),
     local('OverpassMono-Medium'),

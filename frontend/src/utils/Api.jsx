@@ -1,21 +1,11 @@
 import { BACKEND_BASE_URL } from './constants';
 
-function checkResponse(res) {
-  if (res.ok) {
-    return res.json();
+function checkResponse(response) {
+  if (response.ok) {
+    return response.json();
   }
 
-  return res.json().then((err) => Promise.reject(err));
-}
-
-function getFreelancers(){
-  return fetch(`${BACKEND_BASE_URL}/main`,{
-    method: 'GET',
-    headers: {
-      "Content-Type": "application/json",
-  },
-  })
-  .then((res) => checkResponse(res));
+  return response.json().then((error) => Promise.reject(error));
 }
 
 function register(data) {
@@ -25,7 +15,7 @@ function register(data) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
-  }).then((res) => checkResponse(res));
+  }).then((response) => checkResponse(response));
 }
 
 function authenticateUser({ email, password }) {
@@ -65,7 +55,7 @@ function createUserProfile(data) {
       Authorization: `Bearer ${sessionStorage.getItem('access')}`,
     },
     body: JSON.stringify(data),
-  }).then((res) => checkResponse(res));
+  }).then((response) => checkResponse(response));
 }
 
 function updateUserProfile(data) {
@@ -76,7 +66,7 @@ function updateUserProfile(data) {
       Authorization: `Bearer ${sessionStorage.getItem('access')}`,
     },
     body: JSON.stringify(data),
-  }).then((res) => checkResponse(res));
+  }).then((response) => checkResponse(response));
 }
 
 function createTask(data) {
@@ -87,7 +77,15 @@ function createTask(data) {
       Authorization: `Bearer ${sessionStorage.getItem('access')}`,
     },
     body: JSON.stringify(data),
-  }).then((res) => checkResponse(res));
+  }).then((response) => checkResponse(response));
+}
+
+function getTasks() {
+  return fetch(`${BACKEND_BASE_URL}/jobs/`).then((response) => checkResponse(response));
+}
+
+function getFreelancers() {
+  return fetch(`${BACKEND_BASE_URL}/main`).then((response) => checkResponse(response));
 }
 
 export {
@@ -98,5 +96,6 @@ export {
   createUserProfile,
   updateUserProfile,
   createTask,
-  getFreelancers
+  getTasks,
+  getFreelancers,
 };

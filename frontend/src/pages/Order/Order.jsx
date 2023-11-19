@@ -2,9 +2,9 @@ import React, { useState, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { order } from '../../utils/order';
-import { InputMultipleSelect } from '../../components/Inputs/InputMultipleSelect/InputMultipleSelect';
-import { InputTags } from '../../components/Inputs/InputTags/InputTags';
-import '../../components/Forms/CreateTaskForm/CreateTaskForm.css';
+import { InputMultipleSelect } from '../../components/InputComponents/InputMultipleSelect/InputMultipleSelect';
+import { InputTags } from '../../components/InputComponents/InputTags/InputTags';
+import '../../components/FormComponents/CreateTaskForm/CreateTaskForm.css';
 import '../ForgotPass/ForgotPass.css';
 import '../Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly.css';
 import '../Profiles/ProfileFreelancer/ProfileFreelancer.css';
@@ -22,10 +22,10 @@ function Order() {
   // Стили
   const userIsCustomer = currentUser.is_customer;
 
-  const freelancerBtnStyle = `form-profile__bottom-buttons form-profile__bottom-buttons_type_submit${
+  const freelancerButtonStyle = `form-profile__bottom-buttons form-profile__bottom-buttons_type_submit${
     responded ? ' form-profile__bottom-buttons-hide' : ''
   }`;
-  const customerBtnStyle = `form-profile__bottom-buttons${
+  const customerButtonStyle = `form-profile__bottom-buttons${
     isEditable ? ' form-profile__bottom-buttons-hide' : ''
   }`;
   // Получаю данные заказа
@@ -156,7 +156,7 @@ function Order() {
                     placeholder="5000"
                     className="profile__main-text form-profile__input form-profile__rate-input"
                   />
-                  {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
+                  {/* переиспользуемый компонент с FormComponents/FreelancerCompleteForm */}
                   <label className="freelancer-complete-form__input-radio-text">
                     <input
                       type="radio"
@@ -179,7 +179,7 @@ function Order() {
                     placeholder="Дедлайн задачи"
                     className="profile__main-text form-profile__input form-profile__dates_input"
                   />
-                  {/* переиспользуемый компонент с Forms/FreelancerCompleteForm */}
+                  {/* переиспользуемый компонент с FormComponents/FreelancerCompleteForm */}
                   <label className="freelancer-complete-form__input-radio-text">
                     <input
                       type="radio"
@@ -256,7 +256,7 @@ function Order() {
             {!userIsCustomer ? (
               <button
                 type="button"
-                className={freelancerBtnStyle}
+                className={freelancerButtonStyle}
                 onClick={() => setResponded(true)}
               >
                 Откликнуться
@@ -271,7 +271,7 @@ function Order() {
                 </button>
                 <button
                   type="button"
-                  className={customerBtnStyle}
+                  className={customerButtonStyle}
                   onClick={() => setIsEditable(true)}
                 >
                   Редактировать заказ

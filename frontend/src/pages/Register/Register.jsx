@@ -1,5 +1,5 @@
 import React from 'react';
-import { RegisterForm } from '../../components/Forms/RegisterForm/RegisterForm';
+import { RegisterForm } from '../../components/FormComponents/RegisterForm/RegisterForm';
 import './Register.css';
 
 function Register({ handleRegister, error, isError }) {

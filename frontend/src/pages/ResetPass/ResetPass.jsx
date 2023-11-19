@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { SetNewPassForm } from '../../components/Forms/SetNewPassForm/SetNewPassForm';
+import { SetNewPassForm } from '../../components/FormComponents/SetNewPassForm/SetNewPassForm';
 import './ResetPass.css';
 
 function ResetPass() {

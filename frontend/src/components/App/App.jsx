@@ -4,11 +4,11 @@ import { Context } from '../../context/context';
 import { Layout } from '../../layout/Layout';
 import { ProtectedRoute } from '../../services/PotectedRouter';
 import * as Api from '../../utils/Api';
-import { Main } from '../Main/Main';
+import { Main } from '../../pages/Main/Main';
 import { SignOut } from '../SignOut/SignOut';
-import { FreelancerCompleteForm } from '../Forms/FreelancerCompleteForm/FreelancerCompleteForm';
-import { CustomerCompleteForm } from '../Forms/CustomerCompleteForm/CustomerCompleteForm';
-import { CreateTaskForm } from '../Forms/CreateTaskForm/CreateTaskForm';
+import { FreelancerCompleteForm } from '../FormComponents/FreelancerCompleteForm/FreelancerCompleteForm';
+import { CustomerCompleteForm } from '../FormComponents/CustomerCompleteForm/CustomerCompleteForm';
+import { CreateTaskForm } from '../FormComponents/CreateTaskForm/CreateTaskForm';
 import { NotFound } from '../../pages/NotFound/NotFound';
 import { Register } from '../../pages/Register/Register';
 import { Login } from '../../pages/Login/Login';
@@ -29,24 +29,15 @@ function App() {
   // обект со значениями фильтров фильтров
   const [freelanceFilter, setFreelanceFilter] = useState({});
   // временное решение для ререндеринга
-  const [rerender, setRerender] = useState(true);
+  // const [rerender, setRerender] = useState(true);
   const [errorRequest, setErrorRequest] = useState({});
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [freelancers, setFreelancers] = useState([]);
   const navigate = useNavigate();
 
   React.useEffect(() => {
     const accessToken = sessionStorage.getItem('access');
     const refreshToken = localStorage.getItem('refresh');
-
-    Api.getFreelancers()
-    .then((data) => {
-      setFreelancers(data.results)
-    })
-    .catch((err) => {
-      console.error(err);
-    });
 
     function refreshTokenHandler() {
       if (refreshToken) {
@@ -63,12 +54,12 @@ function App() {
               sessionStorage.setItem('access', tokens.access);
 
               Api.getUserInfo()
-                .then((res) => {
-                  if (res.ok) {
-                    return res.json();
+                .then((response) => {
+                  if (response.ok) {
+                    return response.json();
                   }
 
-                  return res.json().then((error) => Promise.reject(error.detail));
+                  return response.json().then((error) => Promise.reject(error.detail));
                 })
                 .then((userData) => {
                   setCurrentUser(userData);
@@ -97,12 +88,12 @@ function App() {
 
     if (accessToken && refreshToken) {
       Api.getUserInfo()
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
           }
 
-          return res.json().then((error) => Promise.reject(error.detail));
+          return response.json().then((error) => Promise.reject(error.detail));
         })
         .then((userData) => {
           setCurrentUser(userData);
@@ -131,15 +122,15 @@ function App() {
         // console.log(values)
 
         Api.authenticateUser(values)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
             }
-            if (res.status === 401) {
-              return res.json().then((error) => Promise.reject(error.detail));
+            if (response.status === 401) {
+              return response.json().then((error) => Promise.reject(error.detail));
             }
 
-            return res.json().then((error) => Promise.reject(error.detail));
+            return response.json().then((error) => Promise.reject(error.detail));
           })
           .then((response) => {
             if (response.refresh && response.access) {
@@ -147,12 +138,12 @@ function App() {
               sessionStorage.setItem('access', response.access);
             }
           })
-          .catch((err) => {
-            console.error(err);
+          .catch((error) => {
+            console.error(error);
           });
       })
-      .catch((err) => {
-        setErrorRequest(err);
+      .catch((error) => {
+        setErrorRequest(error);
         setIsError(true);
       });
   }
@@ -170,18 +161,18 @@ function App() {
     };
     // console.log(array)
     Api.createUserProfile(formValues)
-      .then((res) => {
+      .then((result) => {
         // console.log(data)
-        setCurrentUser(res);
+        setCurrentUser(result);
         navigate('/customer', { replace: true });
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       });
   }
 
   function handleFreelancerSubmit(data) {
-    console.log(data)
+    // console.log(data);
     const formValues = {
       contacts: [
         {
@@ -222,19 +213,19 @@ function App() {
       about: data.values.about,
       web: data.values.web,
     };
-console.log(formValues)
+
     Api.createUserProfile(formValues)
-      .then((res) => {
-        setCurrentUser(res);
+      .then((result) => {
+        setCurrentUser(result);
         navigate('/', { replace: true });
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       });
   }
 
   function handleTaskSubmit(data) {
-    console.log(data)
+    // console.log(data);
     const formValues = {
       title: data.task_name,
       category: [data.activity],
@@ -244,21 +235,19 @@ console.log(formValues)
       deadline: data.deadline?.deadline,
       ask_deadline: data.deadlineDiscussion,
       description: data.about,
-      job_files: data.file
+      job_files: data.file,
     };
-console.log(formValues)
+
+    // console.log(formValues);
+
     Api.createTask(formValues)
       .then(() => {
         navigate('/', { replace: true });
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       });
   }
-
-  const handleOrderFilter = (state) => {
-    setOrderFilter(state);
-  };
 
   const logIn = () => {
     setIsAuthenticated(true);
@@ -275,17 +264,17 @@ console.log(formValues)
         isAuthenticated,
         orderFilter,
         logIn,
-        handleOrderFilter,
         freelanceFilter,
         setFreelanceFilter,
-        rerender,
-        setRerender,
+        // rerender,
+        // setRerender,
       }}
     >
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Main freelancers={freelancers} />} />
+          <Route index element={<Main />} />
           <Route path="order/:id" element={<Order />} />
+          <Route path="profile-freelancer/:id" element={<ProfileFreelancerViewOnly />} />
           <Route
             path="signup"
             element={
@@ -321,7 +310,6 @@ console.log(formValues)
               path="freelancer"
               element={<ProfileFreelancer setCurrentUser={setCurrentUser} />}
             />
-            <Route path="profile-freelancer" element={<ProfileFreelancerViewOnly />} />
             <Route
               path="freelancer/complete"
               element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit} />}

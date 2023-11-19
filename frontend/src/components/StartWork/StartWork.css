@@ -1,14 +1,14 @@
 .start-work {
-  margin: 0 auto;
-  padding-left: 100px;
   max-width: 1440px;
+  padding-left: 100px;
+  margin: 0 auto;
 }
 
 .start-work__title {
-  margin: 230px 0 0;
-  padding: 0;
   width: 100%;
   max-width: 622px;
+  padding: 0;
+  margin: 230px 0 0;
   color: #fff;
   font-family: 'Overpass Mono', monospace;
   font-size: 56px;
@@ -18,22 +18,22 @@
 }
 
 .start-work__buttons-container {
-  margin-top: 48px;
   display: flex;
+  margin-top: 48px;
   gap: 40px;
 }
 
 .start-work__button {
   width: 295px;
   height: 53px;
-  border-radius: 10px;
   border: 1px solid #606060;
+  border-radius: 10px;
+  background-color: transparent;
   color: #606060;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  background-color: transparent;
 }
 
 .start-work__button_freelance {

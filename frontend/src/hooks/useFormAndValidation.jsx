@@ -10,12 +10,12 @@ function useFormAndValidation() {
   const passwordRegex = /^[a-zA-Z0-9@#$%!^&*]+$/;
   const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,80}$/;
 
-  function handleChange(e) {
-    const { name, value } = e.target;
+  function handleChange(event) {
+    const { name, value } = event.target;
 
     setValues({ ...values, [name]: value });
-    setErrors({ ...errors, [name]: e.target.validationMessage });
-    setIsValid(e.target.closest('form').checkValidity());
+    setErrors({ ...errors, [name]: event.target.validationMessage });
+    setIsValid(event.target.closest('form').checkValidity());
 
     if (name === 'email') {
       if (!emailRegex.test(value)) {
@@ -90,7 +90,7 @@ function useFormAndValidation() {
     }
 
     if (name === 're_password') {
-      if (value.length < 1) {
+      if (value.length === 0) {
         setErrors({
           ...errors,
           [name]: 'Введите пароль повторно',
@@ -108,7 +108,7 @@ function useFormAndValidation() {
     if (name === 'first_name' || name === 'last_name') {
       const title = name === 'first_name' ? 'Имя' : 'Фамилия';
 
-      if (value.length < 1) {
+      if (value.length === 0) {
         setErrors({
           ...errors,
           [name]: `Введите ${name === 'first_name' ? 'имя' : 'фамилию'}`,

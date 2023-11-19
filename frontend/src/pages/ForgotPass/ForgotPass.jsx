@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { Button } from '../../components/Button/Button';
-import { ForgotPassForm } from '../../components/Forms/ForgotPassForm/ForgotPassForm';
+import { ForgotPassForm } from '../../components/FormComponents/ForgotPassForm/ForgotPassForm';
 import './ForgotPass.css';
 
 function ForgotPass() {

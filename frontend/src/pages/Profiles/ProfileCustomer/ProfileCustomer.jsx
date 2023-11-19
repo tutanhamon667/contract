@@ -2,13 +2,13 @@ import React, { useState, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Context } from '../../../context/context';
 import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
-import { industryCategoryOptions } from '../../../utils/constants';
+import { industryAndCategoryOptions } from '../../../utils/constants';
 import * as Api from '../../../utils/Api';
-import { InputText } from '../../../components/Inputs/InputText/InputText';
-import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
-import { InputSelect } from '../../../components/Inputs/InputSelect/InputSelect';
+import { InputText } from '../../../components/InputComponents/InputText/InputText';
+import { InputImage } from '../../../components/InputComponents/InputImage/InputImage';
+import { InputSelect } from '../../../components/InputComponents/InputSelect/InputSelect';
 
-import '../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css';
+import '../../../components/FormComponents/FreelancerCompleteForm/FreelancerCompleteForm.css';
 import '../ProfileFreelancer/ProfileFreelancer.css';
 import '../Profile.css';
 import './ProfileCustomer.css';
@@ -24,8 +24,8 @@ function ProfileCustomer({ setCurrentUser }) {
     setPhoto({ photo: url });
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit(event) {
+    event.preventDefault();
 
     setValues({
       name: currentUser?.name || '',
@@ -57,12 +57,12 @@ function ProfileCustomer({ setCurrentUser }) {
       web: values?.web,
     };
     Api.updateUserProfile(newData)
-      .then((res) => {
-        setCurrentUser(res);
+      .then((result) => {
+        setCurrentUser(result);
         setIsEditable(false);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       });
     // }
   }
@@ -176,7 +176,7 @@ function ProfileCustomer({ setCurrentUser }) {
               width="100%"
               onChange={handleChange}
               value={values.industry || currentUser.industry?.name || ''}
-              options={industryCategoryOptions}
+              options={industryAndCategoryOptions}
               isDisabled={!isEditable}
             />
           </div>

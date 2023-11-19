@@ -2,16 +2,16 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
 import { Context } from '../../../context/context';
-import { industryCategoryOptions, degreeOptions } from '../../../utils/constants';
+import { industryAndCategoryOptions, degreeOptions } from '../../../utils/constants';
 import * as Api from '../../../utils/Api';
-import { InputTags } from '../../../components/Inputs/InputTags/InputTags';
-import { InputDoc } from '../../../components/Inputs/InputDoc/InputDoc';
-import { InputSelect } from '../../../components/Inputs/InputSelect/InputSelect';
-import { InputText } from '../../../components/Inputs/InputText/InputText';
-import { InputImage } from '../../../components/Inputs/InputImage/InputImage';
+import { InputTags } from '../../../components/InputComponents/InputTags/InputTags';
+import { InputDocument } from '../../../components/InputComponents/InputDocument/InputDocument';
+import { InputSelect } from '../../../components/InputComponents/InputSelect/InputSelect';
+import { InputText } from '../../../components/InputComponents/InputText/InputText';
+import { InputImage } from '../../../components/InputComponents/InputImage/InputImage';
 import { Button } from '../../../components/Button/Button';
-import { InputSwitch } from '../../../components/Inputs/InputSwitch/InputSwitch';
-import '../../../components/Forms/FreelancerCompleteForm/FreelancerCompleteForm.css';
+import { InputSwitch } from '../../../components/InputComponents/InputSwitch/InputSwitch';
+import '../../../components/FormComponents/FreelancerCompleteForm/FreelancerCompleteForm.css';
 import './ProfileFreelancer.css';
 import '../Profile.css';
 
@@ -21,7 +21,7 @@ function ProfileFreelancer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
   const { values, errors, handleChange } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
-  const [tags, setTags] = useState(currentUser?.stacks?.map((obj) => obj.name) || []);
+  const [tags, setTags] = useState(currentUser?.stacks?.map((object) => object.name) || []);
   const [photo, setPhoto] = useState(null);
   const [diploma, setDiploma] = useState(null);
   const [portfolio, setPortfolio] = useState(null);
@@ -68,8 +68,8 @@ function ProfileFreelancer({ setCurrentUser }) {
     setDiploma({ file, name });
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit(event) {
+    event.preventDefault();
 
     // if (currentUser.education[0]) {}
 
@@ -190,12 +190,12 @@ function ProfileFreelancer({ setCurrentUser }) {
     }
 
     Api.updateUserProfile(newData)
-      .then((res) => {
-        setCurrentUser(res);
+      .then((result) => {
+        setCurrentUser(result);
         setIsEditable(false);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       });
     // }
   }
@@ -319,7 +319,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               width="100%"
               value={values.categories || currentUser.categories[0]?.name || ''}
               onChange={handleChange}
-              options={industryCategoryOptions}
+              options={industryAndCategoryOptions}
               isDisabled={!isEditable}
             />
           </div>
@@ -434,14 +434,14 @@ function ProfileFreelancer({ setCurrentUser }) {
             <h2 className="profile__main-text">Сертификаты, грамоты, дипломы</h2>
             <div className="freelancer-complete-form__input-doc-wrapper">
               {/*{docKeysEdu.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (*/}
-              {/*  <InputDoc key={key} name="diploma" value={values.diploma || currentUser.education[0]?.diploma[index] || ''}*/}
+              {/*  <InputDocument key={key} name="diploma" value={values.diploma || currentUser.education[0]?.diploma[index] || ''}*/}
               {/*            error={errors.diploma} errorMessage={errors.diploma}*/}
               {/*            onChange={(event) => handleDocEduChange(event, key)}*/}
               {/*            onDeleteDocClick={() => onDeleteDocEduClick(key)}*/}
               {/*            isDisabled={!isEditable}*/}
               {/*  />*/}
               {/*))}*/}
-              <InputDoc
+              <InputDocument
                 name="diploma"
                 value={values.diploma || currentUser.education[0]?.diploma[0] || ''}
                 error={errors.diploma}
@@ -558,14 +558,14 @@ function ProfileFreelancer({ setCurrentUser }) {
             <h2 className="profile__title">Портфолио</h2>
             <div className="freelancer-complete-form__input-doc-wrapper">
               {/*{docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (*/}
-              {/*  <InputDoc key={key} name="portfolio" value={values.portfolio || currentUser?.portfolio[index] || ''}*/}
+              {/*  <InputDocument key={key} name="portfolio" value={values.portfolio || currentUser?.portfolio[index] || ''}*/}
               {/*            error={errors.portfolio} errorMessage={errors.portfolio}*/}
               {/*            onChange={(event) => handleDocPortfolioChange(event, key)}*/}
               {/*            onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}*/}
               {/*            isDisabled={!isEditable}*/}
               {/*  />*/}
               {/*))}*/}
-              <InputDoc
+              <InputDocument
                 name="portfolio"
                 value={values.portfolio || currentUser?.portfolio[0] || ''}
                 error={errors.portfolio}

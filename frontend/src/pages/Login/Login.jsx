@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { LoginForm } from '../../components/Forms/LoginForm/LoginForm';
+import { LoginForm } from '../../components/FormComponents/LoginForm/LoginForm';
 import './Login.css';
 
 function Login({ setIsAuthenticated, setCurrentUser, currentUser }) {
