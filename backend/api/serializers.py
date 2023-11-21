@@ -107,7 +107,7 @@ class JobListSerializer(serializers.ModelSerializer):
         many=True,
         slug_field='slug'
     )
-    client = GetCustomerProfileSerializer()
+    client = ClientSerializer()
     job_files = JobFileSerializer(
         read_only=True, many=True)
     is_responded = serializers.SerializerMethodField()
