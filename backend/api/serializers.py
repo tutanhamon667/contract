@@ -15,16 +15,16 @@ from taski.settings import (ASK_MSG, BUDGET_DATA_ERR, CATEGORY_CHOICES,
 from users.clients import GetCustomerProfileSerializer
 from users.freelancers import GetWorkerProfileSerializer
 from users.models import Stack
+from users.models import CustomerProfile as Client
 from users.models import WorkerProfile as Freelancer
 
 
-'''' На удаление в будущем, взамен использован GetCustomerProfileSerializer
 class ClientSerializer(serializers.ModelSerializer):
     """Заказчик."""
     class Meta:
         model = Client
-        fields = ('id', 'name', 'user_id',)
-'''
+        fields = ('id', 'user_id', 'photo', 'name',
+                  'about', 'industry', 'web')
 
 
 class FreelancerSerializer(serializers.ModelSerializer):
