@@ -17,6 +17,7 @@ function useFormAndValidation() {
     setErrors({ ...errors, [name]: event.target.validationMessage });
     setIsValid(event.target.closest('form').checkValidity());
 
+
     if (name === 'email') {
       if (!emailRegex.test(value)) {
         setErrors({ ...errors, [name]: 'Введите корректную эл. почту' });
@@ -131,7 +132,35 @@ function useFormAndValidation() {
         setIsValid(true);
       }
     }
+
+    if (name === 'name') {
+      if (value.length === 0) {
+        setErrors({
+          ...errors,
+          [name]: 'Введите название компании или ваше имя',
+        });
+        setIsValid(false);
+      } else if (value.length > 80) {
+        setErrors({
+          ...errors,
+          [name]: 'Название не может быть длиннее 80 знаков',
+        });
+        setIsValid(false);
+      }
+    }
+
+    if (name === 'industry') {
+      if (value.length === 0) {
+        setErrors({
+          ...errors,
+          [name]: 'Выберите отрасль',
+        });
+        setIsValid(false);
+      }
+    }
+
   }
+
 
   return {
     values,

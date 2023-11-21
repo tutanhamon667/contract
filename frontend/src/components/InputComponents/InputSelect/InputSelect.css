@@ -14,8 +14,16 @@
     border 0.3s ease-in-out;
 }
 
+.select-container {
+  position: relative;
+}
+
 .select_type_placeholder {
   color: #7b7b7b;
+}
+
+.select_type_error {
+  border: 1px solid #eb5757;
 }
 
 .select:disabled {
