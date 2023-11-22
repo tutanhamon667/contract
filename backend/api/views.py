@@ -86,7 +86,7 @@ class JobViewSet(ModelViewSet):
                 freelancer=freelancer,
                 job=job
             )
-            serializer = RespondedSerializer(response.job)
+            serializer = JobResponseSerializer(response)
             return Response(
                 data=serializer.data,
                 status=status.HTTP_201_CREATED

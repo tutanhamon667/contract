@@ -12,7 +12,7 @@ from taski.settings import (ASK_MSG, BUDGET_DATA_ERR, CATEGORY_CHOICES,
                             DATE_FORMAT_ERR, DATETIME_FORMAT,
                             FILE_OVERSIZE_ERR, JOB_ALREADY_APPLIED_ERR,
                             MAX_FILE_SIZE, STACK_ERR_MSG)
-from users.clients import GetCustomerProfileSerializer
+from users.clients import GetCustomerProfileSerializer, IndustrySerializer
 from users.freelancers import GetWorkerProfileSerializer
 from users.models import Stack
 from users.models import CustomerProfile as Client
@@ -21,6 +21,8 @@ from users.models import WorkerProfile as Freelancer
 
 class ClientSerializer(serializers.ModelSerializer):
     """Заказчик."""
+    industry = IndustrySerializer()
+
     class Meta:
         model = Client
         fields = ('id', 'user_id', 'photo', 'name',
@@ -200,7 +202,9 @@ class JobCreateSerializer(serializers.ModelSerializer):
             validated_data['deadline'] = ASK_MSG
         job = Job.objects.create(**validated_data)
         for file in job_files_data:
-            JobFile.objects.create(job=job, file=file['file'])
+            JobFile.objects.create(job=job,
+                                   file=file['file'],
+                                   name=file['name'])
         for skill in stack_data:
             name = skill.get('name')
             stack_obj, created = Stack.objects.get_or_create(
