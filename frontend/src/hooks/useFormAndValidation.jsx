@@ -9,14 +9,17 @@ function useFormAndValidation() {
   // const passwordRegex = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
   const passwordRegex = /^[a-zA-Z0-9@#$%!^&*]+$/;
   const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,80}$/;
+  const aboutRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,500}$/;
 
   function handleChange(event) {
     const { name, value } = event.target;
 
-    setValues({ ...values, [name]: value });
-    setErrors({ ...errors, [name]: event.target.validationMessage });
-    setIsValid(event.target.closest('form').checkValidity());
+    const validationMessage = event.target.validationMessage && (name === 'web' ? 'Укажите ссылку в формате https://example.com' : event.target.validationMessage);
 
+
+    setValues({ ...values, [name]: value });
+    setErrors({ ...errors, [name]: validationMessage });
+    setIsValid(event.target.closest('form').checkValidity());
 
     if (name === 'email') {
       if (!emailRegex.test(value)) {
@@ -146,6 +149,12 @@ function useFormAndValidation() {
           [name]: 'Название не может быть длиннее 80 знаков',
         });
         setIsValid(false);
+      } else if (!nameRegex.test(value)) {
+        setErrors({
+          ...errors,
+          [name]: 'Название может состоять только из латинских и кириллических букв, цифр и следующих символов: .-_@',
+        });
+        setIsValid(false);
       }
     }
 
@@ -157,6 +166,24 @@ function useFormAndValidation() {
         });
         setIsValid(false);
       }
+    }
+
+    if (name === 'about' && !aboutRegex.test(value) && value.length) {
+      setErrors({
+        ...errors,
+        [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+        и строчные символы "-", "_", "@", "."`,
+      });
+      setIsValid(false);
+    } else if (name === 'about' && !value.length) {
+      setErrors({ ...errors, [name]: '' });
+      setIsValid(true);
+    }
+
+
+    if (name === 'web' && !value.length) {
+      setErrors({ ...errors, [name]: '' });
+      setIsValid(true);
     }
 
   }

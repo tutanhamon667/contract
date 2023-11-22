@@ -38,7 +38,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     setErrors({ ...errors, ...newErrors });
 
     if (values.name && values.industry && isValid) {
-      console.log('Form is valid')
 
       // передать данные на бэк
       handleCustomerSubmit({ values, photo });
@@ -110,7 +109,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.about || ''}
           error={errors.about}
           errorMessage={errors.about}
-          onChange={handleChange}
+          onChange={employeHandleChange}
+          onBlur={handleChange}
         />
       </div>
       <div>
@@ -123,14 +123,15 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.web || ''}
           error={errors.web}
           errorMessage={errors.web}
-          onChange={handleChange}
+          onChange={employeHandleChange}
+          onBlur={handleChange}
         />
         <button type="button" className="employer-complete-form__add-link-button">
           Добавить ещё сайт или социальные сети +
         </button>
       </div>
 
-      <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200} disabled={(!values.name || !values.industry || !isValid) && buttonClicked} />
+      <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200} disabled={!isValid || (!values.name || !values.industry)} />
     </form>
   );
 }
