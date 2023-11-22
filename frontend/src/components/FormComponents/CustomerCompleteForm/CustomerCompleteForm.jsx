@@ -9,36 +9,37 @@ import './CustomerCompleteForm.css';
 
 function CustomerCompleteForm({ handleCustomerSubmit }) {
   const [photo, setPhoto] = useState(null);
+  const [buttonClicked, setButtonClicked] = useState(false);
 
-  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
+  const {
+    values,
+    errors,
+    isValid,
+    handleChange,
+    setValues,
+    setErrors,
+  } = useFormAndValidation();
 
   function addPhoto(url) {
     setPhoto({ photo: url });
   }
 
-  // console.log(photo)
-
   const handleSubmit = (event) => {
     event.preventDefault();
-
     let newErrors = {};
 
-    if (!values.first_name) {
-      newErrors = { ...newErrors, first_name: 'Введите имя' };
+    if (!values.name) {
+      newErrors = { ...newErrors, name: 'Введите название компании или ваше имя' };
     }
-
-    if (!values.email) {
-      newErrors = { ...newErrors, email: 'Введите эл. почту' };
+    if (!values.industry) {
+      newErrors = { ...newErrors, industry: 'Выберите отрасль' };
     }
 
     setErrors({ ...errors, ...newErrors });
 
-    if (isValid) {
-      // if (
-      //   isValid &&
-      //   values.first_name &&
-      //   values.email
-      // ) {
+    if (values.name && values.industry && isValid) {
+
+      // передать данные на бэк
       handleCustomerSubmit({ values, photo });
       // console.log(values);
       // setValues({
@@ -49,7 +50,14 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
       //
       // navigate(`/customer`);
     }
+
+    setButtonClicked(true);
   };
+
+  function employeHandleChange(event) {
+    const { name, value } = event.target;
+    setValues({ ...values, [name]: value })
+  }
 
   return (
     <form className="employer-complete-form" onSubmit={handleSubmit}>
@@ -73,8 +81,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.name || ''}
           error={errors.name}
           errorMessage={errors.name}
-          onChange={handleChange}
-          setValues={setValues}
+          onChange={employeHandleChange}
+          onBlur={handleChange}
         />
       </div>
       <div>
@@ -85,7 +93,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.industry || ''}
           error={errors.industry}
           errorMessage={errors.industry}
-          onChange={handleChange}
+          onChange={employeHandleChange}
+          onBlur={handleChange}
           options={industryAndCategoryOptions}
         />
       </div>
@@ -100,7 +109,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.about || ''}
           error={errors.about}
           errorMessage={errors.about}
-          onChange={handleChange}
+          onChange={employeHandleChange}
+          onBlur={handleChange}
         />
       </div>
       <div>
@@ -113,14 +123,15 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.web || ''}
           error={errors.web}
           errorMessage={errors.web}
-          onChange={handleChange}
+          onChange={employeHandleChange}
+          onBlur={handleChange}
         />
         <button type="button" className="employer-complete-form__add-link-button">
           Добавить ещё сайт или социальные сети +
         </button>
       </div>
 
-      <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200} />
+      <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200} disabled={!isValid || (!values.name || !values.industry)} />
     </form>
   );
 }

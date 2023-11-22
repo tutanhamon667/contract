@@ -10,6 +10,7 @@ function InputText({
   height,
   value,
   onChange,
+  onBlur,
   marginTop,
   pass,
   name,
@@ -26,19 +27,19 @@ function InputText({
   return (
     <div className="input-container">
       <InputType
-        className={`input${
-          name === 'payrate'
-            ? ' input_type_number'
-            : name.includes('password')
-              ? ' input_type_password'
-              : ''
-        }${error ? ' input_type_error' : ''}`}
+        className={`input${name === 'payrate'
+          ? ' input_type_number'
+          : name.includes('password')
+            ? ' input_type_password'
+            : ''
+          }${error ? ' input_type_error' : ''}`}
         type={type !== 'textarea' ? type : ''}
         placeholder={placeholder}
         autoComplete={autoComplete}
         style={inputStyle}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
         onWheel={(event) => event.target.blur()}
         name={name}
         id={id}
