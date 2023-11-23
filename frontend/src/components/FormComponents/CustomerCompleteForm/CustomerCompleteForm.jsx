@@ -9,7 +9,6 @@ import './CustomerCompleteForm.css';
 
 function CustomerCompleteForm({ handleCustomerSubmit }) {
   const [photo, setPhoto] = useState(null);
-  const [buttonClicked, setButtonClicked] = useState(false);
 
   const {
     values,
@@ -34,7 +33,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     if (!values.industry) {
       newErrors = { ...newErrors, industry: 'Выберите отрасль' };
     }
-
     setErrors({ ...errors, ...newErrors });
 
     if (values.name && values.industry && isValid) {
@@ -51,10 +49,9 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
       // navigate(`/customer`);
     }
 
-    setButtonClicked(true);
   };
 
-  function employeHandleChange(event) {
+  function handleEmployeChange(event) {
     const { name, value } = event.target;
     setValues({ ...values, [name]: value })
   }
@@ -81,7 +78,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.name || ''}
           error={errors.name}
           errorMessage={errors.name}
-          onChange={employeHandleChange}
+          onChange={handleEmployeChange}
           onBlur={handleChange}
         />
       </div>
@@ -93,7 +90,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.industry || ''}
           error={errors.industry}
           errorMessage={errors.industry}
-          onChange={employeHandleChange}
+          onChange={handleEmployeChange}
           onBlur={handleChange}
           options={industryAndCategoryOptions}
         />
@@ -109,7 +106,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.about || ''}
           error={errors.about}
           errorMessage={errors.about}
-          onChange={employeHandleChange}
+          onChange={handleEmployeChange}
           onBlur={handleChange}
         />
       </div>
@@ -123,7 +120,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.web || ''}
           error={errors.web}
           errorMessage={errors.web}
-          onChange={employeHandleChange}
+          onChange={handleEmployeChange}
           onBlur={handleChange}
         />
         <button type="button" className="employer-complete-form__add-link-button">
@@ -131,7 +128,12 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
         </button>
       </div>
 
-      <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200} disabled={!isValid || (!values.name || !values.industry)} />
+      <Button
+        text="Создать профиль"
+        width={289}
+        marginTop={60}
+        marginBottom={200}
+        disabled={!isValid || (!values.name || !values.industry)} />
     </form>
   );
 }
