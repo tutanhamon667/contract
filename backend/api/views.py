@@ -7,7 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.filters import JobFilter
+from api.filters import JobFilter, JobResponsesFilter
 from api.mixins import CreateListDestroytViewSet, CreateListViewSet
 from api.permissions import (ChatPermission, IsAdminOrReadOnly,
                              IsCustomerOrReadOnly, IsFreelancer, IsJobAuthor,
@@ -108,20 +108,27 @@ class JobViewSet(ModelViewSet):
 
     @action(detail=True, methods=["get"],
             permission_classes=(IsJobAuthor,),
-            pagination_class=PageNumberPagination)
+            pagination_class=PageNumberPagination,
+            filter_backends=(SearchFilter, DjangoFilterBackend,),
+            filterset_class=JobResponsesFilter
+            )
     def offers(self, _, pk=None):
         """
         Отображение списка откликов (фрилансеров).
         Доступно только автору задания.
         Представлен с пагинацей.
+        Есть фильтр по ставке: min_payrate и max_payrate.
         """
         job = get_object_or_404(Job, pk=pk)
-        responses = job.responses.all()
-        page = self.paginate_queryset(responses)
+        responses = job.responses.all().order_by('id')
+        filtered_responses = self.filter_queryset(responses)
+
+        page = self.paginate_queryset(filtered_responses)
         if page is not None:
             serializer = ResponseFreelancersSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        serializer = ResponseFreelancersSerializer(responses, many=True)
+        serializer = ResponseFreelancersSerializer(filtered_responses,
+                                                   many=True)
         return Response(serializer.data)
 
 

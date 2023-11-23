@@ -1,7 +1,7 @@
 from django_filters.rest_framework import FilterSet, NumberFilter, filters
 from django_filters.widgets import BooleanWidget
 
-from orders.models import Job, JobCategory
+from orders.models import Job, JobCategory, JobResponse
 
 
 class JobFilter(FilterSet):
@@ -39,3 +39,16 @@ class JobFilter(FilterSet):
     class Meta:
         model = Job
         fields = ('category', 'client',)
+
+
+class JobResponsesFilter(FilterSet):
+    min_payrate = NumberFilter(
+        field_name='freelancer__payrate', lookup_expr='gte', label='от'
+    )
+    max_payrate = NumberFilter(
+        field_name='freelancer__payrate', lookup_expr='lte', label='до'
+    )
+
+    class Meta:
+        model = JobResponse
+        fields = []

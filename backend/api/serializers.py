@@ -15,9 +15,7 @@ from taski.settings import (ASK_MSG, BUDGET_DATA_ERR, CATEGORY_CHOICES,
 from users.clients import GetCustomerProfileSerializer, IndustrySerializer
 from users.freelancers import GetWorkerProfileSerializer
 from users.models import CustomerProfile as Client
-from users.models import Stack
-from users.models import WorkerProfile
-from users.models import WorkerProfile as Freelancer
+from users.models import Stack, WorkerProfile
 
 
 class ClientSerializer(serializers.ModelSerializer):
