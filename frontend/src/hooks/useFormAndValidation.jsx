@@ -8,8 +8,8 @@ function useFormAndValidation() {
   const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
   // const passwordRegex = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
   const passwordRegex = /^[a-zA-Z0-9@#$%!^&*]+$/;
-  const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,80}$/;
-  const aboutRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,500}$/;
+  const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.\s]{1,80}$/;
+  const aboutRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.\s]{1,500}$/;
 
   function handleChange(event) {
     const { name, value } = event.target;
