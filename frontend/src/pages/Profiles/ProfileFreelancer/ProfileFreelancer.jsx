@@ -239,7 +239,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               <>
                 <button
                   onClick={() => setIsEditable(false)}
-                  className="form-top-buttons form-top-buttons_type_cansel"
+                  className="form-top-buttons form-top-buttons_type_cancel"
                   type="button"
                 >
                   Отмена

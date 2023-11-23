@@ -20,9 +20,8 @@ function Button({
 }) {
   return (
     <button
-      className={`button${
-        buttonSecondary ? ' button_type_secondary' : disabled ? ' button_type_disabled' : ''
-      } ${buttonWhite && ' button_color_white'} ${buttonBlack && ' button_color_black'}`}
+      className={`button ${buttonSecondary ? 'button_type_secondary' : disabled ? 'button_type_disabled' : ''
+        } ${buttonWhite ? 'button_color_white' : ''} ${buttonBlack ? 'button_color_black' : ''}`}
       style={{
         width,
         height,
@@ -38,13 +37,12 @@ function Button({
       onClick={onClick}
       disabled={disabled}
     >
-      <p
-        className={`button__text${
-          buttonSecondary ? ' button_type_secondary__text' : ''
-        } button__text${buttonBlack ? ' button_color_black__text' : ''}`}
+      <span
+        className={`button__text${buttonSecondary ? ' button_type_secondary__text' : ''
+          } button__text${buttonBlack ? ' button_color_black__text' : ''}`}
       >
         {text}
-      </p>
+      </span>
     </button>
   );
 }

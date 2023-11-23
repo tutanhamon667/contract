@@ -32,7 +32,7 @@
   row-gap: 8px;
 }
 
-.profile__user-info > label:first-child {
+.profile__user-info>label:first-child {
   margin-bottom: 4px;
 }
 
@@ -107,7 +107,7 @@
   font-size: 18px;
 }
 
-.form-top-buttons_type_cansel {
+.form-top-buttons_type_cancel {
   padding-right: 20px;
   margin-left: auto;
   color: #a8a8a8;
@@ -115,6 +115,11 @@
 
 .form-top-buttons_type_submit {
   color: #3f3f3f;
+}
+
+.form-top-buttons_type_submit--disabled {
+  cursor: auto;
+  color: #a8a8a8;
 }
 
 .form-profile__bottom-buttons {
