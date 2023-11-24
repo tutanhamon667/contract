@@ -206,8 +206,10 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_deadline = validated_data.pop('ask_deadline', False)
         if ask_budget:
             validated_data['budget'] = ASK_MSG
+            validated_data['ask_budget'] = True
         if ask_deadline:
             validated_data['deadline'] = ASK_MSG
+            validated_data['ask_deadline'] = True
         job = Job.objects.create(**validated_data)
         for file in job_files_data:
             JobFile.objects.create(job=job,
