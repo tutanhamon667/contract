@@ -84,6 +84,10 @@ function getTasks() {
   return fetch(`${BACKEND_BASE_URL}/jobs/`).then((response) => checkResponse(response));
 }
 
+function getTaskById(id) {
+  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`).then((response) => checkResponse(response));
+}
+
 function getFreelancers() {
   return fetch(`${BACKEND_BASE_URL}/main`).then((response) => checkResponse(response));
 }
@@ -97,5 +101,6 @@ export {
   updateUserProfile,
   createTask,
   getTasks,
+  getTaskById,
   getFreelancers,
 };

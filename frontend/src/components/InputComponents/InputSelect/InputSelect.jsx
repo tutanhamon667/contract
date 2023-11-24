@@ -16,7 +16,9 @@ function InputSelect({
   return (
     <div className="select-container">
       <select
-        className={`select${value === '' ? ' select_type_placeholder' : ''}${error ? ' select_type_error' : ''}`}
+        className={`select${value === '' ? ' select_type_placeholder' : ''}${
+          error ? ' select_type_error' : ''
+        }`}
         name={name}
         value={value}
         onChange={onChange}

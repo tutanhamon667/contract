@@ -1,7 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { order } from '../../utils/order';
 import { InputMultipleSelect } from '../../components/InputComponents/InputMultipleSelect/InputMultipleSelect';
 import { InputTags } from '../../components/InputComponents/InputTags/InputTags';
 import '../../components/FormComponents/CreateTaskForm/CreateTaskForm.css';
@@ -10,6 +9,9 @@ import '../Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly.css';
 import '../Profiles/ProfileFreelancer/ProfileFreelancer.css';
 import '../Profiles/Profile.css';
 import './Order.css';
+import * as Api from '../../utils/Api';
+import { industryAndCategoryOptions } from '../../utils/constants';
+import { InputDocument } from '../../components/InputComponents/InputDocument/InputDocument';
 
 function Order() {
   const [responded, setResponded] = useState(false);
@@ -18,6 +20,17 @@ function Order() {
   const { currentUser } = useContext(Context);
   const [stacksValues, setStacksValues] = useState([]);
   const [activityValues, setActivityValues] = useState([]);
+  let { id } = useParams();
+  const [order, setOrder] = useState({});
+  const [document, setDocument] = useState(null);
+
+  useEffect(() => {
+    Api.getTaskById(id)
+      .then((result) => {
+        setOrder(result);
+      })
+      .catch(console.error);
+  }, []);
 
   // Стили
   const userIsCustomer = currentUser.is_customer;
@@ -29,24 +42,19 @@ function Order() {
     isEditable ? ' form-profile__bottom-buttons-hide' : ''
   }`;
   // Получаю данные заказа
-  let { id } = useParams();
   // const tasks = JSON.parse(localStorage.getItem('taskValues'));
-  const tasks = order;
-  const task = tasks.find((item) => String(item.id) === id);
-  // console.log(task);
+  // const task = tasks?.find((item) => String(item?.id) === id);
   // Записываю значения в переменные
-  const stacksList = task.stack.map((item, index) => (
+  const stacksList = order?.stack?.map((item, index) => (
     <li key={index} className="order__list-item">
-      {item}
+      {item?.name}
     </li>
   ));
-  const stacksList2 = task.stack?.join(', ');
-  const specialization = task.direction?.join(', ');
-  const budgetMoney = task.budget;
-  const budgetDiscussion = task.budgetDiscussion?.toString();
-  const { deadline } = task;
-  const deadlineDiscussion = task.deadlineDiscussion?.toString();
   // -----------
+
+  function addDocument(items) {
+    setDocument(items);
+  }
 
   return (
     <>
@@ -211,16 +219,26 @@ function Order() {
             ) : (
               <>
                 <div className="form-profile__input-container">
-                  <h1 className="profile__title">{task.task_name}</h1>
-                  <p className="profile__main-text">{task.about}</p>
+                  <h1 className="profile__title">{order?.title}</h1>
+                  <p className="profile__main-text">{order?.description}</p>
                   <ul className="order__list">{stacksList}</ul>
                 </div>
 
                 <div className="form-profile__input-container">
                   <h3 className="profile__title">Файлы</h3>
                   <div className="profile__file-container">
-                    <div className="profile__file" />
-                    <div className="profile__file" />
+                    <InputDocument
+                      name="portfolio"
+                      value={order?.job_files || ''}
+                      // error={errors.portfolio}
+                      // errorMessage={errors.portfolio}
+                      onChange={addDocument}
+                      isDisabled={true}
+                      // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
+                      // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+                    />
+                    {/*<div className="profile__file" />*/}
+                    {/*<div className="profile__file" />*/}
                   </div>
                 </div>
 
@@ -228,24 +246,24 @@ function Order() {
                   <div className="form-profile__input-container">
                     <h3 className="profile__title">О заказчике</h3>
                     <div className="order__customer-container">
-                      <div className="order__client-logo" />
+                      <img src={order?.client?.photo} alt="Фото заказчика" className="order__client-logo" />
                       <div>
-                        <p className="profile__main-text">AndyClass</p>
+                        <p className="profile__main-text">{order?.client?.name}</p>
                         <div className="order__customer-container">
-                          <p className="profile__main-text order__client-text">wwww.andyclass.ru</p>
-                          <p className="profile__main-text order__client-text">Маркетинг</p>
+                          <p className="profile__main-text order__client-text">
+                            {order?.client?.web}
+                          </p>
+                          <p className="profile__main-text order__client-text">
+                            {
+                              industryAndCategoryOptions.find(
+                                (option) => option?.value === order?.client?.industry?.name,
+                              )?.label
+                            }
+                          </p>
                         </div>
                       </div>
                     </div>
-                    <p className="profile__main-text">
-                      AndyClass полноценное маркетинговое агентство с более чем 10-летним опытом на
-                      рынке. Мы специализируемся на создании и реализации комплексных стратегий для
-                      продвижения брендов и товаров в интернете и оффлайн. Наша команда
-                      профессионалов охватывает все аспекты современного маркетинга: от SEO и
-                      контент-маркетинга до проведения рекламных кампаний и анализа данных. Мы
-                      стремимся предоставлять нашим клиентам высококачественные и результативные
-                      решения для достижения их бизнес-целей.
-                    </p>
+                    <p className="profile__main-text">{order?.client?.about}</p>
                   </div>
                 )}
               </>
@@ -291,27 +309,38 @@ function Order() {
                 <div>
                   <h2 className="profile__title">Дата публикации</h2>
                   <p className="profile__main-text profile__info-main-text">
-                    {task.orderCreationDate}
+                    {new Date(order?.pub_date).toLocaleDateString('ru-RU')}
                   </p>
                 </div>
                 <div>
                   <h2 className="profile__title">Специализация</h2>
-                  <p className="profile__main-text profile__info-main-text">{specialization}</p>
+                  <p className="profile__main-text profile__info-main-text">
+                    {
+                      industryAndCategoryOptions.find(
+                        (option) => order?.category && option?.value === order?.category[0],
+                      )?.label
+                    }
+                  </p>
                 </div>
                 <div>
                   <h2 className="profile__title">Навыки</h2>
-                  <p className="profile__main-text profile__info-main-text">{stacksList2}</p>
+                  <p className="profile__main-text profile__info-main-text">
+                    {/*{stacksList2}*/}
+                    {order?.stack?.map((item) => item?.name).join(', ')}
+                  </p>
                 </div>
                 <div>
                   <h2 className="profile__title">Бюджет</h2>
                   <p className="profile__main-text profile__info-main-text">
-                    {budgetMoney}, ожидает предложений: {budgetDiscussion}
+                    {order?.ask_budget ? 'Ожидает предложений' : `${order?.budget} ₽`}
                   </p>
                 </div>
                 <div>
                   <h2 className="profile__title">Срок</h2>
                   <p className="profile__main-text profile__info-main-text">
-                    {deadline}, по договорённости: {deadlineDiscussion}
+                    {order?.ask_deadline
+                      ? 'По договоренности'
+                      : new Date(order?.deadline).toLocaleDateString('ru-RU')}
                   </p>
                 </div>
               </div>

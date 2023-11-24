@@ -273,8 +273,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Main />} />
-          <Route path="order/:id" element={<Order />} />
-          <Route path="profile-freelancer/:id" element={<ProfileFreelancerViewOnly />} />
           <Route
             path="signup"
             element={
@@ -320,6 +318,8 @@ function App() {
               element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />}
             />
             <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit} />} />
+            <Route path="order/:id" element={<Order />} />
+            <Route path="profile-freelancer/:id" element={<ProfileFreelancerViewOnly />} />
           </Route>
         </Route>
       </Routes>

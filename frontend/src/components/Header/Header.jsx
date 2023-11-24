@@ -78,18 +78,20 @@ function Header() {
           <HeaderAuth />
         )}
       </div>
-      <div className={popStyle}>
-        <Link to={profilePaths} onClick={() => setShowSetting(false)} className="profile__title">
-          Настройки
-        </Link>
-        <Link
-          to="/signout"
-          onClick={() => setShowSetting(false)}
-          className="profile__title profile__popup-signout"
-        >
-          Выйти
-        </Link>
-      </div>
+      {showSetting && (
+        <div className={popStyle}>
+          <Link to={profilePaths} onClick={() => setShowSetting(false)} className="profile__title">
+            Настройки
+          </Link>
+          <Link
+            to="/signout"
+            onClick={() => setShowSetting(false)}
+            className="profile__title profile__popup-signout"
+          >
+            Выйти
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import './InputDocument.css';
 
-function InputDocument({
-  name,
-  value,
-  onChange,
-  isDisabled,
-}) {
+function InputDocument({ name, value, onChange, isDisabled }) {
   // const [currentFile, setCurrentFile] = useState({});
   const [files, setFiles] = useState([]);
   const [error, setError] = useState('');
@@ -15,11 +10,8 @@ function InputDocument({
   React.useEffect(() => {
     if (value) {
       setFiles(value);
-      // console.log(value);
     }
-  }, []);
-
-  // console.log(files?.length, files);
+  }, [value]);
 
   function handleChange(event) {
     const selectedFile = event.currentTarget.files[0];
@@ -51,15 +43,14 @@ function InputDocument({
     reader.onerror = () => {
       console.error(reader.currentTarget);
     };
-
-    console.log(reader);
   }
 
   function handleDelete(item) {
     const newFiles = files.filter((file) => file.file !== item.file);
     setFiles(newFiles);
-    // console.log(newFiles);
     onChange(newFiles);
+
+    // TODO [2023-12-01]: исправить проблему, что не прикрепляется тот же файл после удаления
   }
 
   return (
@@ -85,7 +76,7 @@ function InputDocument({
           </div>
         ))}
 
-      {files?.length < 8 && (
+      {files?.length < 8 && !isDisabled && (
         <div className="input-doc__wrapper">
           <label className="input-doc__real-input">
             <input

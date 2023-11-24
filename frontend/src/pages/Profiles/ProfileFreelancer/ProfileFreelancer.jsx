@@ -19,7 +19,7 @@ import '../Profile.css';
 
 function ProfileFreelancer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
-  const { values, errors, handleChange } = useFormAndValidation();
+  const { values, setValues, errors, handleChange } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [tags, setTags] = useState(currentUser?.stacks?.map((object) => object.name) || []);
   const [photo, setPhoto] = useState(null);
@@ -60,12 +60,12 @@ function ProfileFreelancer({ setCurrentUser }) {
     setPhoto({ file });
   }
 
-  function handlePortfolio(file, name) {
-    setPortfolio({ file, name });
+  function handleDiploma(files) {
+    setDiploma(files);
   }
 
-  function handleDiploma(file, name) {
-    setDiploma({ file, name });
+  function handlePortfolio(files) {
+    setPortfolio(files);
   }
 
   function handleSubmit(event) {
@@ -80,20 +80,21 @@ function ProfileFreelancer({ setCurrentUser }) {
     //   first_name: currentUser?.user?.first_name,
     //   last_name: currentUser?.user?.last_name
     // },
+    // stacks: currentUser?.stacks,
     // categories: [{
     //   name: currentUser?.categories[0]?.name
     // }],
-    // education: [{
-    //   diploma: [{
-    //     file: currentUser?.education[0]?.diploma[0]?.file,
-    //     name: currentUser?.education[0]?.diploma[0]?.name
+    //   education: [{
+    //     diploma: [{
+    //       file: currentUser?.education[0]?.diploma[0]?.file,
+    //       name: currentUser?.education[0]?.diploma[0]?.name
+    //     }],
+    //     name: currentUser?.education[0]?.name,
+    //     faculty: currentUser?.education[0]?.faculty,
+    //     start_year: currentUser?.education[0]?.start_year,
+    //     finish_year: currentUser?.education[0]?.finish_year,
+    //     degree: currentUser?.education[0]?.degree
     //   }],
-    //   name: currentUser?.education[0]?.name,
-    //   faculty: currentUser?.education[0]?.faculty,
-    //   start_year: currentUser?.education[0]?.start_year,
-    //   finish_year: currentUser?.education[0]?.finish_year,
-    //   degree: currentUser?.education[0]?.degree
-    // }],
     // })
 
     // let newErrors = {};
@@ -180,11 +181,11 @@ function ProfileFreelancer({ setCurrentUser }) {
       }
     }
 
-    if (portfolio?.file && portfolio?.name) {
+    if (portfolio && portfolio[0]?.file && portfolio[0]?.name) {
       newData.portfolio = [
         {
-          file: portfolio?.file,
-          name: portfolio?.name,
+          file: portfolio[0]?.file,
+          name: portfolio[0]?.name,
         },
       ];
     }
@@ -443,7 +444,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               {/*))}*/}
               <InputDocument
                 name="diploma"
-                value={values.diploma || currentUser.education[0]?.diploma[0] || ''}
+                value={values.diploma || currentUser.education[0]?.diploma || ''}
                 error={errors.diploma}
                 errorMessage={errors.diploma}
                 onChange={handleDiploma}
@@ -567,7 +568,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               {/*))}*/}
               <InputDocument
                 name="portfolio"
-                value={values.portfolio || currentUser?.portfolio[0] || ''}
+                value={values.portfolio || currentUser?.portfolio || ''}
                 error={errors.portfolio}
                 onChange={handlePortfolio}
                 isDisabled={!isEditable}

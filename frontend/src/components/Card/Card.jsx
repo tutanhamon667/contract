@@ -16,39 +16,39 @@ function Card({ cards, isFirstTab }) {
   // }
 
   return cards?.map(
-    (item, index) => (
-      // (freelanceFilter[`${item?.category}`] || !isFirstTab || one()) && (
+    (data, index) => (
+      // (freelanceFilter[`${data?.category}`] || !isFirstTab || one()) && (
       // {isAuthenticated && (
       //   <Link
       //   key={index}
       //   to={
-      //     item.hasOwnProperty('is_responded')
-      //       ? `order/${item?.id}`
-      //       : `profile-freelancer/${item?.id}`
+      //     data.hasOwnProperty('is_responded')
+      //       ? `order/${data?.id}`
+      //       : `profile-freelancer/${data?.id}`
       //   }
       // >
-      <div key={item?.id || index} className="order-card">
+      <div key={data?.id || index} className="order-card">
         <div className="order-card__header-container">
           <div className="order-card__avatar-container">
-            {item?.user && (
+            {data?.user && (
               <div
                 className="order-card__avatar"
                 style={
-                  (item?.avatar || item?.photo) && {
-                    backgroundImage: `url('${item?.avatar || item?.photo}')`,
+                  (data?.avatar || data?.photo) && {
+                    backgroundImage: `url('${data?.avatar || data?.photo}')`,
                   }
                 }
               />
             )}
             <div className="orderCard__title-container">
               <h3 className="order-card__title">
-                {item?.title || `${item?.user?.first_name} ${item?.user?.last_name}`}
+                {data?.title || `${data?.user?.first_name} ${data?.user?.last_name}`}
               </h3>
               <p className="order-card__direction">
                 {industryAndCategoryOptions
                   .find((option) => {
-                    if (item?.category) return option?.value === item?.category[0];
-                    if (item?.categories) return option?.value === item?.categories[0]?.name;
+                    if (data?.category) return option?.value === data?.category[0];
+                    if (data?.categories) return option?.value === data?.categories[0]?.name;
                   })
                   ?.label.toLowerCase()}
               </p>
@@ -56,18 +56,18 @@ function Card({ cards, isFirstTab }) {
           </div>
           <div className="order-card__price-wrapper">
             <p className="order-card__price">
-              {item?.budget || item?.payrate}
-              {typeof item?.budget === 'number'
+              {data?.budget || data?.payrate}
+              {typeof data?.budget === 'number'
                 ? ' ₽'
-                : typeof item?.payrate === 'number'
+                : typeof data?.payrate === 'number'
                   ? ' ₽/час'
                   : ''}
             </p>
           </div>
         </div>
-        <p className="order-card__description">{item?.description || item?.about}</p>
+        <p className="order-card__description">{data?.description || data?.about}</p>
         <div className="order-card__tag-container">
-          {(item?.stacks || item?.stack)?.map((tag, index) => (
+          {(data?.stacks || data?.stack)?.map((tag, index) => (
             <p key={index} className="order-card__tag">
               {tag?.name}
             </p>

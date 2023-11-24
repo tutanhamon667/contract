@@ -14,8 +14,11 @@ function useFormAndValidation() {
   function handleChange(event) {
     const { name, value } = event.target;
 
-    const validationMessage = event.target.validationMessage && (name === 'web' ? 'Укажите ссылку в формате https://example.com' : event.target.validationMessage);
-
+    const validationMessage =
+      event.target.validationMessage &&
+      (name === 'web'
+        ? 'Укажите ссылку в формате https://example.com'
+        : event.target.validationMessage);
 
     setValues({ ...values, [name]: value });
     setErrors({ ...errors, [name]: validationMessage });
@@ -152,7 +155,8 @@ function useFormAndValidation() {
       } else if (!nameRegex.test(value)) {
         setErrors({
           ...errors,
-          [name]: 'Название может состоять только из латинских и кириллических букв, цифр и следующих символов: .-_@',
+          [name]:
+            'Название может состоять только из латинских и кириллических букв, цифр и следующих символов: .-_@',
         });
         setIsValid(false);
       }
@@ -168,26 +172,23 @@ function useFormAndValidation() {
       }
     }
 
-    if (name === 'about' && !aboutRegex.test(value) && value.length) {
+    if (name === 'about' && !aboutRegex.test(value) && value.length > 0) {
       setErrors({
         ...errors,
         [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
         и строчные символы "-", "_", "@", "."`,
       });
       setIsValid(false);
-    } else if (name === 'about' && !value.length) {
+    } else if (name === 'about' && value.length === 0) {
       setErrors({ ...errors, [name]: '' });
       setIsValid(true);
     }
 
-
-    if (name === 'web' && !value.length) {
+    if (name === 'web' && value.length === 0) {
       setErrors({ ...errors, [name]: '' });
       setIsValid(true);
     }
-
   }
-
 
   return {
     values,

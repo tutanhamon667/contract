@@ -11,14 +11,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
   const [photo, setPhoto] = useState(null);
   const [buttonClicked, setButtonClicked] = useState(false);
 
-  const {
-    values,
-    errors,
-    isValid,
-    handleChange,
-    setValues,
-    setErrors,
-  } = useFormAndValidation();
+  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
 
   function addPhoto(url) {
     setPhoto({ photo: url });
@@ -38,7 +31,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     setErrors({ ...errors, ...newErrors });
 
     if (values.name && values.industry && isValid) {
-
       // передать данные на бэк
       handleCustomerSubmit({ values, photo });
       // console.log(values);
@@ -56,7 +48,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
 
   function employeHandleChange(event) {
     const { name, value } = event.target;
-    setValues({ ...values, [name]: value })
+    setValues({ ...values, [name]: value });
   }
 
   return (
@@ -131,7 +123,13 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
         </button>
       </div>
 
-      <Button text="Создать профиль" width={289} marginTop={60} marginBottom={200} disabled={!isValid || (!values.name || !values.industry)} />
+      <Button
+        text="Создать профиль"
+        width={289}
+        marginTop={60}
+        marginBottom={200}
+        disabled={!isValid || !values.name || !values.industry}
+      />
     </form>
   );
 }
