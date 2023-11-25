@@ -18,7 +18,7 @@ function CardList({ tasks, freelancers, isFirstTab }) {
                 ? freelancers
                 : currentUser.is_customer
                   ? tasks.filter((task) => task?.client?.id === currentUser?.id)
-                  : tasks.filter((task) => task?.is_responded === 1)
+                  : tasks.filter((task) => task?.is_responded === true)
               // : tasks
             }
             isFirstTab={isFirstTab}

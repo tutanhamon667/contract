@@ -84,8 +84,20 @@ function getTasks() {
   return fetch(`${BACKEND_BASE_URL}/jobs/`).then((response) => checkResponse(response));
 }
 
+function getTasksWithAuthorization() {
+  return fetch(`${BACKEND_BASE_URL}/jobs/`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+  }).then((response) => checkResponse(response));
+}
+
 function getTaskById(id) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`).then((response) => checkResponse(response));
+  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+  }).then((response) => checkResponse(response));
 }
 
 function getFreelancers() {
@@ -101,6 +113,7 @@ export {
   updateUserProfile,
   createTask,
   getTasks,
+  getTasksWithAuthorization,
   getTaskById,
   getFreelancers,
 };

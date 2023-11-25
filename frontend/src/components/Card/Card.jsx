@@ -16,6 +16,51 @@ function Card({ cards, isFirstTab }) {
   //   return true;
   // }
 
+  function renderCardContent(data) {
+    return (
+      <>
+        <div className="order-card__header-container">
+          <div className="order-card__avatar-container">
+            {data?.user && (
+              <div
+                className="order-card__avatar"
+                style={
+                  (data?.avatar || data?.photo) && {
+                    backgroundImage: `url('${data?.avatar || data?.photo}')`,
+                  }
+                }
+              />
+            )}
+            <div className="orderCard__title-container">
+              <h3 className="order-card__title">
+                {data?.title || `${data?.user?.first_name} ${data?.user?.last_name}`}
+              </h3>
+              <p className="order-card__direction">
+                {industryAndCategoryOptions
+                  .find((option) => {
+                    if (data?.category) return option?.value === data?.category[0];
+                    if (data?.categories) return option?.value === data?.categories[0]?.name;
+                  })
+                  ?.label.toLowerCase()}
+              </p>
+            </div>
+          </div>
+          <div className="order-card__price-wrapper">
+            <p className="order-card__price">{definePrice(data)}</p>
+          </div>
+        </div>
+        <p className="order-card__description">{data?.description || data?.about}</p>
+        <div className="order-card__tag-container">
+          {(data?.stacks || data?.stack)?.map((tag, index) => (
+            <p key={index} className="order-card__tag">
+              {tag?.name}
+            </p>
+          ))}
+        </div>
+      </>
+    );
+  }
+
   function definePrice(data) {
     if (data.hasOwnProperty('payrate')) {
       if (typeof data?.payrate === 'number' && data?.payrate !== 0) {
@@ -45,7 +90,7 @@ function Card({ cards, isFirstTab }) {
       //   }
       // >
       <div key={data?.id || index} className="order-card">
-        {isAuthenticated && (
+        {isAuthenticated ? (
           <Link
             to={
               data.hasOwnProperty('is_responded')
@@ -53,45 +98,10 @@ function Card({ cards, isFirstTab }) {
                 : `profile-freelancer/${data?.id}`
             }
           >
-            <div className="order-card__header-container">
-              <div className="order-card__avatar-container">
-                {data?.user && (
-                  <div
-                    className="order-card__avatar"
-                    style={
-                      (data?.avatar || data?.photo) && {
-                        backgroundImage: `url('${data?.avatar || data?.photo}')`,
-                      }
-                    }
-                  />
-                )}
-                <div className="orderCard__title-container">
-                  <h3 className="order-card__title">
-                    {data?.title || `${data?.user?.first_name} ${data?.user?.last_name}`}
-                  </h3>
-                  <p className="order-card__direction">
-                    {industryAndCategoryOptions
-                      .find((option) => {
-                        if (data?.category) return option?.value === data?.category[0];
-                        if (data?.categories) return option?.value === data?.categories[0]?.name;
-                      })
-                      ?.label.toLowerCase()}
-                  </p>
-                </div>
-              </div>
-              <div className="order-card__price-wrapper">
-                <p className="order-card__price">{definePrice(data)}</p>
-              </div>
-            </div>
-            <p className="order-card__description">{data?.description || data?.about}</p>
-            <div className="order-card__tag-container">
-              {(data?.stacks || data?.stack)?.map((tag, index) => (
-                <p key={index} className="order-card__tag">
-                  {tag?.name}
-                </p>
-              ))}
-            </div>
+            {renderCardContent(data)}
           </Link>
+        ) : (
+          renderCardContent(data)
         )}
         {currentUser?.is_worker && isFirstTab && (
           <div className="order-card__respond-button-container">

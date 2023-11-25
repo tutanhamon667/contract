@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../ForgotPass/ForgotPass.css';
 import '../ProfileFreelancer/ProfileFreelancer.css';
 import './ProfileFreelancerViewOnly.css';
@@ -7,6 +7,8 @@ import '../Profile.css';
 function ProfileFreelancerViewOnly() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [hiringSuccessful, setHiringSuccessful] = useState(false);
+
+  useEffect(() => {}, []);
 
   return (
     <>
