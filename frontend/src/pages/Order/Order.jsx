@@ -246,7 +246,11 @@ function Order() {
                   <div className="form-profile__input-container">
                     <h3 className="profile__title">О заказчике</h3>
                     <div className="order__customer-container">
-                      <img src={order?.client?.photo} alt="Фото заказчика" className="order__client-logo" />
+                      <img
+                        src={order?.client?.photo}
+                        alt="Фото заказчика"
+                        className="order__client-logo"
+                      />
                       <div>
                         <p className="profile__main-text">{order?.client?.name}</p>
                         <div className="order__customer-container">
