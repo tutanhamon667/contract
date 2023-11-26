@@ -32,7 +32,6 @@ function ProfileCustomer({ setCurrentUser }) {
   const [isEditable, setIsEditable] = useState(false);
   const [photo, setPhoto] = useState(null);
   const formRef = useRef(null);
-
   const isDisabled = !isValid
 
   function addPhoto(url) {
@@ -54,12 +53,10 @@ function ProfileCustomer({ setCurrentUser }) {
     setIsValid(valid)
   }, [isValid, errors])
 
-
   function handleCancel() {
     setIsEditable(false)
     setErrors({})
   }
-
 
   function handleSubmit(event) {
     event.preventDefault();
