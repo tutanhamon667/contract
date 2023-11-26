@@ -94,14 +94,6 @@ function useFormAndValidation() {
           }
         }
       }
-
-      if (values.re_password && values.re_password !== value) {
-        setErrors({ ...errors, 're_password': 'Пароли не совпадают' });
-        setIsValid(false);
-      } else {
-        setErrors({ ...errors, 're_password': '' });
-        setIsValid(true);
-      }
     }
 
     if (name === 're_password') {
