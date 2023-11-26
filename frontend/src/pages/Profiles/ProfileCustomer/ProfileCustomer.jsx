@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Context } from '../../../context/context';
-import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
+import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { industryAndCategoryOptions } from '../../../utils/constants';
 import * as Api from '../../../utils/Api';
 import { InputText } from '../../../components/InputComponents/InputText/InputText';
@@ -16,48 +16,50 @@ import './ProfileCustomer.css';
 
 function ProfileCustomer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
+
   const {
     values,
     errors,
     isValid,
     handleChange,
+    handleBlur,
     setValues,
-    setErrors
+    setErrors,
+    setIsValid,
+    checkErrors,
   } = useFormAndValidation();
+
   const [isEditable, setIsEditable] = useState(false);
   const [photo, setPhoto] = useState(null);
   const formRef = useRef(null);
 
-  const isDisabled = !isValid || (!values.name || !values.industry)
+  const isDisabled = !isValid
 
   function addPhoto(url) {
     setPhoto({ photo: url });
   }
 
-  function handleEmployeChange(event) {
-    const { name, value } = event.target;
-    setValues({ ...values, [name]: value })
-  }
-
   useEffect(() => {
-    setValues({
-      name: currentUser?.name || '',
+    const initialData = {
+      name: currentUser.name || '',
       industry: currentUser?.industry?.name || '',
-      about: currentUser?.about?.name || '',
-      web: currentUser?.web?.name || '',
-    });
+      about: currentUser.about || '',
+      web: currentUser.web || '',
+    }
+    setValues(initialData);
   }, []);
 
+  useEffect(() => {
+    const valid = checkErrors(errors)
+    setIsValid(valid)
+  }, [isValid, errors])
+
+
   function handleCancel() {
-    setValues({
-      name: currentUser?.name || '',
-      industry: currentUser?.industry?.name || '',
-      about: currentUser?.about?.name || '',
-      web: currentUser?.web?.name || '',
-    });
-    setIsEditable(false);
-    setErrors({});
+    setIsEditable(false)
+    setErrors({})
   }
+
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -169,6 +171,7 @@ function ProfileCustomer({ setCurrentUser }) {
               error={errors.email}
               errorMessage={errors.email}
               onChange={handleChange}
+              onBlur={handleBlur}
               id="email"
               isDisabled
             />
@@ -187,11 +190,11 @@ function ProfileCustomer({ setCurrentUser }) {
               autoComplete="name"
               name="name"
               width="100%"
-              value={isEditable ? (values.name || '') : (values.name || currentUser.industry?.name || '')}
+              value={isEditable ? values?.name || '' : currentUser?.name || ''}
               error={errors.name}
               errorMessage={errors.name}
-              onChange={handleEmployeChange}
-              onBlur={handleChange}
+              onChange={handleChange}
+              onBlur={handleBlur}
               id="companyName"
               isDisabled={!isEditable}
             />
@@ -203,9 +206,9 @@ function ProfileCustomer({ setCurrentUser }) {
               name="industry"
               placeholder="Выберите из списка"
               width="100%"
-              onChange={handleEmployeChange}
-              onBlur={handleChange}
-              value={isEditable ? (values.industry || '') : (values.industry || currentUser.industry?.name || '')}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={isEditable ? values?.industry || '' : currentUser?.industry?.name || ''}
               error={errors.industry}
               errorMessage={errors.industry}
               options={industryAndCategoryOptions}
@@ -223,11 +226,11 @@ function ProfileCustomer({ setCurrentUser }) {
               name="about"
               width="100%"
               height={150}
-              value={values.about || currentUser?.about || ''}
+              value={isEditable ? values?.about || '' : currentUser?.about || values?.about || ''}
               error={errors.about}
               errorMessage={errors.about}
-              onChange={handleEmployeChange}
-              onBlur={handleChange}
+              onChange={handleChange}
+              onBlur={handleBlur}
               id="aboutMe"
               isDisabled={!isEditable}
             />
@@ -242,11 +245,11 @@ function ProfileCustomer({ setCurrentUser }) {
               placeholder="https://example.com"
               name="web"
               width="100%"
-              value={values.web || currentUser?.web || ''}
+              value={isEditable ? values?.web || '' : currentUser?.web || values?.web || ''}
               error={errors.web}
               errorMessage={errors.web}
-              onChange={handleEmployeChange}
-              onBlur={handleChange}
+              onChange={handleChange}
+              onBlur={handleBlur}
               id="website"
               isDisabled={!isEditable}
             />
@@ -262,7 +265,7 @@ function ProfileCustomer({ setCurrentUser }) {
               <button
                 type="button"
                 className="profile__main-text form-profile__bottom-buttons"
-                onClick={() => setIsEditable(false)}
+                onClick={handleCancel}
               >
                 Отмена
               </button>
