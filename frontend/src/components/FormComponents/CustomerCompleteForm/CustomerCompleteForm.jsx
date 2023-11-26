@@ -33,14 +33,13 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     if (values.name && values.industry && isValid) {
       // передать данные на бэк
       handleCustomerSubmit({ values, photo });
-      // console.log(values);
       // setValues({
       //  ...values,
       //  first_name: '',
       //  email: '',
       // });
       //
-      // navigate(`/customer`);
+      // navigate(`/profile`);
     }
 
     setButtonClicked(true);

@@ -34,7 +34,6 @@ function InputImage({ name, value, onChange, width, height, isDisabled }) {
       if (allowedFileTypes.includes(selectedFile.type) && selectedFile.size < 52428800) {
         // setFile(selectedFile);
         setError('');
-        // console.log(selectedFile)
       } else {
         setFile(null);
         setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');

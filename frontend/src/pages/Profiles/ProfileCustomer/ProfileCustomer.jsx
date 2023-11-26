@@ -31,7 +31,6 @@ function ProfileCustomer({ setCurrentUser }) {
       name: currentUser?.name || '',
       industry: currentUser?.industry?.name || '',
     });
-    // console.log(values);
 
     // let newErrors = {};
 

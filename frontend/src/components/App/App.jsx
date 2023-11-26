@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { Context } from '../../context/context';
 import { Layout } from '../../layout/Layout';
 import { ProtectedRoute } from '../../services/PotectedRouter';
@@ -112,14 +113,10 @@ function App() {
   function handleRegisterSubmit(values) {
     Api.register(values)
       .then((data) => {
-        // console.log(data);
         setIsError(false);
         setErrorRequest({});
 
-        const role = data.is_customer ? 'customer' : data.is_worker && 'freelancer';
-        navigate(`/${role}/complete`, { replace: true });
-
-        // console.log(values)
+        navigate('/profile/complete', { replace: true });
 
         Api.authenticateUser(values)
           .then((response) => {
@@ -149,7 +146,6 @@ function App() {
   }
 
   function handleCustomerSubmit(data) {
-    // console.log(data);
     const formValues = {
       photo: data.photo?.photo,
       name: data.values?.name,
@@ -159,12 +155,11 @@ function App() {
       about: data.values?.about,
       web: data.values?.web,
     };
-    // console.log(array)
+
     Api.createUserProfile(formValues)
       .then((result) => {
-        // console.log(data)
         setCurrentUser(result);
-        navigate('/customer', { replace: true });
+        navigate('/', { replace: true });
       })
       .catch((error) => {
         console.error(error);
@@ -172,7 +167,6 @@ function App() {
   }
 
   function handleFreelancerSubmit(data) {
-    // console.log(data);
     const formValues = {
       contacts: [
         {
@@ -225,7 +219,6 @@ function App() {
   }
 
   function handleTaskSubmit(data) {
-    // console.log(data);
     const formValues = {
       title: data.task_name,
       category: [data.activity],
@@ -237,8 +230,6 @@ function App() {
       description: data.about,
       job_files: data.file,
     };
-
-    // console.log(formValues);
 
     Api.createTask(formValues)
       .then(() => {
@@ -270,59 +261,68 @@ function App() {
         // setRerender,
       }}
     >
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Main />} />
-          <Route
-            path="signup"
-            element={
-              <Register
-                handleRegister={handleRegisterSubmit}
-                error={errorRequest}
-                isError={isError}
-              />
-            }
-          />
-          <Route
-            path="signin"
-            element={
-              <Login
-                setIsAuthenticated={setIsAuthenticated}
-                setCurrentUser={setCurrentUser}
-                currentUser={currentUser}
-              />
-            }
-          />
-          <Route path="forgot-password" element={<ForgotPass />} />
-          <Route path="reset-password" element={<ResetPass />} />
-          <Route
-            path="signout"
-            element={
-              <SignOut setCurrentUser={setCurrentUser} setIsAuthenticated={setIsAuthenticated} />
-            }
-          />
-          <Route path="*" element={<NotFound />} />
+      <HelmetProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Main />} />
+            <Route
+              path="signup"
+              element={
+                <Register
+                  handleRegister={handleRegisterSubmit}
+                  error={errorRequest}
+                  isError={isError}
+                />
+              }
+            />
+            <Route
+              path="signin"
+              element={
+                <Login
+                  setIsAuthenticated={setIsAuthenticated}
+                  setCurrentUser={setCurrentUser}
+                  currentUser={currentUser}
+                />
+              }
+            />
+            <Route path="forgot-password" element={<ForgotPass />} />
+            <Route path="reset-password" element={<ResetPass />} />
+            <Route
+              path="signout"
+              element={
+                <SignOut setCurrentUser={setCurrentUser} setIsAuthenticated={setIsAuthenticated} />
+              }
+            />
+            <Route path="*" element={<NotFound />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route
-              path="freelancer"
-              element={<ProfileFreelancer setCurrentUser={setCurrentUser} />}
-            />
-            <Route
-              path="freelancer/complete"
-              element={<FreelancerCompleteForm onSubmit={handleFreelancerSubmit} />}
-            />
-            <Route path="customer" element={<ProfileCustomer setCurrentUser={setCurrentUser} />} />
-            <Route
-              path="customer/complete"
-              element={<CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />}
-            />
-            <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit} />} />
-            <Route path="order/:id" element={<Order />} />
-            <Route path="profile-freelancer/:id" element={<ProfileFreelancerViewOnly />} />
+            <Route element={<ProtectedRoute />}>
+              <Route
+                path="profile"
+                element={
+                  currentUser?.is_customer ? (
+                    <ProfileCustomer setCurrentUser={setCurrentUser} />
+                  ) : (
+                    <ProfileFreelancer setCurrentUser={setCurrentUser} />
+                  )
+                }
+              />
+              <Route
+                path="profile/complete"
+                element={
+                  currentUser?.is_customer ? (
+                    <CustomerCompleteForm handleCustomerSubmit={handleCustomerSubmit} />
+                  ) : (
+                    <FreelancerCompleteForm onSubmit={handleFreelancerSubmit} />
+                  )
+                }
+              />
+              <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit} />} />
+              <Route path="order/:id" element={<Order />} />
+              <Route path="freelancer/:id" element={<ProfileFreelancerViewOnly />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
+        </Routes>
+      </HelmetProvider>
     </Context.Provider>
   );
 }

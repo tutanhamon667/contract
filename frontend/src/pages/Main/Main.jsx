@@ -38,7 +38,7 @@ function Main() {
         .catch((error) => {
           console.error(error);
         });
-    } else if (!isAuthenticated) {
+    } else {
       Api.getTasks()
         .then((response) => {
           setTasks(response.results);

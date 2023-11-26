@@ -14,6 +14,8 @@
 
 .profile_right-column {
   display: flex;
+  width: 100%;
+  max-width: 913px;
   flex-direction: column;
   padding: 28px 24px;
   row-gap: 24px;

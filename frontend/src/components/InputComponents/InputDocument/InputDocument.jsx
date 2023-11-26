@@ -32,11 +32,9 @@ function InputDocument({ name, value, onChange, isDisabled }) {
       } else if (!allowedFileTypes.includes(selectedFile.type) || selectedFile.size > 52428800) {
         // setFiles(null);
         setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
-        // console.log('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
       } else if (files.find((file) => file.file === reader.result)) {
         // setFiles(null);
         setError('Такой файл уже загружен.');
-        // console.log('Такой файл уже загружен.');
       }
     };
 

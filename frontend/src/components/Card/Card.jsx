@@ -16,6 +16,22 @@ function Card({ cards, isFirstTab }) {
   //   return true;
   // }
 
+  function definePrice(data) {
+    if (data.hasOwnProperty('payrate')) {
+      if (typeof data?.payrate === 'number' && data?.payrate !== 0) {
+        return `${data?.payrate} ₽/час`;
+      } else {
+        return 'Не указана';
+      }
+    }
+
+    if (data?.ask_budget) {
+      return 'Ожидает предложений';
+    } else {
+      return `${data?.budget} ₽`;
+    }
+  }
+
   function renderCardContent(data) {
     return (
       <>
@@ -61,22 +77,6 @@ function Card({ cards, isFirstTab }) {
     );
   }
 
-  function definePrice(data) {
-    if (data.hasOwnProperty('payrate')) {
-      if (typeof data?.payrate === 'number' && data?.payrate !== 0) {
-        return `${data?.payrate} ₽/час`;
-      } else {
-        return 'Не указана';
-      }
-    }
-
-    if (data?.ask_budget) {
-      return 'Ожидает предложений';
-    } else {
-      return `${data?.budget} ₽`;
-    }
-  }
-
   return cards?.map(
     (data, index) => (
       // (freelanceFilter[`${data?.category}`] || !isFirstTab || one()) && (
@@ -86,16 +86,14 @@ function Card({ cards, isFirstTab }) {
       //   to={
       //     data.hasOwnProperty('is_responded')
       //       ? `order/${data?.id}`
-      //       : `profile-freelancer/${data?.id}`
+      //       : `freelancer/${data?.id}`
       //   }
       // >
       <div key={data?.id || index} className="order-card">
         {isAuthenticated ? (
           <Link
             to={
-              data.hasOwnProperty('is_responded')
-                ? `order/${data?.id}`
-                : `profile-freelancer/${data?.id}`
+              data.hasOwnProperty('is_responded') ? `order/${data?.id}` : `freelancer/${data?.id}`
             }
           >
             {renderCardContent(data)}
@@ -103,7 +101,8 @@ function Card({ cards, isFirstTab }) {
         ) : (
           renderCardContent(data)
         )}
-        {currentUser?.is_worker && isFirstTab && (
+
+        {currentUser?.is_worker && isFirstTab && !data.is_responded && (
           <div className="order-card__respond-button-container">
             <button type="button" className="order-card__respond-button">
               Откликнуться

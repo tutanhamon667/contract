@@ -19,7 +19,6 @@ function register(data) {
 }
 
 function authenticateUser({ email, password }) {
-  // console.log({email, password})
   return fetch(`${BACKEND_BASE_URL}/login/jwt/create/`, {
     method: 'POST',
     headers: {
@@ -104,6 +103,10 @@ function getFreelancers() {
   return fetch(`${BACKEND_BASE_URL}/main`).then((response) => checkResponse(response));
 }
 
+function getFreelancerById(id) {
+  return fetch(`${BACKEND_BASE_URL}/users/${id}`).then((response) => checkResponse(response));
+}
+
 export {
   register,
   authenticateUser,
@@ -116,4 +119,5 @@ export {
   getTasksWithAuthorization,
   getTaskById,
   getFreelancers,
+  getFreelancerById,
 };
