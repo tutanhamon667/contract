@@ -33,18 +33,18 @@ function ProfileCustomer({ setCurrentUser }) {
   const [photo, setPhoto] = useState(null);
   const formRef = useRef(null);
   const isDisabled = !isValid
+  const initialData = {
+    name: currentUser?.name || '',
+    industry: currentUser?.industry?.name || '',
+    about: currentUser?.about || '',
+    web: currentUser?.web || '',
+  }
 
   function addPhoto(url) {
     setPhoto({ photo: url });
   }
 
   useEffect(() => {
-    const initialData = {
-      name: currentUser.name || '',
-      industry: currentUser?.industry?.name || '',
-      about: currentUser.about || '',
-      web: currentUser.web || '',
-    }
     setValues(initialData);
   }, []);
 
@@ -54,6 +54,7 @@ function ProfileCustomer({ setCurrentUser }) {
   }, [isValid, errors])
 
   function handleCancel() {
+    setValues(initialData);
     setIsEditable(false)
     setErrors({})
   }
