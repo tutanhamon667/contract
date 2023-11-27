@@ -1,16 +1,17 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Context } from '../../context/context';
 
-function SignOut() {
+function SignOut({ setCurrentUser, setIsAuthenticated }) {
   const navigate = useNavigate();
 
-  const { logOut } = useContext(Context);
-
   React.useEffect(() => {
-    logOut();
+    sessionStorage.clear();
+    localStorage.clear();
+    setCurrentUser({});
+    setIsAuthenticated(false);
     navigate('/');
-  }, [logOut]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return null;
 }

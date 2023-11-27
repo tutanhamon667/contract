@@ -30,7 +30,7 @@ jobs:
     - name: Test with flake8 tests
       run: |
         python -m flake8 backend/
-  
+
   build_backend_and_push_to_docker_hub:
     name: Push backend Docker image to DockerHub
     runs-on: ubuntu-latest
@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Login to Docker 
+      - name: Login to Docker
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -50,8 +50,9 @@ jobs:
         with:
           context: ./backend/
           push: true
+          build-args: --no-cache
           tags: ${{ secrets.DOCKER_USERNAME }}/freelancing-platform-project_backend:latest
- 
+
   build_frontend_and_push_to_docker_hub:
     name: Push frontend Docker image to DockerHub
     runs-on: ubuntu-latest
@@ -60,7 +61,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Login to Docker 
+      - name: Login to Docker
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -76,18 +77,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs:
-      - tests 
+      - tests
       - build_backend_and_push_to_docker_hub
       - build_frontend_and_push_to_docker_hub
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-  
+
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
+          host: ${{ secrets.HOST_NEW }}
+          username: ${{ secrets.USER_NEW }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: | 
@@ -96,6 +97,8 @@ jobs:
             sudo docker-compose down
             touch .env
             echo DEBUG=False >> .env
+            echo HOST_NEW=${{ secrets.HOST_NEW }} >> .env
+            echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
             echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
@@ -107,6 +110,5 @@ jobs:
             sudo docker-compose exec -T backend python manage.py makemigrations orders
             sudo docker-compose exec -T backend python manage.py makemigrations chat
             sudo docker-compose exec -T backend python manage.py migrate
-            sudo docker-compose exec -T backend python manage.py loaddata
             sudo docker-compose exec -T backend python manage.py collectstatic --no-input
             sudo docker image prune -af

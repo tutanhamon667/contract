@@ -1,21 +1,23 @@
 .profile__left-column-info {
-  padding: 24px;
   display: flex;
-  flex-direction: column;
-  row-gap: 20px;
   width: 289px;
   box-sizing: border-box;
+  flex-direction: column;
+  padding: 24px;
+  row-gap: 20px;
 }
 
 .profile__info-main-text {
   margin-top: 8px;
-  color: #7b7b7b
+  color: #7b7b7b;
 }
 
 .profile_right-column {
-  padding: 28px 24px;
   display: flex;
+  width: 100%;
+  max-width: 913px;
   flex-direction: column;
+  padding: 28px 24px;
   row-gap: 24px;
 }
 
@@ -27,8 +29,8 @@
 .profile__file {
   width: 140px;
   height: 140px;
-  background-color: #C6C6C6;
   border-radius: 12px;
+  background-color: #c6c6c6;
 }
 
 .profile__specialization {
@@ -36,12 +38,12 @@
 }
 
 .popup__title {
-  text-align: center;
   margin-bottom: 40px;
+  text-align: center;
 }
 
 .popup__main-text {
-  text-align: center;
-  margin-bottom: 12px;
   max-width: 470px;
+  margin-bottom: 12px;
+  text-align: center;
 }

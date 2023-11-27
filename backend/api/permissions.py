@@ -1,17 +1,7 @@
 from rest_framework import permissions
 
 from chat.models import Chat
-
-
-class IsAuthorOrAdminOrReadOnly(permissions.BasePermission):
-    def has_permission(self, request, _view):
-        return (request.method in permissions.SAFE_METHODS
-                or request.user.is_authenticated)
-
-    def has_object_permission(self, request, _view, obj):
-        return (request.method in permissions.SAFE_METHODS
-                or request.user.is_admin
-                or obj.author == request.user)
+from orders.models import Job
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -35,34 +25,34 @@ class IsFreelancer(permissions.BasePermission):
         return False
 
 
-''' Удалить если ничего не сломается
-class IsCustomer(permissions.BasePermission):
-    def has_permission(self, request, _):
-        return (
-            request.user.is_authenticated
-            and request.user.is_customer
-        )
-
-
-class IsCustomerOrIsAdmin(permissions.BasePermission):
-    def has_permission(self, request, _):
-        return (
-            request.user.is_authenticated
-            and (request.user.is_customer or request.user.is_admin)
-        )
-'''
-
-
 class IsCustomerOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, _):
         return (request.method in permissions.SAFE_METHODS
-                or request.user.is_authenticated)
+                or (request.user.is_authenticated
+                    and (request.user.is_admin
+                         or request.user.is_customer
+                         or request.user.is_worker)
+                    )
+                )
 
     def has_object_permission(self, request, _, obj):
-        return (request.method in permissions.SAFE_METHODS
-                or request.user.is_admin
-                or request.user.is_customer
-                or obj.client == request.user)
+        return (request.user.is_customer
+                and obj.client == request.user)
+
+
+class IsJobAuthor(permissions.BasePermission):
+    """
+    Проверка для списка откликов на задание,
+    на его доступность только автору задания.
+    """
+    def has_permission(self, request, view):
+        # Проверяем, является ли текущий пользователь автором задания
+        if (request.user.is_authenticated
+                and (request.user.is_admin or request.user.is_customer)):
+            job_id = view.kwargs.get('pk')
+            job = Job.objects.get(pk=job_id)
+            return job.client == request.user.customerprofile
+        return False
 
 
 class ChatPermission(permissions.BasePermission):
@@ -77,7 +67,7 @@ class ChatPermission(permissions.BasePermission):
     - администратор может создавать и удалять;
     - все действия необходимо выполнять авторизованным.
     """
-    def has_permission(self, request, view):
+    def has_permission(self, request, _):
         if request.user.is_authenticated:
             if request.method == 'GET':
                 return True

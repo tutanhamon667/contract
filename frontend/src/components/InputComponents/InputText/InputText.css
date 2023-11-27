@@ -1,0 +1,78 @@
+.input-container {
+  position: relative;
+}
+
+.input {
+  width: 400px;
+  box-sizing: border-box;
+  padding: 19px;
+  border: 1px solid #c6c6c6;
+  border-radius: 12px;
+  background-color: #fff;
+  color: #3f3f3f;
+  font-size: 16px;
+  line-height: 1.25;
+  transition:
+    box-shadow 0.3s ease-in-out,
+    border 0.3s ease-in-out;
+}
+
+.input::placeholder {
+  color: #7b7b7b;
+}
+
+.input:focus {
+  box-shadow: 2px 2px 0 0 #c6c6c6;
+  outline: none;
+}
+
+.input:hover:not(:disabled) {
+  box-shadow: 2px 2px 0 0 #c6c6c6;
+}
+
+.input_type_error {
+  border: 1px solid #eb5757;
+}
+
+.input_type_number {
+  padding: 19px 49px 19px 19px;
+  background: #fff url('../../../images/ruble.svg') no-repeat calc(100% - 19px) center / 11px;
+}
+
+.input_type_password {
+  padding-right: 61px;
+}
+
+/* start: hide default browser arrow for number  */
+.input[type='number'] {
+  appearance: textfield;
+}
+
+.input[type='number']::-webkit-outer-spin-button,
+.input[type='number']::-webkit-inner-spin-button {
+  appearance: none;
+}
+
+/* end: hide default browser arrow for number */
+
+.input__show-pass {
+  position: absolute;
+  top: 54%;
+  left: 89%;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background-color: transparent;
+  background-image: url('../../../images/showPass.svg');
+  background-position: center;
+  cursor: pointer;
+}
+
+.input__error-text {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  color: #eb5757;
+  font-size: 12px;
+  line-height: 1.1;
+}

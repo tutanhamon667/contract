@@ -1,32 +1,20 @@
-import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import RegisterForm from "../../components/Forms/RegisterForm/RegisterForm";
-import { Context } from "../../context/context";
-import "./Register.css";
+import React from 'react';
+import { RegisterForm } from '../../components/FormComponents/RegisterForm/RegisterForm';
+import './Register.css';
 
-const Register = ({handleRegister, error, isError}) => {
-  const { authenticated, currentUser } = React.useContext(Context);
-  const location = useLocation();
-
+function Register({ handleRegister, error, isError }) {
   function onSubmit(values) {
-    globalThis.role = values.is_customer ? "customer" : values.is_worker && "freelancer";
-    console.log(values);
-    handleRegister(values)
+    handleRegister(values);
   }
 
- // if (authenticated) {
-    /* eslint no-undef: "off" */ // globalThis.role is defined in onSubmit function
- //   return <Navigate to={`/${globalThis.role}/complete`} state={{ from: location }} />;
- // }
-
   return (
-    <div className="wrapper">
-      <div className="container">
-        <h1 className="title">Регистрация</h1>
-        <RegisterForm onSubmitHandler={onSubmit} errorRequest={error} isError={isError}/>
+    <div className="register__wrapper">
+      <div className="register__container">
+        <h1 className="register__title">Регистрация</h1>
+        <RegisterForm onSubmitHandler={onSubmit} errorRequest={error} isError={isError} />
       </div>
     </div>
   );
-};
+}
 
-export default Register;
+export { Register };

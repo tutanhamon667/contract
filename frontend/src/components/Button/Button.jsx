@@ -1,7 +1,7 @@
-import React from "react";
-import "./Button.css";
+import React from 'react';
+import './Button.css';
 
-const Button = ({
+function Button({
   text,
   width,
   height,
@@ -17,12 +17,12 @@ const Button = ({
   fontSize,
   fontWeight,
   opacity,
-}) => {
+}) {
   return (
     <button
       className={`button${
-        buttonSecondary ? " buttonSecondary" : disabled ? " buttonDisabled" : ""
-      } ${buttonWhite && " buttonWhite"} ${buttonBlack && " buttonBlack"}`}
+        buttonSecondary ? ' button_type_secondary' : disabled ? ' button_type_disabled' : ''
+      } ${buttonWhite && ' button_color_white'} ${buttonBlack && ' button_color_black'}`}
       style={{
         width,
         height,
@@ -33,19 +33,20 @@ const Button = ({
         fontWeight,
         opacity,
       }}
+      // eslint-disable-next-line react/button-has-type
       type={type}
       onClick={onClick}
       disabled={disabled}
     >
       <p
         className={`button__text${
-          buttonSecondary ? " buttonSecondary__text" : ""
-        }  button__text${buttonBlack ? " buttonBlack__text" : ""}`}
+          buttonSecondary ? ' button_type_secondary__text' : ''
+        } button__text${buttonBlack ? ' button_color_black__text' : ''}`}
       >
         {text}
       </p>
     </button>
   );
-};
+}
 
-export default Button;
+export { Button };

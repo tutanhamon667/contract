@@ -1,0 +1,48 @@
+.create-task-form {
+  max-width: 610px;
+  margin: 0 auto;
+}
+
+.create-task-form__image-input {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 0;
+}
+
+.create-task-form__input-text {
+  margin: 32px 0 16px;
+  color: #3f3f3f;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.create-task-form__contacts-wrapper {
+  display: grid;
+  align-items: center;
+  gap: 12px 16px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.create-task-form__input-checkbox-text {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  color: #7b7b7b;
+  column-gap: 8px;
+}
+
+.create-task-form__input-checkbox-text:hover {
+  cursor: pointer;
+}
+
+.create-task-form__input-doc-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.create-task-form__input-year-wrapper {
+  display: flex;
+  justify-content: space-between;
+}

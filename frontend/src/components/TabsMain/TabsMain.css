@@ -1,0 +1,29 @@
+.operation-mode {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 12px;
+}
+
+.operation-mode__button {
+  width: 50%;
+  height: 52px;
+  border: none;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #7b7b7b;
+  cursor: pointer;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 120% */
+}
+
+.operation-mode__button_action {
+  border: none;
+  background: #fff;
+  color: #3f3f3f;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.2;
+}

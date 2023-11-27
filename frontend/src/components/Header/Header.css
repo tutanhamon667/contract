@@ -1,55 +1,41 @@
 .header {
-  background-color: transparent;
-  margin: 16px 76px 0 76px;
-  border-radius: 12px;
   position: relative;
+  border-radius: 12px;
+  margin: 14px 76px 0;
+  background-color: transparent;
 }
 
 .header__container {
-  padding: 0 24px;
-  min-height: 56px;
   display: flex;
+  min-height: 56px;
   align-items: center;
   justify-content: space-between;
+  padding: 0 24px;
 }
 
 .header-with-background {
-  background-color: #3F3F3F;
+  background-color: #3f3f3f;
 }
 
 .header__logo {
   display: flex;
-  align-items: center;
-  border: none;
   width: 96px;
   height: 32px;
-  cursor: pointer;
-  background-image: url(../../images/logo.svg);
+  align-items: center;
+  border: none;
+  background-color: transparent;
+  background-image: url('../../images/logo.svg');
   background-position: center;
   background-repeat: no-repeat;
-  background-color: transparent;
-  color: #ffffff;
-}
-
-.header__logoBlack {
-  background-image: url(../../images/logo-black.svg);
-  background-position: center;
-  border: none;
-  border-radius: 5px;
-  width: 96px;
-  height: 32px;
+  color: #fff;
   cursor: pointer;
-  background-color: transparent;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
 }
 
 .header__logo-black {
-  background-image: url(../../images/logo-black.svg);
+  background-image: url('../../images/logo-black.svg');
 }
 
-.header__userInfo {
+.header__user-info {
   display: flex;
   align-items: center;
   column-gap: 20px;
@@ -63,43 +49,44 @@
 }
 
 .header__name {
+  margin: 0;
   color: white;
   font-size: 16px;
   font-weight: 400;
-  margin: 0;
+}
+
+.header__name_dark {
+  color: #3f3f3f;
 }
 
 .header__avatar {
   width: 40px;
   height: 40px;
-  background-color: white;
   border-radius: 50px;
+  background-color: white;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .profile__popup {
   position: absolute;
+  z-index: -5;
   right: 25px;
+  display: flex;
   width: 295px;
   height: 160px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   box-sizing: border-box;
-  row-gap: 32px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0 0;
   box-shadow: 1px 1px 1px grey;
   opacity: 0;
-  z-index: -5;
-  margin: 4px 0 0 0;
+  row-gap: 32px;
 }
 
 .profile__popup_show {
-  opacity: 1;
   z-index: 5;
-}
-
-.profile__popup-signout {
-  border: none;
-  background-color: white;
-  cursor: pointer;
+  opacity: 1;
 }

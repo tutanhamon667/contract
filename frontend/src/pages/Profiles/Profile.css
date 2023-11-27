@@ -1,19 +1,19 @@
 .profile {
   display: flex;
+  padding: 24px 100px 100px;
   column-gap: 20px;
-  padding: 24px 100px 100px 100px;
-  background-color: #F2F1EE;
 }
 
 .profile_block {
-  background-color: white;
-  border: 1px solid #C6C6C6;
+  align-self: start;
+  border: 1px solid #c6c6c6;
   border-radius: 10px;
+  background-color: #fff;
 }
 
 .profile__separate-line {
   height: 1px;
-  background: #EEF0FF;
+  background: #eef0ff;
 }
 
 /* --- ЛЕВАЯ КОЛОНКА --- */
@@ -27,10 +27,13 @@
 .profile__user-info {
   position: relative;
   display: flex;
+  width: 100%;
+  max-width: 289px;
+  box-sizing: border-box;
   flex-direction: column;
   align-items: center;
+  padding: 24px;
   row-gap: 8px;
-  padding: 24px 45px;
 }
 
 .profile__user-info > label:first-child {
@@ -40,19 +43,19 @@
 .profile__setting {
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
   padding: 24px;
+  row-gap: 20px;
 }
 
 .profile__avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-image: url(../../images/profile-circle.svg);
-  background-repeat: no-repeat;
+  background-color: #3f3f3f;
+  background-image: url('../../images/profile-circle.svg');
   background-position: center center;
+  background-repeat: no-repeat;
   background-size: 21px 21px;
-  background-color: #3F3F3F;
 }
 
 /* ----------------- */
@@ -81,17 +84,21 @@
 /* --- ТЕКСТЫ --- */
 
 .profile__title {
-  color: #3F3F3F;
+  margin: 0;
+  color: #3f3f3f;
   font-size: 20px;
   font-weight: 600;
-  margin: 0;
+}
+
+.profile__title_place_aside {
+  text-align: center;
 }
 
 .profile__main-text {
-  color: #3F3F3F;
+  margin: 0;
+  color: #3f3f3f;
   font-size: 16px;
   font-weight: 400;
-  margin: 0;
   line-height: 24px;
 }
 
@@ -105,31 +112,31 @@
 }
 
 .form-top-buttons_type_cansel {
-  margin-left: auto;
   padding-right: 20px;
-  color: #A8A8A8;
+  margin-left: auto;
+  color: #a8a8a8;
 }
 
 .form-top-buttons_type_submit {
-  color: #3F3F3F
+  color: #3f3f3f;
 }
 
 .form-profile__bottom-buttons {
+  display: flex;
   width: 289px;
   height: 52px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  border: 1px solid #C6C6C6;
-  background: #F2F1EE;
-  border-radius: 12px;
+  justify-content: center;
   padding: 20px 40px;
+  border: 1px solid #c6c6c6;
+  border-radius: 12px;
+  background-color: #f7f7f7;
   cursor: pointer;
 }
 
 .form-profile__bottom-buttons_type_submit {
-  background: #3F3F3F;
   border: none;
+  background: #3f3f3f;
   color: white;
 }
 
@@ -143,6 +150,6 @@
 
 .form-profile__input {
   padding: 12px 24px;
+  border: 1px solid #c6c6c6;
   border-radius: 12px;
-  border: 1px solid #C6C6C6;
 }

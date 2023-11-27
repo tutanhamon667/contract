@@ -1,81 +1,92 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useContext, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Context } from "../../context/context";
-import HeaderAuth from "../HeaderAuth/HeaderAuth";
-import "../Header/Header.css";
-import "../../pages/Profiles/Profile.css";
+import React, { useContext, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Context } from '../../context/context';
+import { HeaderAuth } from '../HeaderAuth/HeaderAuth';
+import '../../pages/Profiles/Profile.css';
+import './Header.css';
 
-function Header({ setAuthenticated, setCurrentUser }) {
+function Header() {
   const [showSetting, setShowSetting] = useState(false);
-  const { currentUser, authenticated } = useContext(Context);
+  const { currentUser, isAuthenticated } = useContext(Context);
   let { pathname } = useLocation();
 
-  function giveOutNameInHeader(currentUser) {
-    return `${currentUser.first_name} ${currentUser.last_name.slice(0, 1)}.`
+  function formatNameForHeader() {
+    if (!currentUser) {
+      return '';
+    }
+
+    const { is_worker, is_customer, user } = currentUser;
+
+    if (is_worker) {
+      const shortLastName = user?.last_name.slice(0, 1);
+      return `${user?.first_name} ${shortLastName}.`;
+    }
+    if (is_customer) {
+      const shortLastName = currentUser?.last_name.slice(0, 1);
+      return `${currentUser?.first_name} ${shortLastName}.`;
+    }
+
+    return '';
   }
 
-  const completeFormPaths = (
-    pathname === '/freelancer/complete' ||
-    pathname === '/customer/complete' ||
-    pathname === '/create-task'
-  );
+  const completeFormPaths = pathname === '/profile/complete' || pathname === '/create-task';
 
-  const authPaths = (
+  const authPaths =
     pathname === '/signin' ||
     pathname === '/signup' ||
     pathname === '/forgot-password' ||
-    pathname === '/reset-password'
-  );
-
-  const profilePaths = (currentUser.role === 'Заказчик')
-    ? 'customer'
-    : 'freelancer';
+    pathname === '/reset-password';
 
   function handleSetting() {
     setShowSetting(!showSetting);
   }
 
-  function signout() {
-    setAuthenticated(false);
-    setCurrentUser({});
-    setShowSetting(false);
-  }
-
-  const popStyle = `profile__popup profile_block ${showSetting ? 'profile__popup_show' : ''}`
+  const popStyle = `profile__popup profile_block${showSetting ? ' profile__popup_show' : ''}`;
 
   return (
-    <header className={`header${authenticated && !completeFormPaths ? ' header-with-background' : ''}`}>
+    <header
+      className={`header${isAuthenticated && !completeFormPaths ? ' header-with-background' : ''}`}
+    >
       <div className="header__container">
-        <Link to="/" className={`header__logo${authPaths || completeFormPaths ? ' header__logo-black' : ''}`}></Link>
-        {authenticated ? (
+        <Link
+          to="/"
+          className={`header__logo${authPaths || completeFormPaths ? ' header__logo-black' : ''}`}
+        />
+        {isAuthenticated ? (
           <div
             onClick={handleSetting}
             className="header__profile-container"
             role="button"
             tabIndex="0"
           >
-            <p className="header__name">{giveOutNameInHeader(currentUser)}</p>
-            <div className="header__avatar"></div>
+            <p className={`header__name${completeFormPaths ? ' header__name_dark' : ''}`}>
+              {formatNameForHeader()}
+            </p>
+            <div
+              className="header__avatar"
+              style={{ backgroundImage: `url('${currentUser?.photo}')` }}
+            />
           </div>
-        ) : (<HeaderAuth />)
-        }
+        ) : (
+          <HeaderAuth />
+        )}
       </div>
-      <div className={popStyle}>
-        <Link
-          to={profilePaths}
-          onClick={() => setShowSetting(false)}
-          className="profile__title">
-          Настройки
-        </Link>
-        <button
-          className="profile__title profile__popup-signout"
-          onClick={signout}>
-          Выйти
-        </button>
-      </div>
+      {showSetting && (
+        <div className={popStyle}>
+          <Link to="/profile" onClick={() => setShowSetting(false)} className="profile__title">
+            Настройки
+          </Link>
+          <Link
+            to="/signout"
+            onClick={() => setShowSetting(false)}
+            className="profile__title profile__popup-signout"
+          >
+            Выйти
+          </Link>
+        </div>
+      )}
     </header>
   );
 }
 
-export default Header;
+export { Header };
