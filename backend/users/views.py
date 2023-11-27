@@ -31,7 +31,7 @@ class UserView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 
 
 class FreelancerFirstPage(OnlyListView):
-    queryset = WorkerProfile.objects.all().order_by('user__last_name')
+    queryset = WorkerProfile.objects.all().order_by('user__created_at')
     serializer_class = UserViewSerialiser
     permission_classes = (permissions.AllowAny,)
     filter_backends = (SearchFilter, DjangoFilterBackend,)

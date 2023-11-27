@@ -124,7 +124,9 @@ class UserViewSerialiser(serializers.ModelSerializer):
 
     class Meta:
         model = WorkerProfile
-        fields = ('user', 'photo', 'stacks', 'categories', 'about', 'payrate')
+        fields = (
+            'id', 'user', 'photo', 'stacks', 'categories', 'about', 'payrate'
+        )
 
 
 class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
