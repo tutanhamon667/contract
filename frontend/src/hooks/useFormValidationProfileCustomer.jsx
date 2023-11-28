@@ -3,7 +3,7 @@ import { useState } from 'react';
 function useFormAndValidation() {
     const [values, setValues] = useState({});
     const [errors, setErrors] = useState({});
-    const [isValid, setIsValid] = useState(true);
+    const [isValid, setIsValid] = useState(false);
 
     function checkErrors(errors) {
         return Object.values(errors).every(error => error === "")

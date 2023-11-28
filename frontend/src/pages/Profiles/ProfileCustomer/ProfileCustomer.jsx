@@ -32,13 +32,14 @@ function ProfileCustomer({ setCurrentUser }) {
   const [isEditable, setIsEditable] = useState(false);
   const [photo, setPhoto] = useState(null);
   const formRef = useRef(null);
-  const isDisabled = !isValid
   const initialData = {
     name: currentUser?.name || '',
     industry: currentUser?.industry?.name || '',
     about: currentUser?.about || '',
     web: currentUser?.web || '',
   }
+
+  const isDisabled = !values.name || !values.industry || !isValid
 
   function addPhoto(url) {
     setPhoto({ photo: url });
@@ -51,6 +52,7 @@ function ProfileCustomer({ setCurrentUser }) {
   useEffect(() => {
     const valid = checkErrors(errors)
     setIsValid(valid)
+    console.log('UseEff isValid', isValid)
   }, [isValid, errors])
 
   function handleCancel() {
