@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
+import React, { useState, useEffect } from 'react';
+import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { industryAndCategoryOptions } from '../../../utils/constants';
 import { InputImage } from '../../InputComponents/InputImage/InputImage';
 import { InputText } from '../../InputComponents/InputText/InputText';
@@ -15,46 +15,32 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     errors,
     isValid,
     handleChange,
-    setValues,
-    setErrors,
+    handleBlur,
+    setIsValid,
+    checkErrors,
   } = useFormAndValidation();
+
+  const isDisabled = !values.name || !values.industry || !isValid
 
   function addPhoto(url) {
     setPhoto({ photo: url });
   }
 
+  useEffect(() => {
+    const valid = checkErrors(errors)
+    setIsValid(valid)
+  }, [isValid, errors])
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    let newErrors = {};
-
-    if (!values.name) {
-      newErrors = { ...newErrors, name: 'Введите название компании или ваше имя' };
-    }
-    if (!values.industry) {
-      newErrors = { ...newErrors, industry: 'Выберите отрасль' };
-    }
-    setErrors({ ...errors, ...newErrors });
 
     if (values.name && values.industry && isValid) {
-
       // передать данные на бэк
       handleCustomerSubmit({ values, photo });
-      // console.log(values);
-      // setValues({
-      //  ...values,
-      //  first_name: '',
-      //  email: '',
-      // });
-      //
-      // navigate(`/customer`);
     }
 
   };
 
-  function handleEmployeChange(event) {
-    const { name, value } = event.target;
-    setValues({ ...values, [name]: value })
-  }
 
   return (
     <form className="employer-complete-form" onSubmit={handleSubmit}>
@@ -78,8 +64,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.name || ''}
           error={errors.name}
           errorMessage={errors.name}
-          onChange={handleEmployeChange}
-          onBlur={handleChange}
+          onChange={handleChange}
+          onBlur={handleBlur}
         />
       </div>
       <div>
@@ -90,8 +76,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.industry || ''}
           error={errors.industry}
           errorMessage={errors.industry}
-          onChange={handleEmployeChange}
-          onBlur={handleChange}
+          onChange={handleChange}
+          onBlur={handleBlur}
           options={industryAndCategoryOptions}
         />
       </div>
@@ -106,8 +92,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.about || ''}
           error={errors.about}
           errorMessage={errors.about}
-          onChange={handleEmployeChange}
-          onBlur={handleChange}
+          onChange={handleChange}
+          onBlur={handleBlur}
         />
       </div>
       <div>
@@ -120,8 +106,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           value={values.web || ''}
           error={errors.web}
           errorMessage={errors.web}
-          onChange={handleEmployeChange}
-          onBlur={handleChange}
+          onChange={handleChange}
+          onBlur={handleBlur}
         />
         <button type="button" className="employer-complete-form__add-link-button">
           Добавить ещё сайт или социальные сети +
@@ -133,7 +119,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
         width={289}
         marginTop={60}
         marginBottom={200}
-        disabled={!isValid || (!values.name || !values.industry)} />
+        disabled={isDisabled} />
     </form>
   );
 }

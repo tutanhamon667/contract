@@ -52,7 +52,6 @@ function ProfileCustomer({ setCurrentUser }) {
   useEffect(() => {
     const valid = checkErrors(errors)
     setIsValid(valid)
-    console.log('UseEff isValid', isValid)
   }, [isValid, errors])
 
   function handleCancel() {
@@ -63,14 +62,6 @@ function ProfileCustomer({ setCurrentUser }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    let newErrors = {};
-    if (!values.name) {
-      newErrors = { ...newErrors, name: 'Введите название компании или ваше имя' };
-    }
-    if (!values.industry) {
-      newErrors = { ...newErrors, industry: 'Выберите отрасль' };
-    }
-    setErrors({ ...errors, ...newErrors });
 
     if (values.name && values.industry && isValid) {
       const newData = {
