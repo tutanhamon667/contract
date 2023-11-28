@@ -17,6 +17,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     handleChange,
     handleBlur,
     setIsValid,
+    setErrors,
     checkErrors,
   } = useFormAndValidation();
 
@@ -51,6 +52,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           error={errors.photo}
           errorMessage={errors.photo}
           onChange={addPhoto}
+          setErrors={setErrors}
+          errors={errors}
         />
       </div>
       <div>

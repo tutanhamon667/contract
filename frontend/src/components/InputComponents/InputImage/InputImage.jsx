@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './InputImage.css';
 
-function InputImage({ name, value, onChange, width, height, isDisabled }) {
+function InputImage({ name, value, onChange, width, height, isDisabled, setErrors, errors, errorMessage }) {
   const [file, setFile] = useState(null);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState('');
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
   const inputStyle = {};
 
@@ -27,17 +27,19 @@ function InputImage({ name, value, onChange, width, height, isDisabled }) {
     };
 
     reader.onerror = () => {
-      console.error(reader.error);
+      // console.error(reader.error);
     };
 
     if (selectedFile) {
       if (allowedFileTypes.includes(selectedFile.type) && selectedFile.size < 52428800) {
         // setFile(selectedFile);
-        setError('');
+        // setError('');
         // console.log(selectedFile)
+        setErrors({ ...errors, 'photo': '' })
       } else {
         setFile(null);
-        setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
+        setErrors({ ...errors, 'photo': 'Выберите файл в формате PNG, JPG или JPEG до 50 МБ.' })
+        // setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
       }
     }
   };
@@ -45,9 +47,8 @@ function InputImage({ name, value, onChange, width, height, isDisabled }) {
   return (
     <>
       <label
-        className={`input-image__real-input${width === 80 ? ' input-image__real-input_small' : ''}${
-          error ? ' input-image__error' : ''
-        }`}
+        className={`input-image__real-input${width === 80 ? ' input-image__real-input_small' : ''}${errorMessage ? ' input-image__error' : ''
+          }`}
         style={{ ...inputStyle, width, height }}
       >
         <input
@@ -60,7 +61,7 @@ function InputImage({ name, value, onChange, width, height, isDisabled }) {
           disabled={isDisabled}
         />
       </label>
-      <span className="input-image__error-text">{error}</span>
+      <span className="input-image__error-text">{errorMessage}</span>
     </>
   );
 }

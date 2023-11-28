@@ -94,6 +94,8 @@ function ProfileCustomer({ setCurrentUser }) {
             height={80}
             value={values.photo || currentUser?.photo || ''}
             error={errors.photo}
+            setErrors={setErrors}
+            errors={errors}
             errorMessage={errors.photo}
             onChange={addPhoto}
             isDisabled={!isEditable}
