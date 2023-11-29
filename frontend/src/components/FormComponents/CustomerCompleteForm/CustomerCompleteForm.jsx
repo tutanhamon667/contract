@@ -15,7 +15,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     errors,
     isValid,
     handleChange,
-    handleBlur,
     setIsValid,
     setErrors,
     checkErrors,
@@ -68,7 +67,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           error={errors.name}
           errorMessage={errors.name}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </div>
       <div>
@@ -80,7 +78,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           error={errors.industry}
           errorMessage={errors.industry}
           onChange={handleChange}
-          onBlur={handleBlur}
           options={industryAndCategoryOptions}
         />
       </div>
@@ -96,7 +93,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           error={errors.about}
           errorMessage={errors.about}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </div>
       <div>
@@ -110,7 +106,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           error={errors.web}
           errorMessage={errors.web}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
         <button type="button" className="employer-complete-form__add-link-button">
           Добавить ещё сайт или социальные сети +

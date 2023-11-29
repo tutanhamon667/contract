@@ -12,6 +12,7 @@ function useFormAndValidation() {
     function handleChange(event) {
         const { name, value } = event.target;
         setValues({ ...values, [name]: value });
+        setErrors({ ...errors, ...validateValues(name, value) })
     }
 
     function handleBlur(event) {

@@ -22,7 +22,6 @@ function ProfileCustomer({ setCurrentUser }) {
     errors,
     isValid,
     handleChange,
-    handleBlur,
     setValues,
     setErrors,
     setIsValid,
@@ -164,7 +163,6 @@ function ProfileCustomer({ setCurrentUser }) {
               error={errors.email}
               errorMessage={errors.email}
               onChange={handleChange}
-              onBlur={handleBlur}
               id="email"
               isDisabled
             />
@@ -187,7 +185,6 @@ function ProfileCustomer({ setCurrentUser }) {
               error={errors.name}
               errorMessage={errors.name}
               onChange={handleChange}
-              onBlur={handleBlur}
               id="companyName"
               isDisabled={!isEditable}
             />
@@ -200,7 +197,6 @@ function ProfileCustomer({ setCurrentUser }) {
               placeholder="Выберите из списка"
               width="100%"
               onChange={handleChange}
-              onBlur={handleBlur}
               value={isEditable ? values?.industry || '' : currentUser?.industry?.name || ''}
               error={errors.industry}
               errorMessage={errors.industry}
@@ -223,7 +219,6 @@ function ProfileCustomer({ setCurrentUser }) {
               error={errors.about}
               errorMessage={errors.about}
               onChange={handleChange}
-              onBlur={handleBlur}
               id="aboutMe"
               isDisabled={!isEditable}
             />
@@ -242,7 +237,6 @@ function ProfileCustomer({ setCurrentUser }) {
               error={errors.web}
               errorMessage={errors.web}
               onChange={handleChange}
-              onBlur={handleBlur}
               id="website"
               isDisabled={!isEditable}
             />
