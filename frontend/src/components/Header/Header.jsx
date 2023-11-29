@@ -17,12 +17,12 @@ function Header() {
 
     const { is_worker, is_customer, user } = currentUser;
 
-    if (is_worker) {
-      const shortLastName = user?.last_name.slice(0, 1);
+    if (is_worker && user) {
+      const shortLastName = user?.last_name?.slice(0, 1);
       return `${user?.first_name} ${shortLastName}.`;
     }
-    if (is_customer) {
-      const shortLastName = currentUser?.last_name.slice(0, 1);
+    if (is_customer && currentUser.hasOwnProperty('first_name')) {
+      const shortLastName = currentUser?.last_name?.slice(0, 1);
       return `${currentUser?.first_name} ${shortLastName}.`;
     }
 

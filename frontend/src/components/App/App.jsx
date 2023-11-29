@@ -115,6 +115,7 @@ function App() {
       .then((data) => {
         setIsError(false);
         setErrorRequest({});
+        setCurrentUser({ is_customer: data.is_customer, is_worker: data.is_worker });
 
         navigate('/profile/complete', { replace: true });
 

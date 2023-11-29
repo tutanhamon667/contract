@@ -9,7 +9,7 @@ function useFormAndValidation() {
   // const passwordRegex = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
   const passwordRegex = /^[a-zA-Z0-9@#$%!^&*]+$/;
   const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,80}$/;
-  const aboutRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,500}$/;
+  const aboutRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.\s]{1,500}$/;
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -176,7 +176,7 @@ function useFormAndValidation() {
       setErrors({
         ...errors,
         [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
-        и строчные символы "-", "_", "@", "."`,
+        и строчные символы, «-», «_», «@», «.» и пробел.`,
       });
       setIsValid(false);
     } else if (name === 'about' && value.length === 0) {
