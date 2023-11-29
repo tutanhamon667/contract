@@ -66,11 +66,11 @@
   text-align: center;
 }
 
-.button:active > .button__text {
+.button:active>.button__text {
   color: #3f3f3f;
 }
 
-.button_type_disabled:active > .button__text {
+.button_type_disabled:active>.button__text {
   color: #fff;
 }
 
@@ -81,3 +81,23 @@
 .button_color_black__text {
   color: #fff;
 }
+
+.button__header-auth_entry-button {
+  overflow: hidden;
+  width: 103px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 28px;
+  border: 0;
+  border-radius: 10px;
+  margin-left: 40px;
+  background: #fff;
+  color: #606060;
+  cursor: pointer;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
