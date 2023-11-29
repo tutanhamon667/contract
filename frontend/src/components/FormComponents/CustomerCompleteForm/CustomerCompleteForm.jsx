@@ -10,6 +10,7 @@ import './CustomerCompleteForm.css';
 function CustomerCompleteForm({ handleCustomerSubmit }) {
   const [photo, setPhoto] = useState(null);
 
+
   const {
     values,
     errors,
@@ -19,6 +20,7 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     setErrors,
     checkErrors,
   } = useFormAndValidation();
+
 
   const isDisabled = !values.name || !values.industry || !isValid
 
@@ -37,9 +39,11 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     if (values.name && values.industry && isValid) {
       // передать данные на бэк
       handleCustomerSubmit({ values, photo });
+
     }
 
   };
+
 
 
   return (

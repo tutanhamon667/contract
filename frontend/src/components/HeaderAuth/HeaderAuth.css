@@ -4,6 +4,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
+  column-gap: 40px;
 }
 
 .header-auth__singup-button {
@@ -28,6 +29,23 @@
 .header-auth__singup-button:hover {
   opacity: 0.5;
   transition: 0.5s ease-in-out;
+}
+
+.header-auth__entry-button {
+  display: flex;
+  overflow: hidden;
+  width: 103px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #fff;
+  color: #606060;
+  cursor: pointer;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .header-auth__white {

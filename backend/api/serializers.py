@@ -14,9 +14,8 @@ from taski.settings import (ASK_MSG, BUDGET_DATA_ERR, CATEGORY_CHOICES,
                             MAX_FILE_SIZE, STACK_ERR_MSG)
 from users.clients import GetCustomerProfileSerializer, IndustrySerializer
 from users.freelancers import GetWorkerProfileSerializer
-from users.models import Stack
 from users.models import CustomerProfile as Client
-from users.models import WorkerProfile as Freelancer
+from users.models import Stack, WorkerProfile
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -27,13 +26,6 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = ('id', 'user_id', 'photo', 'name',
                   'about', 'industry', 'web')
-
-
-class FreelancerSerializer(serializers.ModelSerializer):
-    """Фрилансер."""
-    class Meta:
-        model = Freelancer
-        fields = ('user',)
 
 
 class JobStackSerializer(serializers.ModelSerializer):
@@ -84,6 +76,22 @@ class RespondedSerializer(serializers.ModelSerializer):
         model = Job
         fields = ('id', 'title', 'category', 'budget', 'stack',
                   'client', 'job_files', 'description',)
+
+
+class FreelancerSerializer(GetWorkerProfileSerializer):
+    class Meta:
+        model = WorkerProfile
+        fields = ('user', 'photo', 'about',
+                  'stacks', 'payrate', 'categories')
+
+
+class ResponseFreelancersSerializer(serializers.ModelSerializer):
+    """Получение списка фрилансеров, которые откликнулись на задание."""
+    freelancer = FreelancerSerializer()
+
+    class Meta:
+        model = JobResponse
+        fields = '__all__'
 
 
 class JobFileSerializer(serializers.ModelSerializer):
@@ -198,8 +206,10 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_deadline = validated_data.pop('ask_deadline', False)
         if ask_budget:
             validated_data['budget'] = ASK_MSG
+            validated_data['ask_budget'] = True
         if ask_deadline:
             validated_data['deadline'] = ASK_MSG
+            validated_data['ask_deadline'] = True
         job = Job.objects.create(**validated_data)
         for file in job_files_data:
             JobFile.objects.create(job=job,

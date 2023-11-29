@@ -30,12 +30,23 @@ function Main() {
         });
     }
 
-    Api.getTasks()
-      .then((response) => {
-        setTasks(response.results);
-      })
-      .catch(console.error);
-
+    if (currentUser?.is_worker) {
+      Api.getTasksWithAuthorization()
+        .then((response) => {
+          setTasks(response.results);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      Api.getTasks()
+        .then((response) => {
+          setTasks(response.results);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

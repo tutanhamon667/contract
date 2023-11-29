@@ -36,6 +36,7 @@ function InputImage({ name, value, onChange, width, height, isDisabled, setError
         // setError('');
         // console.log(selectedFile)
         setErrors({ ...errors, 'photo': '' })
+
       } else {
         setFile(null);
         setErrors({ ...errors, 'photo': 'Выберите файл в формате PNG, JPG или JPEG до 50 МБ.' })

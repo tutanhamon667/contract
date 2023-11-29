@@ -1,6 +1,7 @@
 from rest_framework import permissions
 
 from chat.models import Chat
+from orders.models import Job
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -37,6 +38,21 @@ class IsCustomerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, _, obj):
         return (request.user.is_customer
                 and obj.client == request.user)
+
+
+class IsJobAuthor(permissions.BasePermission):
+    """
+    Проверка для списка откликов на задание,
+    на его доступность только автору задания.
+    """
+    def has_permission(self, request, view):
+        # Проверяем, является ли текущий пользователь автором задания
+        if (request.user.is_authenticated
+                and (request.user.is_admin or request.user.is_customer)):
+            job_id = view.kwargs.get('pk')
+            job = Job.objects.get(pk=job_id)
+            return job.client == request.user.customerprofile
+        return False
 
 
 class ChatPermission(permissions.BasePermission):

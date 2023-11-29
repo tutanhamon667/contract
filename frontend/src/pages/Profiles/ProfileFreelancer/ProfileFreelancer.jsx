@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
 import { Context } from '../../../context/context';
 import { industryAndCategoryOptions, degreeOptions } from '../../../utils/constants';
@@ -19,7 +20,7 @@ import '../Profile.css';
 
 function ProfileFreelancer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
-  const { values, errors, handleChange } = useFormAndValidation();
+  const { values, setValues, errors, handleChange } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [tags, setTags] = useState(currentUser?.stacks?.map((object) => object.name) || []);
   const [photo, setPhoto] = useState(null);
@@ -60,12 +61,12 @@ function ProfileFreelancer({ setCurrentUser }) {
     setPhoto({ file });
   }
 
-  function handlePortfolio(file, name) {
-    setPortfolio({ file, name });
+  function handleDiploma(files) {
+    setDiploma(files);
   }
 
-  function handleDiploma(file, name) {
-    setDiploma({ file, name });
+  function handlePortfolio(files) {
+    setPortfolio(files);
   }
 
   function handleSubmit(event) {
@@ -73,27 +74,26 @@ function ProfileFreelancer({ setCurrentUser }) {
 
     // if (currentUser.education[0]) {}
 
-    // console.log(currentUser?.education[0]?.name);
-
     // setValues({
     // user: {
     //   first_name: currentUser?.user?.first_name,
     //   last_name: currentUser?.user?.last_name
     // },
+    // stacks: currentUser?.stacks,
     // categories: [{
     //   name: currentUser?.categories[0]?.name
     // }],
-    // education: [{
-    //   diploma: [{
-    //     file: currentUser?.education[0]?.diploma[0]?.file,
-    //     name: currentUser?.education[0]?.diploma[0]?.name
+    //   education: [{
+    //     diploma: [{
+    //       file: currentUser?.education[0]?.diploma[0]?.file,
+    //       name: currentUser?.education[0]?.diploma[0]?.name
+    //     }],
+    //     name: currentUser?.education[0]?.name,
+    //     faculty: currentUser?.education[0]?.faculty,
+    //     start_year: currentUser?.education[0]?.start_year,
+    //     finish_year: currentUser?.education[0]?.finish_year,
+    //     degree: currentUser?.education[0]?.degree
     //   }],
-    //   name: currentUser?.education[0]?.name,
-    //   faculty: currentUser?.education[0]?.faculty,
-    //   start_year: currentUser?.education[0]?.start_year,
-    //   finish_year: currentUser?.education[0]?.finish_year,
-    //   degree: currentUser?.education[0]?.degree
-    // }],
     // })
 
     // let newErrors = {};
@@ -180,11 +180,11 @@ function ProfileFreelancer({ setCurrentUser }) {
       }
     }
 
-    if (portfolio?.file && portfolio?.name) {
+    if (portfolio && portfolio[0]?.file && portfolio[0]?.name) {
       newData.portfolio = [
         {
-          file: portfolio?.file,
-          name: portfolio?.name,
+          file: portfolio[0]?.file,
+          name: portfolio[0]?.name,
         },
       ];
     }
@@ -202,6 +202,13 @@ function ProfileFreelancer({ setCurrentUser }) {
 
   return (
     <div className="profile">
+      <Helmet>
+        <title>
+          {`${currentUser?.user?.first_name} ${currentUser?.user?.last_name}` || 'Мой профиль'} •
+          Таски
+        </title>
+      </Helmet>
+
       <div className="profile_left-column">
         <div className="profile_block profile__user-info">
           <InputImage
@@ -317,7 +324,9 @@ function ProfileFreelancer({ setCurrentUser }) {
               name="categories"
               placeholder="Выберите из списка"
               width="100%"
-              value={values.categories || currentUser.categories[0]?.name || ''}
+              value={
+                values.categories || currentUser?.categories ? currentUser?.categories[0]?.name : ''
+              }
               onChange={handleChange}
               options={industryAndCategoryOptions}
               isDisabled={!isEditable}
@@ -338,7 +347,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               placeholder="Ставка"
               name="payrate"
               width={295}
-              value={values.payrate || currentUser?.payrate.toString() || ''}
+              value={values.payrate || currentUser?.payrate ? currentUser?.payrate.toString() : ''}
               error={errors.payrate}
               errorMessage={errors.payrate}
               onChange={handleChange}
@@ -373,7 +382,9 @@ function ProfileFreelancer({ setCurrentUser }) {
               placeholder="Учебное заведение"
               name="education"
               width="100%"
-              value={values.education || currentUser.education[0]?.name || ''}
+              value={
+                values.education || currentUser?.education ? currentUser?.education[0]?.name : ''
+              }
               error={errors.education}
               errorMessage={errors.education}
               onChange={handleChange}
@@ -387,7 +398,11 @@ function ProfileFreelancer({ setCurrentUser }) {
                 placeholder="Начало учёбы"
                 name="start_year"
                 width="100%"
-                value={values.start_year || currentUser.education[0]?.start_year || ''}
+                value={
+                  values.start_year || currentUser?.education
+                    ? currentUser?.education[0]?.start_year
+                    : ''
+                }
                 error={errors.start_year}
                 errorMessage={errors.start_year}
                 onChange={handleChange}
@@ -398,7 +413,11 @@ function ProfileFreelancer({ setCurrentUser }) {
                 placeholder="Окончание учёбы"
                 name="finish_year"
                 width="100%"
-                value={values.finish_year || currentUser.education[0]?.finish_year || ''}
+                value={
+                  values.finish_year || currentUser?.education
+                    ? currentUser?.education[0]?.finish_year
+                    : ''
+                }
                 error={errors.finish_year}
                 errorMessage={errors.finish_year}
                 onChange={handleChange}
@@ -411,7 +430,9 @@ function ProfileFreelancer({ setCurrentUser }) {
               options={degreeOptions}
               placeholder="Степень"
               width="100%"
-              value={values.degree || currentUser.education[0]?.degree || ''}
+              value={
+                values.degree || currentUser?.education ? currentUser?.education[0]?.degree : ''
+              }
               onChange={handleChange}
               isDisabled={!isEditable}
             />
@@ -421,7 +442,9 @@ function ProfileFreelancer({ setCurrentUser }) {
               placeholder="Факультет"
               name="faculty"
               width="100%"
-              value={values.faculty || currentUser.education[0]?.faculty || ''}
+              value={
+                values.faculty || currentUser?.education ? currentUser?.education[0]?.faculty : ''
+              }
               error={errors.faculty}
               errorMessage={errors.faculty}
               onChange={handleChange}
@@ -443,7 +466,9 @@ function ProfileFreelancer({ setCurrentUser }) {
               {/*))}*/}
               <InputDocument
                 name="diploma"
-                value={values.diploma || currentUser.education[0]?.diploma[0] || ''}
+                value={
+                  values.diploma || currentUser?.education ? currentUser.education[0]?.diploma : ''
+                }
                 error={errors.diploma}
                 errorMessage={errors.diploma}
                 onChange={handleDiploma}
@@ -468,7 +493,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               width="100%"
               value={
                 values.phone ||
-                currentUser.contacts.find((item) => item.type === 'phone')?.value ||
+                currentUser?.contacts?.find((item) => item?.type === 'phone')?.value ||
                 ''
               }
               error={errors.phone}
@@ -484,7 +509,9 @@ function ProfileFreelancer({ setCurrentUser }) {
               value="phone"
               onChange={handleChange}
               isDisabled={!isEditable}
-              defaultChecked={currentUser.contacts.find((item) => item.type === 'phone')?.preferred}
+              defaultChecked={
+                currentUser?.contacts?.find((item) => item?.type === 'phone')?.preferred
+              }
             />
 
             <label className="profile__main-text" htmlFor="emailForContacts">
@@ -498,7 +525,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               width="100%"
               value={
                 values.email ||
-                currentUser.contacts.find((item) => item.type === 'email')?.value ||
+                currentUser?.contacts?.find((item) => item?.type === 'email')?.value ||
                 ''
               }
               error={errors.email}
@@ -514,7 +541,9 @@ function ProfileFreelancer({ setCurrentUser }) {
               value="email"
               onChange={handleChange}
               isDisabled={!isEditable}
-              defaultChecked={currentUser.contacts.find((item) => item.type === 'email')?.preferred}
+              defaultChecked={
+                currentUser?.contacts?.find((item) => item?.type === 'email')?.preferred
+              }
             />
           </div>
 
@@ -530,7 +559,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               width="100%"
               value={
                 values.telegram ||
-                currentUser.contacts.find((item) => item.type === 'telegram')?.value ||
+                currentUser?.contacts?.find((item) => item?.type === 'telegram')?.value ||
                 ''
               }
               error={errors.telegram}
@@ -547,7 +576,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               onChange={handleChange}
               isDisabled={!isEditable}
               defaultChecked={
-                currentUser.contacts.find((item) => item.type === 'telegram')?.preferred
+                currentUser?.contacts?.find((item) => item?.type === 'telegram')?.preferred
               }
             />
           </div>
@@ -567,7 +596,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               {/*))}*/}
               <InputDocument
                 name="portfolio"
-                value={values.portfolio || currentUser?.portfolio[0] || ''}
+                value={values.portfolio || currentUser?.portfolio || ''}
                 error={errors.portfolio}
                 onChange={handlePortfolio}
                 isDisabled={!isEditable}

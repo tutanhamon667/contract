@@ -22,6 +22,7 @@ DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1',
                  'localhost',
+                 'localhost:4173',
                  'localhost:5173',
                  os.getenv('HOST_NEW'),
                  'taski.ddns.net']
@@ -242,6 +243,7 @@ SWAGGER_SETTINGS = {
 # CORS
 CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:4173',
     'http://localhost:5173',
 ]
 

@@ -76,7 +76,6 @@ function LoginForm({ setIsAuthenticated, setCurrentUser }) {
     setErrors({ ...errors, ...newErrors });
 
     if (isValid && values.email && values.password) {
-      // console.log(values);
       // setValues({ ...values, email: "", password: "" });
       setValues(values);
       handleLogin(values);

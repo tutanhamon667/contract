@@ -80,10 +80,9 @@ class CustomEmailMessage(mail.EmailMultiAlternatives, ContextMixin):
         self.from_email = kwargs.pop(
             'from_email', settings.DEFAULT_FROM_EMAIL
         )
-        for line in self.to:
-            print(line)
-# message = create_message("me", "maksimka@inbox.ru", self.subject, self.body)
-        # send_message(service, 'me', message)
+        for recipient in self.to:
+            message = create_message("me", recipient, self.subject, self.body)
+            send_message(service, 'me', message)
 
     def _process_node(self, node, context):
         attr = self._node_map.get(getattr(node, 'name', ''))

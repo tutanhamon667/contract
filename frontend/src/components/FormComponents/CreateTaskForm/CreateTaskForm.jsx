@@ -22,10 +22,9 @@ function CreateTaskForm({ onSubmit }) {
   const [budget, setBudget] = useState('');
   const [deadline, setDeadline] = useState('');
   const [allTaskValues, setAllTaskValues] = useState([]);
-  // console.log(isChecked);
+
   function addDocument(items) {
     setDocument(items);
-    // console.log(items);
   }
 
   // временное решение: сохранение значений формы в локальное хранилище
@@ -38,12 +37,10 @@ function CreateTaskForm({ onSubmit }) {
 
   function handleBudget(event) {
     setBudget(event.target.value);
-    // console.log(budget);
   }
 
   function handleDeadline(event) {
     setDeadline(event.target.value);
-    // console.log(e.target.value);
   }
 
   const handleSubmit = (event) => {
@@ -58,7 +55,6 @@ function CreateTaskForm({ onSubmit }) {
       // orderCreationDate: new Date().toString().split(':').slice(0, 2).join(':'),
       file: document,
     };
-    // console.log(allValues)
 
     if (!isChecked.budgetDiscussion) {
       allValues.budget = { budget };
@@ -74,14 +70,6 @@ function CreateTaskForm({ onSubmit }) {
     // setAllTaskValues([allValues, ]);
     onSubmit(allValues);
   };
-
-  // console.log(new Date().toString());
-
-  // const dateString = "Tue Oct 24 2023 23:46:30 GMT+0600 (Kyrgyzstan Time)";
-  // const trimmedDateString = dateString.split(":").slice(0, 2).join(":");
-  // console.log(dateString.split(":"));
-  // console.log(dateString.split(":").slice(0, 2));
-  // console.log(trimmedDateString);
 
   return (
     <form className="create-task-form" onSubmit={handleSubmit}>

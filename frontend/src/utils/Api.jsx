@@ -19,7 +19,6 @@ function register(data) {
 }
 
 function authenticateUser({ email, password }) {
-  // console.log({email, password})
   return fetch(`${BACKEND_BASE_URL}/login/jwt/create/`, {
     method: 'POST',
     headers: {
@@ -84,8 +83,28 @@ function getTasks() {
   return fetch(`${BACKEND_BASE_URL}/jobs/`).then((response) => checkResponse(response));
 }
 
+function getTasksWithAuthorization() {
+  return fetch(`${BACKEND_BASE_URL}/jobs/`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+  }).then((response) => checkResponse(response));
+}
+
+function getTaskById(id) {
+  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+  }).then((response) => checkResponse(response));
+}
+
 function getFreelancers() {
   return fetch(`${BACKEND_BASE_URL}/main`).then((response) => checkResponse(response));
+}
+
+function getFreelancerById(id) {
+  return fetch(`${BACKEND_BASE_URL}/users/${id}`).then((response) => checkResponse(response));
 }
 
 export {
@@ -97,5 +116,8 @@ export {
   updateUserProfile,
   createTask,
   getTasks,
+  getTasksWithAuthorization,
+  getTaskById,
   getFreelancers,
+  getFreelancerById,
 };

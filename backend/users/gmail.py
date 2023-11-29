@@ -1,5 +1,4 @@
 import base64
-import mimetypes
 import os.path
 import pickle
 from email.mime.text import MIMEText
@@ -8,10 +7,8 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient import errors
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
 SCOPES = [
-    'https://mail.google.com/',
     'https://www.googleapis.com/auth/gmail.send',
 ]
 
@@ -26,7 +23,7 @@ def get_service():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'C:/dev/file_5.json', SCOPES)
+                'C:/dev/cred.json', SCOPES)
             creds = flow.run_local_server(port=0)
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)

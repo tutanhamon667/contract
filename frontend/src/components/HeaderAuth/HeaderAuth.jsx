@@ -11,27 +11,23 @@ function HeaderAuth() {
   return (
     <div className="header-auth">
       {location.pathname !== '/signup' && (
-        <Link to="/signup">
-          <button className={regTextStyle} type="button">
-            Регистрация
-          </button>
+        <Link to="/signup" className={regTextStyle}>
+          Регистрация
         </Link>
       )}
 
       {location.pathname !== '/signin' &&
         location.pathname !== '/forgot-password' &&
         location.pathname !== '/reset-password' && (
-          <Link to="/signin">
-            <button
-              className={`${
-                location.pathname === '/signup'
-                  ? 'header-auth__singup-button'
-                  : 'button button__header-auth_entry-button'
-              }`}
-              type="button"
-            >
-              {location.pathname === '/signup' ? 'Вход' : 'Войти'}
-            </button>
+          <Link
+            to="/signin"
+            className={`${
+              location.pathname === '/signup'
+                ? 'header-auth__singup-button'
+                : 'header-auth__entry-button'
+            }`}
+          >
+            {location.pathname === '/signup' ? 'Вход' : 'Войти'}
           </Link>
         )}
     </div>

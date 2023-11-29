@@ -17,32 +17,25 @@ function Header() {
 
     const { is_worker, is_customer, user } = currentUser;
 
-    if (is_worker) {
-      const shortLastName = user?.last_name.slice(0, 1);
+    if (is_worker && user) {
+      const shortLastName = user?.last_name?.slice(0, 1);
       return `${user?.first_name} ${shortLastName}.`;
     }
-    if (is_customer) {
-      const shortLastName = currentUser?.last_name.slice(0, 1);
+    if (is_customer && currentUser.hasOwnProperty('first_name')) {
+      const shortLastName = currentUser?.last_name?.slice(0, 1);
       return `${currentUser?.first_name} ${shortLastName}.`;
     }
 
     return '';
   }
 
-  const completeFormPaths =
-    pathname === '/freelancer/complete' ||
-    pathname === '/customer/complete' ||
-    pathname === '/create-task';
+  const completeFormPaths = pathname === '/profile/complete' || pathname === '/create-task';
 
   const authPaths =
     pathname === '/signin' ||
     pathname === '/signup' ||
     pathname === '/forgot-password' ||
     pathname === '/reset-password';
-
-  const profilePaths = currentUser.is_worker
-    ? '/freelancer'
-    : currentUser.is_customer && '/customer';
 
   function handleSetting() {
     setShowSetting(!showSetting);
@@ -78,18 +71,20 @@ function Header() {
           <HeaderAuth />
         )}
       </div>
-      <div className={popStyle}>
-        <Link to={profilePaths} onClick={() => setShowSetting(false)} className="profile__title">
-          Настройки
-        </Link>
-        <Link
-          to="/signout"
-          onClick={() => setShowSetting(false)}
-          className="profile__title profile__popup-signout"
-        >
-          Выйти
-        </Link>
-      </div>
+      {showSetting && (
+        <div className={popStyle}>
+          <Link to="/profile" onClick={() => setShowSetting(false)} className="profile__title">
+            Настройки
+          </Link>
+          <Link
+            to="/signout"
+            onClick={() => setShowSetting(false)}
+            className="profile__title profile__popup-signout"
+          >
+            Выйти
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

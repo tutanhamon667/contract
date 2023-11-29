@@ -8,14 +8,18 @@ function useFormAndValidation() {
   const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
   // const passwordRegex = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~,"():;<>@\[\\\]]+$/.test(value);
   const passwordRegex = /^[a-zA-Z0-9@#$%!^&*]+$/;
-  const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.\s]{1,80}$/;
+  const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.]{1,80}$/;
+
   const aboutRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.\s]{1,500}$/;
 
   function handleChange(event) {
     const { name, value } = event.target;
 
-    const validationMessage = event.target.validationMessage && (name === 'web' ? 'Укажите ссылку в формате https://example.com' : event.target.validationMessage);
-
+    const validationMessage =
+      event.target.validationMessage &&
+      (name === 'web'
+        ? 'Укажите ссылку в формате https://example.com'
+        : event.target.validationMessage);
 
     setValues({ ...values, [name]: value });
     setErrors({ ...errors, [name]: validationMessage });
@@ -152,7 +156,8 @@ function useFormAndValidation() {
       } else if (!nameRegex.test(value)) {
         setErrors({
           ...errors,
-          [name]: 'Название может состоять только из латинских и кириллических букв, цифр и следующих символов: .-_@',
+          [name]:
+            'Название может состоять только из латинских и кириллических букв, цифр и следующих символов: .-_@',
         });
         setIsValid(false);
       }
@@ -168,26 +173,23 @@ function useFormAndValidation() {
       }
     }
 
-    if (name === 'about' && !aboutRegex.test(value) && value.length) {
+    if (name === 'about' && !aboutRegex.test(value) && value.length > 0) {
       setErrors({
         ...errors,
         [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
-        и строчные символы "-", "_", "@", "."`,
+        и строчные символы, «-», «_», «@», «.» и пробел.`,
       });
       setIsValid(false);
-    } else if (name === 'about' && !value.length) {
+    } else if (name === 'about' && value.length === 0) {
       setErrors({ ...errors, [name]: '' });
       setIsValid(true);
     }
 
-
-    if (name === 'web' && !value.length) {
+    if (name === 'web' && value.length === 0) {
       setErrors({ ...errors, [name]: '' });
       setIsValid(true);
     }
-
   }
-
 
   return {
     values,
