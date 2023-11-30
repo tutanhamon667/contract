@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Context } from '../../../context/context';
-import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
+import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { Button } from '../../Button/Button';
 import { InputText } from '../../InputComponents/InputText/InputText';
 import './RegisterForm.css';
@@ -14,7 +14,16 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
     is_customer: true,
     is_worker: false,
   });
-  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
+  const {
+    values,
+    errors,
+    isValid,
+    checkErrors,
+    handleChange,
+    setValues,
+    setErrors,
+    setIsValid
+  } = useFormAndValidation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -57,8 +66,15 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
         setErrors({ ...errors, ...newErrors });
       }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buttonClicked, isError]);
+  }, [buttonClicked, isError,]);
+
+  React.useEffect(() => {
+    const valid = checkErrors(errors)
+    setIsValid(valid)
+    console.log('UseEff', valid, isValid, errors)
+  }, [isValid, errors])
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -210,13 +226,12 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
           width={400}
           type="submit"
           disabled={
-            (!isValid ||
-              !values.email ||
-              !values.password ||
-              !values.re_password ||
-              !values.first_name ||
-              !values.last_name) &&
-            buttonClicked
+            !isValid ||
+            !values.email ||
+            !values.password ||
+            !values.re_password ||
+            !values.first_name ||
+            !values.last_name
           }
         />
         <div className="register__footer-link-container">
