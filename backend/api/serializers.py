@@ -201,7 +201,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         stack_data = validated_data.pop('stack')
         category_data = validated_data.pop('category')
-        job_files_data = validated_data.pop('job_files')
+        job_files_data = validated_data.pop('job_files', [])
         ask_budget = validated_data.pop('ask_budget', False)
         ask_deadline = validated_data.pop('ask_deadline', False)
         if ask_budget:
