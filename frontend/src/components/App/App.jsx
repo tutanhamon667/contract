@@ -115,7 +115,8 @@ function App() {
       .then((data) => {
         setIsError(false);
         setErrorRequest({});
-        setCurrentUser({ is_customer: data.is_customer, is_worker: data.is_worker });
+        setCurrentUser({user:data, is_customer: data.is_customer, is_worker: data.is_worker})
+     //   setCurrentUser({ is_customer: data.is_customer, is_worker: data.is_worker });
 
         navigate('/profile/complete', { replace: true });
 
@@ -168,25 +169,28 @@ function App() {
   }
 
   function handleFreelancerSubmit(data) {
+
+    console.log(data)
+    /*
     const formValues = {
       contacts: [
         {
           type: 'phone',
-          value: data.values.phone,
-          preferred: data.values.preferred === 'phone',
+          value: data.values?.phone,
+          preferred: data.values?.preferred === 'phone',
         },
         {
           type: 'email',
-          value: data.values.email,
-          preferred: data.values.preferred === 'email',
+          value: data.values?.email,
+          preferred: data.values?.preferred === 'email',
         },
         {
           type: 'telegram',
-          value: data.values.telegram,
-          preferred: data.values.preferred === 'telegram',
+          value: data.values?.telegram,
+          preferred: data.values?.preferred === 'telegram',
         },
       ],
-      stacks: data.tags.map((tag) => ({ name: tag })),
+      stacks: data.tags?.map((tag) => ({ name: tag })),
       categories: [
         {
           name: data.values.activity,
@@ -194,22 +198,39 @@ function App() {
       ],
       education: [
         {
-          diploma: data.document,
-          name: data.values.education,
-          faculty: data.values.faculty,
-          start_year: data.values.start_year,
-          finish_year: data.values.finish_year,
-          degree: data.values.degree,
+          diploma: data?.document,
+          name: data.values?.education,
+          faculty: data.values?.faculty,
+          start_year: data.values?.start_year,
+          finish_year: data.values?.finish_year,
+          degree: data.values?.degree,
         },
       ],
-      portfolio: data.portfolioFile,
-      photo: data.profilePhoto.photo,
-      payrate: data.values.payrate,
-      about: data.values.about,
-      web: data.values.web,
+      portfolio: data?.portfolioFile,
+      photo: data.profilePhoto?.photo,
+      payrate: data.values?.payrate,
+      about: data.values?.about,
+      web: data.values?.web,
     };
+/*
+    if(data.values.phone){
+      formValues.contacts =  {
+        type: 'phone',
+        value: data.values.phone,
+        preferred: data.values.preferred === 'phone',
+      }
+    }
+    if(data.values.email){
+      formValues.contacts = { 
+        type: 'email',
+        value: data.values.email,
+        preferred: data.values.preferred === 'email',
+      
+      }
+    }
+    */
 
-    Api.createUserProfile(formValues)
+    Api.createUserProfile(data)
       .then((result) => {
         setCurrentUser(result);
         navigate('/', { replace: true });
@@ -217,6 +238,7 @@ function App() {
       .catch((error) => {
         console.error(error);
       });
+    
   }
 
   function handleTaskSubmit(data) {

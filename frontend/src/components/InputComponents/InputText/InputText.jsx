@@ -17,6 +17,8 @@ function InputText({
   error,
   errorMessage,
   isDisabled,
+  maxLength,
+  required
 }) {
   const InputType = type === 'textarea' ? 'textarea' : 'input';
   const inputStyle =
@@ -45,6 +47,8 @@ function InputText({
         name={name}
         id={id}
         disabled={isDisabled}
+        maxLength={maxLength}
+        required={required}
       />
       {pass && <button className="input__show-pass" type="button" onClick={pass} />}
       <span className="input__error-text">{errorMessage}</span>

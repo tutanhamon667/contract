@@ -13,6 +13,7 @@ function useFormAndValidation() {
         const { name, value } = event.target;
         setValues({ ...values, [name]: value });
         setErrors({ ...errors, ...validateValues(name, value) })
+        setIsValid(event.target.closest('form').checkValidity());
     }
 
     function handleBlur(event) {
@@ -26,6 +27,7 @@ function useFormAndValidation() {
         const nameRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.\s]{1,80}$/;
         const aboutRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@.\s]{1,500}$/;
         const websiteLinkRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}([a-zA-Z0-9._~:/?#[\]@!$&'()*+,;=-])*$/;
+        const educationRegex = /^[a-zA-Zа-яА-ЯёЁ0-9\-_@."'\s]{1,80}$/;
 
         let errors = { [name]: '' }
 
@@ -115,6 +117,48 @@ function useFormAndValidation() {
                 ...errors, [name]: `Укажите ссылку в формате https://example.com`,
             };
         }
+        if(name === 'phone' && !aboutRegex.test(value) && value.length){
+            errors = {
+              ...errors, [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+              и строчные символы "-", "_", "@", "."`,
+            };
+          }
+      
+          if(name === 'telegram' && !aboutRegex.test(value) && value.length){
+            errors = {
+                ...errors, [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+                и строчные символы "-", "_", "@", "."`,
+              };
+          }
+      
+          if(name === 'preferred' && !value.length){       
+              errors = {
+                ...errors,
+                [name]: `Выберите один из вариантов`,
+              };        
+          }
+      
+          if(name === 'education' && !educationRegex.test(value) && value.length){
+            errors = {
+              ...errors,
+              [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+              и строчные символы "-", "_", "@", ".", "'"`,
+            };
+            
+          }
+      
+          if(name === 'degree' && value === 'student'){
+            setValues({...values, finish_year: '', degree: 'student'})
+          }
+      
+          if(name === 'faculty' && !educationRegex.test(value) && value.length){
+            errors = {
+              ...errors,
+              [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+              и строчные символы "-", "_", "@", ".", "'"`,
+            };
+           
+          }
 
         return errors
     }

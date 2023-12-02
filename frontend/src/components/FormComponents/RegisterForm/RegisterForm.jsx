@@ -170,6 +170,7 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
           value={values.first_name || ''}
           error={errors.first_name}
           errorMessage={errors.first_name}
+          maxLength={80}
         />
         <InputText
           placeholder="Фамилия"
@@ -182,6 +183,7 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
           value={values.last_name || ''}
           error={errors.last_name}
           errorMessage={errors.last_name}
+          maxLength={80}
         />
         <InputText
           placeholder="Эл. почта"

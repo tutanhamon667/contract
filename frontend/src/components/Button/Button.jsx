@@ -18,6 +18,7 @@ function Button({
   fontWeight,
   opacity,
 }) {
+  
   return (
     <button
       className={`button ${buttonSecondary ? 'button_type_secondary' : disabled ? 'button_type_disabled' : ''
