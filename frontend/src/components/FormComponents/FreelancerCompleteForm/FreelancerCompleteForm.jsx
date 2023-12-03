@@ -19,17 +19,22 @@ function FreelancerCompleteForm({ onSubmit }) {
   const [portfolioFile, setPortfolioFile] = useState(null);
   const [document, setDocument] = useState(null);
   // const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
-  const { values, errors, handleChange, setErrors, setValues, checkErrors, setIsValid, isValid } = useFormAndValidation();
+  const { values, errors, handleChange, setErrors, setValues, checkErrors, setIsValid, isValid } =
+    useFormAndValidation();
   const [tags, setTags] = useState([]);
 
   React.useEffect(() => {
-    setTags([])
-    setDocument({})
-    setPortfolioFile({})
-    setProfilePhoto({})
-    setValues({})
-    setValues({ first_name: currentUser.user.first_name, last_name: currentUser.user.last_name, email: currentUser.account_email || currentUser.user.email })
-  }, [currentUser])
+    setTags([]);
+    setDocument({});
+    setPortfolioFile({});
+    setProfilePhoto({});
+    setValues({});
+    setValues({
+      first_name: currentUser.user.first_name,
+      last_name: currentUser.user.last_name,
+      email: currentUser.account_email || currentUser.user.email,
+    });
+  }, [currentUser]);
 
   /*
   React.useEffect(() => {
@@ -39,26 +44,22 @@ function FreelancerCompleteForm({ onSubmit }) {
 */
   function addProfilePhoto(url) {
     setProfilePhoto({ photo: url });
-    console.log(url)
+    // console.log(url);
   }
 
-  
   function addPortfolioFile(files) {
-    console.log(files)
-    setPortfolioFile({files});
+    // console.log(files);
+    setPortfolioFile({ files });
   }
 
   function addDocument(files) {
-    console.log(files)
-    setDocument({files});
-    
+    // console.log(files);
+    setDocument({ files });
   }
-console.log(document?.files, document?.files?.length)
+  // console.log(document?.files, document?.files?.length);
 
- //console.log(document?.file?.file)
-// console.log(isValid)
-
-
+  //console.log(document?.file?.file)
+  // console.log(isValid)
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -82,44 +83,49 @@ console.log(document?.files, document?.files?.length)
     let allValues = {
       categories: [
         {
-          name: values.activity
+          name: values.activity,
         },
       ],
+    };
 
-    }
-
-    if (values.education || values.faculty || values.start_year || values.finish_year || values.degree || document?.files?.length) {
+    if (
+      values.education ||
+      values.faculty ||
+      values.start_year ||
+      values.finish_year ||
+      values.degree ||
+      document?.files?.length
+    ) {
       allValues.education = [];
-      let educationValues= {};
+      let educationValues = {};
 
-      if(document?.files?.length){
-        educationValues.diploma = document.files
+      if (document?.files?.length) {
+        educationValues.diploma = document.files;
       }
-        if(values.education){
-          educationValues.name = values.education
-        }
+      if (values.education) {
+        educationValues.name = values.education;
+      }
 
-        if(values.faculty){
-          educationValues.faculty = values?.faculty
-        }
+      if (values.faculty) {
+        educationValues.faculty = values?.faculty;
+      }
 
-        if(values.start_year){
-          educationValues.start_year = values?.start_year
-        }
+      if (values.start_year) {
+        educationValues.start_year = values?.start_year;
+      }
 
-        if(values.finish_year){
-          educationValues.finish_year = values?.finish_year
-        }
-        if(values.degree){
-          educationValues.degree = values?.degree
-        }
+      if (values.finish_year) {
+        educationValues.finish_year = values?.finish_year;
+      }
+      if (values.degree) {
+        educationValues.degree = values?.degree;
+      }
 
-        allValues.education.push(educationValues)
-      
+      allValues.education.push(educationValues);
     }
 
-    if (tags.length) {
-      allValues.stacks = tags?.map((tag) => ({ name: tag }))
+    if (tags.length > 0) {
+      allValues.stacks = tags?.map((tag) => ({ name: tag }));
     }
 
     if (values?.phone || values?.email || values?.telegram || values?.preferred) {
@@ -148,31 +154,28 @@ console.log(document?.files, document?.files?.length)
       });
     }
 
-
     if (profilePhoto.photo) {
-      allValues.photo = profilePhoto.photo
+      allValues.photo = profilePhoto.photo;
     }
 
     if (portfolioFile.files) {
-      allValues.portfolioFile = portfolioFile.files
+      allValues.portfolioFile = portfolioFile.files;
     }
 
     if (values.payrate) {
-      allValues.payrate = values.payrate
+      allValues.payrate = values.payrate;
     }
 
     if (values.about) {
-      allValues.about = values.about
+      allValues.about = values.about;
     }
 
     if (values.web) {
-      allValues.web = values.web
+      allValues.web = values.web;
     }
 
-
-    console.log(allValues)
+    console.log(allValues);
     onSubmit(allValues);
-
   };
 
   return (
@@ -291,7 +294,14 @@ console.log(document?.files, document?.files?.length)
       </div>
       <div>
         <p className="freelancer-complete-form__input-text">Навыки</p>
-        <InputTags name="stacks" tags={tags} setTags={setTags} errors={errors} setErrors={setErrors} errorMessage={errors.stacks} />
+        <InputTags
+          name="stacks"
+          tags={tags}
+          setTags={setTags}
+          errors={errors}
+          setErrors={setErrors}
+          errorMessage={errors.stacks}
+        />
       </div>
       <div>
         <p className="freelancer-complete-form__input-text">Ставка в час</p>
@@ -333,9 +343,9 @@ console.log(document?.files, document?.files?.length)
             error={errors.portfolio}
             errorMessage={errors.portfolio}
             onChange={addPortfolioFile}
-          // isDisabled={false}
-          // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
-          // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+            // isDisabled={false}
+            // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
+            // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
           />
           {/*))}*/}
         </div>
@@ -434,7 +444,13 @@ console.log(document?.files, document?.files?.length)
         </div>
       </div>
 
-      <Button text="Создать профиль" disabled={!isValid} width={289} marginTop={60} marginBottom={200} />
+      <Button
+        text="Создать профиль"
+        disabled={!isValid}
+        width={289}
+        marginTop={60}
+        marginBottom={200}
+      />
     </form>
   );
 }

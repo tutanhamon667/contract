@@ -1,5 +1,4 @@
-import { useState, useContext } from 'react';
-import { Context } from '../context/context';
+import { useState } from 'react';
 
 function useFormAndValidation() {
   const [values, setValues] = useState({});
@@ -21,7 +20,7 @@ function useFormAndValidation() {
       (name === 'web'
         ? 'Укажите ссылку в формате https://example.com'
         : event.target.validationMessage);
-    console.log(event.target.closest('form').checkValidity())
+    console.log(event.target.closest('form').checkValidity());
 
     setValues({ ...values, [name]: value });
     setErrors({ ...errors, [name]: validationMessage });
@@ -192,7 +191,7 @@ function useFormAndValidation() {
       setIsValid(true);
     }
 
-    if(name === 'phone' && !aboutRegex.test(value) && value.length){
+    if (name === 'phone' && !aboutRegex.test(value) && value.length) {
       setErrors({
         ...errors,
         [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
@@ -201,7 +200,7 @@ function useFormAndValidation() {
       setIsValid(false);
     }
 
-    if(name === 'telegram' && !aboutRegex.test(value) && value.length){
+    if (name === 'telegram' && !aboutRegex.test(value) && value.length) {
       setErrors({
         ...errors,
         [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
@@ -210,17 +209,15 @@ function useFormAndValidation() {
       setIsValid(false);
     }
 
-    if(name === 'preferred' && !value.length){
-      
-        setErrors({
-          ...errors,
-          [name]: `Выберите один из вариантов`,
-        });
-        setIsValid(false);
-      
+    if (name === 'preferred' && !value.length) {
+      setErrors({
+        ...errors,
+        [name]: `Выберите один из вариантов`,
+      });
+      setIsValid(false);
     }
 
-    if(name === 'education' && !educationRegex.test(value) && value.length){
+    if (name === 'education' && !educationRegex.test(value) && value.length) {
       setErrors({
         ...errors,
         [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
@@ -229,11 +226,11 @@ function useFormAndValidation() {
       setIsValid(false);
     }
 
-    if(name === 'degree' && value === 'student'){
-      setValues({...values, finish_year: '', degree: 'student'})
+    if (name === 'degree' && value === 'student') {
+      setValues({ ...values, finish_year: '', degree: 'student' });
     }
 
-    if(name === 'faculty' && !educationRegex.test(value) && value.length){
+    if (name === 'faculty' && !educationRegex.test(value) && value.length) {
       setErrors({
         ...errors,
         [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
@@ -241,7 +238,6 @@ function useFormAndValidation() {
       });
       setIsValid(false);
     }
-
   }
 
   return {

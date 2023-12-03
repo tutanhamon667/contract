@@ -18,7 +18,7 @@ function InputText({
   errorMessage,
   isDisabled,
   maxLength,
-  required
+  required,
 }) {
   const InputType = type === 'textarea' ? 'textarea' : 'input';
   const inputStyle =

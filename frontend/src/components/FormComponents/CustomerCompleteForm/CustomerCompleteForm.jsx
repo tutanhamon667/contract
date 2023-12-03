@@ -10,28 +10,19 @@ import './CustomerCompleteForm.css';
 function CustomerCompleteForm({ handleCustomerSubmit }) {
   const [photo, setPhoto] = useState(null);
 
+  const { values, errors, isValid, handleChange, setIsValid, setErrors, checkErrors } =
+    useFormAndValidation();
 
-  const {
-    values,
-    errors,
-    isValid,
-    handleChange,
-    setIsValid,
-    setErrors,
-    checkErrors,
-  } = useFormAndValidation();
-
-
-  const isDisabled = !values.name || !values.industry || !isValid
+  const isDisabled = !values.name || !values.industry || !isValid;
 
   function addPhoto(url) {
     setPhoto({ photo: url });
   }
 
   useEffect(() => {
-    const valid = checkErrors(errors)
-    setIsValid(valid)
-  }, [isValid, errors])
+    const valid = checkErrors(errors);
+    setIsValid(valid);
+  }, [isValid, errors]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -39,12 +30,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
     if (values.name && values.industry && isValid) {
       // передать данные на бэк
       handleCustomerSubmit({ values, photo });
-
     }
-
   };
-
-
 
   return (
     <form className="employer-complete-form" onSubmit={handleSubmit}>
@@ -121,7 +108,8 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
         width={289}
         marginTop={60}
         marginBottom={200}
-        disabled={isDisabled} />
+        disabled={isDisabled}
+      />
     </form>
   );
 }

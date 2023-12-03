@@ -115,8 +115,8 @@ function App() {
       .then((data) => {
         setIsError(false);
         setErrorRequest({});
-        setCurrentUser({user:data, is_customer: data.is_customer, is_worker: data.is_worker})
-     //   setCurrentUser({ is_customer: data.is_customer, is_worker: data.is_worker });
+        setCurrentUser({ user: data, is_customer: data.is_customer, is_worker: data.is_worker });
+        //   setCurrentUser({ is_customer: data.is_customer, is_worker: data.is_worker });
 
         navigate('/profile/complete', { replace: true });
 
@@ -169,8 +169,7 @@ function App() {
   }
 
   function handleFreelancerSubmit(data) {
-
-    console.log(data)
+    console.log(data);
     /*
     const formValues = {
       contacts: [
@@ -238,7 +237,6 @@ function App() {
       .catch((error) => {
         console.error(error);
       });
-    
   }
 
   function handleTaskSubmit(data) {

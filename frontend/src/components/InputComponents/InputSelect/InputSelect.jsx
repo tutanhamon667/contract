@@ -12,7 +12,7 @@ function InputSelect({
   onBlur,
   error,
   errorMessage,
-  required
+  required,
 }) {
   return (
     <div className="select-container">
