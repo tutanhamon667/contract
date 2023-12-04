@@ -31,7 +31,7 @@ class UserView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 
 
 class FreelancerFirstPage(OnlyListView):
-    queryset = WorkerProfile.objects.all().order_by('user__created_at')
+    queryset = WorkerProfile.objects.all().order_by('-user__created_at')
     serializer_class = UserViewSerialiser
     permission_classes = (permissions.AllowAny,)
     filter_backends = (SearchFilter, DjangoFilterBackend,)
@@ -67,6 +67,8 @@ class UserViewSet(UserView):
                 user = self.request._user
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
+        elif key == 'create':
+            user = User.objects.all().last()
         else:
             return super().get_queryset()
 
@@ -123,6 +125,15 @@ class UserViewSet(UserView):
                     return GetWorkerProfileSerializer
         return UserViewSerialiser
 
+    def create(self, request):
+        user = super().create(request)
+        queryset = self.get_queryset()
+        queryset.create(user=User.objects.all().last())
+        return Response(
+            user.data,
+            status=status.HTTP_201_CREATED
+        )
+
     def retrieve(self, request, pk=None):
         user = get_object_or_404(User, id=pk)
         if user.is_customer == user.is_worker:
@@ -175,8 +186,8 @@ class UserViewSet(UserView):
         queryset = self.get_queryset()
 
         if request.method == 'GET':
-            # obj = get_object_or_404(queryset, user_id=user.id)
-            obj, result = queryset.get_or_create(user=user)
+            obj = get_object_or_404(queryset, user_id=user.id)
+            # obj, result = queryset.get_or_create(user=user)
             serializer = self.get_serializer(obj)
         if request.method == 'POST':
             if user.is_worker:
