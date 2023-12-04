@@ -1,15 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import "./index.css";
-import App from "./components/App/App";
+import { App } from './components/App/App';
+import './index.css';
 
-
-const root = ReactDOM.createRoot(document.getElementById("page__wrapper"));
+const root = ReactDOM.createRoot(document.querySelector('#page__wrapper'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

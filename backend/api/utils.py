@@ -12,16 +12,7 @@ def generate_thumbnail(file):
     Создание миниатюр загруженных файлов в профайле заказа.
     """
     try:
-        if file.name.endswith(('.pdf', '.PDF')):
-            if isinstance(file, bytes):
-                images = convert_from_bytes(file)
-            else:
-                images = convert_from_path(file.path)
-            if images:
-                img = images[0]
-        else:
-            img = Image.open(file)
-
+        img = Image.open(file)
         img.thumbnail(THUMBNAIL_SIZE)
         thumbnail_buffer = BytesIO()
         img.save(thumbnail_buffer, 'JPEG')
@@ -29,7 +20,6 @@ def generate_thumbnail(file):
         return thumbnail_buffer
     except Exception as e:
         print(f"Ошибка при создании миниатюры: {e}")
-        return None
 
 
 class CustomBase64ImageField(Base64ImageField):

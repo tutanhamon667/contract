@@ -3,9 +3,9 @@
 }
 
 .page__wrapper {
-  font-family: Inter, Arial, sans-serif;
-  background: #F2F1EE;
   min-height: 100vh;
+  background: #f7f7f7;
+  font-family: Inter, Arial, sans-serif;
 }
 
 a {

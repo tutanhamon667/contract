@@ -1,12 +1,12 @@
-import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import Button from "../../components/Button/Button";
-import ForgotPassForm from "../../components/Forms/ForgotPassForm/ForgotPassForm";
-import { Context } from "../../context/context";
-import "./ForgotPass.css";
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { Context } from '../../context/context';
+import { Button } from '../../components/Button/Button';
+import { ForgotPassForm } from '../../components/FormComponents/ForgotPassForm/ForgotPassForm';
+import './ForgotPass.css';
 
-const ForgotPass = () => {
-  const { authenticated } = React.useContext(Context);
+function ForgotPass() {
+  const { isAuthenticated } = React.useContext(Context);
   const location = useLocation();
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
 
@@ -14,15 +14,15 @@ const ForgotPass = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
-  if (authenticated) {
-    return <Navigate to={"/"} state={{ from: location }} />;
+  if (isAuthenticated) {
+    return <Navigate to="/" state={{ from: location }} />;
   }
   return (
     <>
       {!isPopupOpen && (
-        <div className="wrapper">
-          <div className="container">
-            <h1 className="title">Забыли пароль?</h1>
+        <div className="forgot-pass__wrapper">
+          <div className="forgot-pass__container">
+            <h1 className="forgotPass__title">Забыли пароль?</h1>
             <ForgotPassForm func={togglePopup} />
           </div>
         </div>
@@ -30,9 +30,9 @@ const ForgotPass = () => {
       {isPopupOpen && (
         <div className="popup-overlay">
           <div className="popup">
-            <div className="popupCheckMark" />
-            <p className="popupTitle">Отправлено</p>
-            <span className="popupDescription">
+            <div className="popup-check-mark" />
+            <p className="popup-title">Отправлено</p>
+            <span className="popup-description">
               Проверьте свою почту и перейдите по ссылке, чтобы сбросить пароль
             </span>
             <Button onClick={togglePopup} text="Хорошо" />
@@ -41,6 +41,6 @@ const ForgotPass = () => {
       )}
     </>
   );
-};
+}
 
-export default ForgotPass;
+export { ForgotPass };

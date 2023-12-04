@@ -22,10 +22,9 @@ DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1',
                  'localhost',
+                 'localhost:4173',
                  'localhost:5173',
-                 'taski.servebeer.com',
-                 '62.84.127.171',
-                 '45.86.180.105',
+                 os.getenv('HOST_NEW'),
                  'taski.ddns.net']
 
 
@@ -158,6 +157,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+ZOHOVERIFY_PATH = os.path.join(BASE_DIR, 'zohoverify')
+
+STATICFILES_DIRS = [
+    ZOHOVERIFY_PATH,
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -239,6 +243,7 @@ SWAGGER_SETTINGS = {
 # CORS
 CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:4173',
     'http://localhost:5173',
 ]
 
@@ -249,6 +254,7 @@ CORS_ALLOWED_ORIGINS = [
 MAX_FILE_SIZE_MB = 50
 MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024
 ALLOWED_FILE_EXT = ['.jpg', '.jpeg', '.png']
+DATETIME_FORMAT = "%Y-%m-%d"
 
 # Размер миниатюры (api/utils.py)
 THUMBNAIL_SIZE = (100, 100)
@@ -261,6 +267,11 @@ CURRENT_DATE_ERR = 'Срок выполнения не может быть ра�
 PUB_DATE_ERR = 'Срок выполнения не может быть раньше даты создания заказа.'
 CHAT_ALREADY_EXISTS_ERR = 'Вы уже создали чат с фрилансером по этому заданию.'
 JOB_ALREADY_APPLIED_ERR = 'Вы уже откликнулись на задание.'
+DATE_FORMAT_ERR = ("Некорректный формат даты - "
+                   "требуется дата по образцу '2023-12-12' "
+                   f"({DATETIME_FORMAT})")
+ASK_MSG = 'Жду предложений'
+BUDGET_DATA_ERR = f'Бюджет должен быть числом или {ASK_MSG}'
 
 # Cообщения в api/views.py
 OTHER_TASK_CHAT_ERR = 'Вы не можете создать чат по чужому заданию.'

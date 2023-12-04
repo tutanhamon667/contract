@@ -1,4 +1,4 @@
-FROM node:18.18.0-alpine
+FROM node:lts-alpine
 RUN mkdir /app
 WORKDIR /app
 COPY package*.json ./

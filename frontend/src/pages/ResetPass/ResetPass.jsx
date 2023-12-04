@@ -1,24 +1,24 @@
-import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import SetNewPassForm from "../../components/Forms/SetNewPassForm/SetNewPassForm";
-import { Context } from "../../context/context";
-import "./ResetPass.css";
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { Context } from '../../context/context';
+import { SetNewPassForm } from '../../components/FormComponents/SetNewPassForm/SetNewPassForm';
+import './ResetPass.css';
 
-const ResetPass = () => {
-  const { authenticated } = React.useContext(Context);
+function ResetPass() {
+  const { isAuthenticated } = React.useContext(Context);
   const location = useLocation();
 
-  if (authenticated) {
-    return <Navigate to={"/"} state={{ from: location }} />;
+  if (isAuthenticated) {
+    return <Navigate to="/" state={{ from: location }} />;
   }
   return (
-    <div className="wrapper">
-      <div className="container">
-        <h1 className="title">Новый пароль</h1>
-          <SetNewPassForm />
+    <div className="reset-password__wrapper">
+      <div className="reset-password__container">
+        <h1 className="reset-password__title">Новый пароль</h1>
+        <SetNewPassForm />
       </div>
     </div>
   );
-};
+}
 
-export default ResetPass;
+export { ResetPass };

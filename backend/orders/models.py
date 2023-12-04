@@ -1,3 +1,4 @@
+import datetime
 from io import BytesIO
 
 from django.core.exceptions import ValidationError
@@ -6,7 +7,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from PIL import Image
 
-from taski.settings import CATEGORY_CHOICES, THUMBNAIL_SIZE
+from taski.settings import CATEGORY_CHOICES, DATETIME_FORMAT, THUMBNAIL_SIZE
 from users.models import CustomerProfile as Client
 from users.models import Stack
 from users.models import WorkerProfile as Freelancer
@@ -64,17 +65,18 @@ class Job(models.Model):
     description = models.TextField(
         verbose_name='Описание задания',
     )
-    budget = models.PositiveIntegerField(
+    budget = models.CharField(
+        max_length=20,
         blank=True, null=True,
         help_text='Укажите сумму в рублях или выберете "Жду предложений"',
-        verbose_name='Бюджет',
-        validators=[MinValueValidator(0)],
+        verbose_name='Бюджет'
     )
     ask_budget = models.BooleanField(
         default=False,
         verbose_name='Запросить бюджет',
     )
-    deadline = models.DateTimeField(
+    deadline = models.CharField(
+        max_length=20,
         blank=True, null=True,
         verbose_name='Срок выполнения или выберете "Жду предложений"',
     )
@@ -87,15 +89,42 @@ class Job(models.Model):
         verbose_name='Дата публикации задания',
     )
 
-    # def save(self, *args, **kwargs):
-    #     if self.ask_budget:
-    #         self.budget = None
-    #     if self.ask_deadline:
-    #         self.deadline = None
-    #     super().save(*args, **kwargs)
+    def get_budget_amount(self):
+        """
+        Возвращает числовое значение бюджета.
+        """
+        if self.budget == "Жду предложений":
+            return None
+        return int(self.budget)
+
+    def get_budget_text(self):
+        """
+        Возвращает текстовое значение бюджета.
+        """
+        if self.budget == "Жду предложений":
+            return "Жду предложений"
+        return self.budget
+
+    def get_deadline(self):
+        """
+        Возвращает дату срока выполнения задания.
+        """
+        if self.ask_deadline or not self.deadline:
+            return None
+        if self.deadline == "Жду предложений":
+            return None
+        return self.deadline.strftime(DATETIME_FORMAT)
+
+    def get_deadline_text(self):
+        """
+        Возвращает текстовое представление срока выполнения задания.
+        """
+        if self.ask_deadline or not self.deadline:
+            return "Жду предложений"
+        return self.deadline
 
     class Meta:
-        ordering = ('-pub_date',)
+        ordering = ('-id',)
         verbose_name = 'Задание'
         verbose_name_plural = 'Задания'
 
@@ -124,6 +153,15 @@ class StackJob(models.Model):
 
     def __str__(self):
         return f"{self.job.title} - {self.stack.name}"
+
+    def clean(self):
+        num_stacks_for_job = self.job.stack.count()
+        if num_stacks_for_job >= 20:
+            raise ValidationError("Максимальное количество тэгов - 20")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super(StackJob, self).save(*args, **kwargs)
 
 
 class JobFile(models.Model):

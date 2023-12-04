@@ -1,32 +1,31 @@
+from datetime import datetime
+from datetime import timezone as tz
+
 from django.utils import timezone
 from rest_framework import serializers
 
 from api.utils import CustomBase64ImageField
 from chat.models import Chat, Message
 from orders.models import Job, JobCategory, JobFile, JobResponse, StackJob
-from taski.settings import (CATEGORY_CHOICES, CHAT_ALREADY_EXISTS_ERR,
-                            CURRENT_DATE_ERR, FILE_OVERSIZE_ERR,
-                            JOB_ALREADY_APPLIED_ERR, MAX_FILE_SIZE,
-                            PUB_DATE_ERR, STACK_ERR_MSG)
-from users.clients import GetCustomerProfileSerializer
+from taski.settings import (ASK_MSG, BUDGET_DATA_ERR, CATEGORY_CHOICES,
+                            CHAT_ALREADY_EXISTS_ERR, CURRENT_DATE_ERR,
+                            DATE_FORMAT_ERR, DATETIME_FORMAT,
+                            FILE_OVERSIZE_ERR, JOB_ALREADY_APPLIED_ERR,
+                            MAX_FILE_SIZE, STACK_ERR_MSG)
+from users.clients import GetCustomerProfileSerializer, IndustrySerializer
 from users.freelancers import GetWorkerProfileSerializer
 from users.models import CustomerProfile as Client
-from users.models import Stack
-from users.models import WorkerProfile as Freelancer
+from users.models import Stack, WorkerProfile
 
 
 class ClientSerializer(serializers.ModelSerializer):
     """Заказчик."""
+    industry = IndustrySerializer()
+
     class Meta:
         model = Client
-        fields = ('id', 'name', 'user_id',)
-
-
-class FreelancerSerializer(serializers.ModelSerializer):
-    """Фрилансер."""
-    class Meta:
-        model = Freelancer
-        fields = ('user',)
+        fields = ('id', 'user_id', 'photo', 'name',
+                  'about', 'industry', 'web')
 
 
 class JobStackSerializer(serializers.ModelSerializer):
@@ -61,9 +60,7 @@ class JobResponseSerializer(serializers.ModelSerializer):
         job = data['job']['id']
         if JobResponse.objects.filter(
                 freelancer__id=freelancer, job__id=job).exists():
-            raise serializers.ValidationError(
-                {'ошибка': 'Вы уже откликнулись на задание.'}
-            )
+            raise serializers.ValidationError(JOB_ALREADY_APPLIED_ERR)
         return data
 
     def create(self, validated_data):
@@ -81,17 +78,61 @@ class RespondedSerializer(serializers.ModelSerializer):
                   'client', 'job_files', 'description',)
 
 
+class FreelancerSerializer(GetWorkerProfileSerializer):
+    class Meta:
+        model = WorkerProfile
+        fields = ('user', 'photo', 'about',
+                  'stacks', 'payrate', 'categories')
+
+
+class ResponseFreelancersSerializer(serializers.ModelSerializer):
+    """Получение списка фрилансеров, которые откликнулись на задание."""
+    freelancer = FreelancerSerializer()
+
+    class Meta:
+        model = JobResponse
+        fields = '__all__'
+
+
+class JobFileSerializer(serializers.ModelSerializer):
+    """Изображения в профайлах"""
+    file = CustomBase64ImageField(required=True)
+
+    class Meta:
+        model = JobFile
+        fields = ('file', 'name')
+
+    def validate_file(self, value):
+        if value:
+            if value.size > MAX_FILE_SIZE:
+                raise serializers.ValidationError(FILE_OVERSIZE_ERR)
+        return value
+
+
 class JobListSerializer(serializers.ModelSerializer):
     """Получение списка заказов."""
     stack = JobStackSerializer(many=True)
+    category = serializers.SlugRelatedField(
+        read_only=True,
+        many=True,
+        slug_field='slug'
+    )
     client = ClientSerializer()
+    job_files = JobFileSerializer(
+        read_only=True, many=True)
     is_responded = serializers.SerializerMethodField()
+    budget = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
         fields = ('id', 'title', 'category', 'stack', 'client',
-                  'budget', 'deadline', 'description', 'job_files',
-                  'is_responded', 'pub_date')
+                  'budget', 'ask_budget', 'deadline', 'ask_deadline',
+                  'description', 'job_files', 'is_responded', 'pub_date')
+
+    def get_budget(self, obj):
+        if obj.budget == "Жду предложений" or not obj.budget.isdigit():
+            return obj.budget
+        return int(obj.budget)
 
     def get_is_responded(self, obj):
         """
@@ -113,33 +154,19 @@ class JobListSerializer(serializers.ModelSerializer):
         return data
 
 
-class JobFileSerializer(serializers.ModelSerializer):
-    """Изображения в профайлах"""
-    file = CustomBase64ImageField(required=True)
-
-    class Meta:
-        model = JobFile
-        fields = ('file', 'name')
-
-    def validate_file(self, value):
-        if value:
-            if value.size > MAX_FILE_SIZE:
-                raise serializers.ValidationError(FILE_OVERSIZE_ERR)
-        return value
-
-
 class JobCreateSerializer(serializers.ModelSerializer):
     """Создание задания."""
     client_id = serializers.IntegerField(
         source='user.id',
         read_only=True
     )
-    category = serializers.PrimaryKeyRelatedField(
+    category = serializers.SlugRelatedField(
         queryset=JobCategory.objects.all(),
-        many=True
+        many=True,
+        slug_field='slug'
     )
     stack = JobStackSerializer(many=True,)
-    job_files = JobFileSerializer(many=True,)
+    job_files = JobFileSerializer(many=True, required=False)
 
     class Meta:
         model = Job
@@ -148,16 +175,27 @@ class JobCreateSerializer(serializers.ModelSerializer):
                   'description', 'job_files',)
 
     def validate_stack(self, data):
-        stack = self.initial_data.get('stack')
-        if stack == []:
+        if data == []:
             raise serializers.ValidationError(STACK_ERR_MSG)
         return data
 
+    def validate_budget(self, value):
+        if value is not None and value != ASK_MSG:
+            try:
+                int(value)
+            except (ValueError, TypeError):
+                raise serializers.ValidationError(BUDGET_DATA_ERR)
+        return value
+
     def validate_deadline(self, value):
-        if value < timezone.now().date():
-            raise serializers.ValidationError(CURRENT_DATE_ERR)
-        if value < self.instance.pub_date.date():
-            raise serializers.ValidationError(PUB_DATE_ERR)
+        if value is not None and value != ASK_MSG:
+            try:
+                deadline = datetime.strptime(
+                    value, DATETIME_FORMAT).replace(tzinfo=tz.utc)
+                if deadline < timezone.now():
+                    raise serializers.ValidationError(CURRENT_DATE_ERR)
+            except ValueError:
+                raise serializers.ValidationError(DATE_FORMAT_ERR)
         return value
 
     def create(self, validated_data):
@@ -167,12 +205,16 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_budget = validated_data.pop('ask_budget', False)
         ask_deadline = validated_data.pop('ask_deadline', False)
         if ask_budget:
-            validated_data['budget'] = 'Жду предложений'
+            validated_data['budget'] = ASK_MSG
+            validated_data['ask_budget'] = True
         if ask_deadline:
-            validated_data['deadline'] = 'Жду предложений'
+            validated_data['deadline'] = ASK_MSG
+            validated_data['ask_deadline'] = True
         job = Job.objects.create(**validated_data)
         for file in job_files_data:
-            JobFile.objects.create(job=job, file=file['file'])
+            JobFile.objects.create(job=job,
+                                   file=file['file'],
+                                   name=file['name'])
         for skill in stack_data:
             name = skill.get('name')
             stack_obj, created = Stack.objects.get_or_create(
@@ -194,7 +236,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_budget = validated_data.get('ask_budget',
                                         instance.ask_budget)
         if ask_budget:
-            instance.budget = 'Жду предложений'
+            instance.budget = ASK_MSG
         else:
             instance.budget = validated_data.get('budget',
                                                  instance.budget)
@@ -202,7 +244,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_deadline = validated_data.get('ask_deadline',
                                           instance.ask_deadline)
         if ask_deadline:
-            instance.deadline = 'Жду предложений'
+            instance.deadline = ASK_MSG
         else:
             instance.deadline = validated_data.get('deadline',
                                                    instance.deadline)
@@ -248,21 +290,34 @@ class ChatReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ('id', 'title', 'customer', 'freelancer', 'messages')
+        fields = ('id', 'title', 'job_id',
+                  'customer', 'freelancer', 'messages')
         read_only_fields = ('customer',)
 
 
 class ChatCreateSerializer(serializers.ModelSerializer):
+    """
+    Создания чата с отправкой сообщения:
+    - для создания чата используется профиль заказчика
+    - для создания сообщения - общий профиль пользователя
+    - поле job_id не обязательное для чатов без привязки к заданию
+    - поле  message_text не обязательное - заменяется на дефолтное
+    """
     job_id = serializers.IntegerField(
         help_text="ID задания, к которому создается чат. "
                   "Необязательное поле. Оставьте его пустым"
                   " для создания чата без привязки к заданию.",
         required=False
     )
+    message_text = serializers.CharField(
+        help_text="Cообщение для начала чата. "
+                  "Заменяется на дефолтное, если отставить пустым.",
+        required=False
+    )
 
     class Meta:
         model = Chat
-        fields = ('id', 'job_id', 'customer', 'freelancer')
+        fields = ('id', 'job_id', 'customer', 'freelancer', 'message_text')
         read_only_fields = ('customer',)
 
     def validate(self, data):
@@ -270,6 +325,16 @@ class ChatCreateSerializer(serializers.ModelSerializer):
         freelancer_id = self.context['request'].data.get('freelancer')
         if Chat.objects.filter(job__id=job_id,
                                freelancer__id=freelancer_id).exists():
-            raise serializers.ValidationError(
-                'Вы уже создали чат с фрилансером по этому заданию.')
+            raise serializers.ValidationError(CHAT_ALREADY_EXISTS_ERR)
         return data
+
+    def create(self, validated_data):
+        message_text = validated_data.pop('message_text', None)
+        chat = super(ChatCreateSerializer, self).create(validated_data)
+
+        if message_text:
+            customer = chat.customer.user
+            Message.objects.create(chat=chat,
+                                   content=message_text,
+                                   sender=customer)
+        return chat
