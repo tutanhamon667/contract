@@ -7,11 +7,12 @@ from rest_framework import serializers
 from api.utils import CustomBase64ImageField
 from chat.models import Chat, Message
 from orders.models import Job, JobCategory, JobFile, JobResponse, StackJob
-from taski.settings import (ASK_MSG, BUDGET_DATA_ERR, CATEGORY_CHOICES,
-                            CHAT_ALREADY_EXISTS_ERR, CURRENT_DATE_ERR,
-                            DATE_FORMAT_ERR, DATETIME_FORMAT,
-                            FILE_OVERSIZE_ERR, JOB_ALREADY_APPLIED_ERR,
-                            MAX_FILE_SIZE, STACK_ERR_MSG)
+from taski.settings import (ASK_MSG, BUDGET_DATA_ERR, BUDGET_ERR,
+                            CATEGORY_CHOICES, CHAT_ALREADY_EXISTS_ERR,
+                            CURRENT_DATE_ERR, DATE_FORMAT_ERR, DATETIME_FORMAT,
+                            DEADLINE_ERR, FILE_OVERSIZE_ERR,
+                            JOB_ALREADY_APPLIED_ERR, MAX_FILE_SIZE,
+                            STACK_ERR_MSG)
 from users.clients import GetCustomerProfileSerializer, IndustrySerializer
 from users.freelancers import GetWorkerProfileSerializer
 from users.models import CustomerProfile as Client
@@ -130,7 +131,7 @@ class JobListSerializer(serializers.ModelSerializer):
                   'description', 'job_files', 'is_responded', 'pub_date')
 
     def get_budget(self, obj):
-        if obj.budget.isdigit():
+        if obj.budget is not None and obj.budget.isdigit():
             return int(obj.budget)
         return obj.budget
 
@@ -173,6 +174,26 @@ class JobCreateSerializer(serializers.ModelSerializer):
         fields = ('client_id', 'title', 'category', 'stack',
                   'budget', 'ask_budget', 'deadline', 'ask_deadline',
                   'description', 'job_files',)
+
+    def validate(self, data):
+        """
+        Проверка, чтобы в полях
+        "budget" и "ask_budget", и соответственно "deadline" и "ask_deadline"
+        не было одновременно null и false.
+        """
+        budget = data.get('budget')
+        ask_budget = data.get('ask_budget')
+        if budget is None and ask_budget is False:
+            raise serializers.ValidationError(BUDGET_ERR)
+        data['budget'] = self.validate_budget(budget)
+
+        deadline = data.get('deadline')
+        ask_deadline = data.get('ask_deadline')
+        if deadline is None and ask_deadline is False:
+            raise serializers.ValidationError(DEADLINE_ERR)
+        data['deadline'] = self.validate_budget(deadline)
+
+        return data
 
     def validate_stack(self, data):
         if data == []:
