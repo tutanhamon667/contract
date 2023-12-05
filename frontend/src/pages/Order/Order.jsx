@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Context } from '../../context/context';
 import * as Api from '../../utils/Api';
@@ -25,6 +25,8 @@ function Order() {
   let { id } = useParams();
   const [order, setOrder] = useState({});
   const [document, setDocument] = useState(null);
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   useEffect(() => {
     Api.getTaskById(id)
@@ -32,15 +34,23 @@ function Order() {
         setOrder(result);
       })
       .catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Стили
-  const freelancerButtonStyle = `form-profile__bottom-buttons form-profile__bottom-buttons_type_submit${
-    responded ? ' form-profile__bottom-buttons-hide' : ''
-  }`;
-  const customerButtonStyle = `form-profile__bottom-buttons${
-    isEditable ? ' form-profile__bottom-buttons-hide' : ''
-  }`;
+  function handleDeleteTask() {
+    setError('');
+
+    Api.deleteTaskById(order?.id)
+      .then(() => {
+        setIsPopupOpen(false);
+        navigate('/', { replace: true });
+      })
+      .catch((error) => {
+        console.error(error);
+        setError(error?.detail);
+      });
+  }
+
   // Получаю данные заказа
   // const tasks = JSON.parse(localStorage.getItem('taskValues'));
   // const task = tasks?.find((item) => String(item?.id) === id);
@@ -261,7 +271,9 @@ function Order() {
                   type="button"
                   text={!order.is_responded ? 'Откликнуться' : 'Просмотреть отклик'}
                   width={289}
-                  className={freelancerButtonStyle}
+                  className={`form-profile__bottom-buttons form-profile__bottom-buttons_type_submit${
+                    responded ? ' form-profile__bottom-buttons-hide' : ''
+                  }`}
                   onClick={() => setResponded(true)}
                 />
               ) : (
@@ -277,7 +289,9 @@ function Order() {
                     text="Редактировать заказ"
                     width={289}
                     buttonSecondary={true}
-                    className={customerButtonStyle}
+                    className={`form-profile__bottom-buttons${
+                      isEditable ? ' form-profile__bottom-buttons-hide' : ''
+                    }`}
                     // onClick={() => setIsEditable(true)}
                   />
                   <Button
@@ -337,27 +351,31 @@ function Order() {
         </section>
 
         {isPopupOpen && (
-          <div className="popup-overlay">
+          <dialog className="popup-overlay">
             <div className="popup">
               <h2 className="popup-title">Вы действительно хотите удалить заказ?</h2>
               <p className="popup-description">Отменить это действие будет невозможно</p>
-              <button
+              <Button
+                type="sumbit"
+                text="Удалить"
+                width={289}
+                marginBottom={12}
+                onClick={handleDeleteTask}
+              />
+              <Button
                 type="button"
-                style={{ marginBottom: 12 }}
-                onClick={() => setIsPopupOpen(false)}
-                className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
-              >
-                Удалить
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsPopupOpen(false)}
-                className="form-profile__bottom-buttons"
-              >
-                Отменить
-              </button>
+                text="Отменить"
+                buttonSecondary={true}
+                width={289}
+                // marginBottom={12}
+                onClick={() => {
+                  setError('');
+                  setIsPopupOpen(false);
+                }}
+              />
+              <span className="popup__error">{error}</span>
             </div>
-          </div>
+          </dialog>
         )}
       </>
     )

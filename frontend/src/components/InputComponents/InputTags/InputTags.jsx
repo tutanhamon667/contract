@@ -2,16 +2,22 @@ import React, { useEffect } from 'react';
 import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
+
 function InputTags({ name, isDisabled, tags, setTags, handleChange, error, errorMessage }) {
   function handleKeyDown(event) {
-    if (event.key !== 'Enter') return;
     const { value } = event.target;
+
+    if (event.key !== 'Enter') return;
+
     if (!value.trim()) return;
 
+
     setTags([...tags, value]);
+
     event.target.value = '';
     event.preventDefault();
   }
+
 
   function removeTag(searchIndex) {
     if (isDisabled) return;
@@ -46,11 +52,9 @@ function InputTags({ name, isDisabled, tags, setTags, handleChange, error, error
           </div>
         ))}
 
-
       </div>
       {error ? <span>{errorMessage}</span> : ''}
     </>
-
   );
 }
 

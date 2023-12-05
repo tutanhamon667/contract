@@ -50,6 +50,7 @@ export default [
       'react/jsx-no-bind': 'off', // TODO [2023-12-01]: изучить useCallback и memo, и включить
       'spaced-comment': 'off', // TODO [2023-12-01]: изучить форматирование комментариев JSX в WebStorm и включить
       'unicorn/filename-case': 'off',
+      'react/jsx-boolean-value': 'off',
     },
   },
   {

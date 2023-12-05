@@ -36,7 +36,7 @@
   row-gap: 8px;
 }
 
-.profile__user-info>label:first-child {
+.profile__user-info > label:first-child {
   margin-bottom: 4px;
 }
 

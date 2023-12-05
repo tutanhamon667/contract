@@ -12,6 +12,7 @@
   color: #3f3f3f;
   font-size: 16px;
   line-height: 1.25;
+  margin-bottom: 10px;
   transition:
     box-shadow 0.3s ease-in-out,
     border 0.3s ease-in-out;

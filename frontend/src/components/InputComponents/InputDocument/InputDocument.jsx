@@ -6,13 +6,12 @@ function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, e
   const [files, setFiles] = useState([]);
   // const [error, setError] = useState('');
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
-
   React.useEffect(() => {
     if (value) {
       setFiles(value);
     }
   }, [value]);
-
+*/
   function handleChange(event) {
     const selectedFile = event.currentTarget.files[0];
 
@@ -26,11 +25,10 @@ function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, e
         !files.find((file) => file.file === reader.result)
       ) {
         setFiles([...files, { file: reader.result, name: selectedFile.name }]);
-        // setCurrentFile({ file: reader.result, name: selectedFile.name });
+
         onChange([...files, { file: reader.result, name: selectedFile.name }]);
         // setError('');
         setErrors({ ...errors, 'portfolio': '' })
-
       } else if (!allowedFileTypes.includes(selectedFile.type) || selectedFile.size > 52428800) {
         // setFiles(null);
         // setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
@@ -41,7 +39,7 @@ function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, e
         setErrors({ ...errors, 'portfolio': 'Такой файл уже загружен.' })
       }
     };
-
+    console.log(files);
     reader.onerror = () => {
       console.error(reader.currentTarget);
     };
