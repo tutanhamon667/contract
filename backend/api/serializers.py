@@ -191,7 +191,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
         ask_deadline = data.get('ask_deadline')
         if deadline is None and ask_deadline is False:
             raise serializers.ValidationError(DEADLINE_ERR)
-        data['deadline'] = self.validate_budget(deadline)
+        data['deadline'] = self.validate_deadline(deadline)
 
         return data
 
