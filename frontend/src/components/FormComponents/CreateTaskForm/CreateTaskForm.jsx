@@ -34,15 +34,8 @@ function CreateTaskForm({ onSubmit }) {
     !values.about,
     !isValid
   ]
-
   const isDisabled = valuesArray.some(item => item == true)
 
-  // const [allTaskValues, setAllTaskValues] = useState({});
-
-  // const [isChecked, setIsChecked] = useState({
-  //   budgetDiscussion: false,
-  //   deadlineDiscussion: false,
-  // });
   const [document, setDocument] = useState(null);
   const [tags, setTags] = useState([]);
 
@@ -60,25 +53,28 @@ function CreateTaskForm({ onSubmit }) {
 
   useEffect(() => {
     setIsValid(checkErrors(errors))
-    console.log('values', values)
-    console.log('errors', errors)
-    console.log('isDisabled', isDisabled)
+    // console.log('values', values)
+    // console.log('errors', errors)
+    // console.log('isDisabled', isDisabled)
   }, [isValid, errors])
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const discussionText = 'Жду предложений от фрилансеров'
+    const discussionText = 'Ожидает предложений'
 
     let allValues = {
       ...values,
       stacks: tags,
-      file: document,
-      deadline: values.deadlineDiscussion ? discussionText : values.deadline,
-      budget: values.budgetDiscussion ? discussionText : values.budget,
+      job_files: document || [],
+      deadline: values?.deadlineDiscussion ? discussionText : values.deadline,
+      budget: values?.budgetDiscussion ? discussionText : parseInt(values.budget),
+      // deadlineDiscussion: values?.deadlineDiscussion || false,
+      // budgetDiscussion: values?.budgetDiscussion || false
     };
 
-    console.log(allValues)
+    // console.log(parseInt(values.budget))
+    // console.log(allValues)
 
     // if (!isChecked.budgetDiscussion) {
     //   allValues.budget = { budget };
