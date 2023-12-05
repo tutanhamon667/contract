@@ -43,19 +43,9 @@ function CreateTaskForm({ onSubmit }) {
     setDocument(items);
   }
 
-  // временное решение: сохранение значений формы в локальное хранилище
-  // для сохранения нескольких заказов в одном файле
-  // необходимо не выходя из страницы создания заказа, сделать два заказа
-  // useEffect(() => {
-  //   const taskValues = JSON.stringify(allTaskValues);
-  //   localStorage.setItem('taskValues', taskValues);
-  // }, [allTaskValues]);
 
   useEffect(() => {
     setIsValid(checkErrors(errors))
-    // console.log('values', values)
-    // console.log('errors', errors)
-    // console.log('isDisabled', isDisabled)
   }, [isValid, errors])
 
   const handleSubmit = (event) => {
@@ -66,28 +56,17 @@ function CreateTaskForm({ onSubmit }) {
     let allValues = {
       ...values,
       stacks: tags,
-      job_files: document || [],
+      file: document || [],
       deadline: values?.deadlineDiscussion ? discussionText : values.deadline,
       budget: values?.budgetDiscussion ? discussionText : parseInt(values.budget),
-      // deadlineDiscussion: values?.deadlineDiscussion || false,
-      // budgetDiscussion: values?.budgetDiscussion || false
+      deadlineDiscussion: values?.deadlineDiscussion || false,
+      budgetDiscussion: values?.budgetDiscussion || false
     };
 
-    // console.log(parseInt(values.budget))
-    // console.log(allValues)
 
-    // if (!isChecked.budgetDiscussion) {
-    //   allValues.budget = { budget };
-    // } else if (!isChecked.deadlineDiscussion) {
-    //   allValues.deadline = { deadline };
-    // }
+    console.log(allValues)
 
-    // if (!isChecked.budgetDiscussion && !isChecked.deadlineDiscussion) {
-    //   allValues.budget = { budget };
-    //   allValues.deadline = { deadline };
-    // }
 
-    // setAllTaskValues([allValues, ]);
     onSubmit(allValues);
   };
 

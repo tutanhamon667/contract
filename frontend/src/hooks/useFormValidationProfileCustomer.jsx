@@ -58,6 +58,14 @@ function useFormAndValidation() {
             errorMessage = 'Введите ваш бюджет'
         }
 
+        if (name == 'deadline' && value && value.length) {
+            const currentDate = new Date()
+            const inputDate = new Date(value)
+            if (inputDate <= currentDate) {
+                errorMessage = 'Введите более позднюю дату дедлайна'
+            }
+        }
+
         if (name == 'deadline' && !value) {
             errorMessage = 'Введите дату дедлайна'
         }
