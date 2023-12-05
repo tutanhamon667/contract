@@ -11,7 +11,7 @@ function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, e
       setFiles(value);
     }
   }, [value]);
-*/
+
   function handleChange(event) {
     const selectedFile = event.currentTarget.files[0];
 
