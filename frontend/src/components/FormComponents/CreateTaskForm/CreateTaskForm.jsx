@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
+import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { industryAndCategoryOptions } from '../../../utils/constants';
 import { InputText } from '../../InputComponents/InputText/InputText';
 import { InputSelect } from '../../InputComponents/InputSelect/InputSelect';
@@ -12,62 +12,61 @@ import './CreateTaskForm.css';
 // const MAX_ATTACHED_DOCS = 8;
 
 function CreateTaskForm({ onSubmit }) {
-  const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
-  const [isChecked, setIsChecked] = useState({
-    budgetDiscussion: false,
-    deadlineDiscussion: false,
-  });
+  const {
+    values,
+    errors,
+    isValid,
+    handleChange,
+    checkErrors,
+    setIsValid,
+    setErrors,
+    handleBlur,
+    handleChangeCheckbox,
+    handleChangeCustom
+  } = useFormAndValidation();
+
+  const valuesArray = [
+    !values.task_name,
+    !values.activity,
+    !values.tags,
+    values.deadlineDiscussion ? !values.deadlineDiscussion : !values.deadline,
+    values.budgetDiscussion ? !values.budgetDiscussion : !values.budget,
+    !values.about,
+    !isValid
+  ]
+  const isDisabled = valuesArray.some(item => item == true)
+
   const [document, setDocument] = useState(null);
   const [tags, setTags] = useState([]);
-  const [budget, setBudget] = useState('');
-  const [deadline, setDeadline] = useState('');
-  const [allTaskValues, setAllTaskValues] = useState([]);
 
   function addDocument(items) {
     setDocument(items);
   }
 
-  // временное решение: сохранение значений формы в локальное хранилище
-  // для сохранения нескольких заказов в одном файле
-  // необходимо не выходя из страницы создания заказа, сделать два заказа
+
   useEffect(() => {
-    const taskValues = JSON.stringify(allTaskValues);
-    localStorage.setItem('taskValues', taskValues);
-  }, [allTaskValues]);
-
-  function handleBudget(event) {
-    setBudget(event.target.value);
-  }
-
-  function handleDeadline(event) {
-    setDeadline(event.target.value);
-  }
+    setIsValid(checkErrors(errors))
+  }, [isValid, errors])
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    const discussionText = 'Ожидает предложений'
+
     let allValues = {
       ...values,
       stacks: tags,
-      budgetDiscussion: isChecked.budgetDiscussion,
-      deadlineDiscussion: isChecked.deadlineDiscussion,
-      // orderId: Math.floor(Math.random() * 100) + 1,
-      // orderCreationDate: new Date().toString().split(':').slice(0, 2).join(':'),
-      file: document,
+      file: document || [],
+      deadline: values?.deadlineDiscussion ? discussionText : values.deadline,
+      budget: values?.budgetDiscussion ? discussionText : parseInt(values.budget),
+      deadlineDiscussion: values?.deadlineDiscussion || false,
+      budgetDiscussion: values?.budgetDiscussion || false
     };
 
-    if (!isChecked.budgetDiscussion) {
-      allValues.budget = { budget };
-    } else if (!isChecked.deadlineDiscussion) {
-      allValues.deadline = { deadline };
-    }
 
-    if (!isChecked.budgetDiscussion && !isChecked.deadlineDiscussion) {
-      allValues.budget = { budget };
-      allValues.deadline = { deadline };
-    }
+    console.log(allValues)
 
-    // setAllTaskValues([allValues, ]);
+
     onSubmit(allValues);
   };
 
@@ -82,6 +81,8 @@ function CreateTaskForm({ onSubmit }) {
           width={610}
           onChange={handleChange}
           value={values.task_name || ''}
+          error={errors.task_name}
+          errorMessage={errors.task_name}
         />
       </div>
       <div>
@@ -98,18 +99,27 @@ function CreateTaskForm({ onSubmit }) {
       </div>
       <div>
         <p className="create-task-form__input-text">Навыки</p>
-        <InputTags name="stacks" tags={tags} setTags={setTags} />
+        <InputTags
+          name="stacks"
+          tags={tags}
+          setTags={setTags}
+          handleChange={handleChangeCustom}
+          error={errors.tags}
+          errorMessage={errors.tags}
+        />
       </div>
       <div>
         <p className="create-task-form__input-text">Бюджет</p>
         <InputText
-          isDisabled={isChecked.budgetDiscussion}
+          isDisabled={values.budgetDiscussion || false}
           type="number"
           placeholder="Бюджет"
           name="budget"
           width={295}
-          onChange={handleBudget}
-          value={budget || ''}
+          onChange={handleChange}
+          value={values.budget || ''}
+          error={errors.budget}
+          errorMessage={errors.budget}
         />
       </div>
       <InputSwitch
@@ -117,14 +127,9 @@ function CreateTaskForm({ onSubmit }) {
         name="budgetDiscussion"
         label="Жду предложений от фрилансеров"
         marginTop={12}
-        // onChange={handleChange}
-        checked={isChecked.budgetDiscussion}
-        onChange={() => {
-          setIsChecked((previous) => ({
-            ...previous,
-            budgetDiscussion: !previous.budgetDiscussion,
-          }));
-        }}
+        value={values.budgetDiscussion || false}
+        checked={values.budgetDiscussion || false}
+        onChange={handleChangeCheckbox}
       />
       <div>
         <p className="create-task-form__input-text">Сроки</p>
@@ -134,9 +139,12 @@ function CreateTaskForm({ onSubmit }) {
             placeholder="Окончание"
             name="deadline"
             width={295}
-            onChange={handleDeadline}
-            value={deadline || ''}
-            isDisabled={isChecked.deadlineDiscussion}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.deadline || ''}
+            error={errors.deadline}
+            errorMessage={errors.deadline}
+            isDisabled={values.deadlineDiscussion || false}
           />
         </div>
       </div>
@@ -145,14 +153,8 @@ function CreateTaskForm({ onSubmit }) {
         name="deadlineDiscussion"
         label="Жду предложений от фрилансеров"
         marginTop={12}
-        // onChange={handleChange}
-        checked={isChecked.deadlineDiscussion}
-        onChange={() => {
-          setIsChecked((previous) => ({
-            ...previous,
-            deadlineDiscussion: !previous.deadlineDiscussion,
-          }));
-        }}
+        checked={values.budgetDiscussion || false}
+        onChange={handleChangeCheckbox}
       />
       <div>
         <p className="create-task-form__input-text">Описание</p>
@@ -164,16 +166,26 @@ function CreateTaskForm({ onSubmit }) {
           height={150}
           onChange={handleChange}
           value={values.about || ''}
+          error={errors.about}
+          errorMessage={errors.about}
         />
       </div>
       <div>
         <p className="create-task-form__input-text">Загрузить файл</p>
         <div className="create-task-form__input-doc-wrapper">
-          <InputDocument name="portfolio" onChange={addDocument} />
+          <InputDocument
+            name="portfolio"
+            onChange={addDocument}
+            setErrors={setErrors}
+            inputName={"portfolio"}
+            error={errors.portfolio}
+            errorMessage={errors.portfolio}
+            errors={errors}
+          />
         </div>
       </div>
 
-      <Button text="Опубликовать заказ" width={289} marginTop={60} marginBottom={200} />
+      <Button text="Опубликовать заказ" width={289} marginTop={60} marginBottom={200} disabled={isDisabled} />
     </form>
   );
 }

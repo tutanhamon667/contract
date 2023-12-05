@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import './InputDocument.css';
 
-function InputDocument({ name, value, onChange, isDisabled }) {
+function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, error, errorMessage }) {
   // const [currentFile, setCurrentFile] = useState({});
   const [files, setFiles] = useState([]);
-  const [error, setError] = useState('');
-  const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
-  /*
+  // const [error, setError] = useState('');
+  const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
   React.useEffect(() => {
     if (value) {
       setFiles(value);
@@ -28,11 +27,16 @@ function InputDocument({ name, value, onChange, isDisabled }) {
         setFiles([...files, { file: reader.result, name: selectedFile.name }]);
 
         onChange([...files, { file: reader.result, name: selectedFile.name }]);
-        setError('');
+        // setError('');
+        setErrors({ ...errors, 'portfolio': '' })
       } else if (!allowedFileTypes.includes(selectedFile.type) || selectedFile.size > 52428800) {
-        setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
+        // setFiles(null);
+        // setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
+        setErrors({ ...errors, 'portfolio': 'Выберите файл в формате PNG, JPG или JPEG до 50 МБ.' })
       } else if (files.find((file) => file.file === reader.result)) {
-        setError('Такой файл уже загружен.');
+        // setFiles(null);
+        // setError('Такой файл уже загружен.');
+        setErrors({ ...errors, 'portfolio': 'Такой файл уже загружен.' })
       }
     };
     console.log(files);
@@ -93,7 +97,7 @@ function InputDocument({ name, value, onChange, isDisabled }) {
               .jpg .jpeg .png
             </span>
           </label>
-          <span className="input-doc__error">{error}</span>
+          {error ? <span className="input-doc__error">{errorMessage}</span> : ""}
         </div>
       )}
     </>
