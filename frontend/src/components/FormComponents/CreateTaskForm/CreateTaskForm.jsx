@@ -34,9 +34,9 @@ function CreateTaskForm({ onSubmit }) {
     !values.about,
     !isValid
   ]
-  const isDisabled = valuesArray.some(item => item == true)
+  const isDisabled = valuesArray.some(Boolean)
 
-  const [document, setDocument] = useState(null);
+  const [document, setDocument] = useState();
   const [tags, setTags] = useState([]);
 
   function addDocument(items) {
@@ -46,27 +46,22 @@ function CreateTaskForm({ onSubmit }) {
 
   useEffect(() => {
     setIsValid(checkErrors(errors))
-  }, [isValid, errors])
+  }, [isValid, errors, values, setIsValid, checkErrors])
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const discussionText = 'Ожидает предложений'
 
-    let allValues = {
+    const allValues = {
       ...values,
       stacks: tags,
       file: document || [],
       deadline: values?.deadlineDiscussion ? discussionText : values.deadline,
-      budget: values?.budgetDiscussion ? discussionText : parseInt(values.budget),
+      budget: values?.budgetDiscussion ? discussionText : Number.parseInt(values.budget, 10),
       deadlineDiscussion: values?.deadlineDiscussion || false,
       budgetDiscussion: values?.budgetDiscussion || false
     };
-
-
-    console.log(allValues)
-
-
     onSubmit(allValues);
   };
 
@@ -177,7 +172,6 @@ function CreateTaskForm({ onSubmit }) {
             name="portfolio"
             onChange={addDocument}
             setErrors={setErrors}
-            inputName={"portfolio"}
             error={errors.portfolio}
             errorMessage={errors.portfolio}
             errors={errors}
