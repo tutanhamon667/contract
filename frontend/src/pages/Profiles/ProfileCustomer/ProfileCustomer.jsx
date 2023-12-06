@@ -17,28 +17,20 @@ import './ProfileCustomer.css';
 function ProfileCustomer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
 
-  const {
-    values,
-    errors,
-    isValid,
-    handleChange,
-    setValues,
-    setErrors,
-    setIsValid,
-    checkErrors,
-  } = useFormAndValidation();
+  const { values, errors, isValid, handleChange, setValues, setErrors, setIsValid, checkErrors } =
+    useFormAndValidation();
 
   const [isEditable, setIsEditable] = useState(false);
   const [photo, setPhoto] = useState(null);
-  const formRef = useRef(null);
+  const formReference = useRef(null);
   const initialData = {
     name: currentUser?.name || '',
     industry: currentUser?.industry?.name || '',
     about: currentUser?.about || '',
     web: currentUser?.web || '',
-  }
+  };
 
-  const isDisabled = !values.name || !values.industry || !isValid
+  const isDisabled = !values.name || !values.industry || !isValid;
 
   function addPhoto(url) {
     setPhoto({ photo: url });
@@ -49,14 +41,14 @@ function ProfileCustomer({ setCurrentUser }) {
   }, []);
 
   useEffect(() => {
-    const valid = checkErrors(errors)
-    setIsValid(valid)
-  }, [isValid, errors])
+    const valid = checkErrors(errors);
+    setIsValid(valid);
+  }, [isValid, errors]);
 
   function handleCancel() {
     setValues(initialData);
-    setIsEditable(false)
-    setErrors({})
+    setIsEditable(false);
+    setErrors({});
   }
 
   function handleSubmit(event) {
@@ -115,7 +107,7 @@ function ProfileCustomer({ setCurrentUser }) {
       </div>
 
       <div className="profile_block profile__form-container">
-        <form className="form-profile" onSubmit={handleSubmit} ref={formRef}>
+        <form className="form-profile" onSubmit={handleSubmit} ref={formReference}>
           <div className="form-profile__top-container">
             <h2 className="profile__title">Информация об аккаунте</h2>
             {isEditable ? (
@@ -130,9 +122,7 @@ function ProfileCustomer({ setCurrentUser }) {
                 <button
                   type="submit"
                   className={`form-top-buttons form-top-buttons_type_submit 
-                  ${isDisabled ?
-                      'form-top-buttons_type_submit--disabled' :
-                      ''}`}
+                  ${isDisabled ? 'form-top-buttons_type_submit--disabled' : ''}`}
                   disabled={isDisabled}
                 >
                   Сохранить

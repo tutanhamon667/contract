@@ -6,7 +6,7 @@ function useFormAndValidation() {
     const [isValid, setIsValid] = useState(false);
 
     function checkErrors(errors) {
-        return Object.values(errors).every(error => error === "")
+        return Object.values(errors).every((error) => error === '');
     }
 
     function handleChange(event) {

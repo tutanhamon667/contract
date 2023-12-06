@@ -14,16 +14,8 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
     is_customer: true,
     is_worker: false,
   });
-  const {
-    values,
-    errors,
-    isValid,
-    checkErrors,
-    handleChange,
-    setValues,
-    setErrors,
-    setIsValid
-  } = useFormAndValidation();
+  const { values, errors, isValid, checkErrors, handleChange, setValues, setErrors, setIsValid } =
+    useFormAndValidation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -68,13 +60,13 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buttonClicked, isError,]);
+  }, [buttonClicked, isError]);
 
   React.useEffect(() => {
-    const valid = checkErrors(errors)
-    setIsValid(valid)
-    console.log('UseEff', valid, isValid, errors)
-  }, [isValid, errors])
+    const valid = checkErrors(errors);
+    setIsValid(valid);
+    console.log('UseEff', valid, isValid, errors);
+  }, [isValid, errors]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -170,6 +162,7 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
           value={values.first_name || ''}
           error={errors.first_name}
           errorMessage={errors.first_name}
+          maxLength={80}
         />
         <InputText
           placeholder="Фамилия"
@@ -182,6 +175,7 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
           value={values.last_name || ''}
           error={errors.last_name}
           errorMessage={errors.last_name}
+          maxLength={80}
         />
         <InputText
           placeholder="Эл. почта"

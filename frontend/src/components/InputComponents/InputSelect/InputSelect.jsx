@@ -12,6 +12,7 @@ function InputSelect({
   onBlur,
   error,
   errorMessage,
+  required,
 }) {
   return (
     <div className="select-container">
@@ -25,6 +26,7 @@ function InputSelect({
         style={{ width }}
         disabled={isDisabled}
         onBlur={onBlur}
+        required={required}
       >
         <option value="">{placeholder}</option>
         {options.map((option, index) => (

@@ -99,6 +99,15 @@ function getTaskById(id) {
   }).then((response) => checkResponse(response));
 }
 
+function deleteTaskById(id) {
+  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+  }).then((response) => checkResponse(response));
+}
+
 function getFreelancers() {
   return fetch(`${BACKEND_BASE_URL}/main`).then((response) => checkResponse(response));
 }
@@ -118,6 +127,7 @@ export {
   getTasks,
   getTasksWithAuthorization,
   getTaskById,
+  deleteTaskById,
   getFreelancers,
   getFreelancerById,
 };
