@@ -94,7 +94,7 @@ function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, e
               </span>
             </div>
             <span className="input-doc__input-text input-doc__input-text_type_tooltip">
-              .jpg .jpeg .png
+              .jpg .jpeg .png .pdf
             </span>
           </label>
           {error ? <span className="input-doc__error">{errorMessage}</span> : ""}

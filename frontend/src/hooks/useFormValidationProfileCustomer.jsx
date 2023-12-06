@@ -80,7 +80,7 @@ function useFormAndValidation() {
 
         if (name === 'task_name') {
             if (value.length === 0) {
-                errorMessage = 'Введите название компании или ваше имя'
+                errorMessage = 'Введите название задачи'
             } else if (value.length > 200) {
                 errorMessage = 'Название не может быть длиннее 200 знаков'
             } else if (!taskNameRegex.test(value)) {
