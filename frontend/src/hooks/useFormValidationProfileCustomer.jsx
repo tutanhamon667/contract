@@ -118,6 +118,8 @@ function useFormAndValidation() {
       }
     }
 
+
+    // работает не совсем корректно!!
     if (name === 're_password') {
       if (value.length === 0) {
         errorMessage = 'Введите пароль повторно'
@@ -170,34 +172,23 @@ function useFormAndValidation() {
     }
 
     if (name === 'phone' && !aboutRegex.test(value) && value.length) {
-      errors = {
-        ...errors,
-        [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
-                  и строчные символы "-", "_", "@", "."`,
-      };
+      errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+                  и строчные символы "-", "_", "@", "."`
     }
 
     if (name === 'telegram' && !aboutRegex.test(value) && value.length) {
-      errors = {
-        ...errors,
-        [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
-                    и строчные символы "-", "_", "@", "."`,
-      };
+      errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+                  и строчные символы "-", "_", "@", ".", "'"`
     }
 
     if (name === 'preferred' && !value.length) {
-      errors = {
-        ...errors,
-        [name]: `Выберите один из вариантов`,
-      };
+      errorMessage = 'Выберите один из вариантов'
+
     }
 
     if (name === 'education' && !educationRegex.test(value) && value.length) {
-      errors = {
-        ...errors,
-        [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
-                  и строчные символы "-", "_", "@", ".", "'"`,
-      };
+      errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+                  и строчные символы "-", "_", "@", ".", "'"`
     }
 
     if (name === 'degree' && value === 'student') {
@@ -205,11 +196,8 @@ function useFormAndValidation() {
     }
 
     if (name === 'faculty' && !educationRegex.test(value) && value.length) {
-      errors = {
-        ...errors,
-        [name]: `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
-                  и строчные символы "-", "_", "@", ".", "'"`,
-      };
+      errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
+                  и строчные символы "-", "_", "@", ".", "'"`
     }
 
     return { [name]: errorMessage }
