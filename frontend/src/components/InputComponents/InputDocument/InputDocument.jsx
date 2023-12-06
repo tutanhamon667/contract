@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './InputDocument.css';
 
-function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, error, errorMessage }) {
+function InputDocument({ name, value, onChange, isDisabled }) {
   // const [currentFile, setCurrentFile] = useState({});
   const [files, setFiles] = useState([]);
-  // const [error, setError] = useState('');
-  const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
+  const [error, setError] = useState('');
+  const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+  /*
   React.useEffect(() => {
     if (value) {
       setFiles(value);
@@ -27,16 +28,11 @@ function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, e
         setFiles([...files, { file: reader.result, name: selectedFile.name }]);
 
         onChange([...files, { file: reader.result, name: selectedFile.name }]);
-        // setError('');
-        setErrors({ ...errors, 'portfolio': '' })
+        setError('');
       } else if (!allowedFileTypes.includes(selectedFile.type) || selectedFile.size > 52428800) {
-        // setFiles(null);
-        // setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
-        setErrors({ ...errors, 'portfolio': 'Выберите файл в формате PNG, JPG или JPEG до 50 МБ.' })
+        setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
       } else if (files.find((file) => file.file === reader.result)) {
-        // setFiles(null);
-        // setError('Такой файл уже загружен.');
-        setErrors({ ...errors, 'portfolio': 'Такой файл уже загружен.' })
+        setError('Такой файл уже загружен.');
       }
     };
     console.log(files);
@@ -97,7 +93,7 @@ function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, e
               .jpg .jpeg .png
             </span>
           </label>
-          {error ? <span className="input-doc__error">{errorMessage}</span> : ""}
+          <span className="input-doc__error">{error}</span>
         </div>
       )}
     </>
