@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Marquee from 'react-fast-marquee';
 import { Context } from '../../context/context';
 import * as Api from '../../utils/Api';
@@ -15,13 +16,21 @@ function Main() {
   const { currentUser, isAuthenticated } = useContext(Context);
   const [tasks, setTasks] = useState([]);
   const [freelancers, setFreelancers] = useState([]);
-  const contentBorderAuthorized = `content__border${
-    isAuthenticated ? ' content__border-authorized' : ''
-  }`;
+  const contentBorderAuthorized = `content__border${isAuthenticated ? ' content__border-authorized' : ''
+    }`;
+
+
+  const [searchQuery, setSearchQuery] = useState(useLocation().search)
+
+
+  // const searchQuery = useLocation().search;
+
 
   useEffect(() => {
+
     if (currentUser?.is_customer || !isAuthenticated) {
-      Api.getFreelancers()
+      const freelancerSearchQuery = searchQuery.replaceAll('category', 'categories')
+      Api.getFreelancers(freelancerSearchQuery)
         .then((response) => {
           setFreelancers(response.results);
         })
@@ -31,7 +40,7 @@ function Main() {
     }
 
     if (currentUser?.is_worker) {
-      Api.getTasksWithAuthorization()
+      Api.getTasksWithAuthorization(searchQuery)
         .then((response) => {
           setTasks(response.results);
         })
@@ -39,7 +48,7 @@ function Main() {
           console.error(error);
         });
     } else {
-      Api.getTasks()
+      Api.getTasks(searchQuery)
         .then((response) => {
           setTasks(response.results);
         })
@@ -48,7 +57,7 @@ function Main() {
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location, searchQuery]);
 
   // function handleFreelanceFilter(filter) {
   //   setFreelanceFilter(filter);
@@ -89,6 +98,8 @@ function Main() {
           </div>
           <div className="freelance-order__column-filter">
             <Filters
+
+              setSearchQuery={setSearchQuery}
             // handleFreelanceFilter={handleFreelanceFilter}
             />
           </div>
