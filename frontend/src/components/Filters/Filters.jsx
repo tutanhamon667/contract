@@ -1,19 +1,30 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { Button } from '../Button/Button';
+import * as Api from '../../utils/Api';
 import './Filters.css';
 
-function Filters() {
-  const [budgetStart, setBudgetStart] = useState(null);
-  const [budgetEnd, setBudgetEnd] = useState(null);
-  const { currentUser, orderFilter, isAuthenticated, freelanceFilter } = useContext(Context);
+function Filters({ setSearchQuery }) {
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const [selectedCategories, setSelectedCategories] = useState(queryParams.getAll('category') || null);
+  const [categories, setCategories] = useState([]);
+  const [budgetStart, setBudgetStart] = useState(queryParams.get('min_budget') || null);
+  const [budgetEnd, setBudgetEnd] = useState(queryParams.get('max_budget') || null);
+  const { currentUser, orderFilter, isAuthenticated } = useContext(Context);
   const navigate = useNavigate();
-  let localFreelanceFilter = {};
+
 
   useEffect(() => {
-    load(7);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    Api.getAllCategories()
+      .then((response) => {
+        setCategories(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   const handleBudgetClean = () => {
@@ -21,32 +32,55 @@ function Filters() {
     setBudgetEnd('');
   };
 
-  function load(n) {
-    while (n) {
-      let checked = JSON.parse(localStorage.getItem(`freelance-item${n}`));
-      let profession = document.querySelector(`#freelance-item${n}`).value;
-      localFreelanceFilter[`${profession}`] = checked;
-      document.querySelector(`#freelance-item${n}`).checked = checked;
-      n--;
-    }
-    // handleFreelanceFilter(localFreelanceFilter);
+
+  const filtersContainerStyle = `filters-container${orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
+    }`;
+
+  function handleFilter() {
+    const searchCategory = selectedCategories.map(category => `category=${category}`)
+    if (budgetStart) searchCategory.push(`min_budget=${budgetStart}`)
+    if (budgetEnd) searchCategory.push(`max_budget=${budgetEnd}`)
+    const searchQuery = `?${[...searchCategory].join('&')}`
+    setSearchQuery(searchQuery)
+    navigate(searchQuery)
   }
 
-  const saveFilters = (n) => {
-    let checkbox = document.querySelector(`#freelance-item${n}`);
-    localFreelanceFilter = freelanceFilter;
-    localFreelanceFilter[`${checkbox.value}`] = checkbox.checked;
-    localStorage.setItem(`freelance-item${n}`, checkbox.checked);
-    // handleFreelanceFilter(localFreelanceFilter);
-    // setRerender(!rerender);
-  };
 
-  const filtersContainerStyle = `filters-container${
-    orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
-  }`;
+  function FilterInput({ id, name, slug }) {
+    const iSchecked = selectedCategories.includes(slug)
+
+    const handleChange = (e) => {
+      const value = e.target.value;
+      const checked = e.target.checked;
+
+      if (checked) {
+        setSelectedCategories([...selectedCategories, value])
+      } else {
+        setSelectedCategories(selectedCategories.filter((category) => category !== value))
+      }
+    };
+
+    return (
+      <div>
+        <input
+          type="checkbox"
+          id={`freelance-item${id}`}
+          name="freelance-item"
+          className="filters-checkbox"
+          value={slug}
+          checked={iSchecked}
+          onChange={handleChange}
+        />
+        <label htmlFor={`freelance-item${id}`} className="filters-checkbox__item">
+          {name}
+        </label>
+      </div>
+    )
+  }
 
   return (
     <section className="filters">
+
       {currentUser?.is_customer && (
         <Button
           text="Создать заказ"
@@ -57,97 +91,11 @@ function Filters() {
       )}
       <div className={filtersContainerStyle}>
         <h2 className="filters-container__title">Специализация</h2>
-        <div>
-          <input
-            type="checkbox"
-            id="freelance-item1"
-            name="freelance-item1"
-            className="filters-checkbox"
-            value="дизайн"
-            onClick={() => saveFilters(1)}
-          />
-          <label htmlFor="freelance-item1" className="filters-checkbox__item">
-            дизайн
-          </label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="freelance-item2"
-            name="freelance-item2"
-            className="filters-checkbox"
-            value="разработка"
-            onClick={() => saveFilters(2)}
-          />
-          <label htmlFor="freelance-item2" className="filters-checkbox__item">
-            разработка
-          </label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="freelance-item3"
-            name="freelance-item3"
-            className="filters-checkbox"
-            value="тестирование"
-            onClick={() => saveFilters(3)}
-          />
-          <label htmlFor="freelance-item3" className="filters-checkbox__item">
-            тестирование
-          </label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="freelance-item4"
-            name="freelance-item4"
-            className="filters-checkbox"
-            value="администрирование"
-            onClick={() => saveFilters(4)}
-          />
-          <label htmlFor="freelance-item4" className="filters-checkbox__item">
-            администрирование
-          </label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="freelance-item5"
-            name="freelance-item5"
-            className="filters-checkbox"
-            value="маркетинг"
-            onClick={() => saveFilters(5)}
-          />
-          <label htmlFor="freelance-item5" className="filters-checkbox__item">
-            маркетинг
-          </label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="freelance-item6"
-            name="freelance-item6"
-            className="filters-checkbox"
-            value="контент"
-            onClick={() => saveFilters(6)}
-          />
-          <label htmlFor="freelance-item6" className="filters-checkbox__item">
-            контент
-          </label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="freelance-item7"
-            name="freelance-item7"
-            className="filters-checkbox"
-            value="разное"
-            onClick={() => saveFilters(7)}
-          />
-          <label htmlFor="freelance-item7" className="filters-checkbox__item">
-            разное
-          </label>
-        </div>
+
+        {categories.map(category => (
+          <FilterInput key={category.id} slug={category.slug} name={category.name} id={category.id} />
+        ))}
+
       </div>
 
       <div className="filters-container filters-container__budget">
@@ -174,7 +122,7 @@ function Filters() {
         </form>
       </div>
       <div className="filters-buttons">
-        <Button text="Применить фильтры" width={289} />
+        <Button text="Применить фильтры" width={289} onClick={handleFilter} />
         <Button text="Очистить фильтры" width={289} buttonSecondary onClick={handleBudgetClean} />
       </div>
     </section>

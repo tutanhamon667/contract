@@ -79,12 +79,16 @@ function createTask(data) {
   }).then((response) => checkResponse(response));
 }
 
-function getTasks() {
-  return fetch(`${BACKEND_BASE_URL}/jobs/`).then((response) => checkResponse(response));
+function getTasks(searchQuery) {
+  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`).then((response) => checkResponse(response));
 }
 
-function getTasksWithAuthorization() {
-  return fetch(`${BACKEND_BASE_URL}/jobs/`, {
+function getTasksWithSearch(searchQuery) {
+  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`).then((response) => checkResponse(response));
+}
+
+function getTasksWithAuthorization(searchQuery) {
+  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('access')}`,
     },
@@ -108,12 +112,16 @@ function deleteTaskById(id) {
   }).then((response) => checkResponse(response));
 }
 
-function getFreelancers() {
-  return fetch(`${BACKEND_BASE_URL}/main`).then((response) => checkResponse(response));
+function getFreelancers(searchQuery) {
+  return fetch(`${BACKEND_BASE_URL}/main/${searchQuery}`).then((response) => checkResponse(response));
 }
 
 function getFreelancerById(id) {
   return fetch(`${BACKEND_BASE_URL}/users/${id}`).then((response) => checkResponse(response));
+}
+
+function getAllCategories() {
+  return fetch(`${BACKEND_BASE_URL}/category/`).then((response) => checkResponse(response));
 }
 
 export {
@@ -130,4 +138,6 @@ export {
   deleteTaskById,
   getFreelancers,
   getFreelancerById,
+  getTasksWithSearch,
+  getAllCategories
 };

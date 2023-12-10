@@ -19,7 +19,7 @@ function FreelancerCompleteForm({ onSubmit }) {
   const [portfolioFile, setPortfolioFile] = useState(null);
   const [document, setDocument] = useState(null);
   // const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
-  const { values, errors, handleChange, setErrors, setValues, checkErrors, setIsValid, isValid } =
+  const { values, errors, handleChange, handleChangeCustom, setErrors, setValues, checkErrors, setIsValid, isValid } =
     useFormAndValidation();
   const [tags, setTags] = useState([]);
 
@@ -298,9 +298,9 @@ function FreelancerCompleteForm({ onSubmit }) {
           name="stacks"
           tags={tags}
           setTags={setTags}
-          errors={errors}
-          setErrors={setErrors}
-          errorMessage={errors.stacks}
+          handleChange={handleChangeCustom}
+          error={errors.tags}
+          errorMessage={errors.tags}
         />
       </div>
       <div>
@@ -343,9 +343,9 @@ function FreelancerCompleteForm({ onSubmit }) {
             error={errors.portfolio}
             errorMessage={errors.portfolio}
             onChange={addPortfolioFile}
-            // isDisabled={false}
-            // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
-            // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+          // isDisabled={false}
+          // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
+          // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
           />
           {/*))}*/}
         </div>

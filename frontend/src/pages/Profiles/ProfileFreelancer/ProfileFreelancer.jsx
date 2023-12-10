@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
+import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { Context } from '../../../context/context';
 import { industryAndCategoryOptions, degreeOptions } from '../../../utils/constants';
 import * as Api from '../../../utils/Api';
@@ -20,7 +20,7 @@ import '../Profile.css';
 
 function ProfileFreelancer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
-  const { values, setValues, errors, handleChange } = useFormAndValidation();
+  const { values, setValues, errors, handleChange, handleChangeCustom } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [tags, setTags] = useState(currentUser?.stacks?.map((object) => object.name) || []);
   const [photo, setPhoto] = useState(null);
@@ -335,7 +335,16 @@ function ProfileFreelancer({ setCurrentUser }) {
 
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Навыки</h2>
-            <InputTags name="stacks" tags={tags} setTags={setTags} isDisabled={!isEditable} />
+            <InputTags
+              name="stacks"
+              tags={tags}
+              setTags={setTags}
+              handleChange={handleChangeCustom}
+              error={errors.tags}
+              errorMessage={errors.tags}
+              isDisabled={!isEditable}
+            />
+
           </div>
 
           <div className="form-profile__input-container">
