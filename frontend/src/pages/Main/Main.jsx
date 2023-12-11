@@ -23,13 +23,14 @@ function Main() {
   const [searchQuery, setSearchQuery] = useState(useLocation().search)
 
 
-  // const searchQuery = useLocation().search;
-
-
   useEffect(() => {
 
     if (currentUser?.is_customer || !isAuthenticated) {
-      const freelancerSearchQuery = searchQuery.replaceAll('category', 'categories')
+      const freelancerSearchQuery = searchQuery
+        .replaceAll('category', 'categories')
+        .replace('min_budget', 'min_payrate')
+        .replace('max_budget', 'max_payrate')
+
       Api.getFreelancers(freelancerSearchQuery)
         .then((response) => {
           setFreelancers(response.results);
@@ -98,7 +99,6 @@ function Main() {
           </div>
           <div className="freelance-order__column-filter">
             <Filters
-
               setSearchQuery={setSearchQuery}
             // handleFreelanceFilter={handleFreelanceFilter}
             />
