@@ -58,7 +58,7 @@ class JobViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action == 'offers':
             permission_classes = (IsJobAuthor,)
-        elif self.action in ['create', 'update']:
+        elif self.action in ['create', 'update', 'partial_update']:
             permission_classes = (IsCustomerOrReadOnly,)
         elif self.action == 'response':
             permission_classes = (IsFreelancer,)
