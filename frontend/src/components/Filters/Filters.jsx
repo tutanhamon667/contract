@@ -31,7 +31,7 @@ function Filters({ setSearchQuery }) {
   function handleReset() {
     setBudgetStart('');
     setBudgetEnd('');
-    setSelectedCategories({})
+    setSelectedCategories([])
     setSearchQuery('')
     navigate('/')
   }
