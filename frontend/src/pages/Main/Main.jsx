@@ -94,7 +94,7 @@ function Main() {
         <section className="freelance-order">
           <div className="freelance-order__column-order">
             <TabsMain isFirstTab={isFirstTab} setIsFirstTab={setIsFirstTab} />
-            <Search />
+            <Search setSearchQuery={setSearchQuery} />
             <CardList isFirstTab={isFirstTab} tasks={tasks} freelancers={freelancers} />
           </div>
           <div className="freelance-order__column-filter">

@@ -27,10 +27,16 @@ function Filters({ setSearchQuery }) {
       });
   }, []);
 
-  const handleBudgetClean = () => {
+
+  function handleReset() {
     setBudgetStart('');
     setBudgetEnd('');
-  };
+    setSelectedCategories({})
+    setSearchQuery('')
+    navigate('/')
+  }
+
+
 
 
   const filtersContainerStyle = `filters-container${orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
@@ -123,7 +129,7 @@ function Filters({ setSearchQuery }) {
       </div>
       <div className="filters-buttons">
         <Button text="Применить фильтры" width={289} onClick={handleFilter} />
-        <Button text="Очистить фильтры" width={289} buttonSecondary onClick={handleBudgetClean} />
+        <Button text="Очистить фильтры" width={289} buttonSecondary onClick={handleReset} />
       </div>
     </section>
   );
