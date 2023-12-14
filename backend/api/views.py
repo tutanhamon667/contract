@@ -44,7 +44,7 @@ class JobViewSet(ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter, DjangoFilterBackend,)
     filterset_class = JobFilter
-    search_fields = ['title', 'description']
+    search_fields = ['title', 'description', 'stack']
 
     def get_serializer_class(self):
         if self.action == 'response':
