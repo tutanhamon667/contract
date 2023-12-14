@@ -254,21 +254,26 @@ class JobCreateSerializer(serializers.ModelSerializer):
                                             instance.title)
         instance.description = validated_data.get('description',
                                                   instance.description)
-        ask_budget = validated_data.get('ask_budget',
-                                        instance.ask_budget)
-        if ask_budget:
-            instance.budget = ASK_MSG
-        else:
-            instance.budget = validated_data.get('budget',
-                                                 instance.budget)
+        ask_budget_present = 'ask_budget' in validated_data
+        if ask_budget_present:
+            ask_budget = validated_data.pop('ask_budget', instance.ask_budget)
+            if ask_budget:
+                instance.budget = ASK_MSG
+                instance.ask_budget = True
+            else:
+                instance.budget = validated_data.get('budget',
+                                                     instance.budget)
+                instance.ask_budget = False
 
-        ask_deadline = validated_data.get('ask_deadline',
-                                          instance.ask_deadline)
-        if ask_deadline:
-            instance.deadline = ASK_MSG
-        else:
-            instance.deadline = validated_data.get('deadline',
-                                                   instance.deadline)
+        ask_deadline_present = 'ask_deadline' in validated_data
+        if ask_deadline_present:
+            ask_deadline = validated_data.get('ask_deadline',
+                                              instance.ask_deadline)
+            if ask_deadline:
+                instance.deadline = ASK_MSG
+            else:
+                instance.deadline = validated_data.get('deadline',
+                                                       instance.deadline)
         category_data = validated_data.get('category')
         if category_data:
             instance.category.set(category_data)
