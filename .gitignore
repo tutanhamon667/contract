@@ -23,6 +23,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+cred.json
+token.pickle
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

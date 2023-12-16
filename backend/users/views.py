@@ -36,6 +36,10 @@ class FreelancerFirstPage(OnlyListView):
     permission_classes = (permissions.AllowAny,)
     filter_backends = (SearchFilter, DjangoFilterBackend,)
     filterset_class = FreelancerFilter
+    search_fields = [
+        'user__first_name', 'user__last_name',
+        'stacks__name', 'categories__name'
+    ]
 
 
 class UserViewSet(UserView):
@@ -178,7 +182,7 @@ class UserViewSet(UserView):
             self, request, *args, **kwargs
         )
 
-    @action(url_path='me', methods=['get', 'post', 'patch'], detail=False)
+    @action(url_path='me', methods=['get', 'patch'], detail=False)
     def me(self, request):
         user = request._user
         if user.is_customer == user.is_worker:
@@ -189,6 +193,7 @@ class UserViewSet(UserView):
             obj = get_object_or_404(queryset, user_id=user.id)
             # obj, result = queryset.get_or_create(user=user)
             serializer = self.get_serializer(obj)
+        '''
         if request.method == 'POST':
             if user.is_worker:
                 fields = None
@@ -204,6 +209,7 @@ class UserViewSet(UserView):
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
+        '''
         if request.method == 'PATCH':
             if user.is_worker:
                 fields = None
