@@ -48,7 +48,7 @@ class StackSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     name = serializers.ChoiceField(choices=CATEGORY_CHOICES, required=True)
-    """Стэк технологий."""
+    """Специализация"""
     class Meta:
         model = Category
         fields = '__all__'
