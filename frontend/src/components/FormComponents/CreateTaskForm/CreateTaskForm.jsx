@@ -9,8 +9,6 @@ import { InputSwitch } from '../../InputComponents/InputSwitch/InputSwitch';
 import { Button } from '../../Button/Button';
 import './CreateTaskForm.css';
 
-// const MAX_ATTACHED_DOCS = 8;
-
 function CreateTaskForm({ onSubmit }) {
   const {
     values,
@@ -22,19 +20,19 @@ function CreateTaskForm({ onSubmit }) {
     setErrors,
     handleBlur,
     handleChangeCheckbox,
-    handleChangeCustom
+    handleChangeCustom,
   } = useFormAndValidation();
 
   const valuesArray = [
-    !values.task_name,
+    !values.title,
     !values.activity,
     !values.tags,
     values.deadlineDiscussion ? !values.deadlineDiscussion : !values.deadline,
     values.budgetDiscussion ? !values.budgetDiscussion : !values.budget,
     !values.about,
-    !isValid
-  ]
-  const isDisabled = valuesArray.some(Boolean)
+    !isValid,
+  ];
+  const isDisabled = valuesArray.some(Boolean);
 
   const [document, setDocument] = useState();
   const [tags, setTags] = useState([]);
@@ -43,25 +41,32 @@ function CreateTaskForm({ onSubmit }) {
     setDocument(items);
   }
 
-
   useEffect(() => {
-    setIsValid(checkErrors(errors))
-  }, [isValid, errors, values, setIsValid, checkErrors])
+    setIsValid(checkErrors(errors));
+  }, [isValid, errors, values, setIsValid, checkErrors]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const discussionText = 'Жду предложений'
-
     const allValues = {
       ...values,
       stacks: tags,
-      file: document || [],
-      deadline: values?.deadlineDiscussion ? discussionText : values.deadline,
-      budget: values?.budgetDiscussion ? discussionText : Number.parseInt(values.budget, 10),
       deadlineDiscussion: values?.deadlineDiscussion || false,
-      budgetDiscussion: values?.budgetDiscussion || false
+      budgetDiscussion: values?.budgetDiscussion || false,
     };
+
+    if (!values?.deadlineDiscussion) {
+      allValues.deadline = values.deadline;
+    }
+
+    if (!values?.budgetDiscussion) {
+      allValues.budget = Number.parseInt(values.budget, 10);
+    }
+
+    if (document) {
+      allValues.file = document;
+    }
+
     onSubmit(allValues);
   };
 
@@ -72,12 +77,12 @@ function CreateTaskForm({ onSubmit }) {
         <InputText
           type="text"
           placeholder="Кратко опишите суть задачи"
-          name="task_name"
+          name="title"
           width={610}
           onChange={handleChange}
-          value={values.task_name || ''}
-          error={errors.task_name}
-          errorMessage={errors.task_name}
+          value={values.title || ''}
+          error={errors.title}
+          errorMessage={errors.title}
         />
       </div>
       <div>
@@ -179,7 +184,13 @@ function CreateTaskForm({ onSubmit }) {
         </div>
       </div>
 
-      <Button text="Опубликовать заказ" width={289} marginTop={60} marginBottom={200} disabled={isDisabled} />
+      <Button
+        text="Опубликовать заказ"
+        width={289}
+        marginTop={60}
+        marginBottom={200}
+        disabled={isDisabled}
+      />
     </form>
   );
 }

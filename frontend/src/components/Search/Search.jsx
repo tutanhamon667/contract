@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Context } from '../../context/context';
 import './Search.css';
 
-
 function Search({ setSearchQuery }) {
   const { currentUser } = useContext(Context);
   const [searchPhrase, setSearchPhrase] = useState('');
@@ -11,13 +10,13 @@ function Search({ setSearchQuery }) {
 
   function handleFormSubmit(event) {
     event.preventDefault();
-    const searchQuery = searchPhrase ? `?search=${searchPhrase}` : ''
-    setSearchQuery(searchQuery)
-    navigate(searchQuery)
+    const searchQuery = searchPhrase ? `?search=${searchPhrase}` : '';
+    setSearchQuery(searchQuery);
+    navigate(searchQuery);
   }
 
   function handleChange(e) {
-    setSearchPhrase(e.target.value)
+    setSearchPhrase(e.target.value);
   }
 
   return (

@@ -65,7 +65,7 @@ function RegisterForm({ onSubmitHandler, errorRequest, isError }) {
   React.useEffect(() => {
     const valid = checkErrors(errors);
     setIsValid(valid);
-    console.log('UseEff', valid, isValid, errors);
+    // console.log('UseEff', valid, isValid, errors);
   }, [isValid, errors]);
 
   const handleSubmit = (event) => {

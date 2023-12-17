@@ -46,17 +46,6 @@ function getUserInfo() {
   });
 }
 
-function createUserProfile(data) {
-  return fetch(`${BACKEND_BASE_URL}/users/me/`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-    body: JSON.stringify(data),
-  }).then((response) => checkResponse(response));
-}
-
 function updateUserProfile(data) {
   return fetch(`${BACKEND_BASE_URL}/users/me/`, {
     method: 'PATCH',
@@ -79,12 +68,27 @@ function createTask(data) {
   }).then((response) => checkResponse(response));
 }
 
+function updateTask(data, id) {
+  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+    body: JSON.stringify(data),
+  }).then((response) => checkResponse(response));
+}
+
 function getTasks(searchQuery) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`).then((response) => checkResponse(response));
+  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`).then((response) =>
+    checkResponse(response),
+  );
 }
 
 function getTasksWithSearch(searchQuery) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`).then((response) => checkResponse(response));
+  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`).then((response) =>
+    checkResponse(response),
+  );
 }
 
 function getTasksWithAuthorization(searchQuery) {
@@ -113,7 +117,9 @@ function deleteTaskById(id) {
 }
 
 function getFreelancers(searchQuery) {
-  return fetch(`${BACKEND_BASE_URL}/main/${searchQuery}`).then((response) => checkResponse(response));
+  return fetch(`${BACKEND_BASE_URL}/main/${searchQuery}`).then((response) =>
+    checkResponse(response),
+  );
 }
 
 function getFreelancerById(id) {
@@ -129,9 +135,9 @@ export {
   authenticateUser,
   getNewAccessToken,
   getUserInfo,
-  createUserProfile,
   updateUserProfile,
   createTask,
+  updateTask,
   getTasks,
   getTasksWithAuthorization,
   getTaskById,
@@ -139,5 +145,5 @@ export {
   getFreelancers,
   getFreelancerById,
   getTasksWithSearch,
-  getAllCategories
+  getAllCategories,
 };

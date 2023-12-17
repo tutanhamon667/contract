@@ -27,7 +27,7 @@ function InputImage({
 
   const handleChange = (event) => {
     const selectedFile = event.currentTarget.files[0];
-    console.log(selectedFile);
+    // console.log(selectedFile);
     setFile(URL.createObjectURL(selectedFile));
 
     const reader = new FileReader();

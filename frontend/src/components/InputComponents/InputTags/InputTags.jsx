@@ -19,8 +19,8 @@ function InputTags({ name, isDisabled, tags, setTags, handleChange, error, error
   }
 
   useEffect(() => {
-    handleChange('tags', tags)
-  }, [tags])
+    handleChange('tags', tags);
+  }, [tags]);
 
   return (
     <>
@@ -45,12 +45,9 @@ function InputTags({ name, isDisabled, tags, setTags, handleChange, error, error
             {!isDisabled && <span className="tag__item-close" />}
           </div>
         ))}
-
-
       </div>
       {error ? <span>{errorMessage}</span> : ''}
     </>
-
   );
 }
 

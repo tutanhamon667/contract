@@ -158,7 +158,7 @@ function App() {
       web: data.values?.web,
     };
 
-    Api.createUserProfile(formValues)
+    Api.updateUserProfile(formValues)
       .then((result) => {
         setCurrentUser(result);
         navigate('/', { replace: true });
@@ -169,7 +169,7 @@ function App() {
   }
 
   function handleFreelancerSubmit(data) {
-    console.log(data);
+    // console.log(data);
     /*
     const formValues = {
       contacts: [
@@ -220,16 +220,16 @@ function App() {
       }
     }
     if(data.values.email){
-      formValues.contacts = { 
+      formValues.contacts = {
         type: 'email',
         value: data.values.email,
         preferred: data.values.preferred === 'email',
-      
+
       }
     }
     */
 
-    Api.createUserProfile(data)
+    Api.updateUserProfile(data)
       .then((result) => {
         setCurrentUser(result);
         navigate('/', { replace: true });
@@ -241,7 +241,7 @@ function App() {
 
   function handleTaskSubmit(data) {
     const formValues = {
-      title: data.task_name,
+      title: data.title,
       category: [data.activity],
       stack: data.stacks.map((stack) => ({ name: stack })),
       budget: data?.budget,

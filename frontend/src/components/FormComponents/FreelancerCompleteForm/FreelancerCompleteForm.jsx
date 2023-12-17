@@ -19,8 +19,17 @@ function FreelancerCompleteForm({ onSubmit }) {
   const [portfolioFile, setPortfolioFile] = useState(null);
   const [document, setDocument] = useState(null);
   // const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
-  const { values, errors, handleChange, handleChangeCustom, setErrors, setValues, checkErrors, setIsValid, isValid } =
-    useFormAndValidation();
+  const {
+    values,
+    errors,
+    handleChange,
+    handleChangeCustom,
+    setErrors,
+    setValues,
+    // checkErrors,
+    // setIsValid,
+    isValid,
+  } = useFormAndValidation();
   const [tags, setTags] = useState([]);
 
   React.useEffect(() => {
@@ -174,7 +183,7 @@ function FreelancerCompleteForm({ onSubmit }) {
       allValues.web = values.web;
     }
 
-    console.log(allValues);
+    // console.log(allValues);
     onSubmit(allValues);
   };
 
@@ -343,9 +352,9 @@ function FreelancerCompleteForm({ onSubmit }) {
             error={errors.portfolio}
             errorMessage={errors.portfolio}
             onChange={addPortfolioFile}
-          // isDisabled={false}
-          // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
-          // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+            // isDisabled={false}
+            // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
+            // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
           />
           {/*))}*/}
         </div>

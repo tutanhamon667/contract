@@ -344,7 +344,6 @@ function ProfileFreelancer({ setCurrentUser }) {
               errorMessage={errors.tags}
               isDisabled={!isEditable}
             />
-
           </div>
 
           <div className="form-profile__input-container">

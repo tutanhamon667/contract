@@ -1,13 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { shallowEqualObjects } from 'shallow-equal';
 import { Context } from '../../context/context';
 import * as Api from '../../utils/Api';
 import { industryAndCategoryOptions } from '../../utils/constants';
 import { InputDocument } from '../../components/InputComponents/InputDocument/InputDocument';
 import { Button } from '../../components/Button/Button';
-import { InputMultipleSelect } from '../../components/InputComponents/InputMultipleSelect/InputMultipleSelect';
 import { InputTags } from '../../components/InputComponents/InputTags/InputTags';
+import { InputText } from '../../components/InputComponents/InputText/InputText';
+import { InputSelect } from '../../components/InputComponents/InputSelect/InputSelect';
+import { InputSwitch } from '../../components/InputComponents/InputSwitch/InputSwitch';
+import { useFormAndValidation } from '../../hooks/useFormValidationProfileCustomer';
 import '../../components/FormComponents/CreateTaskForm/CreateTaskForm.css';
 import '../ForgotPass/ForgotPass.css';
 import '../Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly.css';
@@ -16,26 +20,134 @@ import '../Profiles/Profile.css';
 import './Order.css';
 
 function Order() {
+  const { values, errors, isValid, handleChange, handleChangeCustom, setValues, setErrors } =
+    useFormAndValidation();
   const [responded, setResponded] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const { currentUser } = useContext(Context);
-  const [stacksValues, setStacksValues] = useState([]);
-  const [activityValues, setActivityValues] = useState([]);
   let { id } = useParams();
   const [order, setOrder] = useState({});
   const [document, setDocument] = useState(null);
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [tags, setTags] = useState([]);
+  const [isChecked, setIsChecked] = useState({
+    budgetDiscussion: false,
+    deadlineDiscussion: false,
+  });
+  // const [budget, setBudget] = useState('');
+  // const [deadline, setDeadline] = useState('');
+
+  // useEffect(() => {
+  //   console.log(order);
+  // }, [order]);
 
   useEffect(() => {
     Api.getTaskById(id)
       .then((result) => {
         setOrder(result);
+        // setValues({
+        //   title: result?.title,
+        //   activity: result?.category[0],
+        //   stack: result?.stack,
+        //   budget: result?.budget,
+        //   // budgetDiscussion: result?.ask_budget,
+        //   deadline: result?.deadline,
+        //   // deadlineDiscussion: result?.ask_deadline,
+        //   about: result?.description,
+        //   // job_files: result.file,
+        // });
+        setIsChecked({
+          budgetDiscussion: result?.ask_budget,
+          deadlineDiscussion: result?.ask_deadline,
+        });
+        setTags(result?.stack?.map((item) => item?.name));
+        // setDocument(result?.job_files);
       })
       .catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // function handleBudget(event) {
+  //   setBudget(event.target.value);
+  // }
+
+  function handleDeadline(event) {
+    setDeadline(event.target.value);
+  }
+
+  function handleUpdateTask(event) {
+    event.preventDefault();
+
+    // console.log(values.activity);
+
+    let allValues = {
+      // ...values,
+      title: values?.title,
+      about: values?.about,
+      // category: [values?.activity],
+      // stacks: tags,
+      budgetDiscussion: isChecked.budgetDiscussion,
+      deadlineDiscussion: isChecked.deadlineDiscussion,
+      // orderId: Math.floor(Math.random() * 100) + 1,
+      // orderCreationDate: new Date().toString().split(':').slice(0, 2).join(':'),
+      // file: document,
+    };
+
+    if (values?.activity?.length > 0) {
+      allValues.category = [values?.activity];
+    }
+
+    if (values?.stacks?.length > 0) {
+      const newTags = values?.stacks?.map((stack) => ({ name: stack }));
+      if (!shallowEqualObjects(tags, newTags)) {
+        allValues.stacks = tags;
+      }
+    }
+
+    if (!isChecked.budgetDiscussion) {
+      allValues.budget = Number.parseInt(values.budget, 10);
+    }
+
+    if (!isChecked.deadlineDiscussion) {
+      allValues.deadline = values.deadline;
+    }
+
+    if (document) {
+      allValues.file = document;
+    }
+
+    const formValues = {
+      title: allValues.title,
+      category: allValues.category,
+      stack:
+        values?.stacks?.length > 0 ? allValues.stacks.map((stack) => ({ name: stack })) : undefined,
+      budget: allValues.budget,
+      ask_budget: allValues.budgetDiscussion,
+      deadline: allValues.deadline,
+      ask_deadline: allValues.deadlineDiscussion,
+      description: allValues.about,
+      job_files: allValues.file,
+    };
+
+    Api.updateTask(formValues, id)
+      .then((response) => {
+        // navigate('/', { replace: true });
+        setOrder(response);
+        setIsEditable(false);
+        setValues(undefined);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  function handleCancel() {
+    setValues(order);
+    setIsEditable(false);
+    setErrors({});
+  }
 
   function handleDeleteTask() {
     setError('');
@@ -82,125 +194,139 @@ function Order() {
           <div className="order_block">
             <div className="profile_block profile_right-column left-column">
               {isEditable ? (
-                <form className="form-profile">
+                <form className="order__form">
                   <h1 className="profile__title">Редактирование заказа</h1>
-
-                  <div className="form-profile__input-container">
-                    <label className="profile__main-text" htmlFor="name">
-                      Название
-                    </label>
-                    <input
+                  <div>
+                    <p className="create-task-form__input-text">Название заказа</p>
+                    <InputText
                       type="text"
-                      name="name"
-                      id="name"
-                      placeholder="Александр"
-                      className="profile__main-text form-profile__input"
-                      value="Создать дизайн лендинга"
+                      placeholder="Кратко опишите суть задачи"
+                      name="title"
+                      width="100%"
+                      onChange={handleChange}
+                      // value={isEditable ? values?.title || '' : order?.title || ''}
+                      value={values?.title || order?.title || ''}
                     />
                   </div>
-
-                  <div className="form-profile__input-container">
-                    <label className="profile__main-text" htmlFor="name">
-                      Описание
-                    </label>
-                    <textarea
-                      name="description"
-                      id="description"
-                      cols="30"
-                      rows="10"
-                      className="profile__main-text form-profile__input"
-                      value="Ищу веб дизайнера (веб-дизайнера-верстальщика), чтобы сделать дизайн и верстку
-                  в Figma страницы сайта ИТ тематики. Нужна десктоп и мобильная версия, можно сдать последовательно.
-
-                    Разработать дизайн лендинга для продвижения нового продукта/услуги.
-                    Следовать брендбуку компании (цвета, шрифты и т.д.).
-                    Создать адаптивный дизайн, который будет хорошо выглядеть на всех устройствах (десктоп, таблет,
-                     смартфон).
-                    Интеграция с формами для сбора контактной информации, подписки на новости и т.д.a
-
-                  ТЗ предоставляю в виде:
-                  Прототип в Фигме, примеры страниц с нужным стилем дизайна и созвон в Zoom для уточнения ТЗ.
-                  Потребуется немного вникнуть в специфику услуг и целевой аудитории. Готов рассказать подробнее
-                   при созвоне.
-                  Результат нужен в Figma, чтобы передать веб-разработчику.
-                  Сроки: Прототип готов.
-                  Созвониться готов сегодня до конца дня или завтра вечером. Макет нужен оперативно до конца
-                   дня понедельника 18 сентября 2023. Прошу в отклике указать стоимость и прислать 1 – 3 примеров
-                    ваших работ, наиболее релевантных ТЗ (ссылку или вложением, например PDF).
-                  И указать, есть ли у вас опыт дизайна для ИТ или для B2B тематики. Предпочтение дизайнерам с опытом
-                  веб-дизайна сайтов/лендингов для ИТ или для B2B тематики. Рассматриваю исключительно самостоятельных
-                  специалистов дизайнеров, не студии, не агентства.
-                  Бюджет готов обсудить. Ориентируюсь на примерно 15 000р."
+                  <div>
+                    <p className="create-task-form__input-text">Описание</p>
+                    <InputText
+                      type="textarea"
+                      placeholder="Опишите задачу подробнее"
+                      name="about"
+                      width="100%"
+                      height={150}
+                      onChange={handleChange}
+                      // value={isEditable ? values?.about || '' : order?.description || ''}
+                      value={values?.about || order?.description || ''}
                     />
                   </div>
-
-                  <div className="form-profile__input-container">
-                    <h2 className="profile__main-text">Специализация</h2>
-                    <InputMultipleSelect setActivityValues={setActivityValues} />
-                  </div>
-
-                  <div className="form-profile__input-container">
-                    <h2 className="profile__main-text">Навыки</h2>
-                    <InputTags setStacksValues={setStacksValues} />
-                  </div>
-
-                  <div className="form-profile__input-container">
-                    <label className="profile__main-text" htmlFor="workingRate">
-                      Бюджет
-                    </label>
-                    <input
-                      type="text"
-                      name="workingRate"
-                      id="workingRate"
-                      placeholder="5000"
-                      className="profile__main-text form-profile__input form-profile__rate-input"
+                  <div>
+                    <p className="create-task-form__input-text">Специализация</p>
+                    <InputSelect
+                      placeholder="Выберите из списка"
+                      name="activity"
+                      width="100%"
+                      options={industryAndCategoryOptions}
+                      // value={isEditable ? values?.activity || '' : order?.category || ''}
+                      value={values?.activity || order?.category[0] || ''}
+                      error={errors?.activity}
+                      errorMessage={errors?.activity}
+                      onChange={handleChange}
                     />
-                    {/* переиспользуемый компонент с FormComponents/FreelancerCompleteForm */}
-                    <label className="freelancer-complete-form__input-radio-text">
-                      <input
-                        type="radio"
-                        className="freelancer-complete-form__input-radio"
-                        name="contact-prefer"
+                  </div>
+                  <div>
+                    <p className="create-task-form__input-text">Навыки</p>
+                    <InputTags
+                      name="stacks"
+                      tags={tags}
+                      setTags={setTags}
+                      handleChange={handleChangeCustom}
+                      error={errors.tags}
+                      errorMessage={errors.tags}
+                    />
+                  </div>
+                  <div>
+                    <p className="create-task-form__input-text">Бюджет</p>
+                    <InputText
+                      isDisabled={isChecked?.budgetDiscussion}
+                      type="number"
+                      placeholder="Бюджет"
+                      name="budget"
+                      width={295}
+                      // onChange={handleBudget}
+                      onChange={handleChange}
+                      // value={isEditable ? values?.budget || '' : order?.budget || ''}
+                      value={values?.budget || order?.budget || ''}
+                    />
+                  </div>
+                  <InputSwitch
+                    type="checkbox"
+                    name="budgetDiscussion"
+                    label="Жду предложений от фрилансеров"
+                    marginTop={12}
+                    // onChange={handleChange}
+                    defaultChecked={isChecked?.budgetDiscussion}
+                    onChange={() => {
+                      setIsChecked((previous) => ({
+                        ...previous,
+                        budgetDiscussion: !previous.budgetDiscussion,
+                      }));
+                    }}
+                  />
+                  <div>
+                    <p className="create-task-form__input-text">Сроки</p>
+                    <div className="create-task-form__input-year-wrapper">
+                      <InputText
+                        type="date"
+                        placeholder="Окончание"
+                        name="deadline"
+                        width={295}
+                        onChange={handleDeadline}
+                        // onChange={handleChange}
+                        // value={isEditable ? values?.deadline || '' : order?.deadline || ''}
+                        value={values?.deadline || order?.deadline || ''}
+                        isDisabled={isChecked?.deadlineDiscussion}
                       />
-                      Жду предложений от фрилансеров
-                    </label>
-                    {/* --------------------------------------------- */}
+                    </div>
                   </div>
-
-                  <div className="form-profile__input-container">
-                    <label className="profile__main-text" htmlFor="projectTimeline">
-                      Сроки
-                    </label>
-                    <input
-                      type="month"
-                      name="projectTimeline"
-                      id="projectTimeline"
-                      placeholder="Дедлайн задачи"
-                      className="profile__main-text form-profile__input form-profile__dates_input"
-                    />
-                    {/* переиспользуемый компонент с FormComponents/FreelancerCompleteForm */}
-                    <label className="freelancer-complete-form__input-radio-text">
-                      <input
-                        type="radio"
-                        className="freelancer-complete-form__input-radio"
-                        name="contact-prefer"
+                  <InputSwitch
+                    type="checkbox"
+                    name="deadlineDiscussion"
+                    label="Жду предложений от фрилансеров"
+                    marginTop={12}
+                    // onChange={handleChange}
+                    defaultChecked={isChecked?.deadlineDiscussion}
+                    onChange={() => {
+                      setIsChecked((previous) => ({
+                        ...previous,
+                        deadlineDiscussion: !previous.deadlineDiscussion,
+                      }));
+                    }}
+                  />
+                  <div>
+                    <p className="create-task-form__input-text">Загрузить файл</p>
+                    <div className="create-task-form__input-doc-wrapper">
+                      <InputDocument
+                        name="portfolio"
+                        value={values.portfolio || order?.job_files || ''}
+                        error={errors.portfolio}
+                        onChange={addDocument}
                       />
-                      Жду предложений от фрилансеров
-                    </label>
-                    {/* --------------------------------------------- */}
+                    </div>
                   </div>
 
-                  <div className="form-profile__bottom-buttons-container">
+                  <div className="form-profile__bottom-buttons-container order__buttons-wrapper">
                     <button
                       type="button"
                       className="profile__main-text form-profile__bottom-buttons"
-                      onClick={() => setIsEditable(false)}
+                      onClick={handleCancel}
                     >
                       Отмена
                     </button>
                     <button
                       type="submit"
-                      onClick={() => setIsEditable(false)}
+                      onClick={handleUpdateTask}
                       className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
                     >
                       Сохранить
@@ -223,7 +349,7 @@ function Order() {
                         value={order?.job_files || ''}
                         // error={errors.portfolio}
                         // errorMessage={errors.portfolio}
-                        onChange={addDocument}
+                        // onChange={addDocument}
                         isDisabled={true}
                         // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
                         // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
@@ -284,16 +410,18 @@ function Order() {
                     width={289}
                     className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
                   />
-                  <Button
-                    type="button"
-                    text="Редактировать заказ"
-                    width={289}
-                    buttonSecondary={true}
-                    className={`form-profile__bottom-buttons${
-                      isEditable ? ' form-profile__bottom-buttons-hide' : ''
-                    }`}
-                    // onClick={() => setIsEditable(true)}
-                  />
+                  {!isEditable && (
+                    <Button
+                      type="button"
+                      text="Редактировать заказ"
+                      width={289}
+                      buttonSecondary={true}
+                      className={`form-profile__bottom-buttons${
+                        isEditable ? ' form-profile__bottom-buttons-hide' : ''
+                      }`}
+                      onClick={() => setIsEditable(true)}
+                    />
+                  )}
                   <Button
                     type="button"
                     text="Удалить заказ"

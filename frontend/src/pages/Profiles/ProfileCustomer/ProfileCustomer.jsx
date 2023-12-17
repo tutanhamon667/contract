@@ -8,7 +8,6 @@ import { InputText } from '../../../components/InputComponents/InputText/InputTe
 import { InputImage } from '../../../components/InputComponents/InputImage/InputImage';
 import { InputSelect } from '../../../components/InputComponents/InputSelect/InputSelect';
 import { Button } from '../../../components/Button/Button';
-
 import '../../../components/FormComponents/FreelancerCompleteForm/FreelancerCompleteForm.css';
 import '../ProfileFreelancer/ProfileFreelancer.css';
 import '../Profile.css';
@@ -122,7 +121,7 @@ function ProfileCustomer({ setCurrentUser }) {
                 <button
                   type="submit"
                   className={`form-top-buttons form-top-buttons_type_submit 
-                  ${isDisabled ? 'form-top-buttons_type_submit--disabled' : ''}`}
+                  ${isDisabled ? 'form-top-buttons_type_submit-disabled' : ''}`}
                   disabled={isDisabled}
                 >
                   Сохранить

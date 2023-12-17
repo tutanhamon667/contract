@@ -6,16 +6,16 @@ import * as Api from '../../utils/Api';
 import './Filters.css';
 
 function Filters({ setSearchQuery }) {
-
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const [selectedCategories, setSelectedCategories] = useState(queryParams.getAll('category') || null);
+  const [selectedCategories, setSelectedCategories] = useState(
+    queryParams.getAll('category') || null,
+  );
   const [categories, setCategories] = useState([]);
   const [budgetStart, setBudgetStart] = useState(queryParams.get('min_budget') || null);
   const [budgetEnd, setBudgetEnd] = useState(queryParams.get('max_budget') || null);
   const { currentUser, orderFilter, isAuthenticated } = useContext(Context);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     Api.getAllCategories()
@@ -27,42 +27,38 @@ function Filters({ setSearchQuery }) {
       });
   }, []);
 
-
   function handleReset() {
     setBudgetStart('');
     setBudgetEnd('');
-    setSelectedCategories([])
-    setSearchQuery('')
-    navigate('/')
+    setSelectedCategories([]);
+    setSearchQuery('');
+    navigate('/');
   }
 
-
-
-
-  const filtersContainerStyle = `filters-container${orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
-    }`;
+  const filtersContainerStyle = `filters-container${
+    orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
+  }`;
 
   function handleFilter() {
-    const searchCategory = selectedCategories.map(category => `category=${category}`)
-    if (budgetStart) searchCategory.push(`min_budget=${budgetStart}`)
-    if (budgetEnd) searchCategory.push(`max_budget=${budgetEnd}`)
-    const searchQuery = `?${[...searchCategory].join('&')}`
-    setSearchQuery(searchQuery)
-    navigate(searchQuery)
+    const searchCategory = selectedCategories.map((category) => `category=${category}`);
+    if (budgetStart) searchCategory.push(`min_budget=${budgetStart}`);
+    if (budgetEnd) searchCategory.push(`max_budget=${budgetEnd}`);
+    const searchQuery = `?${[...searchCategory].join('&')}`;
+    setSearchQuery(searchQuery);
+    navigate(searchQuery);
   }
 
-
   function FilterInput({ id, name, slug }) {
-    const iSchecked = selectedCategories.includes(slug)
+    const iSchecked = selectedCategories.includes(slug);
 
     const handleChange = (e) => {
       const value = e.target.value;
       const checked = e.target.checked;
 
       if (checked) {
-        setSelectedCategories([...selectedCategories, value])
+        setSelectedCategories([...selectedCategories, value]);
       } else {
-        setSelectedCategories(selectedCategories.filter((category) => category !== value))
+        setSelectedCategories(selectedCategories.filter((category) => category !== value));
       }
     };
 
@@ -81,12 +77,11 @@ function Filters({ setSearchQuery }) {
           {name}
         </label>
       </div>
-    )
+    );
   }
 
   return (
     <section className="filters">
-
       {currentUser?.is_customer && (
         <Button
           text="Создать заказ"
@@ -98,10 +93,14 @@ function Filters({ setSearchQuery }) {
       <div className={filtersContainerStyle}>
         <h2 className="filters-container__title">Специализация</h2>
 
-        {categories.map(category => (
-          <FilterInput key={category.id} slug={category.slug} name={category.name} id={category.id} />
+        {categories.map((category) => (
+          <FilterInput
+            key={category.id}
+            slug={category.slug}
+            name={category.name}
+            id={category.id}
+          />
         ))}
-
       </div>
 
       <div className="filters-container filters-container__budget">

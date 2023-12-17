@@ -7,7 +7,7 @@ export default {
         'dist',
         'vite.config.js',
         'eslint.config.js',
-        'stylelint.config.mjs',
+        'stylelint.config.js',
         'prettier.config.js',
       ],
       options: { requirePragma: true },

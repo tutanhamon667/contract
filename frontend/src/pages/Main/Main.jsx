@@ -16,20 +16,18 @@ function Main() {
   const { currentUser, isAuthenticated } = useContext(Context);
   const [tasks, setTasks] = useState([]);
   const [freelancers, setFreelancers] = useState([]);
-  const contentBorderAuthorized = `content__border${isAuthenticated ? ' content__border-authorized' : ''
-    }`;
+  const contentBorderAuthorized = `content__border${
+    isAuthenticated ? ' content__border-authorized' : ''
+  }`;
 
-
-  const [searchQuery, setSearchQuery] = useState(useLocation().search)
-
+  const [searchQuery, setSearchQuery] = useState(useLocation().search);
 
   useEffect(() => {
-
     if (currentUser?.is_customer || !isAuthenticated) {
       const freelancerSearchQuery = searchQuery
         .replaceAll('category', 'categories')
         .replace('min_budget', 'min_payrate')
-        .replace('max_budget', 'max_payrate')
+        .replace('max_budget', 'max_payrate');
 
       Api.getFreelancers(freelancerSearchQuery)
         .then((response) => {
@@ -100,7 +98,7 @@ function Main() {
           <div className="freelance-order__column-filter">
             <Filters
               setSearchQuery={setSearchQuery}
-            // handleFreelanceFilter={handleFreelanceFilter}
+              // handleFreelanceFilter={handleFreelanceFilter}
             />
           </div>
         </section>

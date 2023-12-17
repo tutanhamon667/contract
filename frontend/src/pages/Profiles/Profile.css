@@ -121,9 +121,9 @@
   color: #3f3f3f;
 }
 
-.form-top-buttons_type_submit--disabled {
-  cursor: auto;
+.form-top-buttons_type_submit-disabled {
   color: #a8a8a8;
+  cursor: auto;
 }
 
 .form-profile__bottom-buttons {
