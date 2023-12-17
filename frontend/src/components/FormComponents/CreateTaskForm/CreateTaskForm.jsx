@@ -51,7 +51,7 @@ function CreateTaskForm({ onSubmit }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const discussionText = 'Ожидает предложений'
+    const discussionText = 'Жду предложений'
 
     const allValues = {
       ...values,
