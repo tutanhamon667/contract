@@ -107,11 +107,11 @@ function Order() {
     }
 
     if (!isChecked.budgetDiscussion) {
-      allValues.budget = Number.parseInt(values.budget, 10);
+      allValues.budget = values?.budget ? Number.parseInt(values.budget, 10) : order?.budget ;
     }
 
     if (!isChecked.deadlineDiscussion) {
-      allValues.deadline = values.deadline;
+      allValues.deadline = values?.deadline ? values.deadline : order?.deadline;
     }
 
     if (document) {
