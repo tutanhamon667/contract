@@ -48,7 +48,7 @@ function getUserInfo() {
 
 function createUserProfile(data) {
   return fetch(`${BACKEND_BASE_URL}/users/me/`, {
-    method: 'POST',
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${sessionStorage.getItem('access')}`,
