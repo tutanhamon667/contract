@@ -116,6 +116,10 @@ function useFormAndValidation() {
           }
         }
       }
+
+      if (!errorMessage && values?.re_password && value !== values?.re_password) {
+        errorMessage = 'Пароли не совпадают'
+      }
     }
 
 
@@ -127,6 +131,14 @@ function useFormAndValidation() {
         errorMessage = 'Пароли не совпадают'
       }
     }
+
+    if (name === 'password' && value && !errorMessage) {
+      return { re_password: '', password: '' }
+    }
+    if (name === 're_password' && value && !errorMessage) {
+      return { re_password: '', password: '' }
+    }
+
 
     if (name === 'first_name' || name === 'last_name') {
       const title = name === 'first_name' ? 'Имя' : 'Фамилия';
@@ -199,7 +211,7 @@ function useFormAndValidation() {
       errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
                   и строчные символы "-", "_", "@", ".", "'"`
     }
-
+    console.log('Check 3')
     return { [name]: errorMessage }
   }
 
