@@ -12,6 +12,7 @@ function Search({ setSearchQuery }) {
     event.preventDefault();
     const searchQuery = searchPhrase ? `?search=${searchPhrase}` : '';
     setSearchQuery(searchQuery);
+    setSearchPhrase(searchPhrase.replace(/ +(?= )/g, ''))
     navigate(searchQuery);
   }
 
@@ -34,7 +35,6 @@ function Search({ setSearchQuery }) {
                 : 'Поиск фрилансеров по специальности, навыкам, ключевым словам...'
             }
             minLength="2"
-            maxLength="30"
             type="text"
             value={searchPhrase}
             onChange={handleChange}
