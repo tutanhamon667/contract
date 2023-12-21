@@ -32,6 +32,7 @@ function Main() {
       Api.getFreelancers(freelancerSearchQuery)
         .then((response) => {
           setFreelancers(response.results);
+          
         })
         .catch((error) => {
           console.error(error);

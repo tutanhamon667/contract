@@ -212,6 +212,11 @@ function useFormAndValidation() {
     return { [name]: errorMessage };
   }
 
+  function deleteSpaces(event){
+    const { name, value } = event.target;
+    setValues({ ...values, [name]: value.replace(/\s+/g, ' ').trim() });
+  }
+
   return {
     values,
     errors,
@@ -225,6 +230,7 @@ function useFormAndValidation() {
     checkErrors,
     validateValues,
     handleChangeCheckbox,
+    deleteSpaces
   };
 }
 

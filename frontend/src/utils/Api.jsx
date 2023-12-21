@@ -91,8 +91,8 @@ function getTasksWithSearch(searchQuery) {
   );
 }
 
-function getTasksWithAuthorization(searchQuery) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`, {
+function getTasksWithAuthorization() {
+  return fetch(`${BACKEND_BASE_URL}/jobs/`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('access')}`,
     },
@@ -128,6 +128,29 @@ function getFreelancerById(id) {
 
 function getAllCategories() {
   return fetch(`${BACKEND_BASE_URL}/category/`).then((response) => checkResponse(response));
+
+}
+
+function requestNewPassword(email){
+  return fetch(`${BACKEND_BASE_URL}/users/reset_password/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(email),
+  }).then((response) => checkResponse(response));
+  
+}
+
+function createChat(data){
+  return fetch(`${BACKEND_BASE_URL}/chats/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+    body: JSON.stringify(data),
+  }).then((response) => checkResponse(response));
 }
 
 export {
@@ -136,6 +159,7 @@ export {
   getNewAccessToken,
   getUserInfo,
   updateUserProfile,
+  requestNewPassword,
   createTask,
   updateTask,
   getTasks,
@@ -146,4 +170,5 @@ export {
   getFreelancerById,
   getTasksWithSearch,
   getAllCategories,
+  createChat
 };

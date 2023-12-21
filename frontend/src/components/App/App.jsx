@@ -25,6 +25,9 @@ function App() {
   // const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
+  const [tasks, setTasks] = useState([]);
+  const [statePopup, setStatePopup] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
   // обект со значениями фильтров фильтров
@@ -34,6 +37,7 @@ function App() {
   const [errorRequest, setErrorRequest] = useState({});
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [popupError, setPopupError] = useState();
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -169,66 +173,7 @@ function App() {
   }
 
   function handleFreelancerSubmit(data) {
-    // console.log(data);
-    /*
-    const formValues = {
-      contacts: [
-        {
-          type: 'phone',
-          value: data.values?.phone,
-          preferred: data.values?.preferred === 'phone',
-        },
-        {
-          type: 'email',
-          value: data.values?.email,
-          preferred: data.values?.preferred === 'email',
-        },
-        {
-          type: 'telegram',
-          value: data.values?.telegram,
-          preferred: data.values?.preferred === 'telegram',
-        },
-      ],
-      stacks: data.tags?.map((tag) => ({ name: tag })),
-      categories: [
-        {
-          name: data.values.activity,
-        },
-      ],
-      education: [
-        {
-          diploma: data?.document,
-          name: data.values?.education,
-          faculty: data.values?.faculty,
-          start_year: data.values?.start_year,
-          finish_year: data.values?.finish_year,
-          degree: data.values?.degree,
-        },
-      ],
-      portfolio: data?.portfolioFile,
-      photo: data.profilePhoto?.photo,
-      payrate: data.values?.payrate,
-      about: data.values?.about,
-      web: data.values?.web,
-    };
-/*
-    if(data.values.phone){
-      formValues.contacts =  {
-        type: 'phone',
-        value: data.values.phone,
-        preferred: data.values.preferred === 'phone',
-      }
-    }
-    if(data.values.email){
-      formValues.contacts = {
-        type: 'email',
-        value: data.values.email,
-        preferred: data.values.preferred === 'email',
-
-      }
-    }
-    */
-
+    console.log(data);
     Api.updateUserProfile(data)
       .then((result) => {
         setCurrentUser(result);
@@ -237,6 +182,11 @@ function App() {
       .catch((error) => {
         console.error(error);
       });
+  }
+
+  function handleForgotPassSubmit(data) {
+    console.log(data)
+    Api.requestNewPassword(data);
   }
 
   function handleTaskSubmit(data) {
@@ -259,6 +209,33 @@ function App() {
       .catch((error) => {
         console.error(error);
       });
+  }
+
+  function getMyTasks() {
+    if (currentUser?.is_customer) {
+      Api.getTasksWithAuthorization()
+        .then((response) => {
+          setTasks(response.results.filter((task) => task.client.id === currentUser.id))
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }
+
+  function createChat(data){
+    Api.createChat(data)
+    .then((response) => {
+      setStatePopup(true)
+      setIsPopupOpen(false)
+      setPopupError('')
+    })
+    .catch((error) => {
+
+      console.error(error.non_field_errors.toString());
+      setPopupError(error.non_field_errors.toString())
+    });
   }
 
   const logIn = () => {
@@ -306,7 +283,7 @@ function App() {
                 />
               }
             />
-            <Route path="forgot-password" element={<ForgotPass />} />
+            <Route path="forgot-password" element={<ForgotPass onSubmit={handleForgotPassSubmit} />} />
             <Route path="reset-password" element={<ResetPass />} />
             <Route
               path="signout"
@@ -339,7 +316,7 @@ function App() {
               />
               <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit} />} />
               <Route path="order/:id" element={<Order />} />
-              <Route path="freelancer/:id" element={<ProfileFreelancerViewOnly />} />
+              <Route path="freelancer/:id" element={<ProfileFreelancerViewOnly getTasks={getMyTasks} tasks={tasks} onSubmit={createChat} statePopup={statePopup} setStatePopup={setStatePopup} isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} popupError={popupError} setPopupError={setPopupError}/>} />
             </Route>
           </Route>
         </Routes>

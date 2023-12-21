@@ -1,25 +1,33 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate  } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import * as Api from '../../../utils/Api';
 import { industryAndCategoryOptions } from '../../../utils/constants';
 import { Context } from '../../../context/context';
 import { InputDocument } from '../../../components/InputComponents/InputDocument/InputDocument';
 import { InputImage } from '../../../components/InputComponents/InputImage/InputImage';
+import { InputSelect } from '../../../components/InputComponents/InputSelect/InputSelect';
+import { InputText } from '../../../components/InputComponents/InputText/InputText';
 import { Button } from '../../../components/Button/Button';
+import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import '../../ForgotPass/ForgotPass.css';
 import '../ProfileFreelancer/ProfileFreelancer.css';
 import '../Profile.css';
 import './ProfileFreelancerViewOnly.css';
 
-function ProfileFreelancerViewOnly() {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [hiringSuccessful, setHiringSuccessful] = useState(false);
+function ProfileFreelancerViewOnly({ tasks, getTasks, onSubmit, statePopup, setStatePopup, isPopupOpen, setIsPopupOpen, popupError, setPopupError }) {
+  
   const [freelancer, setFreelancer] = useState({});
   let { id } = useParams();
   const { currentUser } = useContext(Context);
+  const navigate = useNavigate();
 
+  const { values, setValues, errors, handleChange, handleChangeCustom } = useFormAndValidation();
+  
   useEffect(() => {
+    if (currentUser?.is_customer) {
+      getTasks();
+    }
     currentUser.is_customer &&
       Api.getFreelancerById(id)
         .then((result) => {
@@ -27,6 +35,20 @@ function ProfileFreelancerViewOnly() {
         })
         .catch(console.error);
   }, []);
+
+  function handleFormSubmit(){
+    const chosenTask = tasks.find((task) => task.title === values.categories);
+
+    const allValues ={
+      job_id: chosenTask?.id || "",
+      freelancer: id,
+      message_text: values.message
+    }
+   
+    onSubmit(allValues)
+    //setIsPopupOpen(false)
+   
+  }
 
   return (
     currentUser.is_customer &&
@@ -141,52 +163,115 @@ function ProfileFreelancerViewOnly() {
 
         {isPopupOpen && (
           <div className="popup-overlay">
-            <div className="popup">
-              <h2 className="profile__title popup__title">
-                Вы хотите нанять специалиста {freelancer?.user?.first_name}{' '}
-                {freelancer?.user?.last_name} для заказа «Создать дизайн лендинга»?
-              </h2>
+            <div className="popup message-popup">
+              <div className="profile__user-info message-popup__user-info">
+                {freelancer?.photo ? (
+                  <InputImage
+                    name="photo"
+                    width={80}
+                    height={80}
+                    value={freelancer?.photo || ''}
+                    isDisabled={true}
+                  />
+                ) : (
+                  <div className="profile__avatar" />
+                )}
+                <h2 className="profile__title">
+                  {freelancer?.user?.first_name} {freelancer?.user?.last_name}
+                </h2>
+                <p className="profile__main-text profile__specialization">
+                  {freelancer?.categories &&
+                    industryAndCategoryOptions.find(
+                      (option) => option?.value === freelancer?.categories[0]?.name,
+                    )?.label}
+                </p>
+              </div>
+              <form className='form-message'>
               <button
-                type="button"
-                style={{ marginBottom: 12 }}
-                onClick={() => setHiringSuccessful(true)}
-                className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
-              >
-                Нанять
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsPopupOpen(false)}
-                className="form-profile__bottom-buttons"
-              >
-                Отменить
-              </button>
+                  type="button"
+                  onClick={() => { 
+                    setIsPopupOpen(false);
+                    setPopupError('') }}
+                  className="form-message__close-button"
+                >
+                </button>
+                <InputSelect
+                  name="categories"
+                  placeholder="Выберите заказ"
+                  width="100%"
+                  margin="20px 0 12px 0"
+                  value={
+                    values.categories || ''
+                  }
+                  onChange={handleChange}
+                  options={tasks}
+                //isDisabled={!isEditable}
+                />
+                <InputText
+                  type="textarea"
+                  placeholder="Ваше сообщение"
+                  name="message"
+                  width={534}
+                  height={200}
+                  value={values.message || ''}
+                  error={errors.message}
+                  errorMessage={errors.message || popupError}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}
+                  onClick={handleFormSubmit}
+                  className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
+                >
+                  Отправить
+                </button>
+              </form>
             </div>
           </div>
         )}
 
-        {hiringSuccessful && (
+        {statePopup && (
           <div className="popup-overlay">
-            <div className="popup">
-              <div className="popup-check-mark" />
+            <div className="popup message-popup">
+            <button
+                  type="button"
+                  onClick={() => { 
+                    setStatePopup(false) 
+                    setIsPopupOpen(false)}}
+                  className="form-message__close-button"
+                >
+                </button>
+              <div className="popup-message__image"></div>
               <h2 className="profile__title popup__title" style={{ marginBottom: 16 }}>
-                Вы успешно наняли специалиста {freelancer?.user?.first_name}{' '}
-                {freelancer?.user?.last_name} для заказа «Создать дизайн лендинга».
+              Сообщение отправлено
               </h2>
               <p className="profile__main-text  popup__main-text" style={{ marginBottom: 40 }}>
-                Свяжитесь с ним, чтобы обсудить детали проекта. Контактные данные вы можете найти в
-                профиле
+              В ближайшее время фрилансер вам ответит. А пока рекомендуем связаться с несколькими фрилансерами, чтобы повысить шанс на выполнение заказа.
               </p>
               <button
                 type="button"
                 onClick={() => {
                   setIsPopupOpen(false);
-                  setHiringSuccessful(false);
+                  setStatePopup(false);
                 }}
-                className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
-                style={{ marginBottom: 50 }}
+                className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit popup-message__button-to-message"
+                style={{ marginBottom: 16 }}
+                disabled
               >
-                Посмотреть профиль
+                Посмотреть сообщение
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsPopupOpen(false);
+                  setHiringSuccessful(false);
+                  navigate('/', {replace: true})
+                }}
+                className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit popup-message__button-to-message popup-message__button-to-freelancers"
+                style={{ marginBottom: 30 }}
+              >
+                Найти фрилансера
               </button>
             </div>
           </div>

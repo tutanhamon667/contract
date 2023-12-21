@@ -5,7 +5,7 @@ import { Button } from '../../components/Button/Button';
 import { ForgotPassForm } from '../../components/FormComponents/ForgotPassForm/ForgotPassForm';
 import './ForgotPass.css';
 
-function ForgotPass() {
+function ForgotPass({onSubmit}) {
   const { isAuthenticated } = React.useContext(Context);
   const location = useLocation();
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
@@ -17,13 +17,19 @@ function ForgotPass() {
   if (isAuthenticated) {
     return <Navigate to="/" state={{ from: location }} />;
   }
+
+ function handleFormSubmit(values){
+
+    onSubmit(values)
+  }
+
   return (
     <>
       {!isPopupOpen && (
         <div className="forgot-pass__wrapper">
           <div className="forgot-pass__container">
             <h1 className="forgotPass__title">Забыли пароль?</h1>
-            <ForgotPassForm func={togglePopup} />
+            <ForgotPassForm func={togglePopup} handleFormSubmit={handleFormSubmit} />
           </div>
         </div>
       )}
