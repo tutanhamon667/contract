@@ -16,9 +16,8 @@ function Main() {
   const { currentUser, isAuthenticated } = useContext(Context);
   const [tasks, setTasks] = useState([]);
   const [freelancers, setFreelancers] = useState([]);
-  const contentBorderAuthorized = `content__border${
-    isAuthenticated ? ' content__border-authorized' : ''
-  }`;
+  const contentBorderAuthorized = `content__border${isAuthenticated ? ' content__border-authorized' : ''}`;
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState(useLocation().search);
 
@@ -35,6 +34,7 @@ function Main() {
         })
         .catch((error) => {
           console.error(error);
+          setFreelancers([])
         });
     }
 
@@ -55,12 +55,10 @@ function Main() {
           console.error(error);
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [location, searchQuery]);
 
-  // function handleFreelanceFilter(filter) {
-  //   setFreelanceFilter(filter);
-  // }
+
 
   return (
     <main className="content">
@@ -98,7 +96,6 @@ function Main() {
           <div className="freelance-order__column-filter">
             <Filters
               setSearchQuery={setSearchQuery}
-              // handleFreelanceFilter={handleFreelanceFilter}
             />
           </div>
         </section>
