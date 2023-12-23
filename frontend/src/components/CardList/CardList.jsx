@@ -21,7 +21,6 @@ function CardList({
       top: isAuthenticated ? 0 : 500,
       behavior: "smooth",
     })
-    console.log(firstTabNavigation[value])
   }
 
   function handleSecondTabPagination(e) {
@@ -31,7 +30,6 @@ function CardList({
       top: isAuthenticated ? 0 : 500,
       behavior: "smooth",
     })
-    console.log(firstTabNavigation[value])
   }
 
   if (firstTabData || secondTabData) {
