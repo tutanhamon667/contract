@@ -99,6 +99,15 @@ function getTasksWithAuthorization(searchQuery) {
   }).then((response) => checkResponse(response));
 }
 
+function getTasksFreelancerWithAuthorization(searchQuery) {
+  console.log(`${BACKEND_BASE_URL}/jobs/${searchQuery ? `${searchQuery}&is_responded=true` : `?is_responded=true`}`)
+  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery ? `${searchQuery}&is_responded=true` : `?is_responded=true`}`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+  }).then((response) => checkResponse(response));
+}
+
 function getTasksCustomerWithAuthorization(searchQuery, userID) {
   return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery ? `${searchQuery}&client=${userID}` : `?client=${userID}`}`, {
     headers: {
@@ -140,7 +149,7 @@ function getAllCategories() {
 
 function getDataByPagination(request) {
   const newRequest = request.replace('http://taski.ddns.net/api', '')
-  console.log(`${BACKEND_BASE_URL}${newRequest}`)
+
   return fetch(`${BACKEND_BASE_URL}${newRequest}`,
     // {
     //   headers: {
@@ -161,6 +170,7 @@ export {
   getTasks,
   getTasksWithAuthorization,
   getTasksCustomerWithAuthorization,
+  getTasksFreelancerWithAuthorization,
   getTaskById,
   deleteTaskById,
   getFreelancers,

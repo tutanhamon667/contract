@@ -80,13 +80,11 @@ function Card({ cards, isFirstTab }) {
 
 
   if (cards.length === 0) {
-    console.log('No cards')
     return <>
       <h4>По вашему запросу ничего не найдено</h4>
     </>
   }
 
-  console.log(cards)
 
   return cards?.map(
     (data, index) => (

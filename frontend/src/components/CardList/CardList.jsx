@@ -12,13 +12,13 @@ function CardList({
   loadSecondTabPaginationData,
   isFirstTab
 }) {
-  const { currentUser } = useContext(Context);
+  const { isAuthenticated } = useContext(Context);
 
   function handleFirstTabPagination(e) {
     const value = e.target.value
     loadFirstTabPaginationData(firstTabNavigation[value])
     window.scrollTo({
-      top: 0,
+      top: isAuthenticated ? 0 : 500,
       behavior: "smooth",
     })
     console.log(firstTabNavigation[value])
@@ -28,7 +28,7 @@ function CardList({
     const value = e.target.value
     loadSecondTabPaginationData(secondTabNavigation[value])
     window.scrollTo({
-      top: 0,
+      top: isAuthenticated ? 0 : 500,
       behavior: "smooth",
     })
     console.log(firstTabNavigation[value])
@@ -40,13 +40,46 @@ function CardList({
         {isFirstTab ?
           <>
             <Card cards={firstTabData} isFirstTab={isFirstTab} />
-            {firstTabNavigation.next && <button value={'next'} onClick={handleFirstTabPagination}>Следующая страница</button>}
-            {firstTabNavigation.previous && <button value={'previous'} onClick={handleFirstTabPagination}>Предыдущая страница</button>}
+            <div className={'card-list__navigation'}>
+              {firstTabNavigation.previous &&
+                <button
+                  value={'previous'}
+                  onClick={handleFirstTabPagination}
+                  className={'card-list__button button button_type_secondary'}
+                >
+                  Предыдущая страница
+                </button>}
+              {firstTabNavigation.next &&
+                <button
+                  value={'next'}
+                  onClick={handleFirstTabPagination}
+                  className={'card-list__button button button_type_secondary'}
+                >
+                  Следующая страница
+                </button>}
+            </div>
           </> :
           <>
             <Card cards={secondTabData} isFirstTab={isFirstTab} />
-            {secondTabNavigation.next && <button value={'next'} onClick={handleSecondTabPagination}>Следующая страница</button>}
-            {secondTabNavigation.previous && <button value={'previous'} onClick={handleSecondTabPagination}>Предыдущая страница</button>}
+            <div className={'card-list__navigation'}>
+              {secondTabNavigation.previous &&
+                <button
+                  value={'previous'}
+                  onClick={handleSecondTabPagination}
+                  className={'card-list__button button button_type_secondary'}
+                >
+                  Предыдущая страница
+                </button>}
+              {secondTabNavigation.next &&
+                <button
+                  value={'next'}
+                  onClick={handleSecondTabPagination}
+                  className={'card-list__button button button_type_secondary'}
+                >
+                  Следующая страница
+                </button>}
+            </div>
+
           </>
         }
       </div>

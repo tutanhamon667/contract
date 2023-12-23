@@ -105,7 +105,7 @@ function Main() {
           setFirstTabValuesOnError(response)
         });
 
-      Api.getTasksWithAuthorization(searchQuery)
+      Api.getTasksFreelancerWithAuthorization(searchQuery)
         .then((response) => {
           setSecondTabValues(response)
         })
