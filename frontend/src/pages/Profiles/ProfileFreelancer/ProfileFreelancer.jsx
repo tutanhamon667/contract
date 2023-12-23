@@ -355,7 +355,7 @@ function ProfileFreelancer({ setCurrentUser }) {
               placeholder="Ставка"
               name="payrate"
               width={295}
-              value={values.payrate || currentUser?.payrate ? currentUser?.payrate.toString() : ''}
+              value={values.payrate || currentUser?.payrate || ''}
               error={errors.payrate}
               errorMessage={errors.payrate}
               onChange={handleChange}

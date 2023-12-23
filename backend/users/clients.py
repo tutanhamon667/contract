@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
-from drf_extra_fields.fields import Base64ImageField
+# from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
+from .fields import CustomizedBase64ImageField
 from .models import CustomerProfile, Industry
 from .serializers import DynamicFieldsModelSerializer
 
@@ -23,7 +24,7 @@ class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     last_name = serializers.ReadOnlyField(source='user.last_name')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
-    photo = Base64ImageField()
+    photo = CustomizedBase64ImageField()
     industry = IndustrySerializer(many=False, read_only=True)
 
     class Meta:
@@ -41,7 +42,7 @@ class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     last_name = serializers.ReadOnlyField(source='user.last_name')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
-    photo = Base64ImageField(required=False)
+    photo = CustomizedBase64ImageField(required=False)
     industry = IndustrySerializer(many=False)
 
     class Meta:

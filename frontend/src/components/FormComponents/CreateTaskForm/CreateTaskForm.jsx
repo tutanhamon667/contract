@@ -17,11 +17,14 @@ function CreateTaskForm({ onSubmit }) {
     handleChange,
     checkErrors,
     setIsValid,
+    deleteSpaces,
     setErrors,
     handleBlur,
     handleChangeCheckbox,
     handleChangeCustom,
   } = useFormAndValidation();
+
+console.log(values)
 
   const valuesArray = [
     !values.title,
@@ -70,6 +73,7 @@ function CreateTaskForm({ onSubmit }) {
     onSubmit(allValues);
   };
 
+
   return (
     <form className="create-task-form" onSubmit={handleSubmit}>
       <div>
@@ -83,6 +87,7 @@ function CreateTaskForm({ onSubmit }) {
           value={values.title || ''}
           error={errors.title}
           errorMessage={errors.title}
+          onBlur={deleteSpaces}
         />
       </div>
       <div>

@@ -13,6 +13,7 @@ function InputSelect({
   error,
   errorMessage,
   required,
+  margin
 }) {
   return (
     <div className="select-container">
@@ -23,7 +24,7 @@ function InputSelect({
         name={name}
         value={value}
         onChange={onChange}
-        style={{ width }}
+        style={{width, margin}}
         disabled={isDisabled}
         onBlur={onBlur}
         required={required}
@@ -31,7 +32,7 @@ function InputSelect({
         <option value="">{placeholder}</option>
         {options.map((option, index) => (
           <option key={index} className="option" value={option.value}>
-            {option.label}
+            {option.label || option.title}
           </option>
         ))}
       </select>
