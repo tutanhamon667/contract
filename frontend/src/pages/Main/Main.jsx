@@ -14,54 +14,129 @@ function Main() {
   const [isFirstTab, setIsFirstTab] = useState(true);
   // true - Таски/Фрилансеры, false - Фрилансеры/Мои заказы
   const { currentUser, isAuthenticated } = useContext(Context);
-  const [tasks, setTasks] = useState([]);
-  const [freelancers, setFreelancers] = useState([]);
-  const contentBorderAuthorized = `content__border${
-    isAuthenticated ? ' content__border-authorized' : ''
-  }`;
+
+  const [firstTabData, setFirstTabData] = useState([]);
+  const [secondTabData, setSecondTabData] = useState([]);
+
+  const [firstTabNavigation, setFirstTabNavigation] = useState({ next: null, previous: null });
+  const [secondTabNavigation, setSecondTabNavigation] = useState({ next: null, previous: null });
+
+  const contentBorderAuthorized = `content__border${isAuthenticated ? ' content__border-authorized' : ''}`;
 
   const [searchQuery, setSearchQuery] = useState(useLocation().search);
+  const freelancerSearchQuery = searchQuery
+    .replaceAll('category', 'categories')
+    .replace('min_budget', 'min_payrate')
+    .replace('max_budget', 'max_payrate');
+
+
+  function setFirstTabValues(response) {
+    setFirstTabData(response.results);
+    setFirstTabNavigation({ next: response.next, previous: response.previous })
+  }
+
+  function setSecondTabValues(response) {
+    setSecondTabData(response.results);
+    setSecondTabNavigation({ next: response.next, previous: response.previous })
+  }
+
+  function setFirstTabValuesOnError() {
+    setFirstTabData([]);
+    setSecondTabNavigation({ next: null, previous: null })
+  }
+
+  function setSecondTabValuesOnError() {
+    setSecondTabData([]);
+    setSecondTabNavigation({ next: null, previous: null })
+  }
 
   useEffect(() => {
-    if (currentUser?.is_customer || !isAuthenticated) {
-      const freelancerSearchQuery = searchQuery
-        .replaceAll('category', 'categories')
-        .replace('min_budget', 'min_payrate')
-        .replace('max_budget', 'max_payrate');
 
+    if (!isAuthenticated) {
       Api.getFreelancers(freelancerSearchQuery)
         .then((response) => {
-          setFreelancers(response.results);
-          
+          setSecondTabValues(response)
         })
         .catch((error) => {
           console.error(error);
+          setSecondTabValuesOnError()
+        });
+
+      Api.getTasks(searchQuery)
+        .then((response) => {
+          setFirstTabValues(response)
+        })
+        .catch((error) => {
+          console.error(error);
+          setFirstTabValuesOnError(response)
         });
     }
+
+
+    if (currentUser?.is_customer) {
+
+      Api.getFreelancers(freelancerSearchQuery)
+        .then((response) => {
+          setFirstTabValues(response)
+        })
+        .catch((error) => {
+          console.error(error);
+          setFirstTabValuesOnError(response)
+        });
+
+      Api.getTasksCustomerWithAuthorization(searchQuery, currentUser.id)
+        .then((response) => {
+          setSecondTabValues(response)
+        })
+        .catch((error) => {
+          console.error(error);
+          setSecondTabValuesOnError()
+        });
+    }
+
 
     if (currentUser?.is_worker) {
       Api.getTasksWithAuthorization(searchQuery)
         .then((response) => {
-          setTasks(response.results);
+          setFirstTabValues(response)
         })
         .catch((error) => {
           console.error(error);
+          setFirstTabValuesOnError(response)
         });
-    } else {
-      Api.getTasks(searchQuery)
+
+      Api.getTasksFreelancerWithAuthorization(searchQuery)
         .then((response) => {
-          setTasks(response.results);
+          setSecondTabValues(response)
         })
         .catch((error) => {
           console.error(error);
+          setSecondTabValuesOnError()
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, searchQuery]);
 
-  // function handleFreelanceFilter(filter) {
-  //   setFreelanceFilter(filter);
-  // }
+  function loadFirstTabPaginationData(request) {
+    Api.getDataByPagination(request)
+      .then((response) => {
+        setFirstTabValues(response)
+      })
+      .catch((error) => {
+        console.error(error);
+        setFirstTabValuesOnError(response)
+      });
+  }
+
+  function loadSecondTabPaginationData(request) {
+    Api.getDataByPagination(request)
+      .then((response) => {
+        setSecondTabValues(response)
+      })
+      .catch((error) => {
+        console.error(error);
+        setSecondTabValuesOnError()
+      });
+  }
 
   return (
     <main className="content">
@@ -94,12 +169,19 @@ function Main() {
           <div className="freelance-order__column-order">
             <TabsMain isFirstTab={isFirstTab} setIsFirstTab={setIsFirstTab} />
             <Search setSearchQuery={setSearchQuery} />
-            <CardList isFirstTab={isFirstTab} tasks={tasks} freelancers={freelancers} />
+            <CardList
+              isFirstTab={isFirstTab}
+              firstTabData={firstTabData}
+              secondTabData={secondTabData}
+              firstTabNavigation={firstTabNavigation}
+              loadFirstTabPaginationData={loadFirstTabPaginationData}
+              secondTabNavigation={secondTabNavigation}
+              loadSecondTabPaginationData={loadSecondTabPaginationData}
+            />
           </div>
           <div className="freelance-order__column-filter">
             <Filters
               setSearchQuery={setSearchQuery}
-              // handleFreelanceFilter={handleFreelanceFilter}
             />
           </div>
         </section>

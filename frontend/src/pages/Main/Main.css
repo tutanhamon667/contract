@@ -39,7 +39,8 @@
 
 .freelance-order {
   display: grid;
+  min-width: 750px;
   max-width: 1440px;
   gap: 20px;
-  grid-template-columns: calc(78% - 40px) 1fr;
+  grid-template-columns: 750px 1fr;
 }

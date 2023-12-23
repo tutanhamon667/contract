@@ -35,9 +35,19 @@ function Filters({ setSearchQuery }) {
     navigate('/');
   }
 
-  const filtersContainerStyle = `filters-container${
-    orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
-  }`;
+  function handleBudgetStart(event) {
+    const regex = /[^0-9]/g;
+    const value = event.target.value
+    setBudgetStart(value.replace(regex, ''))
+  }
+  function handleBudgetEnd(event) {
+    const regex = /[^0-9]/g;
+    const value = event.target.value
+    setBudgetEnd(value.replace(regex, ''))
+  }
+
+  const filtersContainerStyle = `filters-container${orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
+    }`;
 
   function handleFilter() {
     const searchCategory = selectedCategories.map((category) => `category=${category}`);
@@ -106,24 +116,29 @@ function Filters({ setSearchQuery }) {
       <div className="filters-container filters-container__budget">
         <h2 className="filters-container__title">Бюджет</h2>
         <form className="filters-form-budget">
-          <input
-            type="text"
-            id="filters-budget__start"
-            className="filters-budget"
-            value={budgetStart || ''}
-            placeholder="от"
-            onChange={(event) => setBudgetStart(event.target.value)}
-            required
-          />
-          <input
-            type="text"
-            id="filters-budget__end"
-            className="filters-budget"
-            value={budgetEnd || ''}
-            placeholder="до"
-            onChange={(event) => setBudgetEnd(event.target.value)}
-            required
-          />
+          <div className='filters-budget__wrapper'>
+            <span className='filters-budget__label'>От</span>
+            <input
+              type="text"
+              id="filters-budget__start"
+              className="filters-budget"
+              value={budgetStart || ''}
+              onChange={handleBudgetStart}
+              required
+            />
+          </div>
+          <div className='filters-budget__wrapper'>
+            <span className='filters-budget__label'>До</span>
+            <input
+              type="text"
+              id="filters-budget__end"
+              className="filters-budget"
+              value={budgetEnd || ''}
+              onChange={handleBudgetEnd}
+              required
+            />
+          </div>
+
         </form>
       </div>
       <div className="filters-buttons">

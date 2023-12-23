@@ -77,6 +77,15 @@ function Card({ cards, isFirstTab }) {
     );
   }
 
+
+
+  if (cards.length === 0) {
+    return <>
+      <h4>По вашему запросу ничего не найдено</h4>
+    </>
+  }
+
+
   return cards?.map(
     (data, index) => (
       // (freelanceFilter[`${data?.category}`] || !isFirstTab || one()) && (
