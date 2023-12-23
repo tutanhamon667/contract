@@ -148,7 +148,7 @@ function getAllCategories() {
 
 }
 
-function requestNewPassword(email){
+function requestNewPassword(email) {
   return fetch(`${BACKEND_BASE_URL}/users/reset_password/`, {
     method: 'POST',
     headers: {
@@ -156,10 +156,10 @@ function requestNewPassword(email){
     },
     body: JSON.stringify(email),
   }).then((response) => checkResponse(response));
-  
+
 }
 
-function createChat(data){
+function createChat(data) {
   return fetch(`${BACKEND_BASE_URL}/chats/`, {
     method: 'POST',
     headers: {
@@ -201,6 +201,6 @@ export {
   getFreelancerById,
   getTasksWithSearch,
   getAllCategories,
-  getDataByPagination
+  getDataByPagination,
   createChat
 };
