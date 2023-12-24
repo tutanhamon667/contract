@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../context/context';
 import './Search.css';
@@ -12,12 +12,12 @@ function Search({ setSearchQuery }) {
     event.preventDefault();
     const searchQuery = searchPhrase ? `?search=${searchPhrase}` : '';
     setSearchQuery(searchQuery);
-    setSearchPhrase(searchPhrase.replace(/ +(?= )/g, ''))
+    setSearchPhrase(searchPhrase.replace(/ +(?= )/g, ''));
     navigate(searchQuery);
   }
 
-  function handleChange(e) {
-    setSearchPhrase(e.target.value);
+  function handleChange(event) {
+    setSearchPhrase(event.target.value);
   }
 
   return (

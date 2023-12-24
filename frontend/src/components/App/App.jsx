@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Context } from '../../context/context';
@@ -30,7 +30,7 @@ function App() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   // состояние отображения фильтра поиска
   const [orderFilter, setOrderFilter] = useState(true);
-  // обект со значениями фильтров фильтров
+  // объект со значениями фильтров
   const [freelanceFilter, setFreelanceFilter] = useState({});
   // временное решение для ререндеринга
   // const [rerender, setRerender] = useState(true);
@@ -40,7 +40,7 @@ function App() {
   const [popupError, setPopupError] = useState();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const accessToken = sessionStorage.getItem('access');
     const refreshToken = localStorage.getItem('refresh');
 
@@ -173,7 +173,7 @@ function App() {
   }
 
   function handleFreelancerSubmit(data) {
-    console.log(data);
+    // console.log(data);
     Api.updateUserProfile(data)
       .then((result) => {
         setCurrentUser(result);
@@ -185,7 +185,7 @@ function App() {
   }
 
   function handleForgotPassSubmit(data) {
-    console.log(data)
+    // console.log(data);
     Api.requestNewPassword(data);
   }
 
@@ -215,8 +215,7 @@ function App() {
     if (currentUser?.is_customer) {
       Api.getTasksWithAuthorization()
         .then((response) => {
-          setTasks(response.results.filter((task) => task.client.id === currentUser.id))
-
+          setTasks(response.results.filter((task) => task.client.id === currentUser.id));
         })
         .catch((error) => {
           console.error(error);
@@ -224,18 +223,17 @@ function App() {
     }
   }
 
-  function createChat(data){
+  function createChat(data) {
     Api.createChat(data)
-    .then((response) => {
-      setStatePopup(true)
-      setIsPopupOpen(false)
-      setPopupError('')
-    })
-    .catch((error) => {
-
-      console.error(error.non_field_errors.toString());
-      setPopupError(error.non_field_errors.toString())
-    });
+      .then((response) => {
+        setStatePopup(true);
+        setIsPopupOpen(false);
+        setPopupError('');
+      })
+      .catch((error) => {
+        console.error(error.non_field_errors.toString());
+        setPopupError(error.non_field_errors.toString());
+      });
   }
 
   const logIn = () => {
@@ -283,7 +281,10 @@ function App() {
                 />
               }
             />
-            <Route path="forgot-password" element={<ForgotPass onSubmit={handleForgotPassSubmit} />} />
+            <Route
+              path="forgot-password"
+              element={<ForgotPass onSubmit={handleForgotPassSubmit} />}
+            />
             <Route path="reset-password" element={<ResetPass />} />
             <Route
               path="signout"
@@ -316,7 +317,22 @@ function App() {
               />
               <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit} />} />
               <Route path="order/:id" element={<Order />} />
-              <Route path="freelancer/:id" element={<ProfileFreelancerViewOnly getTasks={getMyTasks} tasks={tasks} onSubmit={createChat} statePopup={statePopup} setStatePopup={setStatePopup} isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} popupError={popupError} setPopupError={setPopupError}/>} />
+              <Route
+                path="freelancer/:id"
+                element={
+                  <ProfileFreelancerViewOnly
+                    getTasks={getMyTasks}
+                    tasks={tasks}
+                    onSubmit={createChat}
+                    statePopup={statePopup}
+                    setStatePopup={setStatePopup}
+                    isPopupOpen={isPopupOpen}
+                    setIsPopupOpen={setIsPopupOpen}
+                    popupError={popupError}
+                    setPopupError={setPopupError}
+                  />
+                }
+              />
             </Route>
           </Route>
         </Routes>

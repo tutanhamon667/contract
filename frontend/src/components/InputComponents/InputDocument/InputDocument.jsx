@@ -1,23 +1,15 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './InputDocument.css';
 
 // const MAX_ATTACHED_DOCS = 8;
 
-function InputDocument({
-  name,
-  value,
-  onChange,
-  isDisabled,
-  errors,
-  setErrors,
-  error,
-  errorMessage,
-}) {
+function InputDocument({ name, value, onChange, isDisabled, errors, setErrors, error }) {
   // const [currentFile, setCurrentFile] = useState({});
   const [files, setFiles] = useState([]);
   // const [error, setError] = useState('');
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
-  React.useEffect(() => {
+
+  useEffect(() => {
     if (value) {
       setFiles(value);
     }
@@ -32,7 +24,7 @@ function InputDocument({
     reader.onload = () => {
       if (
         allowedFileTypes.includes(selectedFile.type) &&
-        selectedFile.size <= 52428800 &&
+        selectedFile.size <= 52_428_800 &&
         !files.find((file) => file.file === reader.result)
       ) {
         setFiles([...files, { file: reader.result, name: selectedFile.name }]);
@@ -40,7 +32,7 @@ function InputDocument({
         onChange([...files, { file: reader.result, name: selectedFile.name }]);
         // setError('');
         setErrors({ ...errors, portfolio: '' });
-      } else if (!allowedFileTypes.includes(selectedFile.type) || selectedFile.size > 52428800) {
+      } else if (!allowedFileTypes.includes(selectedFile.type) || selectedFile.size > 52_428_800) {
         // setFiles(null);
         // setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
         setErrors({ ...errors, portfolio: 'Выберите файл в формате PNG, JPG или JPEG до 50 МБ.' });
@@ -108,7 +100,7 @@ function InputDocument({
               .jpg .jpeg .png .pdf
             </span>
           </label>
-          {error ? <span className="input-doc__error">{errorMessage}</span> : ''}
+          {error ? <span className="input-doc__error">{error}</span> : ''}
         </div>
       )}
     </>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { RegisterForm } from '../../components/FormComponents/RegisterForm/RegisterForm';
 import './Register.css';
 

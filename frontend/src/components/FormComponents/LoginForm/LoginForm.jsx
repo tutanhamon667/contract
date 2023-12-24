@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
 import * as Api from '../../../utils/Api';
@@ -7,9 +7,9 @@ import { Button } from '../../Button/Button';
 import './LoginForm.css';
 
 function LoginForm({ setIsAuthenticated, setCurrentUser }) {
-  // const { handleLogin } = React.useContext(Context);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [buttonClicked, setButtonClicked] = React.useState(false);
+  // const { handleLogin } = useContext(Context);
+  const [showPassword, setShowPassword] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
   const navigate = useNavigate();
 
@@ -98,7 +98,6 @@ function LoginForm({ setIsAuthenticated, setCurrentUser }) {
             onChange={handleChange}
             value={values.email || ''}
             error={errors.email}
-            errorMessage={errors.email}
           />
           <InputText
             placeholder="Пароль"
@@ -112,7 +111,6 @@ function LoginForm({ setIsAuthenticated, setCurrentUser }) {
             onChange={handleChange}
             value={values.password || ''}
             error={errors.password}
-            errorMessage={errors.password}
           />
           <Link className="login__forgot-link" to="/forgot-password">
             Восстановить пароль

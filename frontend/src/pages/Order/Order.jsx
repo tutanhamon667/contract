@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { shallowEqualObjects } from 'shallow-equal';
@@ -20,15 +20,22 @@ import '../Profiles/Profile.css';
 import './Order.css';
 
 function Order() {
-  const { values, errors, isValid, handleChange, handleChangeCustom, setValues, setErrors } =
-    useFormAndValidation();
-  const [responded, setResponded] = useState(false);
+  const {
+    values,
+    errors,
+    isValid,
+    handleChange,
+    handleChangeCustom,
+    setValues,
+    setErrors,
+    resetForm,
+  } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = React.useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { currentUser } = useContext(Context);
   let { id } = useParams();
   const [order, setOrder] = useState({});
-  const [document, setDocument] = useState(null);
+  const [document, setDocument] = useState();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [tags, setTags] = useState([]);
@@ -38,10 +45,7 @@ function Order() {
   });
   // const [budget, setBudget] = useState('');
   // const [deadline, setDeadline] = useState('');
-
-  // useEffect(() => {
-  //   console.log(order);
-  // }, [order]);
+  const response = useRef();
 
   useEffect(() => {
     Api.getTaskById(id)
@@ -73,8 +77,25 @@ function Order() {
   //   setBudget(event.target.value);
   // }
 
-  function handleDeadline(event) {
-    setDeadline(event.target.value);
+  // function handleDeadline(event) {
+  //   setDeadline(event.target.value);
+  // }
+
+  function handleRespond() {
+    if (order.is_responded) {
+      response.current.scrollIntoView({
+        behavior: 'smooth',
+      });
+    } else {
+      Api.respondToTask(order?.id)
+        .then(() => {
+          setOrder((previous) => ({
+            ...previous,
+            is_responded: true,
+          }));
+        })
+        .catch(console.error);
+    }
   }
 
   function handleUpdateTask(event) {
@@ -107,7 +128,7 @@ function Order() {
     }
 
     if (!isChecked.budgetDiscussion) {
-      allValues.budget = values?.budget ? Number.parseInt(values.budget, 10) : order?.budget ;
+      allValues.budget = values?.budget ? Number.parseInt(values.budget, 10) : order?.budget;
     }
 
     if (!isChecked.deadlineDiscussion) {
@@ -144,9 +165,10 @@ function Order() {
   }
 
   function handleCancel() {
-    setValues(order);
+    // setValues(order);
+    resetForm();
     setIsEditable(false);
-    setErrors({});
+    // setErrors({});
   }
 
   function handleDeleteTask() {
@@ -192,202 +214,217 @@ function Order() {
           </Link>
 
           <div className="order_block">
-            <div className="profile_block profile_right-column left-column">
-              {isEditable ? (
-                <form className="order__form">
-                  <h1 className="profile__title">Редактирование заказа</h1>
-                  <div>
-                    <p className="create-task-form__input-text">Название заказа</p>
-                    <InputText
-                      type="text"
-                      placeholder="Кратко опишите суть задачи"
-                      name="title"
-                      width="100%"
-                      onChange={handleChange}
-                      // value={isEditable ? values?.title || '' : order?.title || ''}
-                      value={values?.title || order?.title || ''}
-                    />
-                  </div>
-                  <div>
-                    <p className="create-task-form__input-text">Описание</p>
-                    <InputText
-                      type="textarea"
-                      placeholder="Опишите задачу подробнее"
-                      name="about"
-                      width="100%"
-                      height={150}
-                      onChange={handleChange}
-                      // value={isEditable ? values?.about || '' : order?.description || ''}
-                      value={values?.about || order?.description || ''}
-                    />
-                  </div>
-                  <div>
-                    <p className="create-task-form__input-text">Специализация</p>
-                    <InputSelect
-                      placeholder="Выберите из списка"
-                      name="activity"
-                      width="100%"
-                      options={industryAndCategoryOptions}
-                      // value={isEditable ? values?.activity || '' : order?.category || ''}
-                      value={values?.activity || order?.category[0] || ''}
-                      error={errors?.activity}
-                      errorMessage={errors?.activity}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <p className="create-task-form__input-text">Навыки</p>
-                    <InputTags
-                      name="stacks"
-                      tags={tags}
-                      setTags={setTags}
-                      handleChange={handleChangeCustom}
-                      error={errors.tags}
-                      errorMessage={errors.tags}
-                    />
-                  </div>
-                  <div>
-                    <p className="create-task-form__input-text">Бюджет</p>
-                    <InputText
-                      isDisabled={isChecked?.budgetDiscussion}
-                      type="number"
-                      placeholder="Бюджет"
-                      name="budget"
-                      width={295}
-                      // onChange={handleBudget}
-                      onChange={handleChange}
-                      // value={isEditable ? values?.budget || '' : order?.budget || ''}
-                      value={values?.budget || order?.budget || ''}
-                    />
-                  </div>
-                  <InputSwitch
-                    type="checkbox"
-                    name="budgetDiscussion"
-                    label="Жду предложений от фрилансеров"
-                    marginTop={12}
-                    // onChange={handleChange}
-                    defaultChecked={isChecked?.budgetDiscussion}
-                    onChange={() => {
-                      setIsChecked((previous) => ({
-                        ...previous,
-                        budgetDiscussion: !previous.budgetDiscussion,
-                      }));
-                    }}
-                  />
-                  <div>
-                    <p className="create-task-form__input-text">Сроки</p>
-                    <div className="create-task-form__input-year-wrapper">
+            <div className="order__main-container left-column">
+              <div className="profile_block profile_right-column">
+                {isEditable ? (
+                  <form className="order__form">
+                    <h1 className="profile__title">Редактирование заказа</h1>
+                    <div>
+                      <p className="create-task-form__input-text">Название заказа</p>
                       <InputText
-                        type="date"
-                        placeholder="Окончание"
-                        name="deadline"
+                        type="text"
+                        placeholder="Кратко опишите суть задачи"
+                        name="title"
+                        width="100%"
+                        onChange={handleChange}
+                        // value={isEditable ? values?.title || '' : order?.title || ''}
+                        // value={values?.title || order?.title || ''}
+                        value={order?.title}
+                        error={errors?.title}
+                      />
+                    </div>
+                    <div>
+                      <p className="create-task-form__input-text">Описание</p>
+                      <InputText
+                        type="textarea"
+                        placeholder="Опишите задачу подробнее"
+                        name="about"
+                        width="100%"
+                        height={150}
+                        onChange={handleChange}
+                        // value={isEditable ? values?.about || '' : order?.description || ''}
+                        // value={values?.about || order?.description || ''}
+                        value={order?.description}
+                      />
+                    </div>
+                    <div>
+                      <p className="create-task-form__input-text">Специализация</p>
+                      <InputSelect
+                        placeholder="Выберите из списка"
+                        name="activity"
+                        width="100%"
+                        options={industryAndCategoryOptions}
+                        // value={isEditable ? values?.activity || '' : order?.category || ''}
+                        value={values?.activity || order?.category[0] || ''}
+                        error={errors?.activity}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div>
+                      <p className="create-task-form__input-text">Навыки</p>
+                      <InputTags
+                        name="stacks"
+                        tags={tags}
+                        setTags={setTags}
+                        handleChange={handleChangeCustom}
+                        error={errors.tags}
+                      />
+                    </div>
+                    <div>
+                      <p className="create-task-form__input-text">Бюджет</p>
+                      <InputText
+                        isDisabled={isChecked?.budgetDiscussion}
+                        type="number"
+                        placeholder="Бюджет"
+                        name="budget"
                         width={295}
-                        onChange={handleDeadline}
-                        // onChange={handleChange}
-                        // value={isEditable ? values?.deadline || '' : order?.deadline || ''}
-                        value={values?.deadline || order?.deadline || ''}
-                        isDisabled={isChecked?.deadlineDiscussion}
+                        // onChange={handleBudget}
+                        onChange={handleChange}
+                        // value={isEditable ? values?.budget || '' : order?.budget || ''}
+                        // value={values?.budget || order?.budget || ''}
+                        value={order?.budget}
                       />
                     </div>
-                  </div>
-                  <InputSwitch
-                    type="checkbox"
-                    name="deadlineDiscussion"
-                    label="Жду предложений от фрилансеров"
-                    marginTop={12}
-                    // onChange={handleChange}
-                    defaultChecked={isChecked?.deadlineDiscussion}
-                    onChange={() => {
-                      setIsChecked((previous) => ({
-                        ...previous,
-                        deadlineDiscussion: !previous.deadlineDiscussion,
-                      }));
-                    }}
-                  />
-                  <div>
-                    <p className="create-task-form__input-text">Загрузить файл</p>
-                    <div className="create-task-form__input-doc-wrapper">
-                      <InputDocument
-                        name="portfolio"
-                        value={values.portfolio || order?.job_files || ''}
-                        error={errors.portfolio}
-                        onChange={addDocument}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-profile__bottom-buttons-container order__buttons-wrapper">
-                    <button
-                      type="button"
-                      className="profile__main-text form-profile__bottom-buttons"
-                      onClick={handleCancel}
-                    >
-                      Отмена
-                    </button>
-                    <button
-                      type="submit"
-                      onClick={handleUpdateTask}
-                      className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
-                    >
-                      Сохранить
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <>
-                  <div className="form-profile__input-container">
-                    <h1 className="profile__title">{order?.title}</h1>
-                    <p className="profile__main-text">{order?.description}</p>
-                    <ul className="order__list">{stacksList}</ul>
-                  </div>
-
-                  <div className="form-profile__input-container">
-                    <h3 className="profile__title">Файлы</h3>
-                    <div className="profile__file-container">
-                      <InputDocument
-                        name="portfolio"
-                        value={order?.job_files || ''}
-                        // error={errors.portfolio}
-                        // errorMessage={errors.portfolio}
-                        // onChange={addDocument}
-                        isDisabled={true}
-                        // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
-                        // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
-                      />
-                      {/*<div className="profile__file" />*/}
-                      {/*<div className="profile__file" />*/}
-                    </div>
-                  </div>
-
-                  {currentUser?.is_worker && (
-                    <div className="form-profile__input-container">
-                      <h3 className="profile__title">О заказчике</h3>
-                      <div className="order__customer-container">
-                        <img
-                          src={order?.client?.photo}
-                          alt="Фото заказчика"
-                          className="order__client-logo"
+                    <InputSwitch
+                      type="checkbox"
+                      name="budgetDiscussion"
+                      label="Жду предложений от фрилансеров"
+                      marginTop={12}
+                      // onChange={handleChange}
+                      defaultChecked={isChecked?.budgetDiscussion}
+                      onChange={() => {
+                        setIsChecked((previous) => ({
+                          ...previous,
+                          budgetDiscussion: !previous.budgetDiscussion,
+                        }));
+                      }}
+                    />
+                    <div>
+                      <p className="create-task-form__input-text">Сроки</p>
+                      <div className="create-task-form__input-year-wrapper">
+                        <InputText
+                          type="date"
+                          placeholder="Окончание"
+                          name="deadline"
+                          width={295}
+                          // onChange={handleDeadline}
+                          onChange={handleChange}
+                          // value={isEditable ? values?.deadline || '' : order?.deadline || ''}
+                          // value={values?.deadline || order?.deadline || ''}
+                          value={order?.deadline}
+                          isDisabled={isChecked?.deadlineDiscussion}
                         />
-                        <div>
-                          <p className="profile__main-text">{order?.client?.name}</p>
-                          <div className="order__customer-container">
-                            <p className="profile__main-text order__client-text">
-                              {order?.client?.web}
-                            </p>
-                            <p className="profile__main-text order__client-text">
-                              {
-                                industryAndCategoryOptions.find(
-                                  (option) => option?.value === order?.client?.industry?.name,
-                                )?.label
-                              }
-                            </p>
+                      </div>
+                    </div>
+                    <InputSwitch
+                      type="checkbox"
+                      name="deadlineDiscussion"
+                      label="Жду предложений от фрилансеров"
+                      marginTop={12}
+                      // onChange={handleChange}
+                      defaultChecked={isChecked?.deadlineDiscussion}
+                      onChange={() => {
+                        setIsChecked((previous) => ({
+                          ...previous,
+                          deadlineDiscussion: !previous.deadlineDiscussion,
+                        }));
+                      }}
+                    />
+                    <div>
+                      <p className="create-task-form__input-text">Загрузить файл</p>
+                      <div className="create-task-form__input-doc-wrapper">
+                        <InputDocument
+                          name="portfolio"
+                          value={values?.portfolio || order?.job_files || ''}
+                          error={errors.portfolio}
+                          setErrors={setErrors}
+                          onChange={addDocument}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-profile__bottom-buttons-container order__buttons-wrapper">
+                      <button
+                        type="button"
+                        className="profile__main-text form-profile__bottom-buttons"
+                        onClick={handleCancel}
+                      >
+                        Отмена
+                      </button>
+                      <button
+                        type="submit"
+                        onClick={handleUpdateTask}
+                        className="profile__main-text form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
+                      >
+                        Сохранить
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <div className="form-profile__input-container">
+                      <h1 className="profile__title">{order?.title}</h1>
+                      <p className="profile__main-text">{order?.description}</p>
+                      <ul className="order__list">{stacksList}</ul>
+                    </div>
+
+                    <div className="form-profile__input-container">
+                      <h3 className="profile__title">Файлы</h3>
+                      <div className="profile__file-container">
+                        <InputDocument
+                          name="portfolio"
+                          value={order?.job_files || ''}
+                          // error={errors.portfolio}
+                          // onChange={addDocument}
+                          isDisabled={true}
+                          // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
+                          // onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}
+                        />
+                        {/*<div className="profile__file" />*/}
+                        {/*<div className="profile__file" />*/}
+                      </div>
+                    </div>
+
+                    {currentUser?.is_worker && (
+                      <div className="form-profile__input-container">
+                        <h3 className="profile__title">О заказчике</h3>
+                        <div className="order__customer-container">
+                          <img
+                            src={order?.client?.photo}
+                            alt="Фото заказчика"
+                            className="order__client-logo"
+                          />
+                          <div>
+                            <p className="profile__main-text">{order?.client?.name}</p>
+                            <div className="order__customer-container">
+                              <p className="profile__main-text order__client-text">
+                                {order?.client?.web}
+                              </p>
+                              <p className="profile__main-text order__client-text">
+                                {
+                                  industryAndCategoryOptions.find(
+                                    (option) => option?.value === order?.client?.industry?.name,
+                                  )?.label
+                                }
+                              </p>
+                            </div>
                           </div>
                         </div>
+                        <p className="profile__main-text">{order?.client?.about}</p>
                       </div>
-                      <p className="profile__main-text">{order?.client?.about}</p>
-                    </div>
-                  )}
-                </>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {currentUser?.is_worker && order.is_responded && (
+                <div
+                  className="profile_block profile_right-column form-profile__input-container"
+                  ref={response}
+                >
+                  <h3 className="profile__title">Ваш отклик</h3>
+                  <p className="profile__main-text">{currentUser?.about}</p>
+                </div>
               )}
             </div>
 
@@ -395,12 +432,10 @@ function Order() {
               {currentUser?.is_worker ? (
                 <Button
                   type="button"
-                  text={!order.is_responded ? 'Откликнуться' : 'Просмотреть отклик'}
+                  text={order.is_responded ? 'Просмотреть отклик' : 'Откликнуться'}
                   width={289}
-                  className={`form-profile__bottom-buttons form-profile__bottom-buttons_type_submit${
-                    responded ? ' form-profile__bottom-buttons-hide' : ''
-                  }`}
-                  onClick={() => setResponded(true)}
+                  className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
+                  onClick={handleRespond}
                 />
               ) : (
                 <>

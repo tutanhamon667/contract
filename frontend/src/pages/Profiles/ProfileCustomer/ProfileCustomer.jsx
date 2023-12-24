@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Context } from '../../../context/context';
 import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
@@ -20,7 +20,7 @@ function ProfileCustomer({ setCurrentUser }) {
     useFormAndValidation();
 
   const [isEditable, setIsEditable] = useState(false);
-  const [photo, setPhoto] = useState(null);
+  const [photo, setPhoto] = useState(undefined);
   const formReference = useRef(null);
   const initialData = {
     name: currentUser?.name || '',
@@ -85,8 +85,7 @@ function ProfileCustomer({ setCurrentUser }) {
             value={values.photo || currentUser?.photo || ''}
             error={errors.photo}
             setErrors={setErrors}
-            errors={errors}
-            errorMessage={errors.photo}
+            // errors={errors}
             onChange={addPhoto}
             isDisabled={!isEditable}
           />
@@ -150,7 +149,6 @@ function ProfileCustomer({ setCurrentUser }) {
               width="100%"
               value={values.email || currentUser?.account_email || ''}
               error={errors.email}
-              errorMessage={errors.email}
               onChange={handleChange}
               id="email"
               isDisabled
@@ -172,7 +170,6 @@ function ProfileCustomer({ setCurrentUser }) {
               width="100%"
               value={isEditable ? values?.name || '' : currentUser?.name || ''}
               error={errors.name}
-              errorMessage={errors.name}
               onChange={handleChange}
               id="companyName"
               isDisabled={!isEditable}
@@ -188,7 +185,6 @@ function ProfileCustomer({ setCurrentUser }) {
               onChange={handleChange}
               value={isEditable ? values?.industry || '' : currentUser?.industry?.name || ''}
               error={errors.industry}
-              errorMessage={errors.industry}
               options={industryAndCategoryOptions}
               isDisabled={!isEditable}
             />
@@ -206,7 +202,6 @@ function ProfileCustomer({ setCurrentUser }) {
               height={150}
               value={isEditable ? values?.about || '' : currentUser?.about || values?.about || ''}
               error={errors.about}
-              errorMessage={errors.about}
               onChange={handleChange}
               id="aboutMe"
               isDisabled={!isEditable}
@@ -224,7 +219,6 @@ function ProfileCustomer({ setCurrentUser }) {
               width="100%"
               value={isEditable ? values?.web || '' : currentUser?.web || values?.web || ''}
               error={errors.web}
-              errorMessage={errors.web}
               onChange={handleChange}
               id="website"
               isDisabled={!isEditable}

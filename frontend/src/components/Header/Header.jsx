@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { HeaderAuth } from '../HeaderAuth/HeaderAuth';

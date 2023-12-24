@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Marquee from 'react-fast-marquee';
 import { Context } from '../../context/context';
@@ -18,10 +18,12 @@ function Main() {
   const [firstTabData, setFirstTabData] = useState([]);
   const [secondTabData, setSecondTabData] = useState([]);
 
-  const [firstTabNavigation, setFirstTabNavigation] = useState({ next: null, previous: null });
-  const [secondTabNavigation, setSecondTabNavigation] = useState({ next: null, previous: null });
+  const [firstTabNavigation, setFirstTabNavigation] = useState({ next: undefined, previous: undefined });
+  const [secondTabNavigation, setSecondTabNavigation] = useState({ next: undefined, previous: undefined });
 
-  const contentBorderAuthorized = `content__border${isAuthenticated ? ' content__border-authorized' : ''}`;
+  const contentBorderAuthorized = `content__border${
+    isAuthenticated ? ' content__border-authorized' : ''
+  }`;
 
   const [searchQuery, setSearchQuery] = useState(useLocation().search);
   const freelancerSearchQuery = searchQuery
@@ -29,89 +31,84 @@ function Main() {
     .replace('min_budget', 'min_payrate')
     .replace('max_budget', 'max_payrate');
 
-
   function setFirstTabValues(response) {
     setFirstTabData(response.results);
-    setFirstTabNavigation({ next: response.next, previous: response.previous })
+    setFirstTabNavigation({ next: response.next, previous: response.previous });
   }
 
   function setSecondTabValues(response) {
     setSecondTabData(response.results);
-    setSecondTabNavigation({ next: response.next, previous: response.previous })
+    setSecondTabNavigation({ next: response.next, previous: response.previous });
   }
 
   function setFirstTabValuesOnError() {
     setFirstTabData([]);
-    setSecondTabNavigation({ next: null, previous: null })
+    setSecondTabNavigation({ next: undefined, previous: undefined });
   }
 
   function setSecondTabValuesOnError() {
     setSecondTabData([]);
-    setSecondTabNavigation({ next: null, previous: null })
+    setSecondTabNavigation({ next: undefined, previous: undefined });
   }
 
   useEffect(() => {
-
     if (!isAuthenticated) {
       Api.getFreelancers(freelancerSearchQuery)
         .then((response) => {
-          setSecondTabValues(response)
+          setSecondTabValues(response);
         })
         .catch((error) => {
           console.error(error);
-          setSecondTabValuesOnError()
+          setSecondTabValuesOnError();
         });
 
       Api.getTasks(searchQuery)
         .then((response) => {
-          setFirstTabValues(response)
+          setFirstTabValues(response);
         })
         .catch((error) => {
           console.error(error);
-          setFirstTabValuesOnError(response)
+          setFirstTabValuesOnError(response);
         });
     }
 
-
     if (currentUser?.is_customer) {
-
       Api.getFreelancers(freelancerSearchQuery)
         .then((response) => {
-          setFirstTabValues(response)
+          setFirstTabValues(response);
         })
         .catch((error) => {
           console.error(error);
-          setFirstTabValuesOnError(response)
+          setFirstTabValuesOnError(response);
         });
 
       Api.getTasksCustomerWithAuthorization(searchQuery, currentUser.id)
         .then((response) => {
-          setSecondTabValues(response)
+          setSecondTabValues(response);
         })
         .catch((error) => {
           console.error(error);
-          setSecondTabValuesOnError()
+          setSecondTabValuesOnError();
         });
     }
-
 
     if (currentUser?.is_worker) {
       Api.getTasksWithAuthorization(searchQuery)
         .then((response) => {
-          setFirstTabValues(response)
+          setFirstTabValues(response);
         })
         .catch((error) => {
           console.error(error);
-          setFirstTabValuesOnError(response)
+          setFirstTabValuesOnError(response);
         });
 
       Api.getTasksFreelancerWithAuthorization(searchQuery)
         .then((response) => {
-          setSecondTabValues(response)
+          setSecondTabValues(response);
         })
         .catch((error) => {
           console.error(error);
-          setSecondTabValuesOnError()
+          setSecondTabValuesOnError();
         });
     }
   }, [location, searchQuery]);
@@ -119,22 +116,22 @@ function Main() {
   function loadFirstTabPaginationData(request) {
     Api.getDataByPagination(request)
       .then((response) => {
-        setFirstTabValues(response)
+        setFirstTabValues(response);
       })
       .catch((error) => {
         console.error(error);
-        setFirstTabValuesOnError(response)
+        setFirstTabValuesOnError(response);
       });
   }
 
   function loadSecondTabPaginationData(request) {
     Api.getDataByPagination(request)
       .then((response) => {
-        setSecondTabValues(response)
+        setSecondTabValues(response);
       })
       .catch((error) => {
         console.error(error);
-        setSecondTabValuesOnError()
+        setSecondTabValuesOnError();
       });
   }
 
@@ -180,9 +177,7 @@ function Main() {
             />
           </div>
           <div className="freelance-order__column-filter">
-            <Filters
-              setSearchQuery={setSearchQuery}
-            />
+            <Filters setSearchQuery={setSearchQuery} />
           </div>
         </section>
       </div>

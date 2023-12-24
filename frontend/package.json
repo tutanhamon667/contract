@@ -13,14 +13,15 @@
     "lint:style": "stylelint '**/*.css'",
     "lint:style:fix": "stylelint '**/*.css' --fix",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky install"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-fast-marquee": "^1.6.2",
-    "react-helmet-async": "^2.0.3",
-    "react-router-dom": "^6.21.0",
+    "react-helmet-async": "^2.0.4",
+    "react-router-dom": "^6.21.1",
     "shallow-equal": "^3.1.0"
   },
   "devDependencies": {
@@ -35,8 +36,9 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-unicorn": "^49.0.0",
+    "eslint-plugin-unicorn": "^50.0.1",
     "globals": "^13.24.0",
+    "husky": "^8.0.3",
     "prettier": "^3.1.1",
     "stylelint": "^16.0.2",
     "stylelint-config-idiomatic-order": "^10.0.0",

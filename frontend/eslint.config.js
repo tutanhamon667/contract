@@ -1,4 +1,5 @@
 import globals from 'globals';
+import eslintPluginUnicorn from 'eslint-plugin-unicorn';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 import { FlatCompat } from '@eslint/eslintrc';
@@ -13,9 +14,10 @@ const compat = new FlatCompat({
 });
 
 export default [
+  eslintPluginUnicorn.configs['flat/recommended'],
   ...compat.extends(
-    'plugin:unicorn/recommended',
     'airbnb',
+    'plugin:react/jsx-runtime',
     'airbnb/hooks',
   ),
   eslintConfigPrettier,
@@ -54,7 +56,7 @@ export default [
     },
   },
   {
-    files: ['eslint.config.js'],
+    files: ['eslint.config.js', 'vite.config.js'],
     rules: {
       'import/no-extraneous-dependencies': 'off',
       'no-underscore-dangle': 'off',
@@ -63,7 +65,6 @@ export default [
   {
     ignores: [
       'dist',
-      'vite.config.js',
     ],
   },
 ];

@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import '../InputMultipleSelect/InputMultipleSelect.css';
 import './InputTags.css';
 
-function InputTags({ name, isDisabled, tags, setTags, handleChange, error, errorMessage }) {
+function InputTags({ name, isDisabled, tags, setTags, handleChange, error }) {
   function handleKeyDown(event) {
     if (event.key !== 'Enter') return;
     const { value } = event.target;
@@ -46,7 +46,7 @@ function InputTags({ name, isDisabled, tags, setTags, handleChange, error, error
           </div>
         ))}
       </div>
-      {error ? <span>{errorMessage}</span> : ''}
+      {error ? <span>{error}</span> : ''}
     </>
   );
 }

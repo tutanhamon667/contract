@@ -22,6 +22,12 @@
   text-underline-offset: 4px;
 }
 
+.order__main-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
 .order__back {
   width: 24px;
   height: 24px;
