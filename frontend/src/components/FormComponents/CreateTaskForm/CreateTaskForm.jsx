@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { industryAndCategoryOptions } from '../../../utils/constants';
 import { InputText } from '../../InputComponents/InputText/InputText';
@@ -24,7 +24,7 @@ function CreateTaskForm({ onSubmit }) {
     handleChangeCustom,
   } = useFormAndValidation();
 
-console.log(values)
+  // console.log(values);
 
   const valuesArray = [
     !values.title,
@@ -73,7 +73,6 @@ console.log(values)
     onSubmit(allValues);
   };
 
-
   return (
     <form className="create-task-form" onSubmit={handleSubmit}>
       <div>
@@ -86,7 +85,6 @@ console.log(values)
           onChange={handleChange}
           value={values.title || ''}
           error={errors.title}
-          errorMessage={errors.title}
           onBlur={deleteSpaces}
         />
       </div>
@@ -98,7 +96,6 @@ console.log(values)
           options={industryAndCategoryOptions}
           value={values.activity || ''}
           error={errors.activity}
-          errorMessage={errors.activity}
           onChange={handleChange}
         />
       </div>
@@ -110,7 +107,6 @@ console.log(values)
           setTags={setTags}
           handleChange={handleChangeCustom}
           error={errors.tags}
-          errorMessage={errors.tags}
         />
       </div>
       <div>
@@ -124,7 +120,6 @@ console.log(values)
           onChange={handleChange}
           value={values.budget || ''}
           error={errors.budget}
-          errorMessage={errors.budget}
         />
       </div>
       <InputSwitch
@@ -148,7 +143,6 @@ console.log(values)
             onBlur={handleBlur}
             value={values.deadline || ''}
             error={errors.deadline}
-            errorMessage={errors.deadline}
             isDisabled={values.deadlineDiscussion || false}
           />
         </div>
@@ -172,7 +166,6 @@ console.log(values)
           onChange={handleChange}
           value={values.about || ''}
           error={errors.about}
-          errorMessage={errors.about}
         />
       </div>
       <div>
@@ -183,8 +176,7 @@ console.log(values)
             onChange={addDocument}
             setErrors={setErrors}
             error={errors.portfolio}
-            errorMessage={errors.portfolio}
-            errors={errors}
+            // errors={errors}
           />
         </div>
       </div>

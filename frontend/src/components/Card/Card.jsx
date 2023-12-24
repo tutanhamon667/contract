@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { industryAndCategoryOptions } from '../../utils/constants';
@@ -77,14 +77,13 @@ function Card({ cards, isFirstTab }) {
     );
   }
 
-
-
   if (cards.length === 0) {
-    return <>
-      <h4>По вашему запросу ничего не найдено</h4>
-    </>
+    return (
+      <>
+        <h4>По вашему запросу ничего не найдено</h4>
+      </>
+    );
   }
-
 
   return cards?.map(
     (data, index) => (

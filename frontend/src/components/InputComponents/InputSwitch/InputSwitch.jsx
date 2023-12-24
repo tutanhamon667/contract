@@ -1,4 +1,3 @@
-import React from 'react';
 import './InputSwitch.css';
 
 function InputSwitch({
@@ -10,7 +9,6 @@ function InputSwitch({
   marginTop,
   name,
   error,
-  errorMessage,
   isDisabled,
   defaultChecked,
 }) {
@@ -34,7 +32,7 @@ function InputSwitch({
         />
         {label}
       </label>
-      <span className="input-switch__error-text">{errorMessage}</span>
+      <span className="input-switch__error-text">{error}</span>
     </div>
   );
 }

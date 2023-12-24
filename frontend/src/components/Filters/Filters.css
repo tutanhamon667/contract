@@ -32,6 +32,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
+
   /* 125% */
 }
 
@@ -41,13 +42,13 @@
   opacity: 0;
 }
 
-.filters-checkbox+label {
+.filters-checkbox + label {
   display: inline-flex;
   align-items: center;
   user-select: none;
 }
 
-.filters-checkbox+label::before {
+.filters-checkbox + label::before {
   display: inline-block;
   width: 24px;
   height: 24px;
@@ -63,7 +64,7 @@
 }
 
 /* стили для чекбокса, находящегося в состоянии checked */
-.filters-checkbox:checked+label::before {
+.filters-checkbox:checked + label::before {
   width: 26px;
   height: 26px;
   border: none;
@@ -85,9 +86,9 @@
 }
 
 .filters-budget__wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 
 .filters-budget__label {

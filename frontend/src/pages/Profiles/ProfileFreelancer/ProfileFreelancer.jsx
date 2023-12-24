@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
@@ -23,9 +23,9 @@ function ProfileFreelancer({ setCurrentUser }) {
   const { values, setValues, errors, handleChange, handleChangeCustom } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [tags, setTags] = useState(currentUser?.stacks?.map((object) => object.name) || []);
-  const [photo, setPhoto] = useState(null);
-  const [diploma, setDiploma] = useState(null);
-  const [portfolio, setPortfolio] = useState(null);
+  const [photo, setPhoto] = useState();
+  const [diploma, setDiploma] = useState();
+  const [portfolio, setPortfolio] = useState();
 
   // const [docKeysEdu, setDocKeysEdu] = useState([...currentUser.education[0]?.diploma?.map((element) => element.id), Date.now()] || [Date.now()]);
   // const [docKeysEdu, setDocKeysEdu] = useState(() => {
@@ -217,7 +217,6 @@ function ProfileFreelancer({ setCurrentUser }) {
             height={80}
             value={values.photo || currentUser.photo || ''}
             error={errors.photo}
-            errorMessage={errors.photo}
             onChange={handleAvatar}
             isDisabled={!isEditable}
           />
@@ -275,7 +274,6 @@ function ProfileFreelancer({ setCurrentUser }) {
               width="100%"
               value={values.email || currentUser?.account_email || ''}
               error={errors.email}
-              errorMessage={errors.email}
               onChange={handleChange}
               id="email"
               isDisabled
@@ -297,7 +295,6 @@ function ProfileFreelancer({ setCurrentUser }) {
               width="100%"
               value={values.first_name || currentUser.user?.first_name || ''}
               error={errors.first_name}
-              errorMessage={errors.first_name}
               onChange={handleChange}
               id="firstName"
               isDisabled={!isEditable}
@@ -311,7 +308,6 @@ function ProfileFreelancer({ setCurrentUser }) {
               marginTop={12}
               value={values.last_name || currentUser.user?.last_name || ''}
               error={errors.last_name}
-              errorMessage={errors.last_name}
               onChange={handleChange}
               id="lastName"
               isDisabled={!isEditable}
@@ -341,7 +337,6 @@ function ProfileFreelancer({ setCurrentUser }) {
               setTags={setTags}
               handleChange={handleChangeCustom}
               error={errors.tags}
-              errorMessage={errors.tags}
               isDisabled={!isEditable}
             />
           </div>
@@ -357,7 +352,6 @@ function ProfileFreelancer({ setCurrentUser }) {
               width={295}
               value={values.payrate || currentUser?.payrate || ''}
               error={errors.payrate}
-              errorMessage={errors.payrate}
               onChange={handleChange}
               id="workingRate"
               isDisabled={!isEditable}
@@ -376,7 +370,6 @@ function ProfileFreelancer({ setCurrentUser }) {
               height={60}
               value={values.about || currentUser?.about || ''}
               error={errors.about}
-              errorMessage={errors.about}
               onChange={handleChange}
               id="aboutMe"
               isDisabled={!isEditable}
@@ -394,7 +387,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                 values.education || currentUser?.education ? currentUser?.education[0]?.name : ''
               }
               error={errors.education}
-              errorMessage={errors.education}
               onChange={handleChange}
               id="education"
               isDisabled={!isEditable}
@@ -412,7 +404,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                     : ''
                 }
                 error={errors.start_year}
-                errorMessage={errors.start_year}
                 onChange={handleChange}
                 isDisabled={!isEditable}
               />
@@ -427,7 +418,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                     : ''
                 }
                 error={errors.finish_year}
-                errorMessage={errors.finish_year}
                 onChange={handleChange}
                 isDisabled={!isEditable}
               />
@@ -454,7 +444,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                 values.faculty || currentUser?.education ? currentUser?.education[0]?.faculty : ''
               }
               error={errors.faculty}
-              errorMessage={errors.faculty}
               onChange={handleChange}
               id="faculty"
               isDisabled={!isEditable}
@@ -466,7 +455,7 @@ function ProfileFreelancer({ setCurrentUser }) {
             <div className="freelancer-complete-form__input-doc-wrapper">
               {/*{docKeysEdu.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (*/}
               {/*  <InputDocument key={key} name="diploma" value={values.diploma || currentUser.education[0]?.diploma[index] || ''}*/}
-              {/*            error={errors.diploma} errorMessage={errors.diploma}*/}
+              {/*            error={errors.diploma}*/}
               {/*            onChange={(event) => handleDocEduChange(event, key)}*/}
               {/*            onDeleteDocClick={() => onDeleteDocEduClick(key)}*/}
               {/*            isDisabled={!isEditable}*/}
@@ -478,7 +467,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                   values.diploma || currentUser?.education ? currentUser.education[0]?.diploma : ''
                 }
                 error={errors.diploma}
-                errorMessage={errors.diploma}
                 onChange={handleDiploma}
                 isDisabled={!isEditable}
               />
@@ -505,7 +493,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                 ''
               }
               error={errors.phone}
-              errorMessage={errors.phone}
               onChange={handleChange}
               id="phoneForContacts"
               isDisabled={!isEditable}
@@ -537,7 +524,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                 ''
               }
               error={errors.email}
-              errorMessage={errors.email}
               onChange={handleChange}
               id="emailForContacts"
               isDisabled={!isEditable}
@@ -571,7 +557,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                 ''
               }
               error={errors.telegram}
-              errorMessage={errors.telegram}
               onChange={handleChange}
               id="telegram"
               isDisabled={!isEditable}
@@ -596,7 +581,7 @@ function ProfileFreelancer({ setCurrentUser }) {
             <div className="freelancer-complete-form__input-doc-wrapper">
               {/*{docKeysPortfolio.slice(0, MAX_ATTACHED_DOCS).map((key, index) => (*/}
               {/*  <InputDocument key={key} name="portfolio" value={values.portfolio || currentUser?.portfolio[index] || ''}*/}
-              {/*            error={errors.portfolio} errorMessage={errors.portfolio}*/}
+              {/*            error={errors.portfolio}*/}
               {/*            onChange={(event) => handleDocPortfolioChange(event, key)}*/}
               {/*            onDeleteDocClick={() => onDeleteDocPortfolioClick(key)}*/}
               {/*            isDisabled={!isEditable}*/}
@@ -622,7 +607,6 @@ function ProfileFreelancer({ setCurrentUser }) {
                 width="100%"
                 value={values.web || currentUser?.web || ''}
                 error={errors.web}
-                errorMessage={errors.web}
                 onChange={handleChange}
                 id="portfolioLink"
                 isDisabled={!isEditable}

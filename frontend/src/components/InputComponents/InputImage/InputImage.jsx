@@ -1,18 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './InputImage.css';
 
-function InputImage({
-  name,
-  value,
-  onChange,
-  width,
-  height,
-  isDisabled,
-  setErrors,
-  errors,
-  errorMessage,
-}) {
-  const [file, setFile] = useState(null);
+function InputImage({ name, value, onChange, width, height, isDisabled, setErrors, error }) {
+  const [file, setFile] = useState();
   // const [error, setError] = useState('');
   const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
   const inputStyle = {};
@@ -42,14 +32,14 @@ function InputImage({
     };
 
     if (selectedFile) {
-      if (allowedFileTypes.includes(selectedFile.type) && selectedFile.size < 52428800) {
+      if (allowedFileTypes.includes(selectedFile.type) && selectedFile.size < 52_428_800) {
         // setFile(selectedFile);
         // setError('');
         // console.log(selectedFile)
-        setErrors({ ...errors, photo: '' });
+        setErrors({ ...error, photo: '' });
       } else {
-        setFile(null);
-        setErrors({ ...errors, photo: 'Выберите файл в формате PNG, JPG или JPEG до 50 МБ.' });
+        setFile(undefined);
+        setErrors({ ...error, photo: 'Выберите файл в формате PNG, JPG или JPEG до 50 МБ.' });
         // setError('Выберите файл в формате PNG, JPG или JPEG до 50 МБ.');
       }
     }
@@ -59,7 +49,7 @@ function InputImage({
     <>
       <label
         className={`input-image__real-input${width === 80 ? ' input-image__real-input_small' : ''}${
-          errorMessage ? ' input-image__error' : ''
+          error ? ' input-image__error' : ''
         }`}
         style={{ ...inputStyle, width, height }}
       >
@@ -73,7 +63,7 @@ function InputImage({
           disabled={isDisabled}
         />
       </label>
-      <span className="input-image__error-text">{errorMessage}</span>
+      <span className="input-image__error-text">{error}</span>
     </>
   );
 }

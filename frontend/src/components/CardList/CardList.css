@@ -11,23 +11,40 @@
   gap: 30px;
 }
 
-.button {
-  display: flex;
-  width: 400px;
-  height: 52px;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 28px;
-  border: none;
-  border-radius: 12px;
-  background-color: #3f3f3f;
-  cursor: pointer;
-  line-height: 1.5;
-  transition: all 0.3s ease-in-out;
-}
+/* .button { */
 
-.button_type_secondary {
-  padding: 0;
-  border: 1px solid #c6c6c6;
-  background-color: #f7f7f7;
-}
+/*  display: flex; */
+
+/*  width: 400px; */
+
+/*  height: 52px; */
+
+/*  align-items: center; */
+
+/*  justify-content: center; */
+
+/*  padding: 6px 28px; */
+
+/*  border: none; */
+
+/*  border-radius: 12px; */
+
+/*  background-color: #3f3f3f; */
+
+/*  cursor: pointer; */
+
+/*  line-height: 1.5; */
+
+/*  transition: all 0.3s ease-in-out; */
+
+/* } */
+
+/* .button_type_secondary { */
+
+/*  padding: 0; */
+
+/*  border: 1px solid #c6c6c6; */
+
+/*  background-color: #f7f7f7; */
+
+/* } */

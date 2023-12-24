@@ -9,11 +9,14 @@ function useFormAndValidation() {
     return Object.values(errors).every((error) => error === '');
   }
 
-  function handleChange(event) {
-    const { name, value } = event.target;
+  function handleChange({ target: { name, value } }) {
+    // function handleChange(event) {
+    //   const { name, value } = event.target;
+    // console.log(name, value);
     setValues({ ...values, [name]: value });
     setErrors({ ...errors, ...validateValues(name, value) });
-    setIsValid(event.target.closest('form').checkValidity());
+    // setIsValid(event.target.closest('form').checkValidity());
+    setIsValid(checkErrors(errors));
   }
 
   function handleChangeCustom(name, value) {
@@ -57,7 +60,7 @@ function useFormAndValidation() {
       errorMessage = 'Введите ваш бюджет';
     }
 
-    if (name === 'deadline' && value && value.length) {
+    if (name === 'deadline' && value && value.length > 0) {
       const currentDate = new Date();
       const inputDate = new Date(value);
       if (inputDate <= currentDate) {
@@ -172,30 +175,30 @@ function useFormAndValidation() {
       }
     }
 
-    if (name === 'about' && !aboutRegex.test(value) && value.length) {
+    if (name === 'about' && !aboutRegex.test(value) && value.length > 0) {
       errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
       и строчные символы "-", "_", "@", "."`;
     }
 
-    if (name === 'web' && !websiteLinkRegex.test(value) && value.length) {
+    if (name === 'web' && !websiteLinkRegex.test(value) && value.length > 0) {
       errorMessage = `Укажите ссылку в формате https://example.com`;
     }
 
-    if (name === 'phone' && !aboutRegex.test(value) && value.length) {
+    if (name === 'phone' && !aboutRegex.test(value) && value.length > 0) {
       errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
                   и строчные символы "-", "_", "@", "."`;
     }
 
-    if (name === 'telegram' && !aboutRegex.test(value) && value.length) {
+    if (name === 'telegram' && !aboutRegex.test(value) && value.length > 0) {
       errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
                   и строчные символы "-", "_", "@", ".", "'"`;
     }
 
-    if (name === 'preferred' && !value.length) {
+    if (name === 'preferred' && value.length === 0) {
       errorMessage = 'Выберите один из вариантов';
     }
 
-    if (name === 'education' && !educationRegex.test(value) && value.length) {
+    if (name === 'education' && !educationRegex.test(value) && value.length > 0) {
       errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
                   и строчные символы "-", "_", "@", ".", "'"`;
     }
@@ -204,7 +207,7 @@ function useFormAndValidation() {
       setValues({ ...values, finish_year: '', degree: 'student' });
     }
 
-    if (name === 'faculty' && !educationRegex.test(value) && value.length) {
+    if (name === 'faculty' && !educationRegex.test(value) && value.length > 0) {
       errorMessage = `Можно использовать латиницу, кириллицу, арабские цифры, заглавные
                   и строчные символы "-", "_", "@", ".", "'"`;
     }
@@ -212,9 +215,15 @@ function useFormAndValidation() {
     return { [name]: errorMessage };
   }
 
-  function deleteSpaces(event){
+  function deleteSpaces(event) {
     const { name, value } = event.target;
     setValues({ ...values, [name]: value.replace(/\s+/g, ' ').trim() });
+  }
+
+  function resetForm() {
+    setValues({});
+    setErrors({});
+    setIsValid(false);
   }
 
   return {
@@ -230,7 +239,8 @@ function useFormAndValidation() {
     checkErrors,
     validateValues,
     handleChangeCheckbox,
-    deleteSpaces
+    deleteSpaces,
+    resetForm,
   };
 }
 

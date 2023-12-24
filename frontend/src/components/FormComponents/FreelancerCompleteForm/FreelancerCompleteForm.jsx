@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { industryAndCategoryOptions, degreeOptions } from '../../../utils/constants';
 import { InputText } from '../../InputComponents/InputText/InputText';
@@ -16,8 +16,8 @@ import './FreelancerCompleteForm.css';
 function FreelancerCompleteForm({ onSubmit }) {
   const { currentUser } = useContext(Context);
   const [profilePhoto, setProfilePhoto] = useState({});
-  const [portfolioFile, setPortfolioFile] = useState(null);
-  const [document, setDocument] = useState(null);
+  const [portfolioFile, setPortfolioFile] = useState();
+  const [document, setDocument] = useState();
   // const [docKeysPortfolio, setDocKeysPortfolio] = useState([Date.now()]);
   const {
     values,
@@ -32,7 +32,7 @@ function FreelancerCompleteForm({ onSubmit }) {
   } = useFormAndValidation();
   const [tags, setTags] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTags([]);
     setDocument({});
     setPortfolioFile({});
@@ -46,7 +46,7 @@ function FreelancerCompleteForm({ onSubmit }) {
   }, [currentUser]);
 
   /*
-  React.useEffect(() => {
+  useEffect(() => {
     const valid = checkErrors(errors)
     setIsValid(valid)
   }, [isValid, errors])
@@ -67,7 +67,7 @@ function FreelancerCompleteForm({ onSubmit }) {
   }
   // console.log(document?.files, document?.files?.length);
 
-  //console.log(document?.file?.file)
+  // console.log(document?.file?.file)
   // console.log(isValid)
 
   const handleSubmit = (event) => {
@@ -194,7 +194,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           name="profilePhoto"
           value={values.profilePhoto || ''}
           error={errors.profilePhoto}
-          errorMessage={errors.profilePhoto}
           onChange={addProfilePhoto}
           setErrors={setErrors}
         />
@@ -209,7 +208,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           width={610}
           value={values.first_name || ''}
           error={errors.first_name}
-          errorMessage={errors.first_name}
           onChange={handleChange}
           minLength={80}
           required={true}
@@ -223,7 +221,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           marginTop={12}
           value={values.last_name || ''}
           error={errors.last_name}
-          errorMessage={errors.last_name}
           onChange={handleChange}
           minLength={80}
           required={true}
@@ -240,7 +237,6 @@ function FreelancerCompleteForm({ onSubmit }) {
             width={328}
             value={values.phone || ''}
             error={errors.phone}
-            errorMessage={errors.phone}
             onChange={handleChange}
           />
           <InputSwitch
@@ -249,7 +245,6 @@ function FreelancerCompleteForm({ onSubmit }) {
             label="Предпочтительный вид связи"
             value="phone"
             onChange={handleChange}
-            errorMessage={errors.preferred}
             error={errors.preferred}
           />
           <InputText
@@ -276,7 +271,6 @@ function FreelancerCompleteForm({ onSubmit }) {
             width={328}
             value={values.telegram || ''}
             error={errors.telegram}
-            errorMessage={errors.telegram}
             onChange={handleChange}
           />
           <InputSwitch
@@ -295,7 +289,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           placeholder="Выберите из списка"
           value={values.activity || ''}
           error={errors.activity}
-          errorMessage={errors.activity}
           onChange={handleChange}
           options={industryAndCategoryOptions}
           required={true}
@@ -309,7 +302,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           setTags={setTags}
           handleChange={handleChangeCustom}
           error={errors.tags}
-          errorMessage={errors.tags}
         />
       </div>
       <div>
@@ -321,7 +313,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           width={295}
           value={values.payrate || ''}
           error={errors.payrate}
-          errorMessage={errors.payrate}
           onChange={handleChange}
           maxLength={10}
         />
@@ -336,7 +327,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           height={150}
           value={values.about || ''}
           error={errors.about}
-          errorMessage={errors.about}
           onChange={handleChange}
           maxLength={500}
         />
@@ -350,7 +340,6 @@ function FreelancerCompleteForm({ onSubmit }) {
             name="portfolio"
             value={values.portfolio || ''}
             error={errors.portfolio}
-            errorMessage={errors.portfolio}
             onChange={addPortfolioFile}
             // isDisabled={false}
             // onChange={(event) => handleDocPortfolioChange(event, key)} key={key}
@@ -369,7 +358,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           width={610}
           value={values.web || ''}
           error={errors.web}
-          errorMessage={errors.web}
           onChange={handleChange}
         />
       </div>
@@ -382,7 +370,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           width={610}
           value={values.education || ''}
           error={errors.education}
-          errorMessage={errors.education}
           onChange={handleChange}
         />
       </div>
@@ -396,7 +383,6 @@ function FreelancerCompleteForm({ onSubmit }) {
             width={295}
             value={values.start_year || ''}
             error={errors.start_year}
-            errorMessage={errors.start_year}
             onChange={handleChange}
           />
           <InputText
@@ -406,7 +392,6 @@ function FreelancerCompleteForm({ onSubmit }) {
             width={295}
             value={values.finish_year || ''}
             error={errors.finish_year}
-            errorMessage={errors.finish_year}
             onChange={handleChange}
             isDisabled={values.degree === 'student'}
           />
@@ -419,7 +404,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           placeholder="Выберите из списка"
           value={values.degree || ''}
           error={errors.degree}
-          errorMessage={errors.degree}
           onChange={handleChange}
           options={degreeOptions}
         />
@@ -433,7 +417,6 @@ function FreelancerCompleteForm({ onSubmit }) {
           width={610}
           value={values.faculty || ''}
           error={errors.faculty}
-          errorMessage={errors.faculty}
           onChange={handleChange}
         />
       </div>
@@ -447,7 +430,6 @@ function FreelancerCompleteForm({ onSubmit }) {
             name="diploma"
             value={values.diploma || ''}
             error={errors.diploma}
-            errorMessage={errors.diploma}
             onChange={addDocument}
           />
         </div>

@@ -1,12 +1,12 @@
-import React from 'react';
+import { useState } from 'react';
 import { useFormAndValidation } from '../../../hooks/useFormAndValidation';
 import { Button } from '../../Button/Button';
 import { InputText } from '../../InputComponents/InputText/InputText';
 import './SetNewPassForm.css';
 
 function SetNewPassForm() {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [buttonClicked, setButtonClicked] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -53,7 +53,6 @@ function SetNewPassForm() {
             onChange={handleChange}
             value={values.password || ''}
             error={errors.password}
-            errorMessage={errors.password}
           />
           <InputText
             placeholder="Повторите пароль"
@@ -66,7 +65,6 @@ function SetNewPassForm() {
             onChange={handleChange}
             value={values.re_password || ''}
             error={errors.re_password}
-            errorMessage={errors.re_password}
           />
         </div>
         <Button
