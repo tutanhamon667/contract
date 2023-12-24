@@ -51,7 +51,7 @@ class JobFilter(FilterSet):
 
     def filter_budget(self, queryset, value, lookup_expr):
         try:
-            queryset = queryset.exclude(budget="Ожидает предложений").annotate(
+            queryset = queryset.exclude(budget=ASK_MSG).annotate(
                 int_budget=Cast('budget', IntegerField())
             ).filter(**{f'int_budget__{lookup_expr}': int(value)})
         except (ValueError, ValidationError):
