@@ -1,10 +1,11 @@
 .profile {
   display: flex;
-  padding: 24px 100px 100px;
+  padding: 24px 100px 50px;
   column-gap: 20px;
 }
 
 .profile_block {
+  box-sizing: border-box;
   align-self: start;
   border: 1px solid #c6c6c6;
   border-radius: 10px;

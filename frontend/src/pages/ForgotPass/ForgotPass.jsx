@@ -1,14 +1,14 @@
-import React from 'react';
+import { useContext, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { Button } from '../../components/Button/Button';
 import { ForgotPassForm } from '../../components/FormComponents/ForgotPassForm/ForgotPassForm';
 import './ForgotPass.css';
 
-function ForgotPass({onSubmit}) {
-  const { isAuthenticated } = React.useContext(Context);
+function ForgotPass({ onSubmit }) {
+  const { isAuthenticated } = useContext(Context);
   const location = useLocation();
-  const [isPopupOpen, setIsPopupOpen] = React.useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -18,9 +18,8 @@ function ForgotPass({onSubmit}) {
     return <Navigate to="/" state={{ from: location }} />;
   }
 
- function handleFormSubmit(values){
-
-    onSubmit(values)
+  function handleFormSubmit(values) {
+    onSubmit(values);
   }
 
   return (
@@ -28,7 +27,7 @@ function ForgotPass({onSubmit}) {
       {!isPopupOpen && (
         <div className="forgot-pass__wrapper">
           <div className="forgot-pass__container">
-            <h1 className="forgotPass__title">Забыли пароль?</h1>
+            <h1 className="forgot-pass__title">Забыли пароль?</h1>
             <ForgotPassForm func={togglePopup} handleFormSubmit={handleFormSubmit} />
           </div>
         </div>

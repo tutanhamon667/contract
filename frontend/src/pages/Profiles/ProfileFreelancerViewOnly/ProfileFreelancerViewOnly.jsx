@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useParams, useNavigate  } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import * as Api from '../../../utils/Api';
 import { industryAndCategoryOptions } from '../../../utils/constants';
@@ -15,15 +15,23 @@ import '../ProfileFreelancer/ProfileFreelancer.css';
 import '../Profile.css';
 import './ProfileFreelancerViewOnly.css';
 
-function ProfileFreelancerViewOnly({ tasks, getTasks, onSubmit, statePopup, setStatePopup, isPopupOpen, setIsPopupOpen, popupError, setPopupError }) {
-  
+function ProfileFreelancerViewOnly({
+  tasks,
+  getTasks,
+  onSubmit,
+  statePopup,
+  setStatePopup,
+  isPopupOpen,
+  setIsPopupOpen,
+  popupError,
+  setPopupError,
+}) {
   const [freelancer, setFreelancer] = useState({});
   let { id } = useParams();
   const { currentUser } = useContext(Context);
   const navigate = useNavigate();
-
   const { values, setValues, errors, handleChange, handleChangeCustom } = useFormAndValidation();
-  
+
   useEffect(() => {
     if (currentUser?.is_customer) {
       getTasks();
@@ -34,25 +42,25 @@ function ProfileFreelancerViewOnly({ tasks, getTasks, onSubmit, statePopup, setS
           setFreelancer(result);
         })
         .catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleFormSubmit(){
+  function handleFormSubmit() {
     const chosenTask = tasks.find((task) => task.title === values.categories);
 
-    const allValues ={
-      job_id: chosenTask?.id || "",
+    const allValues = {
+      job_id: chosenTask?.id || '',
       freelancer: id,
-      message_text: values.message
-    }
-   
-    onSubmit(allValues)
+      message_text: values.message,
+    };
+
+    onSubmit(allValues);
     //setIsPopupOpen(false)
-   
   }
 
   return (
-    currentUser.is_customer &&
-    freelancer?.is_worker && (
+    currentUser.is_customer && (
+      // freelancer?.is_worker &&
       <>
         <Helmet>
           <title>
@@ -186,26 +194,24 @@ function ProfileFreelancerViewOnly({ tasks, getTasks, onSubmit, statePopup, setS
                     )?.label}
                 </p>
               </div>
-              <form className='form-message'>
-              <button
+              <form className="form-message">
+                <button
                   type="button"
-                  onClick={() => { 
+                  onClick={() => {
                     setIsPopupOpen(false);
-                    setPopupError('') }}
+                    setPopupError('');
+                  }}
                   className="form-message__close-button"
-                >
-                </button>
+                />
                 <InputSelect
                   name="categories"
                   placeholder="Выберите заказ"
                   width="100%"
                   margin="20px 0 12px 0"
-                  value={
-                    values.categories || ''
-                  }
+                  value={values.categories || ''}
                   onChange={handleChange}
                   options={tasks}
-                //isDisabled={!isEditable}
+                  //isDisabled={!isEditable}
                 />
                 <InputText
                   type="textarea"
@@ -214,8 +220,7 @@ function ProfileFreelancerViewOnly({ tasks, getTasks, onSubmit, statePopup, setS
                   width={534}
                   height={200}
                   value={values.message || ''}
-                  error={errors.message}
-                  errorMessage={errors.message || popupError}
+                  error={errors.message || popupError}
                   onChange={handleChange}
                 />
                 <button
@@ -234,20 +239,21 @@ function ProfileFreelancerViewOnly({ tasks, getTasks, onSubmit, statePopup, setS
         {statePopup && (
           <div className="popup-overlay">
             <div className="popup message-popup">
-            <button
-                  type="button"
-                  onClick={() => { 
-                    setStatePopup(false) 
-                    setIsPopupOpen(false)}}
-                  className="form-message__close-button"
-                >
-                </button>
-              <div className="popup-message__image"></div>
+              <button
+                type="button"
+                onClick={() => {
+                  setStatePopup(false);
+                  setIsPopupOpen(false);
+                }}
+                className="form-message__close-button"
+              />
+              <div className="popup-message__image" />
               <h2 className="profile__title popup__title" style={{ marginBottom: 16 }}>
-              Сообщение отправлено
+                Сообщение отправлено
               </h2>
               <p className="profile__main-text  popup__main-text" style={{ marginBottom: 40 }}>
-              В ближайшее время фрилансер вам ответит. А пока рекомендуем связаться с несколькими фрилансерами, чтобы повысить шанс на выполнение заказа.
+                В ближайшее время фрилансер вам ответит. А пока рекомендуем связаться с несколькими
+                фрилансерами, чтобы повысить шанс на выполнение заказа.
               </p>
               <button
                 type="button"
@@ -266,7 +272,7 @@ function ProfileFreelancerViewOnly({ tasks, getTasks, onSubmit, statePopup, setS
                 onClick={() => {
                   setIsPopupOpen(false);
                   setHiringSuccessful(false);
-                  navigate('/', {replace: true})
+                  navigate('/', { replace: true });
                 }}
                 className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit popup-message__button-to-message popup-message__button-to-freelancers"
                 style={{ marginBottom: 30 }}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { industryAndCategoryOptions } from '../../../utils/constants';
 import { InputImage } from '../../InputComponents/InputImage/InputImage';
@@ -8,7 +8,7 @@ import { InputSelect } from '../../InputComponents/InputSelect/InputSelect';
 import './CustomerCompleteForm.css';
 
 function CustomerCompleteForm({ handleCustomerSubmit }) {
-  const [photo, setPhoto] = useState(null);
+  const [photo, setPhoto] = useState();
 
   const { values, errors, isValid, handleChange, setIsValid, setErrors, checkErrors } =
     useFormAndValidation();
@@ -40,10 +40,9 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           name="photo"
           value={values.photo || ''}
           error={errors.photo}
-          errorMessage={errors.photo}
           onChange={addPhoto}
           setErrors={setErrors}
-          errors={errors}
+          // errors={errors}
         />
       </div>
       <div>
@@ -56,7 +55,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           width={610}
           value={values.name || ''}
           error={errors.name}
-          errorMessage={errors.name}
           onChange={handleChange}
         />
       </div>
@@ -67,7 +65,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           placeholder="Выберите из списка"
           value={values.industry || ''}
           error={errors.industry}
-          errorMessage={errors.industry}
           onChange={handleChange}
           options={industryAndCategoryOptions}
         />
@@ -82,7 +79,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           height={150}
           value={values.about || ''}
           error={errors.about}
-          errorMessage={errors.about}
           onChange={handleChange}
         />
       </div>
@@ -95,7 +91,6 @@ function CustomerCompleteForm({ handleCustomerSubmit }) {
           width={610}
           value={values.web || ''}
           error={errors.web}
-          errorMessage={errors.web}
           onChange={handleChange}
         />
         <button type="button" className="employer-complete-form__add-link-button">

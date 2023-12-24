@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Context } from '../../context/context';
 import { Button } from '../Button/Button';
@@ -7,13 +7,13 @@ import './Filters.css';
 
 function Filters({ setSearchQuery }) {
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
+  const queryParameters = new URLSearchParams(location.search);
   const [selectedCategories, setSelectedCategories] = useState(
-    queryParams.getAll('category') || null,
+    queryParameters.getAll('category') || undefined,
   );
   const [categories, setCategories] = useState([]);
-  const [budgetStart, setBudgetStart] = useState(queryParams.get('min_budget') || null);
-  const [budgetEnd, setBudgetEnd] = useState(queryParams.get('max_budget') || null);
+  const [budgetStart, setBudgetStart] = useState(queryParameters.get('min_budget') || undefined);
+  const [budgetEnd, setBudgetEnd] = useState(queryParameters.get('max_budget') || undefined);
   const { currentUser, orderFilter, isAuthenticated } = useContext(Context);
   const navigate = useNavigate();
 
@@ -35,19 +35,18 @@ function Filters({ setSearchQuery }) {
     navigate('/');
   }
 
-  function handleBudgetStart(event) {
+  function handleBudgetStart({ target: { value } }) {
     const regex = /[^0-9]/g;
-    const value = event.target.value
-    setBudgetStart(value.replace(regex, ''))
+    setBudgetStart(value.replace(regex, ''));
   }
-  function handleBudgetEnd(event) {
+  function handleBudgetEnd({ target: { value } }) {
     const regex = /[^0-9]/g;
-    const value = event.target.value
-    setBudgetEnd(value.replace(regex, ''))
+    setBudgetEnd(value.replace(regex, ''));
   }
 
-  const filtersContainerStyle = `filters-container${orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
-    }`;
+  const filtersContainerStyle = `filters-container${
+    orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
+  }`;
 
   function handleFilter() {
     const searchCategory = selectedCategories.map((category) => `category=${category}`);
@@ -59,18 +58,15 @@ function Filters({ setSearchQuery }) {
   }
 
   function FilterInput({ id, name, slug }) {
-    const iSchecked = selectedCategories.includes(slug);
+    const isChecked = selectedCategories.includes(slug);
 
-    const handleChange = (e) => {
-      const value = e.target.value;
-      const checked = e.target.checked;
-
+    function handleChange({ target: { value, checked} }) {
       if (checked) {
         setSelectedCategories([...selectedCategories, value]);
       } else {
         setSelectedCategories(selectedCategories.filter((category) => category !== value));
       }
-    };
+    }
 
     return (
       <div>
@@ -80,7 +76,7 @@ function Filters({ setSearchQuery }) {
           name="freelance-item"
           className="filters-checkbox"
           value={slug}
-          checked={iSchecked}
+          checked={isChecked}
           onChange={handleChange}
         />
         <label htmlFor={`freelance-item${id}`} className="filters-checkbox__item">
@@ -116,8 +112,8 @@ function Filters({ setSearchQuery }) {
       <div className="filters-container filters-container__budget">
         <h2 className="filters-container__title">Бюджет</h2>
         <form className="filters-form-budget">
-          <div className='filters-budget__wrapper'>
-            <span className='filters-budget__label'>От</span>
+          <div className="filters-budget__wrapper">
+            <span className="filters-budget__label">От</span>
             <input
               type="text"
               id="filters-budget__start"
@@ -127,8 +123,8 @@ function Filters({ setSearchQuery }) {
               required
             />
           </div>
-          <div className='filters-budget__wrapper'>
-            <span className='filters-budget__label'>До</span>
+          <div className="filters-budget__wrapper">
+            <span className="filters-budget__label">До</span>
             <input
               type="text"
               id="filters-budget__end"
@@ -138,7 +134,6 @@ function Filters({ setSearchQuery }) {
               required
             />
           </div>
-
         </form>
       </div>
       <div className="filters-buttons">

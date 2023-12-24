@@ -1,13 +1,12 @@
-import React from 'react';
+import { useState } from 'react';
 import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
 import { Button } from '../../Button/Button';
 import { InputText } from '../../InputComponents/InputText/InputText';
 import './ForgotPassForm.css';
 
 function ForgotPassForm({ func, handleFormSubmit }) {
-  const [buttonClicked, setButtonClicked] = React.useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
   const { values, errors, isValid, handleChange, setValues, setErrors } = useFormAndValidation();
-
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -27,11 +26,8 @@ function ForgotPassForm({ func, handleFormSubmit }) {
     setButtonClicked(true);
     */
 
-    handleFormSubmit(values)
-
-
+    handleFormSubmit(values);
   };
-
 
   return (
     <form className="forgot-pass" onSubmit={handleSubmit}>
@@ -53,16 +49,9 @@ function ForgotPassForm({ func, handleFormSubmit }) {
             onChange={handleChange}
             value={values.email || ''}
             error={errors.email}
-            errorMessage={errors.email}
           />
         </div>
-        <Button
-          text="Отправить"
-          width={400}
-          height={52}
-          type="submit"
-          disabled={!isValid}
-        />
+        <Button text="Отправить" width={400} height={52} type="submit" disabled={!isValid} />
       </div>
     </form>
   );

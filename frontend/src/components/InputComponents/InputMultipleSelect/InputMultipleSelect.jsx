@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../../../pages/Profiles/ProfileFreelancer/ProfileFreelancer.css';
 import '../../../pages/Profiles/Profile.css';
 import './InputMultipleSelect.css';
