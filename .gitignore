@@ -38,7 +38,10 @@ db.sqlite3
 db.sqlite3-journal
 
 # migrations
-backend/*/migrations/
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+
 
 # Media
 media/
