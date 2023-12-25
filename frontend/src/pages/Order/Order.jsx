@@ -23,7 +23,6 @@ function Order() {
   const {
     values,
     errors,
-    isValid,
     handleChange,
     handleChangeCustom,
     setValues,
@@ -33,7 +32,7 @@ function Order() {
   const [isEditable, setIsEditable] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { currentUser } = useContext(Context);
-  let { id } = useParams();
+  const { id } = useParams();
   const [order, setOrder] = useState({});
   const [document, setDocument] = useState();
   const navigate = useNavigate();
@@ -444,6 +443,7 @@ function Order() {
                     text="Отклики"
                     width={289}
                     className="form-profile__bottom-buttons form-profile__bottom-buttons_type_submit"
+                    onClick={() => navigate('responses')}
                   />
                   {!isEditable && (
                     <Button

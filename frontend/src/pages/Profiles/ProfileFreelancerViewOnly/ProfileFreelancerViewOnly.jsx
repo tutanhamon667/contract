@@ -27,10 +27,10 @@ function ProfileFreelancerViewOnly({
   setPopupError,
 }) {
   const [freelancer, setFreelancer] = useState({});
-  let { id } = useParams();
+  const { id } = useParams();
   const { currentUser } = useContext(Context);
   const navigate = useNavigate();
-  const { values, setValues, errors, handleChange, handleChangeCustom } = useFormAndValidation();
+  const { values, errors, handleChange } = useFormAndValidation();
 
   useEffect(() => {
     if (currentUser?.is_customer) {

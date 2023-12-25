@@ -4,11 +4,13 @@
 
 .order_block {
   display: flex;
+  justify-content: center;
   column-gap: 32px;
 }
 
 .left-column {
   width: 100%;
+  max-width: 750px;
 }
 
 .order__back-container {

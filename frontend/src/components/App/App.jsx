@@ -19,6 +19,7 @@ import { ResetPass } from '../../pages/ResetPass/ResetPass';
 import { ProfileCustomer } from '../../pages/Profiles/ProfileCustomer/ProfileCustomer';
 import { ProfileFreelancerViewOnly } from '../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly';
 import { Order } from '../../pages/Order/Order';
+import { ResponseList } from '../../pages/ResponseList/ResponseList';
 import './App.css';
 
 function App() {
@@ -225,7 +226,7 @@ function App() {
 
   function createChat(data) {
     Api.createChat(data)
-      .then((response) => {
+      .then(() => {
         setStatePopup(true);
         setIsPopupOpen(false);
         setPopupError('');
@@ -317,6 +318,7 @@ function App() {
               />
               <Route path="create-task" element={<CreateTaskForm onSubmit={handleTaskSubmit} />} />
               <Route path="order/:id" element={<Order />} />
+              <Route path="order/:id/responses" element={<ResponseList />} />
               <Route
                 path="freelancer/:id"
                 element={

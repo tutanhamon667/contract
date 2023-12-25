@@ -20,7 +20,7 @@ function ProfileCustomer({ setCurrentUser }) {
     useFormAndValidation();
 
   const [isEditable, setIsEditable] = useState(false);
-  const [photo, setPhoto] = useState(undefined);
+  const [photo, setPhoto] = useState();
   const formReference = useRef(null);
   const initialData = {
     name: currentUser?.name || '',

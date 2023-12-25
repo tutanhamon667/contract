@@ -20,7 +20,7 @@ import '../Profile.css';
 
 function ProfileFreelancer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
-  const { values, setValues, errors, handleChange, handleChangeCustom } = useFormAndValidation();
+  const { values, errors, handleChange, handleChangeCustom } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [tags, setTags] = useState(currentUser?.stacks?.map((object) => object.name) || []);
   const [photo, setPhoto] = useState();
@@ -231,7 +231,7 @@ function ProfileFreelancer({ setCurrentUser }) {
         <div className="profile_block profile__setting ">
           <h3 className="profile__title">Настройки</h3>
           <div className="profile__separate-line" />
-          <Link className="profile__main-text" to="">
+          <Link className="profile__main-text" to="#">
             Информация
           </Link>
         </div>

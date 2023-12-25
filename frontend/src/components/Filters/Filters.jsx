@@ -5,7 +5,7 @@ import { Button } from '../Button/Button';
 import * as Api from '../../utils/Api';
 import './Filters.css';
 
-function Filters({ setSearchQuery }) {
+function Filters({ setSearchQuery, marginTop }) {
   const location = useLocation();
   const queryParameters = new URLSearchParams(location.search);
   const [selectedCategories, setSelectedCategories] = useState(
@@ -32,7 +32,7 @@ function Filters({ setSearchQuery }) {
     setBudgetEnd('');
     setSelectedCategories([]);
     setSearchQuery('');
-    navigate('/');
+    // navigate('/');
   }
 
   function handleBudgetStart({ target: { value } }) {
@@ -44,9 +44,12 @@ function Filters({ setSearchQuery }) {
     setBudgetEnd(value.replace(regex, ''));
   }
 
-  const filtersContainerStyle = `filters-container${
-    orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''
-  }`;
+  const isFreelance =
+    (orderFilter && isAuthenticated) || /^\/order\/\d+\/responses$/.test(location.pathname);
+  const filtersContainerStyle = isFreelance
+    ? 'filters-container filters-container__freelance'
+    : 'filters-container';
+  // const filtersContainerStyle = `filters-container${orderFilter && isAuthenticated ? ' filters-container__freelance ' : ''}`;
 
   function handleFilter() {
     const searchCategory = selectedCategories.map((category) => `category=${category}`);
@@ -60,7 +63,7 @@ function Filters({ setSearchQuery }) {
   function FilterInput({ id, name, slug }) {
     const isChecked = selectedCategories.includes(slug);
 
-    function handleChange({ target: { value, checked} }) {
+    function handleChange({ target: { value, checked } }) {
       if (checked) {
         setSelectedCategories([...selectedCategories, value]);
       } else {
@@ -87,8 +90,8 @@ function Filters({ setSearchQuery }) {
   }
 
   return (
-    <section className="filters">
-      {currentUser?.is_customer && (
+    <section className="filters" style={{ marginTop }}>
+      {currentUser?.is_customer && location.pathname === '/' && (
         <Button
           text="Создать заказ"
           width={289}

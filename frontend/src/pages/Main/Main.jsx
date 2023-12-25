@@ -18,8 +18,14 @@ function Main() {
   const [firstTabData, setFirstTabData] = useState([]);
   const [secondTabData, setSecondTabData] = useState([]);
 
-  const [firstTabNavigation, setFirstTabNavigation] = useState({ next: undefined, previous: undefined });
-  const [secondTabNavigation, setSecondTabNavigation] = useState({ next: undefined, previous: undefined });
+  const [firstTabNavigation, setFirstTabNavigation] = useState({
+    next: undefined,
+    previous: undefined,
+  });
+  const [secondTabNavigation, setSecondTabNavigation] = useState({
+    next: undefined,
+    previous: undefined,
+  });
 
   const contentBorderAuthorized = `content__border${
     isAuthenticated ? ' content__border-authorized' : ''

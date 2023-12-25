@@ -157,6 +157,14 @@ function respondToTask(id) {
   }).then((response) => checkResponse(response));
 }
 
+function getResponses(id, searchQuery) {
+  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/offers/${searchQuery}`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+    },
+  }).then((response) => checkResponse(response));
+}
+
 function getFreelancers(searchQuery) {
   return fetch(`${BACKEND_BASE_URL}/main/${searchQuery}`).then((response) =>
     checkResponse(response),
@@ -222,6 +230,7 @@ export {
   getTaskById,
   deleteTaskById,
   respondToTask,
+  getResponses,
   getFreelancers,
   getFreelancerById,
   getAllCategories,

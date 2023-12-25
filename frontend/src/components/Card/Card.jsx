@@ -7,19 +7,19 @@ import './Card.css';
 function Card({ cards, isFirstTab }) {
   const { currentUser, isAuthenticated } = useContext(Context);
 
-  // function one() {
-  //   for (const key in freelanceFilter) {
-  //     if (freelanceFilter[key]) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // }
-
   function definePrice(data) {
     if (data.hasOwnProperty('payrate')) {
       if (typeof data?.payrate === 'number' && data?.payrate !== 0) {
         return `${data?.payrate} ₽/час`;
+      } else {
+        return 'Не указана';
+      }
+    }
+
+    // temporary
+    if (data?.freelancer?.payrate) {
+      if (typeof data?.freelancer?.payrate === 'number' && data?.freelancer?.payrate !== 0) {
+        return `${data?.freelancer?.payrate} ₽/час`;
       } else {
         return 'Не указана';
       }
@@ -37,25 +37,31 @@ function Card({ cards, isFirstTab }) {
       <>
         <div className="order-card__header-container">
           <div className="order-card__avatar-container">
-            {data?.user && (
+            {(data?.user || data?.freelancer?.user) && (
               <div
                 className="order-card__avatar"
                 style={
-                  (data?.avatar || data?.photo) && {
-                    backgroundImage: `url('${data?.avatar || data?.photo}')`,
+                  (data?.avatar || data?.photo || data?.freelancer?.photo) && {
+                    backgroundImage: `url('${
+                      data?.avatar || data?.photo || data?.freelancer?.photo
+                    }')`,
                   }
                 }
               />
             )}
             <div className="orderCard__title-container">
               <h3 className="order-card__title">
-                {data?.title || `${data?.user?.first_name} ${data?.user?.last_name}`}
+                {data?.title ||
+                  (data?.user && `${data?.user?.first_name} ${data?.user?.last_name}`) ||
+                  `${data?.freelancer?.user?.first_name} ${data?.freelancer?.user?.last_name}`}
               </h3>
               <p className="order-card__direction">
                 {industryAndCategoryOptions
                   .find((option) => {
                     if (data?.category) return option?.value === data?.category[0];
                     if (data?.categories) return option?.value === data?.categories[0]?.name;
+                    if (data?.freelancer?.categories)
+                      return option?.value === data?.freelancer?.categories[0]?.name;
                   })
                   ?.label.toLowerCase()}
               </p>
@@ -65,9 +71,11 @@ function Card({ cards, isFirstTab }) {
             <p className="order-card__price">{definePrice(data)}</p>
           </div>
         </div>
-        <p className="order-card__description">{data?.description || data?.about}</p>
+        <p className="order-card__description">
+          {data?.description || data?.about || data?.freelancer?.about}
+        </p>
         <div className="order-card__tag-container">
-          {(data?.stacks || data?.stack)?.map((tag, index) => (
+          {(data?.stacks || data?.stack || data?.freelancer?.stacks)?.map((tag, index) => (
             <p key={index} className="order-card__tag">
               {tag?.name}
             </p>
@@ -78,11 +86,7 @@ function Card({ cards, isFirstTab }) {
   }
 
   if (cards.length === 0) {
-    return (
-      <>
-        <h4>По вашему запросу ничего не найдено</h4>
-      </>
-    );
+    return <h4>По вашему запросу ничего не найдено</h4>;
   }
 
   return cards?.map(
@@ -101,7 +105,7 @@ function Card({ cards, isFirstTab }) {
         {isAuthenticated ? (
           <Link
             to={
-              data.hasOwnProperty('is_responded') ? `order/${data?.id}` : `freelancer/${data?.id}`
+              data.hasOwnProperty('is_responded') ? `/order/${data?.id}` : `/freelancer/${data?.id}`
             }
           >
             {renderCardContent(data)}
