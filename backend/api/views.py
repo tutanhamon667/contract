@@ -114,7 +114,9 @@ class JobViewSet(ModelViewSet):
             search_fields=('freelancer__user__first_name',
                            'freelancer__user__last_name',
                            'freelancer__stacks__name',
-                           'freelancer__categories__name')
+                           'freelancer__categories__name',
+                           'freelancer__categories__slug',
+                           'freelancer__about')
             )
     def offers(self, _, pk=None):
         """
