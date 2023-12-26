@@ -88,11 +88,26 @@ class FreelancerSerializer(GetWorkerProfileSerializer):
 
 class ResponseFreelancersSerializer(serializers.ModelSerializer):
     """Получение списка фрилансеров, которые откликнулись на задание."""
-    freelancer = FreelancerSerializer()
 
     class Meta:
         model = JobResponse
-        fields = '__all__'
+        fields = ['id', 'job', 'freelancer']
+
+    def to_representation(self, instance):
+        # Преобразование вложенного объекта Freelancer в нужный формат
+        # c добавлением полей фрилансера на один уровень с 'id' и 'job'
+        representation = super().to_representation(instance)
+        freelancer_data = FreelancerSerializer(instance.freelancer).data
+        representation.update({
+            'user': freelancer_data['user'],
+            'photo': freelancer_data['photo'],
+            'about': freelancer_data['about'],
+            'stacks': freelancer_data['stacks'],
+            'payrate': freelancer_data['payrate'],
+            'categories': freelancer_data['categories'],
+        })
+        representation.pop('freelancer')
+        return representation
 
 
 class JobFileSerializer(serializers.ModelSerializer):
