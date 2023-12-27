@@ -26,6 +26,7 @@ class UserCreateSerializer(
 
     class Meta(djoser_serializers.UserCreatePasswordRetypeSerializer.Meta):
         fields = (
+            'id',
             'is_customer',
             'is_worker',
             'email',

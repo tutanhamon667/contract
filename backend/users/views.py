@@ -146,12 +146,12 @@ class UserViewSet(UserView):
         obj = get_object_or_404(queryset, user_id=user.id)
         if user.is_customer:
             fields = (
-                'photo', 'name', 'is_customer', 'is_worker', 'industry',
+                'id', 'photo', 'name', 'is_customer', 'is_worker', 'industry',
                 'about', 'web'
             )
         if user.is_worker:
             fields = (
-                'photo', 'user', 'is_customer', 'is_worker', 'stacks',
+                'id', 'photo', 'user', 'is_customer', 'is_worker', 'stacks',
                 'categories', 'education', 'portfolio', 'payrate', 'about',
                 'web', 'contacts'
             )
