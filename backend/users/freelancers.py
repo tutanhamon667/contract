@@ -120,6 +120,7 @@ class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
 
 class UserViewSerialiser(serializers.ModelSerializer):
     user = FreelancerField(queryset=User.objects.all())
+    id = serializers.ReadOnlyField(source='user.id')
     photo = CustomizedBase64ImageField(required=False)
     stacks = StackSerializer(many=True)
     categories = CategorySerializer(many=True)
