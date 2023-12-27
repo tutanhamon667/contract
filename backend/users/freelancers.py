@@ -102,6 +102,7 @@ class FreelancerField(serializers.RelatedField):
 
 class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
     user = FreelancerField(queryset=User.objects.all())
+    id = serializers.ReadOnlyField(source='user.id')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
     photo = CustomizedBase64ImageField(required=False)
@@ -133,6 +134,7 @@ class UserViewSerialiser(serializers.ModelSerializer):
 class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
     user = FreelancerField(queryset=User.objects.all(), required=False)
     photo = CustomizedBase64ImageField(required=False)
+    id = serializers.ReadOnlyField(source='user.id')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
     is_customer = serializers.ReadOnlyField(source='user.is_customer')
     account_email = serializers.ReadOnlyField(source='user.email')

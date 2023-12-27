@@ -19,6 +19,7 @@ class IndustrySerializer(serializers.ModelSerializer):
 
 class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    id = serializers.ReadOnlyField(source='user.id')
     account_email = serializers.ReadOnlyField(source='user.email')
     first_name = serializers.ReadOnlyField(source='user.first_name')
     last_name = serializers.ReadOnlyField(source='user.last_name')
@@ -37,6 +38,7 @@ class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
 
 class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    id = serializers.ReadOnlyField(source='user.id')
     account_email = serializers.ReadOnlyField(source='user.email')
     first_name = serializers.ReadOnlyField(source='user.first_name')
     last_name = serializers.ReadOnlyField(source='user.last_name')
