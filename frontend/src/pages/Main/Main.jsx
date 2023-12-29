@@ -22,14 +22,14 @@ function Main() {
     next: undefined,
     previous: undefined,
   });
+
   const [secondTabNavigation, setSecondTabNavigation] = useState({
     next: undefined,
     previous: undefined,
   });
 
-  const contentBorderAuthorized = `content__border${
-    isAuthenticated ? ' content__border-authorized' : ''
-  }`;
+  const contentBorderAuthorized = `content__border${isAuthenticated ? ' content__border-authorized' : ''
+    }`;
 
   const [searchQuery, setSearchQuery] = useState(useLocation().search);
   const freelancerSearchQuery = searchQuery
@@ -183,7 +183,7 @@ function Main() {
             />
           </div>
           <div className="freelance-order__column-filter">
-            <Filters setSearchQuery={setSearchQuery} />
+            <Filters setSearchQuery={setSearchQuery} isFirstTab={isFirstTab} />
           </div>
         </section>
       </div>
