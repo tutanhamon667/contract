@@ -5,7 +5,7 @@ import { Button } from '../Button/Button';
 import * as Api from '../../utils/Api';
 import './Filters.css';
 
-function Filters({ setSearchQuery, marginTop }) {
+function Filters({ setSearchQuery, marginTop, isFirstTab }) {
   const location = useLocation();
   const queryParameters = new URLSearchParams(location.search);
   const [selectedCategories, setSelectedCategories] = useState(
@@ -113,7 +113,13 @@ function Filters({ setSearchQuery, marginTop }) {
       </div>
 
       <div className="filters-container filters-container__budget">
-        <h2 className="filters-container__title">Бюджет</h2>
+        <h2 className="filters-container__title">
+          {!isAuthenticated && isFirstTab && 'Бюджет'}
+          {!isAuthenticated && !isFirstTab && 'Ставка'}
+          {isAuthenticated && currentUser?.is_customer && isFirstTab && 'Ставка'}
+          {isAuthenticated && currentUser?.is_customer && !isFirstTab && 'Бюджет'}
+          {isAuthenticated && currentUser?.is_worker && isFirstTab && 'Бюджет'}
+        </h2>
         <form className="filters-form-budget">
           <div className="filters-budget__wrapper">
             <span className="filters-budget__label">От</span>
