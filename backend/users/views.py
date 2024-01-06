@@ -7,16 +7,17 @@ from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
-from .clients import (GetCustomerProfileSerializer,
-                      PostCustomerProfileSerializer)
-from .filters import FreelancerFilter
-from .freelancers import (GetWorkerProfileSerializer,
-                          PostWorkerProfileSerializer, UserViewSerialiser)
-from .models import CustomerProfile, WorkerProfile
-from .permissions import IsUser
-from .serializers import (NewEmailSerializer, PasswordResetConfirmSerializer,
-                          SendEmailResetSerializer, SetPasswordSerializer,
-                          UserCreateSerializer)
+from users.clients import (GetCustomerProfileSerializer,
+                           PostCustomerProfileSerializer)
+from users.filters import FreelancerFilter
+from users.freelancers import (GetWorkerProfileSerializer,
+                               PostWorkerProfileSerializer, UserViewSerialiser)
+from users.models import CustomerProfile, WorkerProfile
+from users.permissions import IsUser
+from users.serializers import (NewEmailSerializer,
+                               PasswordResetConfirmSerializer,
+                               SendEmailResetSerializer, SetPasswordSerializer,
+                               UserCreateSerializer)
 
 User = get_user_model()
 
@@ -31,7 +32,15 @@ class UserView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 
 
 class FreelancerFirstPage(OnlyListView):
-    queryset = WorkerProfile.objects.all().order_by('-user__created_at')
+    queryset = WorkerProfile.objects.exclude(
+        stacks__isnull=True
+    ).exclude(
+        user__first_name__isnull=True
+    ).exclude(
+        user__last_name__isnull=True
+    ).order_by(
+        '-user__created_at'
+    )
     serializer_class = UserViewSerialiser
     permission_classes = (permissions.AllowAny,)
     filter_backends = (SearchFilter, DjangoFilterBackend,)
