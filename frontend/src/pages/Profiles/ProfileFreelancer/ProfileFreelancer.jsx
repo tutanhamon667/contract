@@ -23,7 +23,7 @@ function ProfileFreelancer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
 
   const [error, setError] = useState({});
-  const {resumeData, setResumeData} = useState({data:[]});
+  const { resumeData, setResumeData } = useState({ data: [] });
   const { values, errors, handleChange, handleChangeCustom } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [tags, setTags] = useState(currentUser?.stacks?.map((object) => object.name) || []);

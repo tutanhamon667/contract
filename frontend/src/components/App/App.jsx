@@ -16,7 +16,7 @@ import { Register } from '../../pages/Register/Register';
 import { Login } from '../../pages/Login/Login';
 import { ForgotPass } from '../../pages/ForgotPass/ForgotPass';
 import { ProfileFreelancer } from '../../pages/Profiles/ProfileFreelancer/ProfileFreelancer';
-import { ResumePage } from '../../pages/Profiles/ProfileFreelancer/Resume'
+import { ResumePage } from '../../pages/Profiles/ProfileFreelancer/Resume';
 import { ResetPass } from '../../pages/ResetPass/ResetPass';
 import { ProfileCustomer } from '../../pages/Profiles/ProfileCustomer/ProfileCustomer';
 import { ProfileFreelancerViewOnly } from '../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly';
@@ -46,10 +46,9 @@ function App() {
   const navigate = useNavigate();
   const userApi = new UserAPI(setCurrentUser, setToken, setIsAuthenticated, setError);
 
-  
   const refreshTokenHandler = async () => {
     if (refreshToken) {
-      const result = await userApi.getNewAccessToken()
+      const result = await userApi.getNewAccessToken();
       if (result.success) {
         if (result.data.access) {
           sessionStorage.setItem('access', result.data.access);
@@ -65,7 +64,6 @@ function App() {
             console.error(result.error);
             setIsLoading(false);
           }
-
         }
       } else {
         setIsAuthenticated(false);
@@ -73,14 +71,11 @@ function App() {
         console.error(result.error);
         setIsLoading(false);
       }
-
     } else {
       setIsAuthenticated(false);
       setIsLoading(false);
     }
-  }
-
-
+  };
 
   useEffect(() => {
     const accessToken = sessionStorage.getItem('access');
@@ -218,7 +213,6 @@ function App() {
     setIsAuthenticated(true);
   };
 
-
   return (
     <Context.Provider
       value={{
@@ -282,11 +276,10 @@ function App() {
               />
             </Route>
 
-
             <Route element={<ProtectedRoute />}>
               <Route
                 path="profile/resume"
-                element={<ResumePage setCurrentUser={setCurrentUser} currentUser={currentUser}/>}
+                element={<ResumePage setCurrentUser={setCurrentUser} currentUser={currentUser} />}
               />
               <Route
                 path="profile/complete"

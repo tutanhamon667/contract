@@ -20,15 +20,8 @@ import '../Profiles/Profile.css';
 import './Order.css';
 
 function Order() {
-  const {
-    values,
-    errors,
-    handleChange,
-    handleChangeCustom,
-    setValues,
-    setErrors,
-    resetForm,
-  } = useFormAndValidation();
+  const { values, errors, handleChange, handleChangeCustom, setValues, setErrors, resetForm } =
+    useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { currentUser } = useContext(Context);

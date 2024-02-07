@@ -3,10 +3,9 @@ import { BACKEND_BASE_URL } from './constants';
 async function checkResponse(response) {
   if (response.ok) {
     return await response.json();
-  } 
+  }
   const error = await response.json();
   throw error;
-  
 }
 
 async function register(data) {
@@ -233,7 +232,7 @@ async function getTasksFreelancerWithAuthorization(searchQuery) {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access')}`,
         },
-      }
+      },
     );
     return await checkResponse(response);
   } catch (error) {
@@ -251,7 +250,7 @@ async function getTasksCustomerWithAuthorization(searchQuery, userID) {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access')}`,
         },
-      }
+      },
     );
     return await checkResponse(response);
   } catch (error) {
