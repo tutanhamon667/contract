@@ -1,0 +1,11 @@
+ <section id="image-carousel" class="splide" aria-label="Beautiful Images" style="height: 400px;">
+      <div class="splide__track">
+            <ul class="splide__list">
+                {% for banner in banners %}
+                <li class="splide__slide">
+                    <img src="{{banner.photo.url}}" alt="">
+                </li>
+                {% endfor %}
+            </ul>
+      </div>
+    </section>

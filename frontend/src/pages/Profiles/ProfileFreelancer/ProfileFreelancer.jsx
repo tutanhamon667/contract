@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useFormAndValidation } from '../../../hooks/useFormValidationProfileCustomer';
@@ -15,17 +15,22 @@ import { InputSwitch } from '../../../components/InputComponents/InputSwitch/Inp
 import '../../../components/FormComponents/FreelancerCompleteForm/FreelancerCompleteForm.css';
 import './ProfileFreelancer.css';
 import '../Profile.css';
+import { ResumeAPI } from '../../../utils/resumeApi';
 
 // const MAX_ATTACHED_DOCS = 8;
 
 function ProfileFreelancer({ setCurrentUser }) {
   const { currentUser } = useContext(Context);
+
+  const [error, setError] = useState({});
+  const {resumeData, setResumeData} = useState({data:[]});
   const { values, errors, handleChange, handleChangeCustom } = useFormAndValidation();
   const [isEditable, setIsEditable] = useState(false);
   const [tags, setTags] = useState(currentUser?.stacks?.map((object) => object.name) || []);
   const [photo, setPhoto] = useState();
   const [diploma, setDiploma] = useState();
   const [portfolio, setPortfolio] = useState();
+  const resumeApi = new ResumeAPI(setResumeData, setError);
 
   // const [docKeysEdu, setDocKeysEdu] = useState([...currentUser.education[0]?.diploma?.map((element) => element.id), Date.now()] || [Date.now()]);
   // const [docKeysEdu, setDocKeysEdu] = useState(() => {
@@ -200,6 +205,10 @@ function ProfileFreelancer({ setCurrentUser }) {
     // }
   }
 
+  useEffect(() => {
+    resumeApi.getUserResumes();
+  }, []);
+
   return (
     <div className="profile">
       <Helmet>
@@ -233,6 +242,9 @@ function ProfileFreelancer({ setCurrentUser }) {
           <div className="profile__separate-line" />
           <Link className="profile__main-text" to="#">
             Информация
+          </Link>
+          <Link className="profile__main-text" to="/profile/resume">
+            Мои резюме
           </Link>
         </div>
       </div>
@@ -313,7 +325,6 @@ function ProfileFreelancer({ setCurrentUser }) {
               isDisabled={!isEditable}
             />
           </div>
-
           <div className="form-profile__input-container">
             <h2 className="profile__main-text">Специализация</h2>
             <InputSelect

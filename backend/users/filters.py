@@ -1,6 +1,6 @@
 from django_filters.rest_framework import FilterSet, NumberFilter, filters
 
-from .models import Category, WorkerProfile
+from users.models.user import Specialisation, WorkerProfile
 
 
 class FreelancerFilter(FilterSet):
@@ -13,7 +13,7 @@ class FreelancerFilter(FilterSet):
     categories = filters.ModelMultipleChoiceFilter(
         field_name='categories__name',
         to_field_name='name',
-        queryset=Category.objects.all(),
+        queryset=Specialisation.objects.all(),
         label='Категории',
     )
 

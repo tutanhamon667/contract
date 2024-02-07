@@ -1,8 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from orders.models import Job
-from users.models import CustomerProfile, Member, WorkerProfile
+from users.models.user import CustomerProfile, Member, WorkerProfile, Job
 
 
 class Chat(models.Model):

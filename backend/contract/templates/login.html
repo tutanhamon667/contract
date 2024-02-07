@@ -1,0 +1,26 @@
+<div class="container py-5">
+  <h1>Login</h1>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form }}
+       <div class="captcha">
+        <img id="captcha-img" src="data:image/png;base64, {{captcha}}">
+    </div>
+    <input type="hidden" name="ref" value="">
+    <input type="hidden" name="hashkey" value="{{hashkey}}">
+    <div class="input-group">
+        <input type="text" placeholder="**" class="login-input" name="captcha" required="" autofocus="" style="text-transform:uppercase">
+        <span class="floating-label">Введите капчу</span>
+    </div>
+    <button class="btn btn-primary" type="submit">Login</button>
+  </form>
+  <p class="text-center">Don't have an account? <a href="/signup/worker">Create an account</a>.</p>
+</div>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}

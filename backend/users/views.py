@@ -1,23 +1,37 @@
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model, login, logout
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserView
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+import base64
 
+from captcha.image import ImageCaptcha
+from django.shortcuts import render
+
+from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
+from contract.settings import ERRORS
+from .forms import ResumeForm, RegisterWorkerForm
+from users.models.common import Captcha
 from users.clients import (GetCustomerProfileSerializer,
                            PostCustomerProfileSerializer)
 from users.filters import FreelancerFilter
-from users.freelancers import (GetWorkerProfileSerializer,
-                               PostWorkerProfileSerializer, UserViewSerialiser)
-from users.models import CustomerProfile, WorkerProfile
-from users.permissions import IsUser
-from users.serializers import (NewEmailSerializer,
+from users.serializers.worker_serializer import (GetWorkerProfileSerializer,
+                                                 PostWorkerProfileSerializer, WorkerViewSerializer)
+from users.models.user import CustomerProfile, WorkerProfile, Resume
+from users.permissions import IsUser, IsOwnerOrReadOnly
+from users.serializers.serializers import (NewEmailSerializer,
                                PasswordResetConfirmSerializer,
                                SendEmailResetSerializer, SetPasswordSerializer,
                                UserCreateSerializer)
+
+from django.contrib.auth import authenticate
+from users.serializers.worker_serializer import ResumeSerializer
+from .models.advertise import Banners
 
 User = get_user_model()
 
@@ -31,23 +45,122 @@ class UserView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
     pass
 
 
-class FreelancerFirstPage(OnlyListView):
+def captcha_check(request):
+    image = SimpleCaptcha(width=280, height=90)
+    challenge = Captcha.get_captcha_challenge(hash=request.POST['hashkey'])
+    captcha_base64 = str(base64.b64encode(image.generate(challenge, 'png').getvalue()))
+    return captcha_base64.replace("b'", '').replace("'", "")
+
+def captcha_view(request):
+    if request.method == 'POST':
+        if request.POST["captcha"] is not None:
+            hash = request.POST["hashkey"]
+            res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
+            if res:
+                page = redirect(to="index")
+                page.set_cookie('captcha', hash, max_age=60*60)
+                return page
+            else:
+                return render(request, 'captcha.html',
+                              {'hashkey': hash,
+                               'captcha': captcha_check(request),
+                               'error': "Введена не верная каптча"})
+    else:
+        captcha = Captcha()
+        key, hash = captcha.generate_key()
+        image = SimpleCaptcha(width=280, height=120)
+        captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
+        return render(request, 'captcha.html', {'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "")})
+
+
+
+
+
+def profile_view(request):
+    error = None
+    if request.method == 'GET':
+        banners = Banners.objects.all()
+        return render(request, 'profile.html',
+                      {'banners': banners})
+
+
+
+def register_view(request):
+    if request.method == "GET":
+        form = RegisterWorkerForm()
+        captcha = Captcha()
+        key, hash = captcha.generate_key()
+        image = ImageCaptcha(width=280, height=90)
+        captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
+        return render(request, 'register.html', {'form': form, 'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "") })
+    if request.method == "POST":
+        form = RegisterWorkerForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+        return render(request, 'register.html',
+                      {'form': form,
+                       'hashkey': request.POST['hashkey'],
+                       'captcha': captcha_check(request)})
+        if request.POST["captcha"] is not None:
+            hash = request.POST["hashkey"]
+            res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
+            if not res:
+                error = ERRORS['captcha']
+                return render(request, 'register.html',
+                              {'form': form,
+                               'hashkey': request.POST['hashkey'],
+                               'captcha':  captcha_check(request),
+                               'errors': error})
+
+
+
+
+def login_view(request):
+    error = None
+    if request.method == 'POST':
+        if request.POST["captcha"] is not None:
+            hash = request.POST["hashkey"]
+            res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
+            if not res:
+                error = ERRORS['captcha']
+                return render(request, 'login.html',
+                              {'hashkey': request.POST['hashkey'],
+                               'captcha': captcha_check(request),
+                               'error':error})
+        user = authenticate(username=request.POST['login'], password=request.POST['password'])
+        if user is not None:
+            login(request, user)
+            page = redirect(to="index")
+            return page
+        else:
+            error = ERRORS['auth_login_pass']
+            return render(request, 'login.html',
+                          {'hashkey': request.POST['hashkey'], 'captcha': captcha_check(request),
+                               'error':error})
+    if request.method == 'GET':
+        captcha = Captcha()
+        key, hash = captcha.generate_key()
+        image = ImageCaptcha(width=280, height=90)
+        captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
+        return render(request, 'login.html',
+                      {'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "")})
+
+
+class WorkerFirstPage(OnlyListView):
     queryset = WorkerProfile.objects.exclude(
-        stacks__isnull=True
-    ).exclude(
         user__first_name__isnull=True
     ).exclude(
         user__last_name__isnull=True
     ).order_by(
         '-user__created_at'
     )
-    serializer_class = UserViewSerialiser
+    serializer_class = WorkerViewSerializer
     permission_classes = (permissions.AllowAny,)
     filter_backends = (SearchFilter, DjangoFilterBackend,)
     filterset_class = FreelancerFilter
     search_fields = [
-        'user__first_name', 'user__last_name',
-        'stacks__name', 'categories__name'
+        'user__first_name', 'user__last_name'
     ]
 
 
@@ -136,7 +249,7 @@ class UserViewSet(UserView):
                     return GetCustomerProfileSerializer
                 if user.is_worker:
                     return GetWorkerProfileSerializer
-        return UserViewSerialiser
+        return WorkerViewSerializer
 
     def create(self, request):
         user = super().create(request)
@@ -155,14 +268,11 @@ class UserViewSet(UserView):
         obj = get_object_or_404(queryset, user_id=user.id)
         if user.is_customer:
             fields = (
-                'id', 'photo', 'name', 'is_customer', 'is_worker', 'industry',
-                'about', 'web'
+                'id', 'photo', 'name', 'is_customer', 'is_worker', 'industry', 'about', 'web'
             )
         if user.is_worker:
             fields = (
-                'id', 'photo', 'user', 'is_customer', 'is_worker', 'stacks',
-                'categories', 'education', 'portfolio', 'payrate', 'about',
-                'web', 'contacts'
+                'id', 'photo', 'user', 'is_customer', 'is_worker'
             )
         serializer = self.get_serializer(obj, fields=fields)
         return Response(serializer.data)
@@ -202,23 +312,7 @@ class UserViewSet(UserView):
             obj = get_object_or_404(queryset, user_id=user.id)
             # obj, result = queryset.get_or_create(user=user)
             serializer = self.get_serializer(obj)
-        '''
-        if request.method == 'POST':
-            if user.is_worker:
-                fields = None
-            elif user.is_customer:
-                fields = (
-                    'id', 'user', 'account_email', 'is_worker', 'is_customer',
-                    'first_name', 'last_name', 'photo', 'name', 'industry',
-                    'about', 'web'
-                )
-            serializer = self.get_serializer(
-                data=request.data,
-                fields=fields
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        '''
+
         if request.method == 'PATCH':
             if user.is_worker:
                 fields = None
@@ -241,3 +335,30 @@ class UserViewSet(UserView):
             serializer.data,
             status=status.HTTP_200_OK
         )
+
+
+class ResumeViewSet(viewsets.ModelViewSet):
+    queryset = Resume.objects.all()
+    serializer_class = ResumeSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def retrieve(self, request, pk=None):
+        user = get_object_or_404(User, id=pk)
+        if user.is_customer == user.is_worker:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, user_id=user.id)
+        fields = (
+            'id', 'salary', 'stack', 'work_experience'
+        )
+        serializer = self.get_serializer(obj, fields=fields)
+        return Response(serializer.data)

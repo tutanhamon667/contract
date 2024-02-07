@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Captcha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    {% load static %}
+
+    <link rel="stylesheet" href="../static/css/index.css">
+</head>
+<body>
+<div class="container">
+    <div class="login-wrapper">
+        <div class="login-container">
+            <center>
+                 <img src="../static/img/logo2.png"/>
+            </center>
+
+            <form class="form-captcha text-center" action="/captcha" method="post" autocomplete="off">
+                <div class="captcha">
+                    <img id="captcha-img" src="data:image/png;base64, {{captcha}}">
+                </div>
+                <input type="hidden" name="ref" value="">
+                <input type="hidden" name="hashkey" value="{{hashkey}}">
+                <div class="input-group">
+                    <input type="text" placeholder="**" class="login-input" name="captcha" required="" autofocus="" style="text-transform:uppercase">
+                    <span class="floating-label">Введите капчу</span>
+                </div>
+                {% csrf_token %}
+                <button class="button-submit" type="submit">Войти</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -5,8 +5,8 @@ from django.core.validators import RegexValidator
 from rest_framework import serializers
 
 from .fields import CustomizedBase64ImageField
-from .models import CustomerProfile, Industry
-from .serializers import DynamicFieldsModelSerializer
+from users.models.user import CustomerProfile, Industry
+from .serializers.serializers import DynamicFieldsModelSerializer
 
 User = get_user_model()
 
@@ -20,7 +20,7 @@ class IndustrySerializer(serializers.ModelSerializer):
 class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     id = serializers.ReadOnlyField(source='user.id')
-    account_email = serializers.ReadOnlyField(source='user.email')
+    account_login = serializers.ReadOnlyField(source='user.login')
     first_name = serializers.ReadOnlyField(source='user.first_name')
     last_name = serializers.ReadOnlyField(source='user.last_name')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
@@ -31,7 +31,7 @@ class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = (
-            'id', 'user', 'account_email', 'is_worker', 'is_customer', 'photo',
+            'id', 'user', 'account_login', 'is_worker', 'is_customer', 'photo',
             'first_name', 'last_name', 'name', 'about', 'industry', 'web'
         )
 
@@ -39,7 +39,7 @@ class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
 class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     id = serializers.ReadOnlyField(source='user.id')
-    account_email = serializers.ReadOnlyField(source='user.email')
+    account_login = serializers.ReadOnlyField(source='user.login')
     first_name = serializers.ReadOnlyField(source='user.first_name')
     last_name = serializers.ReadOnlyField(source='user.last_name')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
@@ -50,7 +50,7 @@ class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = (
-            'id', 'user', 'account_email', 'is_worker', 'is_customer', 'photo',
+            'id', 'user', 'account_login', 'is_worker', 'is_customer', 'photo',
             'first_name', 'last_name', 'name', 'about', 'industry', 'web'
         )
 

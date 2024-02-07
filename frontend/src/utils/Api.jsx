@@ -1,216 +1,385 @@
 import { BACKEND_BASE_URL } from './constants';
 
-function checkResponse(response) {
+async function checkResponse(response) {
   if (response.ok) {
-    return response.json();
+    return await response.json();
+  } 
+  const error = await response.json();
+  throw error;
+  
+}
+
+async function register(data) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/users/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
   }
-
-  return response.json().then((error) => Promise.reject(error));
 }
 
-function register(data) {
-  return fetch(`${BACKEND_BASE_URL}/users/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  }).then((response) => checkResponse(response));
+async function authenticateUser({ email, password }) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/login/jwt/create/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
 }
 
-function authenticateUser({ email, password }) {
-  return fetch(`${BACKEND_BASE_URL}/login/jwt/create/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-  });
+async function getNewAccessToken() {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/login/jwt/refresh/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh: localStorage.getItem('refresh') }),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getNewAccessToken() {
-  return fetch(`${BACKEND_BASE_URL}/login/jwt/refresh/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ refresh: localStorage.getItem('refresh') }),
-  });
+async function getUserResumes(setFunction) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/resume`, {
+      headers: {
+        authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+    });
+    const res = await checkResponse(response);
+    if (res) {
+      setFunction(res);
+    }
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getUserInfo() {
-  return fetch(`${BACKEND_BASE_URL}/users/me/`, {
-    headers: {
-      authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-  });
+async function getResume(data) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/resume/${data.id}`, {
+      headers: {
+        authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function updateUserProfile(data) {
-  return fetch(`${BACKEND_BASE_URL}/users/me/`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-    body: JSON.stringify(data),
-  }).then((response) => checkResponse(response));
+async function updateResume(data) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/resume/${data.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function createTask(data) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-    body: JSON.stringify(data),
-  }).then((response) => checkResponse(response));
+async function createResume(data) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/resume`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function updateTask(data, id) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-    body: JSON.stringify(data),
-  }).then((response) => checkResponse(response));
+async function deleteResume(data) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/resume/${data.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getTasks(searchQuery) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`).then((response) =>
-    checkResponse(response),
-  );
+async function getUserInfo() {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/users/me/`, {
+      headers: {
+        authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getTasksWithSearch(searchQuery) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`).then((response) =>
-    checkResponse(response),
-  );
+async function updateUserProfile(data) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/users/me/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getTasksWithAuthorization() {
-  return fetch(`${BACKEND_BASE_URL}/jobs/`, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-  }).then((response) => checkResponse(response));
+async function createTask(data) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getTasksFreelancerWithAuthorization(searchQuery) {
-  // console.log(
-  //   `${BACKEND_BASE_URL}/jobs/${
-  //     searchQuery ? `${searchQuery}&is_responded=true` : `?is_responded=true`
-  //   }`,
-  // );
-  return fetch(
-    `${BACKEND_BASE_URL}/jobs/${
-      searchQuery ? `${searchQuery}&is_responded=true` : `?is_responded=true`
-    }`,
-    {
+async function updateTask(data, id) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getTasks(searchQuery) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`);
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getTasksWithSearch(searchQuery) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/${searchQuery}`);
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getTasksWithAuthorization() {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('access')}`,
       },
-    },
-  ).then((response) => checkResponse(response));
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getTasksCustomerWithAuthorization(searchQuery, userID) {
-  return fetch(
-    `${BACKEND_BASE_URL}/jobs/${
-      searchQuery ? `${searchQuery}&client=${userID}` : `?client=${userID}`
-    }`,
-    {
+async function getTasksFreelancerWithAuthorization(searchQuery) {
+  try {
+    const response = await fetch(
+      `${BACKEND_BASE_URL}/jobs/${
+        searchQuery ? `${searchQuery}&is_responded=true` : `?is_responded=true`
+      }`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+        },
+      }
+    );
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getTasksCustomerWithAuthorization(searchQuery, userID) {
+  try {
+    const response = await fetch(
+      `${BACKEND_BASE_URL}/jobs/${
+        searchQuery ? `${searchQuery}&client=${userID}` : `?client=${userID}`
+      }`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+        },
+      }
+    );
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getTaskById(id) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem('access')}`,
       },
-    },
-  ).then((response) => checkResponse(response));
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getTaskById(id) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-  }).then((response) => checkResponse(response));
+async function deleteTaskById(id) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function deleteTaskById(id) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-  }).then((response) => checkResponse(response));
+async function respondToTask(id) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/${id}/response/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function respondToTask(id) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/response/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-  }).then((response) => checkResponse(response));
+async function getResponses(id, searchQuery) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/jobs/${id}/offers/${searchQuery}`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getResponses(id, searchQuery) {
-  return fetch(`${BACKEND_BASE_URL}/jobs/${id}/offers/${searchQuery}`, {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-  }).then((response) => checkResponse(response));
+async function getFreelancers(searchQuery) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/main/${searchQuery}`);
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getFreelancers(searchQuery) {
-  return fetch(`${BACKEND_BASE_URL}/main/${searchQuery}`).then((response) =>
-    checkResponse(response),
-  );
+async function getFreelancerById(id) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/users/${id}`);
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getFreelancerById(id) {
-  return fetch(`${BACKEND_BASE_URL}/users/${id}`).then((response) => checkResponse(response));
+async function getAllCategories() {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/category/`);
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function getAllCategories() {
-  return fetch(`${BACKEND_BASE_URL}/category/`).then((response) => checkResponse(response));
+async function requestNewPassword(email) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/users/reset_password/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(email),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function requestNewPassword(email) {
-  return fetch(`${BACKEND_BASE_URL}/users/reset_password/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(email),
-  }).then((response) => checkResponse(response));
+async function createChat(data) {
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}/chats/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('access')}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
-function createChat(data) {
-  return fetch(`${BACKEND_BASE_URL}/chats/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    },
-    body: JSON.stringify(data),
-  }).then((response) => checkResponse(response));
-}
-
-function getDataByPagination(request) {
-  const newRequest = request.replace('http://taski.ddns.net/api', '');
-
-  return fetch(
-    `${BACKEND_BASE_URL}${newRequest}`,
-    // {
-    //   headers: {
-    //     Authorization: `Bearer ${sessionStorage.getItem('access')}`,
-    //   }
-    // }
-  ).then((response) => checkResponse(response));
+async function getDataByPagination(request) {
+  try {
+    const newRequest = request.replace('http://taski.ddns.net/api', '');
+    const response = await fetch(`${BACKEND_BASE_URL}${newRequest}`);
+    return await checkResponse(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
 export {
@@ -236,4 +405,9 @@ export {
   getAllCategories,
   getDataByPagination,
   createChat,
+  getResume,
+  updateResume,
+  deleteResume,
+  createResume,
+  getUserResumes,
 };

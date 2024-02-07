@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="my_order">
+        <h1 class="my_order_title">Мои jobs</h1>
+        <form action="" method="post">
+            {% csrf_token %}
+            {% for field in new_entity_form %}
+            <div class="form-group">
+                {% if field.is_hidden == False  %}
+                {{field.label_tag}}
+                {% endif %}
+                <div>{{field}}</div>
+                <div class="error">{{field.errors}}</div>
+            </div>
+            {% endfor %}
+            <input type="submit" value="Send" />
+        </form>
+        <div class="my_order_table">
+            <ul>
+            {% for job in jobs %}
+                <li>
+                <a href="/profile/job/{{job.id}}">{{job.title}}</a>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+     </div>
+</div>

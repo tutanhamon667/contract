@@ -5,6 +5,7 @@ import { Context } from '../../context/context';
 import { Layout } from '../../layout/Layout';
 import { ProtectedRoute } from '../../services/PotectedRouter';
 import * as Api from '../../utils/Api';
+import { UserAPI } from '../../utils/userApi';
 import { Main } from '../../pages/Main/Main';
 import { SignOut } from '../SignOut/SignOut';
 import { FreelancerCompleteForm } from '../FormComponents/FreelancerCompleteForm/FreelancerCompleteForm';
@@ -15,6 +16,7 @@ import { Register } from '../../pages/Register/Register';
 import { Login } from '../../pages/Login/Login';
 import { ForgotPass } from '../../pages/ForgotPass/ForgotPass';
 import { ProfileFreelancer } from '../../pages/Profiles/ProfileFreelancer/ProfileFreelancer';
+import { ResumePage } from '../../pages/Profiles/ProfileFreelancer/Resume'
 import { ResetPass } from '../../pages/ResetPass/ResetPass';
 import { ProfileCustomer } from '../../pages/Profiles/ProfileCustomer/ProfileCustomer';
 import { ProfileFreelancerViewOnly } from '../../pages/Profiles/ProfileFreelancerViewOnly/ProfileFreelancerViewOnly';
@@ -26,7 +28,9 @@ function App() {
   // const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
+  const [tokens, setToken] = useState({});
   const [tasks, setTasks] = useState([]);
+  const [error, setError] = useState({});
   const [statePopup, setStatePopup] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   // состояние отображения фильтра поиска
@@ -40,78 +44,51 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [popupError, setPopupError] = useState();
   const navigate = useNavigate();
+  const userApi = new UserAPI(setCurrentUser, setToken, setIsAuthenticated, setError);
+
+  
+  const refreshTokenHandler = async () => {
+    if (refreshToken) {
+      const result = await userApi.getNewAccessToken()
+      if (result.success) {
+        if (result.data.access) {
+          sessionStorage.setItem('access', result.data.access);
+          const result = await userApi.getUserInfo();
+
+          if (result.success) {
+            setCurrentUser(result.data);
+            setIsAuthenticated(true);
+            setIsLoading(false);
+          } else {
+            setIsAuthenticated(false);
+            sessionStorage.removeItem('access');
+            console.error(result.error);
+            setIsLoading(false);
+          }
+
+        }
+      } else {
+        setIsAuthenticated(false);
+        sessionStorage.removeItem('access');
+        console.error(result.error);
+        setIsLoading(false);
+      }
+
+    } else {
+      setIsAuthenticated(false);
+      setIsLoading(false);
+    }
+  }
+
+
 
   useEffect(() => {
     const accessToken = sessionStorage.getItem('access');
     const refreshToken = localStorage.getItem('refresh');
-
-    function refreshTokenHandler() {
-      if (refreshToken) {
-        Api.getNewAccessToken()
-          .then((response) => {
-            if (response.ok) {
-              return response.json();
-            }
-
-            return response.json().then((error) => Promise.reject(error.detail));
-          })
-          .then((tokens) => {
-            if (tokens.access) {
-              sessionStorage.setItem('access', tokens.access);
-
-              Api.getUserInfo()
-                .then((response) => {
-                  if (response.ok) {
-                    return response.json();
-                  }
-
-                  return response.json().then((error) => Promise.reject(error.detail));
-                })
-                .then((userData) => {
-                  setCurrentUser(userData);
-                  setIsAuthenticated(true);
-                  setIsLoading(false);
-                })
-                .catch((error) => {
-                  setIsAuthenticated(false);
-                  sessionStorage.removeItem('access');
-                  console.error(error);
-                  setIsLoading(false);
-                });
-            }
-          })
-          .catch((error) => {
-            setIsAuthenticated(false);
-            sessionStorage.removeItem('access');
-            console.error(error);
-            setIsLoading(false);
-          });
-      } else {
-        setIsAuthenticated(false);
-        setIsLoading(false);
-      }
-    }
-
-    if (accessToken && refreshToken) {
-      Api.getUserInfo()
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
-
-          return response.json().then((error) => Promise.reject(error.detail));
-        })
-        .then((userData) => {
-          setCurrentUser(userData);
-          setIsAuthenticated(true);
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          refreshTokenHandler();
-          console.error(error);
-        });
-    } else {
+    if (!accessToken || !refreshToken) {
       refreshTokenHandler();
+    } else {
+      userApi.getUserInfo();
     }
   }, []);
 
@@ -241,9 +218,6 @@ function App() {
     setIsAuthenticated(true);
   };
 
-  if (isLoading) {
-    return;
-  }
 
   return (
     <Context.Provider
@@ -305,6 +279,14 @@ function App() {
                     <ProfileFreelancer setCurrentUser={setCurrentUser} />
                   )
                 }
+              />
+            </Route>
+
+
+            <Route element={<ProtectedRoute />}>
+              <Route
+                path="profile/resume"
+                element={<ResumePage setCurrentUser={setCurrentUser} currentUser={currentUser}/>}
               />
               <Route
                 path="profile/complete"

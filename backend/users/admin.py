@@ -1,16 +1,90 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-from .models import Contact, Member, Stack, WorkerProfile
+from users.models.advertise import  Banners
+from users.models.common import Region
+from users.models.user import (Specialisation, CustomerProfile, Member, WorkerProfile, Contact, Resume, CustomerReview,
+                               Industry, Job)
 
-'''
-@admin.register(WorkerProfile)
-class WorkerProfileAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name')
+
+@admin.register(Industry)
+class StackAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ('name',)
+    list_filter = ('name',)
     empty_value_display = '-пусто-'
+# Для администирорования пользователей #
 
+@admin.register(Banners)
+class BannersAdmin(admin.ModelAdmin):
+    list_display = ('link', 'alt',)
+    list_filter = ('link', 'alt',)
+
+
+@admin.register(CustomerReview)
+class CustomerReviewAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'reviewer','comment', 'rating')
+    list_filter =  ('customer', 'reviewer','comment', 'rating')
+
+@admin.register(Specialisation)
+class SpecialisationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
+    list_filter = ('name', 'slug',)
+
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = ('title', 'customer', 'pub_date')
+    list_filter = ( 'pub_date',)
+    search_fields = ('title', 'description', 'client__user__username')
+    empty_value_display = '-пусто-'
 
 @admin.register(Contact)
 class ContactsAdmin(admin.ModelAdmin):
-    list_display = ('freelancer', 'type', 'contact',)
+    list_display = ('user', 'type',)
     empty_value_display = '-пусто-'
-'''
+
+
+@admin.register(Region)
+class RegionAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    empty_value_display = '-пусто-'
+
+@admin.register(Resume)
+class ResumeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'specialisation', 'salary', 'deposit', 'work_experience', 'region',)
+    empty_value_display = '-пусто-'
+
+
+@admin.register(WorkerProfile)
+class WorkerProfileAdmin(admin.ModelAdmin):
+    list_display = ('user',)
+
+
+# Кастомный административный класс для модели CustomerProfile
+@admin.register(CustomerProfile)
+class CustomerProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'company_name')
+
+
+
+@admin.register(Member)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('first_name', 'last_name',
+                    'login', 'is_staff', 'is_active',
+                    'is_customer', 'is_worker')
+    list_filter = ('login', 'last_name',)
+    fieldsets = (
+        (None, {'fields': ('login',)}),
+        ('Personal info', {'fields': ('first_name', 'last_name')})
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('login', 'first_name', 'last_name',
+                       'is_customer', 'is_worker', 'is_active',
+                       'password1', 'password2'),
+        }),
+    )
+    ordering = ('login',)

@@ -1,0 +1,145 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <script src="../static/js/jquery.js"></script>
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+    <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="../static/css/normalize.css">
+    <link rel="stylesheet" href="../static/css/splide.css">
+    <style>
+        .error_panel {
+            margin-top: 4px;
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+            position: relative;
+            padding: 1rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+
+        .message_panel {
+            margin-top: 4px;
+            color: #FFFFFF;
+            background-color: #0c4128;
+            border-color: #0c4128;
+            position: relative;
+            padding: 1rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+
+        .visible {
+            display: block;
+        }
+
+        .invisible {
+            display: none;
+        }
+
+        a.disabled {
+            pointer-events: none;
+        }
+
+        .moderator_nick_name {
+            color: red;
+        }
+    </style>
+    <title>Поиск сотрудников, работы</title>
+</head>
+<body>
+
+
+    {% include "./blocks/header.html"  %}
+    <div class="container">
+
+        {% if error %}
+          <div class="alert-message">
+            <button>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M5.83174 5.00011L9.82751 1.00435C10.0575 0.774357 10.0575 0.40261 9.82751 0.172617C9.59751 -0.0573763 9.22576 -0.0573763 8.99577 0.172617L5.00001 4.16838L1.00423 0.172617C0.774235 -0.0573763 0.402488 -0.0573763 0.172495 0.172617C-0.0574983 0.40261 -0.0574983 0.774357 0.172495 1.00435L4.16826 5.00011L0.172495 8.99587C-0.0574983 9.22587 -0.0574983 9.59761 0.172495 9.82761C0.287199 9.94231 0.43778 9.99995 0.588362 9.99995C0.738943 9.99995 0.889525 9.94229 1.00423 9.82761L4.99999 5.83185L8.99575 9.82761C9.11046 9.94231 9.26104 9.99995 9.41162 9.99995C9.5622 9.99995 9.71278 9.94229 9.82749 9.82761C10.0575 9.59761 10.0575 9.22587 9.82749 8.99587L5.83174 5.00011Z"
+                        fill="black"></path>
+                </svg>
+            </button>
+            <div>
+
+                <p>{{error}}</p>
+
+            </div>
+        </div>
+        {% endif %}
+       <div class="shop_main user-profile profile-header">
+        <div class="container">
+         {% include "./blocks/slider_banners_header.html"  %}
+            <div class="shop_panel">
+                <div class="shop_panel_info">
+                    <div class="shop_panel_img">
+                        <img src="/media/about/images/avatar.png" loading="lazy">
+                    </div>
+                    <div class="shop_panel_title">
+                        <p class="shop_title">
+                            {{ user.login }}
+                            <span class="user-profile__delimiter">|</span>
+                            <span class="user-profile__title">Соискатель</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="shop_nav">
+                <input type="checkbox" id="shop_nav_box">
+                <label for="shop_nav_box" class="shop_btn_call">
+                    Профиль:
+                    <span>Профиль пользователя</span>
+                </label>
+                <div class="shop_nav_box">
+                    <a href="/profile/" class="active">Профиль пользователя</a>
+                    <a href="/profile/resume" class="nonactive">Резюме</a>
+                    <a href="/notifications" class="nonactive">Оповещения</a>
+                    <a href="/profile/preferences/" class="nonactive">Настройки</a>
+                    <a href="/profile/contacts/" class="nonactive">Контакты</a>
+                    <a href="/feedback" class="nonactive">обратная связь</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="finance">
+    <div class="container">
+        <div class="settings">
+            <h1 class="settings-title">Мой профиль</h1>
+            <div class="settings-main">
+                <div class="settings-main__content">
+                    <div class="settings-main__info">
+                        <span class="par">Регистрация:</span>
+                        <span class="details">20.01.2024</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    {% include "./blocks/footer.html"  %}
+        <script src="../static/js/main.js"></script>
+        <script src="../static/js/catalog.js"></script>
+        <script src="../static/js/splide.min.js"></script>
+
+    </div>
+<script>
+      document.addEventListener( 'DOMContentLoaded', function () {
+    new Splide( '#image-carousel' ).mount();
+  } );
+</script>
+</body>
+
+</html>
