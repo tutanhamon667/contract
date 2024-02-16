@@ -2,36 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Captcha</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     {% load static %}
-
-    <link rel="stylesheet" href="../static/css/index.css">
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% bootstrap_messages %}
 </head>
 <body>
-<div class="container">
-    <div class="login-wrapper">
-        <div class="login-container">
-            <center>
-                 <img src="../static/img/logo2.png"/>
-            </center>
+<section class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-white text-black" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
 
-            <form class="form-captcha text-center" action="/captcha" method="post" autocomplete="off">
-                <div class="captcha">
-                    <img id="captcha-img" src="data:image/png;base64, {{captcha}}">
+                        <div class="mt-md-4 pb-5">
+                            <div class="text-center">
+                                <img src="{% static "img/logo.png" %}" class="rounded" alt="...">
+                            </div>
+
+                            <form class="form-captcha text-center" action="/captcha" method="post" autocomplete="off">
+                                <div class="text-center mb-md-2">
+                                    <img id="captcha-img" class=" rounded" src="data:image/png;base64, {{ captcha }}">
+                                </div>
+                                <input type="hidden" name="ref" value="">
+                                <input type="hidden" name="hashkey" value="{{ hashkey }}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label" for="id_username">Введите капчу</label>
+                                    <input type="text" name="captcha" autofocus="" autocapitalize="none" class="form-control" placeholder="captcha" required="" id="id_captcha">
+                                </div>
+                                <button class="btn btn-outline-dark btn-lg px-5" type="submit">Отправить</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <input type="hidden" name="ref" value="">
-                <input type="hidden" name="hashkey" value="{{hashkey}}">
-                <div class="input-group">
-                    <input type="text" placeholder="**" class="login-input" name="captcha" required="" autofocus="" style="text-transform:uppercase">
-                    <span class="floating-label">Введите капчу</span>
-                </div>
-                {% csrf_token %}
-                <button class="button-submit" type="submit">Войти</button>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-
+</section>
 </body>
 </html>

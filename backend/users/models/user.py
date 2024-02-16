@@ -118,7 +118,13 @@ class Industry(models.Model):
         null = True,
         default = None
     )
-
+    icon = models.CharField(
+        max_length=100,
+        verbose_name='icon',
+        blank=True,
+        null=True,
+        default=''
+    )
     class Meta:
         ordering = ('-name',)
         verbose_name = 'Отрасль'
@@ -141,6 +147,13 @@ class Specialisation(models.Model):
         verbose_name='alt',
         null=True,
         default=None
+    )
+    icon = models.CharField(
+        max_length=100,
+        verbose_name='icon',
+        blank=True,
+        null=True,
+        default=''
     )
     industry = models.ForeignKey(to=Industry, verbose_name="Отрасль", on_delete=models.CASCADE, null=True, default=None)
 
@@ -389,11 +402,20 @@ class Job(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def final_salary(self):
+        if self.salary > 0:
+            return self.salary
+        else:
+            if self.salary_from and self.salary_to:
+                return f'{self.salary_from} - {self.salary_to}'
+            else:
+                return self.salary_from or self.salary_to
+
     @classmethod
     def is_current_user(cls, _id, user):
         obj = cls.objects.get(_id)
         return obj.user == user.id
-
 
     @classmethod
     def get_new_jobs(cls, limit):

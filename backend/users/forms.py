@@ -1,14 +1,9 @@
 from ckeditor.widgets import CKEditorWidget
 from django import forms
-from captcha.fields import CaptchaField
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
 
 from users.models.user import Resume, Member, User, Contact, Job, WorkerProfile, CustomerProfile
-
-
-class Captcha(forms.Form):
-    captcha = CaptchaField()
 
 
 class JobForm(ModelForm):

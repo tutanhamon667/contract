@@ -11,6 +11,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 from users.models.user import CustomerProfile, WorkerProfile
 from django.contrib.auth.forms import AuthenticationForm
+from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count
+from btc.models import Address as WalletAddress
 
 
 def logout_view(request):
@@ -86,6 +88,10 @@ def registration_customer_view(request):
             company_name = request.POST.get('company_name') or None
             customer_profile = CustomerProfile(user=user, company_name=company_name)
             customer_profile.save()
+            wallet = get_wallet()
+            addresses_count = get_addresses_count(wallet)
+            address = generate_address(addresses_count + 1, wallet.seed)
+            new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet, user=user)
             return redirect(to='index')
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")

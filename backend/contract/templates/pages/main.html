@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% block content %}
+
+    <div class="container">
+        <section>
+            <p>Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является
+                стандартной
+                "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую
+                коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только
+                успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его
+                популяризации в
+                новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более
+                недавнее
+                время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem
+                Ipsum.</p>
+        </section>
+
+
+        <section>
+            <h5>Анонимный поиск работы без границ</h5>
+            <form class="form row" action="/" method="get">
+                <div class="col-md-11">
+                    <input type="text" class="form-control" placeholder="Введите должность, сферу или профессию"
+                           name="search" value="" autocomplete="off">
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary">Найти</button>
+                </div>
+                <a href="/workers" class="link-dark">Ищу сотрудников</a>
+            </form>
+
+        </section>
+        <section>
+            <p>
+          <span>
+            {% bs_icon 'bag' %}
+          </span>
+                <span class="icon-text"> Вакансии по должностям</span>
+            </p>
+            <div class="products-category-container">
+                {% for category in categories_stat %}
+                    {% if forloop.counter|divisibleby:5 %}
+                        <div class="collapse" id="collapseExample">
+                    {% endif %}
+                {% if forloop.counter|divisibleby:5  or   forloop.first %}
+                    <div class="row">
+                {% endif %}
+                <div class=" col-lg-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <p>
+                        <span>
+                            {% bs_icon category.icon %}
+                        </span>
+                                <span class="icon-text"> {{ category.name }}</span>
+                            </p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Минимальная зп: {{ category.get_min }}</h5>
+                            <p class="card-text">Вакансий: {{ category.count }}</p>
+                            <a href="/jobs/category/{{ category.id }}" class="btn btn-primary">Показать</a>
+                        </div>
+                    </div>
+                </div>
+
+                {% if forloop.counter|divisibleby:4   or  forloop.last %}
+                    </div>
+                {% endif %}
+                {% if forloop.counter|divisibleby:4 %}
+                    <p>
+                        <a class="link-dark" data-bs-toggle="collapse" href="#collapseExample" role="button"
+                           aria-expanded="false" aria-controls="collapseExample">
+                            Показать все
+                        </a>
+                    </p>
+                {% endif %}
+                {% if forloop.last %}
+                    </div>
+                {% endif %}
+
+                {% endfor %}
+            </div>
+        </section>
+
+        <section>
+            {% include "../blocks/slider_banners_header.html" %}
+        </section>
+
+        <section>
+            <p>
+          <span>
+            {% bs_icon 'newspaper' %}
+          </span>
+                <span class="icon-text">лучшие работодатели</span>
+            </p>
+            <div class="row">
+
+                {% for best_customer in best_customers %}
+
+
+                    <div class="col-md">
+                        <div class="card">
+                            <img src="../media/{{ best_customer.customer.photo }}"
+                                 alt="{{ best_customer.customer.company_name }}" class="card-img-top" width="190" height="190">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ best_customer.customer.company_name }}</h5>
+                                <a href="/customer/{{ best_customer.customer.id }}" class="btn btn-primary">Просмотреть</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+            </div>
+        </section>
+
+        <section>
+            <p>
+          <span class="red-icon">
+            {% bs_icon 'fire' %}
+          </span>
+                <span class="icon-text">Горячие вакансии</span>
+            </p>
+            <div class="row">
+
+                {% for job in hot_jobs %}
+
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <span class="icon-text">{{ job.title }}</span>
+                                    <span class="red-icon">
+                                    {% bs_icon 'fire' %}
+                                </span>
+                                </h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ job.final_salary }} р.</h6>
+                                <span class="job-card-item-customer">{{ job.customer }}</span>
+                                <div class="row">
+                                    {% if job.work_experience is 0 %}
+                                        <div class="col-md-6">
+
+                                            <p>
+                                  <span>
+                                    {% bs_icon 'currency-dollar' %}
+                                  </span>
+                                                <span class="icon-text">Без залога</span>
+                                            </p>
+
+                                        </div>
+                                    {% endif %}
+                                    <div class="col-md-6">
+                                        {% if job.deposit is 0 %}
+                                            <p>
+                                  <span>
+                                    {% bs_icon 'bag' %}
+                                  </span>
+                                                <span class="icon-text">Без опыта</span>
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <a href="/job/{{ job.id }}" class="link-dark">Просмотреть</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                {% endfor %}
+            </div>
+        </section>
+
+        <section>
+            <p>
+          <span>
+            {% bs_icon 'newspaper' %}
+          </span>
+                <span class="icon-text">Новые вакансии</span>
+            </p>
+            <div class="row">
+
+                {% for job in hot_jobs %}
+
+
+                    <div class=" col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <span class="icon-text">{{ job.title }}</span>
+                                </h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ job.final_salary }} р.</h6>
+                                <span class="job-card-item-customer">{{ job.customer }}</span>
+                                <div class="row">
+                                    {% if job.work_experience is 0 %}
+                                        <div class="col-md-6">
+                                            <p>
+                                  <span>
+                                    {% bs_icon 'currency-dollar' %}
+                                  </span>
+                                                <span class="icon-text">Без залога</span>
+                                            </p>
+
+                                        </div>
+                                    {% endif %}
+                                    <div class="col-md-6">
+                                        {% if job.deposit is 0 %}
+                                            <p>
+                                  <span>
+                                    {% bs_icon 'bag' %}
+                                  </span>
+                                                <span class="icon-text">Без опыта</span>
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+
+                                <a href="/job/{{ job.id }}" class="link-dark">Просмотреть</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+            </div>
+        </section>
+
+
+    </div>
+{% endblock content %}

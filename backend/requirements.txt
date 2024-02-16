@@ -1,4 +1,4 @@
-asgiref==3.7.2
+asgiref
 certifi==2023.7.22
 cffi==1.15.1
 charset-normalizer==3.2.0
@@ -41,7 +41,7 @@ pytz==2023.3.post1
 PyYAML==6.0.1
 requests==2.31.0
 requests-oauthlib==1.3.1
-setuptools==69.0.2
+setuptools==57.5.0
 social-auth-app-django==5.3.0
 social-auth-core==4.4.2
 sqlparse==0.4.4
@@ -50,3 +50,8 @@ tzdata==2023.3
 uritemplate==4.1.1
 urllib3==2.0.5
 views-py==2.0.0
+pycoin~=0.92.20230326
+django-ckeditor~=6.7.1
+captcha~=0.5.0
+django-simple-captcha~=0.6.0
+bipwallet~=1.0.2

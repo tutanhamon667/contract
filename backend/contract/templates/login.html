@@ -1,26 +1,49 @@
-<div class="container py-5">
-  <h1>Login</h1>
-  <form method="POST">
-    {% csrf_token %}
-    {{ form }}
-       <div class="captcha">
-        <img id="captcha-img" src="data:image/png;base64, {{captcha}}">
-    </div>
-    <input type="hidden" name="ref" value="">
-    <input type="hidden" name="hashkey" value="{{hashkey}}">
-    <div class="input-group">
-        <input type="text" placeholder="**" class="login-input" name="captcha" required="" autofocus="" style="text-transform:uppercase">
-        <span class="floating-label">Введите капчу</span>
-    </div>
-    <button class="btn btn-primary" type="submit">Login</button>
-  </form>
-  <p class="text-center">Don't have an account? <a href="/signup/worker">Create an account</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captcha</title>
+    {% load static %}
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% bootstrap_messages %}
+</head>
+<body>
+<section class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-white text-black" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
 
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
+                        <div class="mt-md-4 pb-5">
+                            <div class="text-center mb-5">
+                                <img src="{% static "img/logo.png" %}" class="rounded" alt="...">
+                            </div>
+                            <form method="POST">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                <div class="captcha">
+                                    <img id="captcha-img" src="data:image/png;base64, {{ captcha }}">
+                                </div>
+                                <input type="hidden" name="ref" value="">
+                                <input type="hidden" name="hashkey" value="{{ hashkey }}">
+                                <div class="mb-3">
+                                    <label class="form-label" for="id_username">Введите капчу</label>
+                                    <input type="text" name="captcha" autofocus="" autocapitalize="none" class="form-control" placeholder="captcha" required="" id="id_captcha">
+                                </div>
+                                <button class="btn btn-primary" type="submit">Войти</button>
+                            </form>
+                            <p class="text-center">Зарегистрироваться как <br><a href="/signup/customer">работодатель</a><br><a href="/signup/worker">соискатель</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

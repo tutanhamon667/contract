@@ -1,0 +1,7 @@
+{% extends "profile.html" %}
+{% block profile_content %}
+    {% load django_bootstrap5 %}
+    <h1 class="my_order_title">BTC</h1>
+    <p>btc wallet: {{ wallet.address }}</p>
+    <p>balance: {{ balance }}</p>
+{% endblock profile_content %}

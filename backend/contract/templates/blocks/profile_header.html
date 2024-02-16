@@ -1,7 +1,8 @@
 {% if not user.is_authenticated  %}
 <div class="account-block">
     <a href="/login" class="button-submit account-action-login">Войти</a>
-    <a href="/resume/create" class="button-submit-white account-money">Создать резюме</a>
+    <a href="/signup/customer" class="button-submit-white account-money">Регистрация работодателя</a>
+    <a href="/signup/worker" class="button-submit-white account-money">Регистрация соискателя</a>
 </div>
 {% else %}
 

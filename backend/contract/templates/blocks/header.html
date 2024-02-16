@@ -1,23 +1,67 @@
-<header class="header-main">
-    <div class="container">
-        <div class="header-container-child">
-            <div class="header-left">
-                <div class="logo">
-                    <a href="/" class="logo">
-                     <img src="../static/img/logo.png">
-                    </a>
-                </div>
+<div class="container">
+<nav class="navbar navbar-expand-sm navbar-light bg-body-tertiary">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+    <!-- Toggle button -->
+    <button
+      data-mdb-collapse-init
+      class="navbar-toggler"
+      type="button"
+      data-mdb-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
 
-                <div class="navigation">
-                    <div class="menu-links">
-                        <a href="/" class="">Соискателям</a>
-                        <a href="/resumes" class="">Работодателям</a>
-                    </div>
-                </div>
-
-            </div>
-            {% include "./profile_header.html"  %}
-            {% include "./profile_header_mob.html"  %}
-        </div>
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Navbar brand -->
+      <a class="navbar-brand mt-2 mt-lg-0" href="/">
+        <img
+          src="../static/img/logo.png"
+          height="30"
+          alt="MDB Logo"
+          loading="lazy"
+        />
+      </a>
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Соискателям</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Работодателям</a>
+        </li>
+      </ul>
+      <!-- Left links -->
     </div>
-</header>
+    <!-- Collapsible wrapper -->
+
+    <!-- Right elements -->
+    <div class="d-flex align-items-center">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if user.login %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ user.login }}
+          </a>
+          <ul class="dropdown-menu  dropdown-menu-end dropdown-menu-lg-start" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/profile">Профиль</a></li>
+
+            <li><a class="dropdown-item" href="#">Выйти </a></li>
+          </ul>
+        </li>
+          {% else %}
+              <li class="nav-item">
+              <a class="nav-link" href="/signin">sign in</a>
+            </li>
+          {% endif %}
+      </ul>
+    </div>
+    <!-- Right elements -->
+  </div>
+</nav>
+
+</div>

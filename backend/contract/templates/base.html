@@ -1,0 +1,21 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% bootstrap_messages %}
+    <link href="{% static 'css/base.css' %}" rel="stylesheet"/>
+    <title>Поиск сотрудников, работы</title>
+
+</head>
+<body>
+    {% include "./blocks/header.html"  %}
+    {% block content %}{% endblock content %}
+    {% include "./blocks/footer.html"  %}
+</body>
+
+</html>

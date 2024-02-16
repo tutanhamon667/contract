@@ -39,12 +39,12 @@ def job_view(request, job_id):
 
 
 def jobs_view(request):
-    def get_page(new_entity_form, user):
+    def get_page(form, user):
         if request.user.is_authenticated:
             jobs = Job.objects.filter(customer=user.id)
             return render(request, './blocks/profile/profile_jobs.html',
                           {'jobs': jobs,
-                           'new_entity_form': new_entity_form
+                           'form': form
                            })
         else:
             return redirect(to="login")
@@ -87,5 +87,5 @@ def jobs_view(request):
             return get_page(new_entity_form, user)
 
     else:
-        return redirect(to="login")
+        return redirect(to="signin")
 

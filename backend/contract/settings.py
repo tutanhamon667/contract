@@ -20,13 +20,7 @@ SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4gGultuiot8hbxlguev@bh%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1',
-                 'localhost',
-                 'localhost:4173',
-                 'localhost:5173',
-                 os.getenv('HOST_NEW')]
-
-
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'django_bootstrap5',
     'djoser',
     'corsheaders',
     'users',
@@ -46,9 +41,10 @@ INSTALLED_APPS = [
     'chat',
     'drf_yasg',
     'drf_extra_fields',
-    'captcha',
     'contract',
-    'ckeditor'
+    'ckeditor',
+    'btc',
+    'django_bootstrap_icons'
 
 ]
 
@@ -92,11 +88,11 @@ WSGI_APPLICATION = 'contract.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', default='postgres'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST', default='db'),
-        'PORT': os.getenv('DB_PORT', default='5432')
+        'NAME': 'contract' ,
+        'USER': 'contract',
+        'PASSWORD': 'uyfuy^6jji',
+        'HOST':'localhost',
+        'PORT':5433
     }
 }
 
@@ -153,7 +149,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 # Add these new lines
 STATICFILES_DIRS = (

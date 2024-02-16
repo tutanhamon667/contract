@@ -13,36 +13,36 @@ def resume_view(request, resume_id):
         if request.method == "GET":
             resume = Resume.objects.get(user=user.id, id=resume_id)
             if resume:
-                resume_form = ResumeForm(instance=resume)
+                form = ResumeForm(instance=resume)
                 return render(request, './blocks/profile/profile_resume.html', {
-                    'resume_form': resume_form
+                    'form': form
                 })
             else:
                 return HttpResponse(status=404)
 
         if request.method == "POST":
             resume = Resume.objects.get(user=user.id, id=resume_id)
-            resume_form = ResumeForm(request.POST, instance=resume)
+            form = ResumeForm(request.POST, instance=resume)
             user_id = int(request.POST.get('user'))
             if user_id != user.id:
                 print('fuck off wrong user')
                 return HttpResponse(status=503)
             else:
-                if resume_form.is_valid():
-                    resume_form.save()
+                if form.is_valid():
+                    form.save()
                     return redirect(to='profile_resume')
                 return render(request, './blocks/profile/profile_resume.html', {
-                    'resume_form': resume_form
+                    'form': form
                 })
     else:
-        return redirect(to="login")
+        return redirect(to="signin")
 
 def resumes_view(request):
-    def resume_page(new_resume_form, user):
+    def resume_page(form, user):
         resumes = Resume.objects.filter(user=user.id)
         return render(request, './blocks/profile/profile_resumes.html',
                       {'resumes': resumes,
-                       'new_resume_form': new_resume_form
+                       'form': form
                        })
 
     if request.user.is_authenticated:
@@ -76,14 +76,14 @@ def resumes_view(request):
                     print(e)
 
         if request.method == "GET":
-            new_resume_form = ResumeForm(initial={'user': user.id})
+            form = ResumeForm(initial={'user': user.id})
             resumes = Resume.objects.filter(user=user.id)
             return render(request, './blocks/profile/profile_resumes.html',
                           {'resumes': resumes,
-                           'new_resume_form': new_resume_form
+                           'form': form
                            })
     else:
-        return redirect(to="login")
+        return redirect(to="signin")
 
 
 def contact_view(request, contact_id):
@@ -116,15 +116,15 @@ def contact_view(request, contact_id):
                     'form': form
                 })
     else:
-        return redirect(to="login")
+        return redirect(to="signin")
 
 
 def contacts_view(request):
-    def contact_page(new_entity_form, user):
+    def contact_page(form, user):
         contacts = Contact.objects.filter(user=user.id)
         return render(request, './blocks/profile/profile_contacts.html',
                       {'contacts': contacts,
-                       'new_entity_form': new_entity_form
+                       'form': form
                        })
 
     if request.user.is_authenticated:
@@ -160,10 +160,10 @@ def contacts_view(request):
                     print(e)
 
         if request.method == "GET":
-            new_entity_form = ContactForm(initial={'user': user.id})
-            return contact_page(new_entity_form, user)
+            form = ContactForm(initial={'user': user.id})
+            return contact_page(form, user)
     else:
-        return redirect(to="login")
+        return redirect(to="signin")
 
 def profile_main_view(request):
     if request.user.is_authenticated:
@@ -206,4 +206,4 @@ def profile_main_view(request):
                     'form': form
                 })
     else:
-        return redirect(to="login")
+        return redirect(to="signin")
