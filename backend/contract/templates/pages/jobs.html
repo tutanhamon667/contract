@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <div class="container">
+        <section>
+            <div class="row">
+                <div class="col-lg-3">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form search_form %}
+                    </form>
+                </div>
+                <div class="col-lg-9 job-list">
+                    {% for job in jobs %}
+                    {% with short=False show_company_logo=True %}
+
+                        {% include "../blocks/job_item.html"  %}
+                    {% endwith %}
+
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock content %}

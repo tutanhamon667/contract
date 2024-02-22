@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <section>
+            <div class="row">
+                <div class="col-lg-2">
+                    <nav class="navbar bg-light">
+                        <div class="container-fluid">
+                            <ul class="navbar-nav">
+                                {% for category in categories %}
+                                    {% if category.show_nav_menu %}
+                                        <li class="nav-item">
+                                            <p>{{ category.title }}</p>
+                                            <ul class="navbar-nav">
+                                                {% for cat_article in articles %}
+                                                    {% if cat_article.category == category %}
+                                                        <li class="nav-item mb-2">
+                                                            {% if cat_article.is_contact %}
+                                                                {% if article.id == cat_article.id %}
+                                                                    <a href="{{ cat_article.get_link }}"
+                                                                       class="nav-link p-0 text-muted active"
+                                                                       target="_blank">
+                                                                {% else %}
+                                                                    <a href="{{ cat_article.get_link }}"
+                                                                       class="nav-link p-0 text-muted" target="_blank">
+                                                                {% endif %}
+
+                                                            {% else %}
+                                                                {% if article.id == cat_article.id %}
+                                                                    <a href="{{ cat_article.get_link }}"
+                                                                       class="nav-link p-0 text-muted active">
+                                                                {% else %}
+                                                                    <a href="{{ cat_article.get_link }}"
+                                                                       class="nav-link p-0 text-muted">
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            {{ cat_article.title }}</a>
+                                                        </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+                <div class="col-lg-10">
+                    <h1>{{ article.title }}</h1>
+                    {{ article.text|safe }}
+                </div>
+            </div>
+
+        </section>
+    </div>
+{% endblock content %}

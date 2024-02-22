@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from users.models.advertise import  Banners
 from users.models.common import Region
-from users.models.user import (Specialisation, CustomerProfile, Member, WorkerProfile, Contact, Resume, CustomerReview,
+from users.models.user import (Specialisation, Company, Member, Contact, Resume, CustomerReview,
                                Industry, Job)
 
 
@@ -24,8 +24,8 @@ class BannersAdmin(admin.ModelAdmin):
 
 @admin.register(CustomerReview)
 class CustomerReviewAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'reviewer','comment', 'rating')
-    list_filter =  ('customer', 'reviewer','comment', 'rating')
+    list_display = ('company', 'reviewer','comment', 'rating')
+    list_filter =  ('company', 'reviewer','comment', 'rating')
 
 @admin.register(Specialisation)
 class SpecialisationAdmin(admin.ModelAdmin):
@@ -35,7 +35,7 @@ class SpecialisationAdmin(admin.ModelAdmin):
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('title', 'customer', 'pub_date')
+    list_display = ('title', 'company', 'pub_date')
     list_filter = ( 'pub_date',)
     search_fields = ('title', 'description', 'client__user__username')
     empty_value_display = '-пусто-'
@@ -57,15 +57,11 @@ class ResumeAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-@admin.register(WorkerProfile)
-class WorkerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user',)
 
-
-# Кастомный административный класс для модели CustomerProfile
-@admin.register(CustomerProfile)
-class CustomerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'company_name')
+# Кастомный административный класс для модели
+@admin.register(Company)
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name')
 
 
 

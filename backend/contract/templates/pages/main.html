@@ -105,7 +105,7 @@
                                  alt="{{ best_customer.customer.company_name }}" class="card-img-top" width="190" height="190">
                             <div class="card-body">
                                 <h5 class="card-title">{{ best_customer.customer.company_name }}</h5>
-                                <a href="/customer/{{ best_customer.customer.id }}" class="btn btn-primary">Просмотреть</a>
+                                <a href="/company/{{ best_customer.customer.id }}" class="btn btn-primary">Просмотреть</a>
                             </div>
                         </div>
 
@@ -123,51 +123,16 @@
                 <span class="icon-text">Горячие вакансии</span>
             </p>
             <div class="row">
+                {% with addition_card_class=' hot-job-card horizontal-height' short=True show_company_logo=True %}
+                    {% for job in hot_jobs %}
 
-                {% for job in hot_jobs %}
-
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <span class="icon-text">{{ job.title }}</span>
-                                    <span class="red-icon">
-                                    {% bs_icon 'fire' %}
-                                </span>
-                                </h5>
-                                <h6 class="card-subtitle mb-2 text-muted">{{ job.final_salary }} р.</h6>
-                                <span class="job-card-item-customer">{{ job.customer }}</span>
-                                <div class="row">
-                                    {% if job.work_experience is 0 %}
-                                        <div class="col-md-6">
-
-                                            <p>
-                                  <span>
-                                    {% bs_icon 'currency-dollar' %}
-                                  </span>
-                                                <span class="icon-text">Без залога</span>
-                                            </p>
-
-                                        </div>
-                                    {% endif %}
-                                    <div class="col-md-6">
-                                        {% if job.deposit is 0 %}
-                                            <p>
-                                  <span>
-                                    {% bs_icon 'bag' %}
-                                  </span>
-                                                <span class="icon-text">Без опыта</span>
-                                            </p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <a href="/job/{{ job.id }}" class="link-dark">Просмотреть</a>
-                            </div>
+                        <div class="col-lg-4">
+                            {% include "../blocks/job_item.html"  %}
                         </div>
-                    </div>
 
 
-                {% endfor %}
+                    {% endfor %}
+                {% endwith %}
             </div>
         </section>
 
@@ -216,7 +181,7 @@
                                 </div>
 
 
-                                <a href="/job/{{ job.id }}" class="link-dark">Просмотреть</a>
+                                <a href="/jobs/{{ job.id }}" class="link-dark">Просмотреть</a>
                             </div>
                         </div>
 

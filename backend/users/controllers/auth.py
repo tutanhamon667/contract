@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
-from users.models.user import CustomerProfile, WorkerProfile
+from users.models.user import Member, Company
 from django.contrib.auth.forms import AuthenticationForm
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count
 from btc.models import Address as WalletAddress
@@ -86,8 +86,8 @@ def registration_customer_view(request):
             login(request, user)
             messages.success(request, "Registration successful.")
             company_name = request.POST.get('company_name') or None
-            customer_profile = CustomerProfile(user=user, company_name=company_name)
-            customer_profile.save()
+            customer_company = Company(user=user, name=company_name)
+            customer_company.save()
             wallet = get_wallet()
             addresses_count = get_addresses_count(wallet)
             address = generate_address(addresses_count + 1, wallet.seed)
@@ -126,7 +126,7 @@ def registration_worker_view(request):
             user.save()
             login(request, user)
             messages.success(request, "Registration successful.")
-            worker_profile = WorkerProfile(user=user)
+            worker_profile = Member(user=user)
             worker_profile.save()
             return redirect(to='index')
 

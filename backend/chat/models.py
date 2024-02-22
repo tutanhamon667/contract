@@ -1,18 +1,20 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from users.models.user import CustomerProfile, Member, WorkerProfile, Job
+from users.models.user import Member, Job
 
 
 class Chat(models.Model):
     customer = models.ForeignKey(
-        CustomerProfile,
-        related_name='chat',
+        Member,
+        related_name='chat_customer',
+        default=None,
         on_delete=models.CASCADE
     )
-    freelancer = models.ForeignKey(
-        WorkerProfile,
-        related_name='chat',
+    worker = models.ForeignKey(
+        Member,
+        related_name='chat_worker',
+        default=None,
         on_delete=models.CASCADE
     )
     title = models.CharField(max_length=255)
@@ -28,7 +30,7 @@ class Chat(models.Model):
         verbose_name_plural = 'Чаты'
 
     def __str__(self):
-        return f"{self.title} - {self.freelancer.user.last_name}"
+        return f"{self.title} - {self.worker.last_name}"
 
 
 class Message(models.Model):

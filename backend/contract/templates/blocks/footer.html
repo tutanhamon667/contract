@@ -1,52 +1,31 @@
 <div class="container">
     <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
         <div class="col mb-3"></div>
+        {% for category in categories %}
+            <div class="col mb-3">
+                <h5>{{ category.title }}</h5>
+                <ul class="nav flex-column">
+                    {% for cat_article in articles %}
+                        {% if cat_article.category == category %}
+                            <li class="nav-item mb-2">
+                                {% if cat_article.is_contact %}
+                                    <a href="{{ cat_article.get_link }}"
+                                   class="nav-link p-0 text-muted" target="_blank">
+                                {% else %}
+                                    <a href="{{ cat_article.get_link }}"
+                                   class="nav-link p-0 text-muted">
+                                {% endif %}
 
-        <div class="col mb-3">
-            <h5>Соискателям</h5>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-2"><a href="/profile" class="nav-link p-0 text-muted">Аккаунт пользователя</a>
-                </li>
-                <li class="nav-item mb-2"><a href="/profile/resume" class="nav-link p-0 text-muted">Размещение
-                    резюме</a></li>
-                <li class="nav-item mb-2"><a href="/vacancies" class="nav-link p-0 text-muted">Поиск по вакансиям</a>
-                </li>
-                <li class="nav-item mb-2"><a href="/worker_help" class="nav-link p-0 text-muted">Руководство
-                    соискателя</a></li>
-            </ul>
-        </div>
-
-        <div class="col mb-3">
-            <h5>Работодателям</h5>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Условия размещения</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Прайс лист</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Страница сервиса</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Размещение вакансии</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Руководство работодателя</a></li>
-            </ul>
-        </div>
-
-        <div class="col mb-3">
-            <h5>Информация</h5>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Зеркала</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Правила проекта</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Отправить жалобу</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Новости</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Наши контакты</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">roadmap</a></li>
-            </ul>
-        </div>
-        <div class="col mb-3">
-            <h5>Контакты</h5>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Телеграм</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Рутор</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">ВейВей</a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Пасаремос</a></li>
-            </ul>
-        </div>
+                                    {% if cat_article.photo %}
+                                        <img src='../media/{{  cat_article.photo  }}' height="30" alt="{{ cat_article.get_link }}"/>
+                                    {% endif %}
+                                    {{ cat_article.title }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
     </footer>
 </div>
 

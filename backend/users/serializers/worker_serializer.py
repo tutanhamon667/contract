@@ -5,8 +5,8 @@ from django.core.validators import RegexValidator
 from rest_framework import serializers
 
 from users.fields import CustomizedBase64ImageField
-from users.models.user import ( Specialisation, Contact, PortfolioFile,
-                          Industry, WorkerProfile, Resume)
+from users.models.user import ( Specialisation, Contact,
+                          Industry, Member, Resume)
 from users.serializers.serializers import DynamicFieldsModelSerializer
 
 User = get_user_model()
@@ -41,7 +41,7 @@ class GetWorkerProfileSerializer(DynamicFieldsModelSerializer):
     account_email = serializers.ReadOnlyField(source='user.email')
 
     class Meta:
-        model = WorkerProfile
+        model = Member
         fields = '__all__'
 
 
@@ -51,14 +51,13 @@ class WorkerViewSerializer(serializers.ModelSerializer):
     photo = CustomizedBase64ImageField(required=False)
 
     class Meta:
-        model = WorkerProfile
+        model = Member
         fields = (
-            'id', 'user', 'photo'
+            'id',  'photo'
         )
 
 
 class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
-    user = WorkerField(queryset=User.objects.all(), required=False)
     photo = CustomizedBase64ImageField(required=False)
     id = serializers.ReadOnlyField(source='user.id')
     is_worker = serializers.ReadOnlyField(source='user.is_worker')
@@ -66,13 +65,13 @@ class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
     account_email = serializers.ReadOnlyField(source='user.email')
 
     class Meta:
-        model = WorkerProfile
+        model = Member
         fields = '__all__'
 
     def validate(self, attrs):
         user = self.context.get('request')._user
         if (
-            WorkerProfile.objects.filter(user_id=user.id)
+            Member.objects.filter(id=user.id)
             and self.context.get('request').method == 'POST'
         ):
             raise ValidationError(
@@ -83,7 +82,7 @@ class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
     def validate_user(self, freelancer):
         user = self.context.get('request').user
         if (
-            WorkerProfile.objects.filter(user_id=user.id)
+            Member.objects.filter(id=user.id)
             and self.context.get('request').method == 'POST'
         ):
             raise ValidationError(
@@ -94,12 +93,12 @@ class PostWorkerProfileSerializer(DynamicFieldsModelSerializer):
     def create(self, validated_data):
         if 'user' not in self.initial_data:
             validated_data['user'] = self.context.get('request')._user
-        profile = WorkerProfile.objects.create(**validated_data)
+        profile = Member.objects.create(**validated_data)
         return profile
 
 
     def update(self, user, validated_data):
-        profile = WorkerProfile.objects.get(user=user)
+        profile = Member.objects.get(id=user.id)
         for field, value in validated_data.items():
             setattr(profile, field, value)
         profile.save()

@@ -1,6 +1,7 @@
 from io import BytesIO
 
-from ckeditor.fields import RichTextField
+from django.http import HttpResponse
+from django_ckeditor_5.fields import CKEditor5Field
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.db.models import Sum, Count, Avg
@@ -27,19 +28,33 @@ class Member(PermissionsMixin, AbstractBaseUser):
     display_name = models.CharField(
         verbose_name='display_name',
         max_length=254,
-        default=''
+        default='',
+        blank=True,
+        null=True
     )
 
     first_name = encrypt(models.CharField(
         max_length=150,
-        default=''
+        default='',
+        blank=True,
+        null=True
+
     ))
 
     last_name = encrypt(models.CharField(
         max_length=150,
-        default=''
+        default='',
+        blank=True,
+        null=True
     ))
 
+    photo = models.ImageField(
+        upload_to='profile/images/',
+        null=True,
+        default=None,
+        blank=True,
+        verbose_name='Фото'
+    )
 
     is_customer = models.BooleanField(default=False)
     is_worker = models.BooleanField(default=False)
@@ -74,12 +89,21 @@ class Member(PermissionsMixin, AbstractBaseUser):
     def is_superuser(self):
         return self.is_admin
 
+    @classmethod
+    def has_customer_permission(cls, user_id):
+        member = cls.objects.filter(id=user_id)
+        if len(member) == 0:
+            return HttpResponse(status=404)
+        if member[0].is_worker:
+            return HttpResponse(status=503)
+        return member
+
 
 User = get_user_model()
 
 
 class Contact(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=Member, on_delete=models.CASCADE)
     type = models.CharField(
         choices=CONTACT_TYPE,
         max_length=150,
@@ -166,67 +190,13 @@ class Specialisation(models.Model):
         return self.name
 
 
-class PortfolioFile(models.Model):
-    file = models.ImageField(
-        upload_to="portfolio/",
-    )
-    name = models.CharField(
-        max_length=255,
-        verbose_name='Имя документа'
-    )
-    thumbnail = models.ImageField(
-        upload_to='portfolio/thumnails/',
-        null=True,
-        blank=True)
-
-    def create_thumbnail(self):
-        image = Image.open(self.file, 'r')
-        thumbnail_size = THUMBNAIL_SIZE
-        image.thumbnail(thumbnail_size)
-        x, thumb_name = self.file.name.replace('.', '_thumb.').split('/')
-        thumb_io = BytesIO()
-        image.save(thumb_io, 'png')
-        self.thumbnail.save(
-            thumb_name,
-            InMemoryUploadedFile(
-                thumb_io, None,
-                thumb_name, 'image/png',
-                thumb_io.tell, None
-            ),
-            save=True
-        )
-        thumb_io.close()
-
-
-class WorkerProfile(models.Model):
+class Company(models.Model):
     user = models.OneToOneField(
         Member,
         on_delete=models.PROTECT
     )
-
-    photo = models.ImageField(
-        upload_to='bio/images/',
-        null=True,
-        default=None,
-        blank=True,
-        verbose_name='Фото'
-    )
-
-    class Meta:
-        verbose_name = 'Соискатель'
-        verbose_name_plural = 'Соискатель'
-
-    def __str__(self):
-        return self.user.display_name
-
-
-class CustomerProfile(models.Model):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.PROTECT
-    )
-    photo = models.ImageField(
-        upload_to='about/images/',
+    logo = models.ImageField(
+        upload_to='company/images/',
         null=True,
         default=None,
         blank=True,
@@ -240,15 +210,14 @@ class CustomerProfile(models.Model):
         blank=True,
         unique=True,
     ))
-    company_name = models.CharField(
+    name = models.CharField(
         max_length=150,
         verbose_name='Название компании или ваше имя'
     )
 
-    about = models.TextField(
-        max_length=500,
+    about = CKEditor5Field(
         blank=True,
-        verbose_name='О себе'
+        verbose_name='О себе', config_name='extends'
     )
     web = models.URLField(
         blank=True,
@@ -256,24 +225,29 @@ class CustomerProfile(models.Model):
     )
 
     class Meta:
-        ordering = ('-company_name',)
-        verbose_name = 'Работодатель'
-        verbose_name_plural = 'Работодатели'
+        ordering = ('-name',)
+        verbose_name = 'Company'
+        verbose_name_plural = 'Companies'
 
     def __str__(self):
-        return self.company_name
-
+        return self.name
 
 
 class CustomerReview(models.Model):
-    customer = models.ForeignKey(
-        CustomerProfile,
+    company = models.ForeignKey(
+        Company,
         on_delete=models.CASCADE,
+        related_name='review_company',
+        default=None,
+        null=True,
         unique=False
     )
     reviewer = models.ForeignKey(
-        WorkerProfile,
+        Member,
+        related_name='review_reviewer',
         on_delete=models.CASCADE,
+        default=None,
+        null=True,
         unique=False
 
     )
@@ -289,13 +263,18 @@ class CustomerReview(models.Model):
     moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=False)
 
     @classmethod
-    def get_top_customers(cls, limit):
+    def get_top_companies(cls, limit):
         result = []
-        res = cls.objects.values('customer').annotate(avg_rating=Avg('rating'))
+        res = cls.objects.values('company').annotate(avg_rating=Avg('rating'))
         for item in res:
-            customer = CustomerProfile.objects.get(id=item['customer'])
-            result.append({'customer': customer, 'rating': item['avg_rating']})
+            company = Member.objects.get(id=item['user'])
+            result.append({'company': company, 'rating': item['avg_rating']})
         return  result
+
+    @classmethod
+    def get_company_rating(cls, company_id):
+        res = cls.objects.values('company').annotate(avg_rating=Avg('rating')).filter(company_id=company_id)
+        return res
 
 
 class Resume(models.Model):
@@ -353,14 +332,17 @@ class Job(models.Model):
         help_text='Выберите специализацию',
         on_delete=models.CASCADE
     )
-    customer = models.ForeignKey(
-        User,
-        related_name='jobs',
-        verbose_name='Работодатель',
-        on_delete=models.CASCADE
+    company = models.ForeignKey(
+        Company,
+        related_name='job_company',
+        verbose_name='Компания',
+        default=None,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT
     )
-    description = RichTextField(
-        verbose_name='Описание вакансии',
+    description = CKEditor5Field(
+        verbose_name='Описание вакансии', config_name='extends'
     )
     salary = models.BigIntegerField(
         default=0,
@@ -381,13 +363,10 @@ class Job(models.Model):
     )
     is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
     is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
-    region = models.ForeignKey(verbose_name='Регион работы',
-                               to=Region,
-                               null=True,
-                               default=None,
-                               on_delete=models.SET_DEFAULT)
+    region = models.ManyToManyField(Region, verbose_name='Регион работы', null=True, default=None, blank=True)
     active_search = models.BooleanField(null=True, default=True, verbose_name='В активном поиске')
     deposit = models.IntegerField(verbose_name='Залог', null=True, default=0)
+    views = models.IntegerField(verbose_name='Просмотры', null=True, default=0)
 
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -403,6 +382,30 @@ class Job(models.Model):
         return self.title
 
     @property
+    def busy_type(self):
+        str = ''
+        if self.is_offline:
+            str =  'Оффлайн занятость'
+        else:
+            str = 'Онлайн занятость'
+        regions = self.region.all()
+        regions_str = ''
+        if len(regions):
+            regions_str = ': '
+        index = 0
+        for region in regions:
+            if index > 2:
+                return str + regions_str + f' и ещё {len(regions) - index}'
+            if index == 0:
+                regions_str = regions_str + f'{region.name}'
+            else:
+                regions_str = regions_str + f', {region.name}'
+            index += 1
+        return str + regions_str
+
+
+
+    @property
     def final_salary(self):
         if self.salary > 0:
             return self.salary
@@ -410,7 +413,10 @@ class Job(models.Model):
             if self.salary_from and self.salary_to:
                 return f'{self.salary_from} - {self.salary_to}'
             else:
-                return self.salary_from or self.salary_to
+                if self.salary_from > 0:
+                    return f' от {self.salary_from}'
+                else:
+                    return f'до {self.salary_to}'
 
     @classmethod
     def is_current_user(cls, _id, user):

@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from rest_framework import serializers
 
 from .fields import CustomizedBase64ImageField
-from users.models.user import CustomerProfile, Industry
+from users.models.user import Member, Industry
 from .serializers.serializers import DynamicFieldsModelSerializer
 
 User = get_user_model()
@@ -29,7 +29,7 @@ class GetCustomerProfileSerializer(DynamicFieldsModelSerializer):
     industry = IndustrySerializer(many=False, read_only=True)
 
     class Meta:
-        model = CustomerProfile
+        model = Member
         fields = (
             'id', 'user', 'account_login', 'is_worker', 'is_customer', 'photo',
             'first_name', 'last_name', 'name', 'about', 'industry', 'web'
@@ -48,7 +48,7 @@ class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     industry = IndustrySerializer(many=False)
 
     class Meta:
-        model = CustomerProfile
+        model = Member
         fields = (
             'id', 'user', 'account_login', 'is_worker', 'is_customer', 'photo',
             'first_name', 'last_name', 'name', 'about', 'industry', 'web'
@@ -57,7 +57,7 @@ class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     def validate_user(self, user):
         user = self.context.get('request').user
         if (
-            CustomerProfile.objects.filter(user_id=user.id)
+            Member.objects.filter(user_id=user.id)
             and self.context.get('request').method == 'POST'
         ):
             raise ValidationError(
@@ -75,13 +75,13 @@ class PostCustomerProfileSerializer(DynamicFieldsModelSerializer):
     def create(self, validated_data):
         industry_data = validated_data.pop('industry')
         industry, status = Industry.objects.get_or_create(**industry_data)
-        return CustomerProfile.objects.create(
+        return Member.objects.create(
             industry=industry,
             **validated_data
         )
 
     def update(self, user, validated_data):
-        profile = CustomerProfile.objects.get(user=user)
+        profile = Member.objects.get(id=user.id)
         if 'industry' in self.initial_data:
             industry_data = validated_data.pop('industry')
             industry, status = Industry.objects.get_or_create(**industry_data)

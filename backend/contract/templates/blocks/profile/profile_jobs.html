@@ -2,9 +2,10 @@
 {% block profile_content %}
     {% load django_bootstrap5 %}
     <h1 class="my_order_title">Мои jobs</h1>
-    <form action="" method="post">
+    <form action="" method="post"  enctype="multipart/form-data" novalidate>
         {% csrf_token %}
-        {% bootstrap_form form %}
+        {{ form.media }}
+        {{ form.as_p }}
         <input type="submit" value="Добавить"/>
     </form>
     <div class="list-group">

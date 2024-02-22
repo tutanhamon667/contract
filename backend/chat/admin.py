@@ -5,9 +5,9 @@ from chat.models import Chat, Message
 
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer', 'freelancer')
-    list_filter = ('customer', 'freelancer')
-    search_fields = ('customer__username', 'freelancer__username')
+    list_display = ('id', 'customer', 'worker')
+    list_filter = ('customer', 'worker')
+    search_fields = ('customer__username', 'worker__username')
     readonly_fields = ('id',)
 
 

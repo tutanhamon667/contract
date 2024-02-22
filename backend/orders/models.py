@@ -1,5 +1,5 @@
 from django.db import models as basic_models
-from users.models.user import CustomerProfile, WorkerProfile, Specialisation, User
+from users.models.user import Member, Company, Specialisation, User
 
 
 class JobSpecialisationStat(basic_models.Model):

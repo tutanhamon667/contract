@@ -1,6 +1,6 @@
 from django_filters.rest_framework import FilterSet, NumberFilter, filters
 
-from users.models.user import Specialisation, WorkerProfile
+from users.models.user import Specialisation, Member
 
 
 class FreelancerFilter(FilterSet):
@@ -18,5 +18,5 @@ class FreelancerFilter(FilterSet):
     )
 
     class Meta:
-        model = WorkerProfile
+        model = Member
         fields = ('categories',)

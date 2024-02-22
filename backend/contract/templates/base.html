@@ -8,9 +8,13 @@
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     {% bootstrap_messages %}
+    {% load static %}
     <link href="{% static 'css/base.css' %}" rel="stylesheet"/>
     <title>Поиск сотрудников, работы</title>
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <script src="{% static './ckeditor/ckeditor-init.js' %}"></script>
+    <script src="{% static './js/jquery.js' %}"></script>
+    <script src="{% static './js/main.js' %}"></script>
 </head>
 <body>
     {% include "./blocks/header.html"  %}

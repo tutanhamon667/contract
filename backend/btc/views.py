@@ -3,6 +3,7 @@ from bipwallet import wallet
 
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count, get_wallet_balance
 from btc.models import Address as WalletAddress
+from common.models import Article, ArticleCategory
 
 
 def generate_wallet():
@@ -19,6 +20,8 @@ def gen_address(user):
 def profile_wallet_view(request):
 	if request.user.is_authenticated:
 		user = request.user
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
 		if request.method == "GET":
 			profile_address = None
 			address = WalletAddress.objects.filter(user=user.id)
@@ -33,5 +36,7 @@ def profile_wallet_view(request):
 			balance = get_wallet_balance(profile_address.address)
 			return render(request, './blocks/profile/profile_wallet.html', {
 				'wallet': profile_address,
-				'balance': balance
+				'balance': balance,
+					'categories': categories,
+					'articles': articles
 			})

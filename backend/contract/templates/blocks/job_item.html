@@ -1,0 +1,55 @@
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+<div class="card {{ addition_card_class }}">
+    <div class="card-body">
+        <div class="left">
+        <h4 class="card-title">
+            <span class="icon-text"> <a href="/jobs/{{ job.id }}" class="link-dark">{{ job.title }}</a></span>
+            <span class="red-icon">
+                                    {% bs_icon 'fire' %}
+                                </span>
+        </h4>
+        <h3 class="card-subtitle">{{ job.final_salary }} р.</h3>
+        <p class="job-card-item-customer customer-name">{{ job.company.name }} {% bs_icon 'check-circle' %}</p>
+        {% if short is False %}
+            <span class="job-card-item-customer text-muted job-type">{{ job.busy_type }}</span>
+        {% endif %}
+        <div class="">
+            {% if job.work_experience is 0 %}
+                <div class="left">
+                    <p>
+                        <span>
+                        {% bs_icon 'currency-dollar' %}
+                        </span>
+                        <span class="icon-text">Без залога</span>
+                    </p>
+
+                </div>
+            {% endif %}
+            <div class="">
+                {% if job.deposit is 0 %}
+                    <p>
+                        <span>
+                        {% bs_icon 'bag' %}
+                        </span>
+                        <span class="icon-text">Без опыта</span>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        </div>
+        {% if show_company_logo is True %}
+        <div class="right">
+            <img src="../media/{{ job.company.logo }}" height="50" alt="{{ job.company.name }}"/>
+        </div>
+        {% endif %}
+        {% if short is False %}
+            <div class="clear">
+                <a href="#" class="btn btn-success">Откликнуться</a>
+            </div>
+
+        {% endif %}
+    </div>
+</div>

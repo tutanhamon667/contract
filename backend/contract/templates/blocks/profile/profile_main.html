@@ -1,11 +1,13 @@
 {% extends "profile.html" %}
 {% block profile_content %}
     {% load django_bootstrap5 %}
+    {% load static %}
+
 <h1 class="settings-title">Мой профиль</h1>
 <div class="settings-main">
     <div class="settings-main__content">
         <div class="settings-main__info">
-            <form action="" method="post" >
+            <form action="" method="post"   enctype="multipart/form-data" novalidate>
             {% csrf_token %}
             {% bootstrap_form form %}
             <input type="submit" value="Обновить" />

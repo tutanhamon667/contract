@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <div class="container">
+        <section>
+            <div class="row">
+                <div class="col-lg-9">
+                    {% with short=False show_company_logo=False %}
+
+                        {% include "../blocks/job_item.html" %}
+                    {% endwith %}
+                    <div>
+                        {{ job.description|safe }}
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card border-none">
+                        <img src="../media/{{ job.company.logo }}"
+                             alt="{{ job.company.name }}" class="" width="190" height="190">
+                        <div class="card-body">
+                            <div class="">
+                                <div class="left">{{ rating }}</div>
+                                <div class="left"><div class="star-rating">
+                                    <span class="fa fa-star-o" data-rating="1"></span>
+                                    <span class="fa fa-star-o" data-rating="2"></span>
+                                    <span class="fa fa-star-o" data-rating="3"></span>
+                                    <span class="fa fa-star-o" data-rating="4"></span>
+                                    <span class="fa fa-star-o" data-rating="5"></span>
+                                    <input type="hidden" name="whatever1" class="rating-value" value="{{ rating }}">
+                                </div></div>
+
+                                <div class=""><p>{{ reviews_count }} отзывов</p></div>
+                            </div>
+                            <a href="/company/{{ job.company.id }}" class="">{{ job.company.name }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h4>Контакты:</h4>
+            {% for contact in contacts %}
+                <a href="{{ contact.value }}">{{ contact.value }}</a>
+            {% endfor %}
+        </section>
+    </div>
+
+    <script>
+        $(document).ready(() => {
+            const application = new app()
+            application.initRating($('.star-rating .fa'), 'input.rating-value', false)
+        })
+    </script>
+{% endblock content %}
