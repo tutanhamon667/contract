@@ -7,7 +7,7 @@ from django.db import models
 from django.db.models import Sum, Count, Avg
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-
+from django.db.models import Q
 from PIL import Image
 
 from contract.settings import CONTACT_TYPE, THUMBNAIL_SIZE
@@ -267,13 +267,17 @@ class CustomerReview(models.Model):
         result = []
         res = cls.objects.values('company').annotate(avg_rating=Avg('rating'))
         for item in res:
-            company = Member.objects.get(id=item['user'])
+            company = Company.objects.get(id=item['company'])
             result.append({'company': company, 'rating': item['avg_rating']})
         return  result
 
     @classmethod
     def get_company_rating(cls, company_id):
         res = cls.objects.values('company').annotate(avg_rating=Avg('rating')).filter(company_id=company_id)
+        if len(res) == 0:
+            res = 0
+        else:
+            res = round(res[0]["avg_rating"], 1)
         return res
 
 
@@ -382,10 +386,15 @@ class Job(models.Model):
         return self.title
 
     @property
+    def regions_name(self):
+        regions = self.region.all()
+        return regions
+
+    @property
     def busy_type(self):
         str = ''
         if self.is_offline:
-            str =  'Оффлайн занятость'
+            str = 'Оффлайн занятость'
         else:
             str = 'Онлайн занятость'
         regions = self.region.all()
@@ -393,9 +402,15 @@ class Job(models.Model):
         if len(regions):
             regions_str = ': '
         index = 0
+
         for region in regions:
             if index > 2:
-                return str + regions_str + f' и ещё {len(regions) - index}'
+                length = len(regions) - index
+                regs = []
+                for _region in regions:
+                    regs.append(_region.name)
+                btn_content = f'<a tabindex="0"  role="button" class="regions-expand" data-bs-container="body" data-bs-trigger="click" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="{", ".join(regs)}">и еще {length}</button>'
+                return str + regions_str + btn_content
             if index == 0:
                 regions_str = regions_str + f'{region.name}'
             else:
@@ -431,3 +446,52 @@ class Job(models.Model):
     def get_hot_jobs(cls, limit):
         return cls.objects.all().order_by('-id')[:limit]
 
+    @classmethod
+    def search_filter(cls, request, limit):
+        _get = request.GET
+        print(_get)
+        objs = cls.objects
+        filters_exists = False
+        if "title" in _get and _get["title"] != '':
+            filters_exists = True
+            objs = objs.filter(Q(title__icontains=_get["title"]) | Q(specialisation__name__icontains=_get["title"]))
+        if "salary_from" in _get and _get["salary_from"] != '':
+            filters_exists = True
+            objs = objs.filter(Q(salary__gt=0) | Q(salary_from__gt=0)).filter(Q(salary__gte=_get["salary_from"]) | Q(salary_from__gte=_get["salary_from"]) )
+        if "work_type" in _get and _get["work_type"] != '3':
+            filters_exists = True
+            if _get["work_type"] == '2':
+                objs = objs.filter(is_offline=False)
+            if _get["work_type"] == '1':
+                objs = objs.filter(is_offline=True)
+        if "work_time_busy" in _get and _get["work_time_busy"] != '3':
+            filters_exists = True
+            if _get["work_time_busy"] == '2':
+                objs = objs.filter(is_fulltime=False)
+            if _get["work_time_busy"] == '1':
+                objs = objs.filter(is_fulltime=True)
+        if "work_deposit" in _get and _get["work_deposit"] != '2':
+            filters_exists = True
+            if _get["work_deposit"] == '1':
+                objs = objs.filter(deposit__gte=0)
+        if "deposit" in _get and _get["deposit"] != '':
+            filters_exists = True
+            objs = objs.filter(deposit__lte=_get["deposit"])
+        if "work_experience" in _get and _get["work_experience"] != 'NoMatter':
+            filters_exists = True
+            if _get["work_experience"] == 'WithoutExperience':
+                objs = objs.filter(work_experience=0)
+            if _get["work_experience"] == 'Between1And6':
+                objs = objs.filter(work_experience__gte=1, work_experience__lte=6)
+            if _get["work_experience"] == 'Between6And12':
+                objs = objs.filter(work_experience__gte=6, work_experience__lte=12)
+        if "specialisation" in _get and _get["specialisation"] != '':
+            filters_exists = True
+            objs = objs.filter(specialisation__in=request.GET.getlist("specialisation"))
+        if "region" in _get and _get["region"] != '':
+            filters_exists = True
+            objs = objs.filter(specialisation__in=request.GET.getlist("region"))
+        if not filters_exists:
+            return cls.objects.all().order_by('-id')[:limit]
+        else:
+            return objs[:limit]

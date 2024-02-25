@@ -96,6 +96,9 @@ ul.errorlist {
 .card.horizontal-height {
         min-height: 175px;
 }
+.card {
+    margin-bottom: 10px;
+}
 
 .clear {
     clear: both;

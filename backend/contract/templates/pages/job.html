@@ -7,9 +7,9 @@
         <section>
             <div class="row">
                 <div class="col-lg-9">
-                    {% with short=False show_company_logo=False %}
+                    {% with short=False show_company_logo=False  jobs=job single=True %}
 
-                        {% include "../blocks/job_item.html" %}
+                        {% include "../blocks/components/job/job_component.html" %}
                     {% endwith %}
                     <div>
                         {{ job.description|safe }}

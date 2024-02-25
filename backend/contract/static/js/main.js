@@ -20,8 +20,25 @@ const app = function() {
             });
         SetRatingStar();
     }
+
+    const radioInputChecker = (radio,value, input) => {
+        if (parseInt($(radio).val()) === parseInt(value)){
+                $(input).attr("disabled", "disabled")
+            }else{
+                $(input).removeAttr("disabled")
+            }
+        $(radio).on("change", function() {
+            if (parseInt($(this).val()) === parseInt(value)){
+                $(input).attr("disabled", "disabled")
+            }else{
+                $(input).removeAttr("disabled")
+            }
+
+        })
+    }
     return {
-        initRating:initRating
+        initRating:initRating,
+        radioInputChecker:radioInputChecker
     }
 }
 

@@ -1,0 +1,19 @@
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% for review in reviews %}
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2">Отзыв сотрудника</h6>
+            <div class="reviews star-rating" id="review_{{ review.id }}">
+                <span class="fa fa-star-o" data-rating="1"></span>
+                <span class="fa fa-star-o" data-rating="2"></span>
+                <span class="fa fa-star-o" data-rating="3"></span>
+                <span class="fa fa-star-o" data-rating="4"></span>
+                <span class="fa fa-star-o" data-rating="5"></span>
+                <input type="hidden" name="whatever1" class="rating-value" value="{{ review.rating }}">
+            </div>
+            <p class="card-text">{{ review.comment }}</p>
+        </div>
+    </div>
+{% endfor %}

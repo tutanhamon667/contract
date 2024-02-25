@@ -1,0 +1,11 @@
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% if single %}
+    {% include "./job_item.html"  %}
+{% else %}
+    {% for job in jobs %}
+        {% include "./job_item.html"  %}
+    {% endfor %}
+{% endif %}

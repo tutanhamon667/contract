@@ -16,14 +16,16 @@
                     <div class="">
                         <h3>{{ company.name }}</h3>
                         <div class="left">{{ rating }}</div>
-                        <div class="left"><div class="star-rating">
-                            <span class="fa fa-star-o" data-rating="1"></span>
-                            <span class="fa fa-star-o" data-rating="2"></span>
-                            <span class="fa fa-star-o" data-rating="3"></span>
-                            <span class="fa fa-star-o" data-rating="4"></span>
-                            <span class="fa fa-star-o" data-rating="5"></span>
-                            <input type="hidden" name="whatever1" class="rating-value" value="{{ rating }}">
-                        </div></div>
+                        <div class="left">
+                            <div id="company_{{ company.id }}" class="star-rating">
+                                <span class="fa fa-star-o" data-rating="1"></span>
+                                <span class="fa fa-star-o" data-rating="2"></span>
+                                <span class="fa fa-star-o" data-rating="3"></span>
+                                <span class="fa fa-star-o" data-rating="4"></span>
+                                <span class="fa fa-star-o" data-rating="5"></span>
+                                <input type="hidden" name="whatever1" class="rating-value" value="{{ rating }}">
+                            </div>
+                        </div>
 
                         <div class=""><p>{{ reviews_count }} отзывов</p></div>
 
@@ -36,21 +38,39 @@
                         {{ company.about|safe }}
                     </div>
                     <div>
-                    <h3>Наши вакансии</h3>
-                         {% for job in jobs %}
-                    {% with short=False show_company_logo=True %}
+                        <h3>Наши вакансии</h3>
+                        {% for job in jobs %}
+                            {% with short=False show_company_logo=True %}
 
-                        {% include "../blocks/job_item.html"  %}
-                    {% endwith %}
+                                {% include "../blocks/components/job_component.html" %}
+                            {% endwith %}
 
-                    {% endfor %}
+                        {% endfor %}
                     </div>
-                </div>
-                <div class="col-lg-3">
 
+                    <h3>Отзывы о работодателе</h3>
+                        {% include "../blocks/components/review_item.html" %}
+                    <h3>Оставьте отзыв о работодателе</h3>
+                        {% include "../blocks/components/review_form.html" %}
                 </div>
             </div>
-        </section>
+            <div class="col-lg-3">
+
+            </div>
+
+    </section>
 
     </div>
+     <script>
+        $(document).ready(() => {
+            const application = new app()
+            application.initRating($('#company_{{ company.id }}.star-rating .fa'), '#company_{{ company.id }} input.rating-value', false)
+            {% for review in reviews %}
+                application.initRating($('#review_{{ review.id }}.star-rating .fa'), '#review_{{ review.id }} input.rating-value', false)
+
+            {% endfor %}
+
+            application.initRating($('#review_form.star-rating .fa'), '#review_form input.rating-value', true)
+        })
+    </script>
 {% endblock content %}

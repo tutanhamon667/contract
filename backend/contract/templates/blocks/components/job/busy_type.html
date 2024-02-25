@@ -1,0 +1,31 @@
+{% load django_bootstrap5 %}
+{% load bootstrap_icons %}
+
+
+<span class="job-card-item-customer text-muted job-type">{{ job.is_offline|yesno:"Оффлайн,Онлайн" }}
+    {{ job.regions_name|length|yesno:":, " }}
+    {% if job.regions_name|length %}
+        {% for region in job.regions_name %}
+
+            {% if forloop.counter <= 3 %}
+                {{ region.name }}
+                {% if not forloop.last %}
+                    ,
+                {% endif %}
+            {% else %}
+                {% if forloop.counter == 4 %}
+                    <span>
+                {% endif %}
+                {{ region.name }}
+
+                {% if forloop.last %}
+                    </span>
+                {% else %}
+                    ,
+                {% endif %}
+
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</span>
+

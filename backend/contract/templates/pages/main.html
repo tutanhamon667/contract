@@ -84,7 +84,7 @@
         </section>
 
         <section>
-            {% include "../blocks/slider_banners_header.html" %}
+            {% include "../blocks/components/slider_banners_header.html" %}
         </section>
 
         <section>
@@ -99,13 +99,15 @@
                 {% for best_customer in best_customers %}
 
 
-                    <div class="col-md">
+                    <div class="col-md-3">
                         <div class="card">
-                            <img src="../media/{{ best_customer.customer.photo }}"
-                                 alt="{{ best_customer.customer.company_name }}" class="card-img-top" width="190" height="190">
+                            <img src="../media/{{ best_customer.company.logo }}"
+                                 alt="{{ best_customer.company.name }}" class="card-img-top" width="190"
+                                 height="190">
                             <div class="card-body">
-                                <h5 class="card-title">{{ best_customer.customer.company_name }}</h5>
-                                <a href="/company/{{ best_customer.customer.id }}" class="btn btn-primary">Просмотреть</a>
+                                <h5 class="card-title">{{ best_customer.company.name }}</h5>
+                                <a href="/company/{{ best_customer.company.id }}"
+                                   class="btn btn-primary">Просмотреть</a>
                             </div>
                         </div>
 
@@ -123,15 +125,9 @@
                 <span class="icon-text">Горячие вакансии</span>
             </p>
             <div class="row">
-                {% with addition_card_class=' hot-job-card horizontal-height' short=True show_company_logo=True %}
-                    {% for job in hot_jobs %}
+                {% with addition_card_class=' hot-job-card horizontal-height' short=True show_company_logo=True jobs=hot_jobs col="col-lg-4" %}
+                    {% include "../blocks/components/job/job_component.html" %}
 
-                        <div class="col-lg-4">
-                            {% include "../blocks/job_item.html"  %}
-                        </div>
-
-
-                    {% endfor %}
                 {% endwith %}
             </div>
         </section>
