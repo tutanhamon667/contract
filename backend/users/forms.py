@@ -6,7 +6,7 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 
 from users.models.common import Region
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
-	Company, CustomerReview
+	Company, CustomerReview, ResponseInvite
 
 
 class JobForm(ModelForm):
@@ -23,6 +23,23 @@ class JobForm(ModelForm):
 				self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
 
 		self.fields['description'].widget.attrs.update({'class': 'form-control django_ckeditor_5'})
+
+
+class ResponseForm(ModelForm):
+
+	class Meta:
+		model = ResponseInvite
+		fields = ['worker', 'type', 'job', 'resume', 'status']
+
+		widgets = {'worker': forms.HiddenInput(),
+				   'job': forms.HiddenInput(),
+				   'type': forms.HiddenInput(),
+				   'status':  forms.HiddenInput()}
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		for field in self.fields:
+			self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off', 'autofocus': False})
 
 
 class CompanyReviewForm(ModelForm):

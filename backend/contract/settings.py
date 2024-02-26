@@ -384,6 +384,17 @@ JOB_TARIFF = (
 (3, 'Не оплачен'),
 )
 
+
+RESPONSE_INVITE_TYPE = {
+    'RESPONSE': 0,
+    'INVITE': 1
+}
+RESPONSE_INVITE_STATUS = {
+    'WAIT_FOR_ACCEPT': 0,
+    'ACCEPTED': 1,
+    'DECLINED': 2
+}
+
 # Перечень контактов для моделей в users
 CONTACT_TYPE = (
     ('phone', 'Phone number'),

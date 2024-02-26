@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from users.models.advertise import  Banners
 from users.models.common import Region
 from users.models.user import (Specialisation, Company, Member, Contact, Resume, CustomerReview,
-                               Industry, Job)
+                               Industry, Job, ResponseInvite)
 
 
 @admin.register(Industry)
@@ -21,6 +21,11 @@ class BannersAdmin(admin.ModelAdmin):
     list_display = ('link', 'alt',)
     list_filter = ('link', 'alt',)
 
+
+@admin.register(ResponseInvite)
+class ResponseInviteAdmin(admin.ModelAdmin):
+    list_display = ( 'worker','status', 'type', 'resume', 'job')
+    list_filter = ( 'worker','status', 'type', 'resume', 'job')
 
 @admin.register(CustomerReview)
 class CustomerReviewAdmin(admin.ModelAdmin):

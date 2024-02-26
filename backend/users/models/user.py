@@ -10,7 +10,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import Q
 from PIL import Image
 
-from contract.settings import CONTACT_TYPE, THUMBNAIL_SIZE
+from contract.settings import CONTACT_TYPE, THUMBNAIL_SIZE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS
 from .common import Region
 from users.usermanager import UserManager
 from django_cryptography.fields import encrypt, get_encrypted_field
@@ -285,6 +285,7 @@ class Resume(models.Model):
     class Meta:
         verbose_name='Резюме пользователя'
         verbose_name_plural = 'Резюме пользователей'
+
     name = models.CharField(null=False, max_length=255, verbose_name='Наименование должности', default='')
     description = models.CharField(null=False, max_length=255, verbose_name='Описание должности', default='')
     user = models.ForeignKey(to=Member,
@@ -491,7 +492,47 @@ class Job(models.Model):
         if "region" in _get and _get["region"] != '':
             filters_exists = True
             objs = objs.filter(specialisation__in=request.GET.getlist("region"))
+
         if not filters_exists:
             return cls.objects.all().order_by('-id')[:limit]
         else:
             return objs[:limit]
+
+
+class ResponseInvite(models.Model):
+    worker = models.ForeignKey(
+        Member,
+        related_name='response_invite_worker',
+        on_delete=models.CASCADE,
+        default=None,
+        null=True,
+        unique=False
+    )
+    job = models.ForeignKey(
+        Job,
+        related_name='response_invite_job',
+        on_delete=models.CASCADE,
+        unique=False
+    )
+    resume = models.ForeignKey(
+        Resume,
+        related_name='response_invite_resume',
+        on_delete=models.CASCADE,
+        unique=False
+    )
+
+    type = models.IntegerField()
+    status = models.IntegerField()
+
+    create_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата публикации вакансии',
+    )
+
+    answer_date = models.DateTimeField(
+        auto_now_add=False,
+        verbose_name='Дата ответа на отклик\приглашение',
+        blank=True,
+        null=True,
+        default=None
+    )

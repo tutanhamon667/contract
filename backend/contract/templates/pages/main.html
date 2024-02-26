@@ -140,50 +140,9 @@
                 <span class="icon-text">Новые вакансии</span>
             </p>
             <div class="row">
-
-                {% for job in hot_jobs %}
-
-
-                    <div class=" col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <span class="icon-text">{{ job.title }}</span>
-                                </h5>
-                                <h6 class="card-subtitle mb-2 text-muted">{{ job.final_salary }} р.</h6>
-                                <span class="job-card-item-customer">{{ job.customer }}</span>
-                                <div class="row">
-                                    {% if job.work_experience is 0 %}
-                                        <div class="col-md-6">
-                                            <p>
-                                  <span>
-                                    {% bs_icon 'currency-dollar' %}
-                                  </span>
-                                                <span class="icon-text">Без залога</span>
-                                            </p>
-
-                                        </div>
-                                    {% endif %}
-                                    <div class="col-md-6">
-                                        {% if job.deposit is 0 %}
-                                            <p>
-                                  <span>
-                                    {% bs_icon 'bag' %}
-                                  </span>
-                                                <span class="icon-text">Без опыта</span>
-                                            </p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-
-                                <a href="/jobs/{{ job.id }}" class="link-dark">Просмотреть</a>
-                            </div>
-                        </div>
-
-                    </div>
-
-                {% endfor %}
+                {% with addition_card_class=' horizontal-height' short=True show_company_logo=True jobs=new_jobs col="col-lg-4" %}
+                    {% include "../blocks/components/job/job_component.html" %}
+                {% endwith %}
             </div>
         </section>
 

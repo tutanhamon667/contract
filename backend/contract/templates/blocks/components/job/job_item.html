@@ -14,8 +14,11 @@
                                     {% bs_icon 'fire' %}
                                 </span>
             </h4>
-            <h3 class="card-subtitle">{{ job.final_salary }} р.</h3>
-            <p class="job-card-item-customer customer-name">{{ job.company.name }} {% bs_icon 'check-circle' %}</p>
+            <h3 class="card-subtitle">{{ job.final_salary }} ₽</h3>
+            <div>
+                <a class="job-card-item-customer customer-name"
+                   href="/company/{{ job.company.id }}">{{ job.company.name }} {% bs_icon 'check-circle' %}</a>
+            </div>
             {% if short is False %}
                 {% include "./busy_type.html" %}
             {% endif %}
@@ -32,7 +35,7 @@
                     </div>
                 {% else %}
                     {% if short is False %}
-                        <span class="job-card-item-customer text-muted job-type">Залог: {{ job.deposit }} р.</span>
+                        <span class="job-card-item-customer text-muted job-type">Залог: {{ job.deposit }} ₽</span>
                     {% endif %}
                 {% endif %}
                 <div class="">
@@ -43,12 +46,14 @@
                         </span>
                             <span class="icon-text">Без опыта</span>
                         </p>
-                    {% else %}
+                    {% endif %}
+                </div>
+                <div class="clear">
+                    {% if job.work_experience > 0 %}
                         {% if short is False %}
                             <span class="job-card-item-customer text-muted job-type">Опыт: {{ job.work_experience }} месяцев</span>
                         {% endif %}
                     {% endif %}
-
                 </div>
             </div>
 
@@ -58,11 +63,45 @@
                 <img src="../media/{{ job.company.logo }}" height="50" alt="{{ job.company.name }}"/>
             </div>
         {% endif %}
-        {% if short is False %}
+        {% if short is False and not user %}
             <div class="clear">
-                <a href="#" class="btn btn-success">Откликнуться</a>
+                <a href='/signin' class="btn btn-success">Войти для отклика</a>
             </div>
+        {% endif %}
+        {% if short is False and user.is_worker %}
+            <div class="clear">
+                {% if job.status == 0 %}
+                    <button class="btn-primary btn">Ждёт подтверждения от работодателя</button>
+                {% elif job.status == 1 %}
+                    <button class="btn-success btn">Приглашение на собеседование принято</button>
+                    <a href="#" >Перейти в чат с работодателем</a>
+                {% elif job.status == 2 %}
+                    <button class="btn-danger btn">Отклик откланён работодателем</button>
+                {% elif job.status is None %}
+                    {% if resumes|length > 0 %}
+                        <button class="btn btn-success" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#responseInvite_{{ job.id }}" aria-expanded="false"
+                                aria-controls="responseInvite_{{ job.id }}">
+                            Откликнуться
+                        </button>
+                        <div class="collapse" id="responseInvite_{{ job.id }}">
+                            <div class="card card-body">
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="job" value="{{ job.id }}"/>
+                                    <label for="id_resume">Резюме</label>
+                                    {{ form_response.resume }}
+                                    <br/>
+                                    <input type="submit" class="btn btn-success" value="Отправить отклик"/>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="/profile/resume" class="btn-primary btn">Создать резюме</a>
+                    {% endif %}
+                {% endif %}
 
+            </div>
         {% endif %}
     </div>
 </div>

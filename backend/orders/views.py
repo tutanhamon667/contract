@@ -8,10 +8,11 @@ from pytz import unicode
 
 from common.models import Article, ArticleCategory
 from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
+from contract.settings import RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS
 from orders.models import JobSpecialisationStat
-from users.forms import JobFilterForm, CompanyReviewForm
+from users.forms import JobFilterForm, CompanyReviewForm, ResponseForm
 from users.models.common import Captcha
-from users.models.user import Member, Company, CustomerReview, Specialisation, Job, Contact
+from users.models.user import Member, Company, CustomerReview, Specialisation, Job, Contact, Resume, ResponseInvite
 from users.models.advertise import Banners
 
 User = get_user_model()
@@ -65,11 +66,57 @@ def jobs_view(request):
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		jobs = Job.search_filter(request, 10)
+		job_ids = []
+		for job in jobs:
+			job_ids.append(job.id)
+		form_response = None
+		resumes = None
+		job_responses = []
+		if request.user.is_authenticated:
+			user = request.user
+			job_responses = ResponseInvite.objects.filter(worker=user, job_id__in=job_ids).values()
+			for job in jobs:
+				for job_response in job_responses:
+					if job.id == job_response["job_id"]:
+						job.status = job_response["status"]
+			resumes = Resume.objects.filter(user=user)
+
+			form_response = ResponseForm(
+				initial={"worker": user, "type": RESPONSE_INVITE_TYPE["RESPONSE"], "resume": resumes})
 		return render(request, './pages/jobs.html', {
 			'search_form': search_form,
 			'jobs': jobs,
 			'articles': articles,
-			'categories': categories})
+			'job_responses':job_responses,
+			'form_response': form_response,
+			'categories': categories,
+			'resumes': resumes})
+
+	if request.method == 'POST':
+		search_form = JobFilterForm(initial=request.GET)
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
+		jobs = Job.search_filter(request, 10)
+		form_response = None
+		resumes = None
+		if request.user.is_authenticated:
+			user = request.user
+			resumes = Resume.objects.filter(user=user)
+			form_response = ResponseForm(request.POST, initial={"resume": resumes})
+			job = Job.objects.get(id=request.POST["job"])
+			job_response = ResponseInvite(job=job, resume_id=request.POST["resume"], worker=user,
+										  type=RESPONSE_INVITE_TYPE["RESPONSE"],
+										  status=RESPONSE_INVITE_STATUS["WAIT_FOR_ACCEPT"])
+			job_response.save()
+			messages.success(request, 'Отклик отправлен')
+		return render(request, './pages/jobs.html', {
+			'search_form': search_form,
+			'jobs': jobs,
+			'articles': articles,
+			'form_response': form_response,
+			'categories': categories,
+			'resumes': resumes})
+
 
 def job_view(request, job_id):
 	if request.method == 'GET':
@@ -86,8 +133,8 @@ def job_view(request, job_id):
 			'categories': categories,
 			'rating': rating,
 			'reviews_count': len(reviews),
-		'company': company,
-		'contacts': contacts})
+			'company': company,
+			'contacts': contacts})
 
 
 def company_view(request, company_id):
@@ -99,7 +146,7 @@ def company_view(request, company_id):
 		rating = CustomerReview.get_company_rating(company.id)
 		reviews = CustomerReview.objects.filter(company_id=company.id)
 		contacts = Contact.objects.filter(user=company.user_id)
-		form = CompanyReviewForm( initial={"company": company})
+		form = CompanyReviewForm(initial={"company": company})
 		captcha = Captcha()
 		key, hash_key = captcha.generate_key()
 		image = SimpleCaptcha(width=280, height=90)
@@ -111,9 +158,9 @@ def company_view(request, company_id):
 			'categories': categories,
 			'rating': rating,
 			'reviews_count': len(reviews),
-			'reviews':reviews,
-		'company': company,
-		'contacts': contacts, 'hashkey': hash_key, 'captcha': captcha_base64})
+			'reviews': reviews,
+			'company': company,
+			'contacts': contacts, 'hashkey': hash_key, 'captcha': captcha_base64})
 	if request.method == "POST":
 		form = CompanyReviewForm(request.POST)
 
@@ -139,7 +186,7 @@ def company_view(request, company_id):
 				'company': company,
 				'contacts': contacts,
 				'hashkey': hash_key,
-                'captcha': SimpleCaptcha.captcha_check(request)})
+				'captcha': SimpleCaptcha.captcha_check(request)})
 		else:
 			if request.user.is_authenticated:
 

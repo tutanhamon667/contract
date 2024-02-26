@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-
+from django.contrib import messages
 from common.models import Article, ArticleCategory
-from users.models.user import  Company, Resume, Contact, Job, Member
+from users.models.user import Company, Resume, Contact, Job, Member
 from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm
 
 
@@ -61,32 +61,17 @@ def resumes_view(request):
 	if request.user.is_authenticated:
 		user = request.user
 		if request.method == 'POST':
-			id = request.POST.get("id", None)
-			if id is not None:
-				try:
-					if not Resume.is_current_user(id, user):
-						print('fuck off wrong user')
-						return HttpResponse(status=503)
-					else:
-						resume_form = ResumeForm(request.POST)
-						if resume_form.is_valid():
-							resume_form.save()
-						return resume_page(resume_form, user)
-				except Exception as e:
-					print(e)
-			else:
-				try:
-					resume_form = ResumeForm(request.POST)
-					user_id = int(request.POST.get('user'))
-					if user_id != user.id:
-						print('fuck off wrong user')
-						return HttpResponse(status=503)
-					else:
-						if resume_form.is_valid():
-							resume_form.save()
-						return resume_page(resume_form, user)
-				except Exception as e:
-					print(e)
+			try:
+				resume_form = ResumeForm(request.POST)
+				resume_form.user = request.user
+				if resume_form.is_valid():
+					resume_form.save()
+					resume_form.clean()
+					messages.success(request, 'Резюме создано')
+				return resume_page(resume_form, user)
+			except Exception as e:
+				messages.error(request, f'Внутренняя ошибка {e}')
+				return HttpResponse(status=500)
 
 		if request.method == "GET":
 			form = ResumeForm(initial={'user': user.id})
@@ -222,7 +207,6 @@ def profile_main_view(request):
 		return redirect(to="signin")
 
 
-
 def profile_company_view(request):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
@@ -238,7 +222,7 @@ def profile_company_view(request):
 			if len(company) > 0:
 				form = CompanyForm(instance=company[0])
 			else:
-				form = CompanyForm(initial={'user':user.id})
+				form = CompanyForm(initial={'user': user.id})
 			return render(request, './blocks/profile/profile_company.html', {
 				'form': form,
 				'company': company,
