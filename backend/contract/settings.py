@@ -384,6 +384,8 @@ JOB_TARIFF = (
 (3, 'Не оплачен'),
 )
 
+CUSTOMER_ACCESS_PAGES = {'resume': {"paid": True}, }
+
 
 RESPONSE_INVITE_TYPE = {
     'RESPONSE': 0,

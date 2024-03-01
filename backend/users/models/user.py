@@ -95,7 +95,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		if len(member) == 0:
 			return HttpResponse(status=404)
 		if member[0].is_worker:
-			return HttpResponse(status=503)
+			return HttpResponse(status=403)
 		return member
 
 
@@ -225,6 +225,8 @@ class Company(models.Model):
 		verbose_name='Личный сайт'
 	)
 
+	is_moderated = models.BooleanField(verbose_name="Прошёл модерацию", default=False, blank=True)
+
 	class Meta:
 		ordering = ('-name',)
 		verbose_name = 'Company'
@@ -310,6 +312,7 @@ class Resume(models.Model):
 	work_experience = models.IntegerField(verbose_name='Опыт работы (месяцы)', null=True, default=0)
 	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
 	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
+	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=True)
 	region = models.ForeignKey(verbose_name='Регион работы',
 							   to=Region,
 							   null=True,
@@ -383,9 +386,9 @@ class Resume(models.Model):
 			objs = objs.filter(specialisation__in=request.GET.getlist("region"))
 
 		if not filters_exists:
-			return cls.objects.all().order_by('-id')[:limit]
+			return cls.objects.filter(moderated=True, active_search=True).order_by('-id')[:limit]
 		else:
-			return objs[:limit]
+			return objs.filter(moderated=True, active_search=True).order_by('-id')[:limit]
 
 
 class Job(models.Model):
@@ -436,7 +439,7 @@ class Job(models.Model):
 	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
 	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
 	region = models.ManyToManyField(Region, verbose_name='Регион работы', null=True, default=None, blank=True)
-	active_search = models.BooleanField(null=True, default=True, verbose_name='В активном поиске')
+	active_search = models.BooleanField(null=True, blank=True, default=True, verbose_name='В активном поиске')
 	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0)
 	views = models.IntegerField(verbose_name='Просмотры', null=True, default=0)
 
@@ -444,6 +447,7 @@ class Job(models.Model):
 		auto_now_add=True,
 		verbose_name='Дата публикации вакансии',
 	)
+	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=True)
 
 	class Meta:
 		ordering = ('-id',)
@@ -520,7 +524,8 @@ class Job(models.Model):
 		filters_exists = False
 		if "title" in _get and _get["title"] != '':
 			filters_exists = True
-			objs = objs.filter(Q(title__icontains=_get["title"]) | Q(specialisation__name__icontains=_get["title"]))
+			objs = objs.filter(Q(title__icontains=_get["title"]) | Q(specialisation__name__icontains=_get["title"]) | Q(
+				specialisation__industry__name__icontains=_get["title"]))
 		if "salary_from" in _get and _get["salary_from"] != '':
 			filters_exists = True
 			objs = objs.filter(Q(salary__gt=0) | Q(salary_from__gt=0)).filter(
@@ -560,9 +565,9 @@ class Job(models.Model):
 			objs = objs.filter(specialisation__in=request.GET.getlist("region"))
 
 		if not filters_exists:
-			return cls.objects.all().order_by('-id')[:limit]
+			return cls.objects.filter(moderated=True, active_search=True).order_by('-id')[:limit]
 		else:
-			return objs[:limit]
+			return objs.filter(moderated=True, active_search=True).order_by('-id')[:limit]
 
 
 class ResponseInvite(models.Model):
@@ -599,6 +604,11 @@ class ResponseInvite(models.Model):
 	def create_invite(cls, user: User, job_id: int, resume_id: int) -> bool:
 		try:
 			user_job = Job.objects.get(company__user=user, id=job_id)
+			invite = ResponseInvite.objects.filter(resume_id=resume_id, job_id=job_id)
+
+			if len(invite):
+				# Отклик уже существует
+				return False
 			invite = ResponseInvite(resume_id=resume_id, job_id=job_id, type=RESPONSE_INVITE_TYPE["INVITE"],
 									status=RESPONSE_INVITE_STATUS["WAIT_FOR_ACCEPT"])
 			invite.save()
@@ -611,8 +621,13 @@ class ResponseInvite(models.Model):
 	def create_response(cls, user: User, job_id: int, resume_id: int) -> bool:
 		try:
 			user_resume = Resume.objects.get(user=user, id=resume_id)
+			invite = ResponseInvite.objects.filter(resume_id=resume_id, job_id=job_id)
+
+			if len(invite):
+				# Отклик уже существует
+				return False
 			response = ResponseInvite(resume_id=resume_id, job_id=job_id, type=RESPONSE_INVITE_TYPE["RESPONSE"],
-									status=RESPONSE_INVITE_STATUS["WAIT_FOR_ACCEPT"])
+									  status=RESPONSE_INVITE_STATUS["WAIT_FOR_ACCEPT"])
 			response.save()
 			return True
 		except Exception as e:

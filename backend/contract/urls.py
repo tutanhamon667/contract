@@ -7,14 +7,14 @@ from rest_framework import permissions
 
 from btc.views import gen_address, profile_wallet_view
 from common.views import article_view
-from users.controllers.job import jobs_profile_view, job_profile_view
-from users.controllers.profile import profile_resumes_view, resume_view, contact_view, contacts_view, profile_main_view, \
-    profile_company_view
+
+from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, profile_main_view, \
+    profile_company_view, job_profile_view, jobs_profile_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view
 from . import settings
 from users.views import captcha_view, profile_view,   \
     register_view
-from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view
+from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -40,16 +40,17 @@ urlpatterns = [
     path('logout', logout_view, name='logout'),
     path('jobs', jobs_view, name='jobs'),
     path('resumes', resumes_view, name='resumes'),
+    path('resumes/<int:resume_id>', resume_view, name='resume_view'),
     path('jobs/<int:job_id>', job_view, name='job'),
     path('company/<int:company_id>', company_view, name='company'),
     path('profile/main', profile_main_view, name='profile_main'),
     path('profile/resume', profile_resumes_view, name='profile_resume'),
-    path('profile/resume/<int:resume_id>', resume_view, name='profile_resume'),
+    path('profile/resume/<int:resume_id>', profile_resume_view, name='profile_resume'),
     path('profile/contact', contacts_view, name='profile_contacts'),
     path('profile/contact/<int:contact_id>', contact_view, name='profile_contacts'),
     path('profile/company', profile_company_view, name='profile_company_view'),
-    path('profile/job', jobs_profile_view, name='profile_jobs'),
-    path('profile/job/<int:job_id>', job_profile_view, name='profile_job'),
+    path('profile/jobs', jobs_profile_view, name='profile_jobs'),
+    path('profile/jobs/<int:job_id>', job_profile_view, name='profile_job'),
     path('profile/wallet', profile_wallet_view, name='profile_wallet'),
     path('article/<int:article_id>', article_view, name='article'),
 

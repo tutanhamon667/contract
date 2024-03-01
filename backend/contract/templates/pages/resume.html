@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <div class="container">
+        <section>
+            <div class="row">
+                <div class="col-lg-9">
+
+                    <div>
+                        <h3>Резюме пользователя {{ worker.display_name }}</h3>
+                        <img src="../media/{{ worker.photo }}"
+                             alt="{{ worker.nick_name }}" class="" width="190" height="190">
+                        {% with short=False single=True%}
+                            {% include "../blocks/components/resume/resume_component.html" %}
+                        {% endwith %}
+                        <h4>Описание резюме</h4>
+                        <p>{{ resume.description|safe }}</p>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock content %}
