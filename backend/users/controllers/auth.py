@@ -3,13 +3,14 @@ import base64
 from django.shortcuts import render, redirect
 
 from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
+from users.core.user import UserCore
 from users.forms import RegisterWorkerForm, RegisterCustomerForm
 from users.models.common import Captcha
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
-from users.models.user import Member, Company
+from users.models.user import Member, Company, User
 from django.contrib.auth.forms import AuthenticationForm
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count
 from btc.models import Address as WalletAddress
@@ -23,14 +24,11 @@ def logout_view(request):
 def login_view(request):
     if request.method == "GET":
         form = AuthenticationForm()
-        captcha = Captcha()
-        key, hash_key = captcha.generate_key()
-        image = SimpleCaptcha(width=280, height=90)
-        captcha_base64 = image.get_base64(key)
+        key, hash_key = Captcha().generate_key()
+        captcha_base64 = SimpleCaptcha(width=280, height=90).get_base64(key)
         return render(request, 'login.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64})
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
-
         hash_key = request.POST.get("hashkey")
         res = Captcha.check_chaptcha(captcha=request.POST.get("captcha"), hash=hash_key)
         if not res:
@@ -43,13 +41,13 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
+            user_core = UserCore(User)
+            res = user_core.login(username=username, password=password, request=request)
+            if res:
                 messages.info(request, f"You are now logged in as {username}.")
                 return redirect("index")
             else:
-                messages.error(request, "Invalid username or password.")
+                messages.error(request, res.error["msg"])
                 return render(request, 'login.html',
                               {'form': form,
                                'hashkey': hash_key,

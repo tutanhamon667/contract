@@ -20,7 +20,9 @@
                    href="/company/{{ job.company.id }}">{{ job.company.name }} {% bs_icon 'check-circle' %}</a>
             </div>
             {% if short is False %}
-                {% include "./busy_type.html" %}
+                {% with region=job.regions_name %}
+                    {% include "../busy_type.html" %}
+                {% endwith %}
             {% endif %}
             <div class="">
                 {% if job.deposit is 0 %}

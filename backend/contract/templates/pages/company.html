@@ -15,7 +15,8 @@
 
                     <div class="">
                         <h3>{{ company.name }}</h3>
-                        <div class="left">{{ rating }}</div>
+                    <div class="star-rating-container">
+                          <div class="left">{{ rating }}</div>
                         <div class="left">
                             <div id="company_{{ company.id }}" class="star-rating">
                                 <span class="fa fa-star-o" data-rating="1"></span>
@@ -26,6 +27,8 @@
                                 <input type="hidden" name="whatever1" class="rating-value" value="{{ rating }}">
                             </div>
                         </div>
+                    </div>
+
 
                         <div class=""><p>{{ reviews_count }} отзывов</p></div>
 
@@ -39,19 +42,21 @@
                     </div>
                     <div>
                         <h3>Наши вакансии</h3>
-                        {% for job in jobs %}
-                            {% with short=False show_company_logo=True %}
 
-                                {% include "../blocks/components/job/job_component.html" %}
-                            {% endwith %}
+                        {% with short=False show_company_logo=True %}
 
-                        {% endfor %}
+                            {% include "../blocks/components/job/job_component.html" %}
+                        {% endwith %}
+
                     </div>
 
                     <h3>Отзывы о работодателе</h3>
                         {% include "../blocks/components/review_item.html" %}
-                    <h3>Оставьте отзыв о работодателе</h3>
-                        {% include "../blocks/components/review_form.html" %}
+
+                    {% if user.is_worker %}
+                        <h3>Оставьте отзыв о работодателе</h3>
+                            {% include "../blocks/components/review_form.html" %}
+                    {% endif %}
                 </div>
             </div>
             <div class="col-lg-3">

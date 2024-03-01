@@ -1,0 +1,109 @@
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% if col %}
+    <div class={{ col }}>
+{% endif %}
+<div class="card {{ addition_card_class }}">
+    <div class="card-body">
+        <div class="left">
+            <h4 class="card-title">
+                <span class="icon-text"> <a href="/resumes/{{ resume.id }}" class="link-dark">{{ resume.name }}</a></span>
+            </h4>
+            <h3 class="card-subtitle">{{ resume.salary }} ₽</h3>
+            <div>
+                <a class="job-card-item-customer customer-name"
+                   href="/worker/{{ resume.user.id }}">{{ resume.user.display_name }} {% bs_icon 'check-circle' %}</a>
+            </div>
+            {% if short is False %}
+                {% with region=resume.regions_name %}
+                    {% include "../busy_type.html" %}
+                {% endwith %}
+            {% endif %}
+            <div class="">
+                {% if resume.deposit is 0 %}
+                    <div class="left">
+                        <p>
+                        <span>
+                        {% bs_icon 'currency-dollar' %}
+                        </span>
+                            <span class="icon-text">Без залога</span>
+                        </p>
+
+                    </div>
+                {% else %}
+                    {% if short is False %}
+                        <span class="job-card-item-customer text-muted job-type">Залог: {{ resume.deposit }} ₽</span>
+                    {% endif %}
+                {% endif %}
+                <div class="">
+                    {% if resume.work_experience is 0 %}
+                        <p>
+                        <span>
+                        {% bs_icon 'bag' %}
+                        </span>
+                            <span class="icon-text">Без опыта</span>
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="clear">
+                    {% if resume.work_experience > 0 %}
+                        {% if short is False %}
+                            <span class="job-card-item-customer text-muted job-type">Опыт: {{ resume.work_experience }} месяцев</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="right">
+            <img src="../media/{{ resume.user.photo }}" height="50" alt="{{ resume.user.name }}"/>
+        </div>
+
+        {% if short is False and not user %}
+            <div class="clear">
+                <a href='/signin' class="btn btn-success">Войти для приглашения</a>
+            </div>
+        {% endif %}
+        {% if short is False and user.is_customer %}
+            <div class="clear">
+                {% if resume.status == 0 %}
+                    <button class="btn-primary btn">Ждёт подтверждения от соискателя</button>
+                {% elif resume.status == 1 %}
+                    <button class="btn-success btn">Приглашение на собеседование принято</button>
+                    <a href="#" >Перейти в чат с соискателем</a>
+                {% elif resume.status == 2 %}
+                    <button class="btn-danger btn">Отклик откланён соискателем</button>
+                {% elif resume.status is None %}
+                    {% if jobs|length > 0 %}
+                        <button class="btn btn-success" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#responseInvite_{{ resume.id }}" aria-expanded="false"
+                                aria-controls="responseInvite_{{ resume.id }}">
+                            Пригласить
+                        </button>
+                        <div class="collapse" id="responseInvite_{{ resume.id }}">
+                            <div class="card card-body">
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="resume" value="{{ resume.id }}"/>
+                                    <label for="id_job">Вакансия</label>
+                                    {{ form_response.job }}
+                                    <br/>
+                                    <input type="submit" class="btn btn-success" value="Отправить приглашение"/>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="/profile/job" class="btn-primary btn">Создать вакансию</a>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% if col %}
+    </div>
+{% endif %}

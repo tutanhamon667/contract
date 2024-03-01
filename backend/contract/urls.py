@@ -8,13 +8,13 @@ from rest_framework import permissions
 from btc.views import gen_address, profile_wallet_view
 from common.views import article_view
 from users.controllers.job import jobs_profile_view, job_profile_view
-from users.controllers.profile import resumes_view, resume_view, contact_view, contacts_view, profile_main_view, \
+from users.controllers.profile import profile_resumes_view, resume_view, contact_view, contacts_view, profile_main_view, \
     profile_company_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view
 from . import settings
 from users.views import captcha_view, profile_view,   \
     register_view
-from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view
+from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -39,10 +39,11 @@ urlpatterns = [
     path('signup/customer', registration_customer_view, name='register'),
     path('logout', logout_view, name='logout'),
     path('jobs', jobs_view, name='jobs'),
+    path('resumes', resumes_view, name='resumes'),
     path('jobs/<int:job_id>', job_view, name='job'),
     path('company/<int:company_id>', company_view, name='company'),
     path('profile/main', profile_main_view, name='profile_main'),
-    path('profile/resume', resumes_view, name='profile_resume'),
+    path('profile/resume', profile_resumes_view, name='profile_resume'),
     path('profile/resume/<int:resume_id>', resume_view, name='profile_resume'),
     path('profile/contact', contacts_view, name='profile_contacts'),
     path('profile/contact/<int:contact_id>', contact_view, name='profile_contacts'),

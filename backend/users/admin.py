@@ -24,8 +24,8 @@ class BannersAdmin(admin.ModelAdmin):
 
 @admin.register(ResponseInvite)
 class ResponseInviteAdmin(admin.ModelAdmin):
-    list_display = ( 'worker','status', 'type', 'resume', 'job')
-    list_filter = ( 'worker','status', 'type', 'resume', 'job')
+    list_display = ('status', 'type', 'resume', 'job')
+    list_filter = ('status', 'type', 'resume', 'job')
 
 @admin.register(CustomerReview)
 class CustomerReviewAdmin(admin.ModelAdmin):

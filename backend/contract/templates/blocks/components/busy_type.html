@@ -3,9 +3,9 @@
 
 
 <span class="job-card-item-customer text-muted job-type">{{ job.is_offline|yesno:"Оффлайн,Онлайн" }}
-    {{ job.regions_name|length|yesno:":, " }}
-    {% if job.regions_name|length %}
-        {% for region in job.regions_name %}
+    {{ regions|length|yesno:":, " }}
+    {% if regions|length %}
+        {% for region in regions %}
 
             {% if forloop.counter <= 3 %}
                 {{ region.name }}

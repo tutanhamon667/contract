@@ -121,3 +121,7 @@ ul.errorlist {
 .card p {
     margin-bottom: 0;
 }
+
+.star-rating-container{
+    line-height: 2;
+}

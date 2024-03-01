@@ -45,7 +45,7 @@ def resume_view(request, resume_id):
 		return redirect(to="signin")
 
 
-def resumes_view(request):
+def profile_resumes_view(request):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
 

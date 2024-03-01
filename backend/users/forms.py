@@ -29,24 +29,44 @@ class ResponseForm(ModelForm):
 
 	class Meta:
 		model = ResponseInvite
-		fields = ['worker', 'type', 'job', 'resume', 'status']
+		fields = [ 'type', 'job', 'resume', 'status']
 
-		widgets = {'worker': forms.HiddenInput(),
+		widgets = {
 				   'job': forms.HiddenInput(),
 				   'type': forms.HiddenInput(),
 				   'status':  forms.HiddenInput()}
 
 	def __init__(self, *args, **kwargs):
+		user = kwargs["initial"].pop('user', '')
 		super().__init__(*args, **kwargs)
+		self.fields["resume"] = forms.ModelChoiceField(queryset=Resume.objects.filter(user=user))
 		for field in self.fields:
 			self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off', 'autofocus': False})
 
+class InviteForm(ModelForm):
+
+	class Meta:
+		model = ResponseInvite
+		fields = [ 'type', 'job', 'resume', 'status']
+
+		widgets = {
+				   'resume': forms.HiddenInput(),
+				   'type': forms.HiddenInput(),
+				   'status':  forms.HiddenInput()}
+
+	def __init__(self, *args, **kwargs):
+		user = kwargs["initial"].pop('user', '')
+		super().__init__(*args, **kwargs)
+		self.fields["job"] = forms.ModelChoiceField(queryset=Job.objects.filter(company__user=user))
+		for field in self.fields:
+			self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off', 'autofocus': False})
 
 class CompanyReviewForm(ModelForm):
 	class Meta:
 		model = CustomerReview
-		fields = ['company', 'comment', 'rating', 'reviewer']
-		widgets = {'company': forms.HiddenInput(), 'rating': forms.HiddenInput(), 'reviewer': forms.HiddenInput()}
+		fields = ['company', 'comment', 'rating', 'reviewer', 'moderated']
+
+		widgets = {'company': forms.HiddenInput(), 'rating': forms.HiddenInput(), 'reviewer': forms.HiddenInput(), 'moderated': forms.HiddenInput()}
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -88,6 +108,39 @@ class JobFilterForm(forms.Form):
 		if "region" in kwargs["initial"]:
 			self.fields["region"].initial = kwargs["initial"].getlist("region")
 
+
+
+class ResumeFilterForm(forms.Form):
+
+	region = forms.ModelMultipleChoiceField(label="Регион рабоы", queryset=Region.objects.all(), blank=True, required=False)
+	specialisation = forms.ModelMultipleChoiceField(label="Специализация", queryset=Specialisation.objects.all(), blank=True, required=False)
+	name = forms.CharField(
+		label='Название вакансии', max_length=200, required=False
+	)
+	CHOICES_WORK_TYPE = [("1", "Оффлайн"),("2", "Онлайн"),("3", "Не имеет значения")]
+	CHOICES_WORK_EXPERIENCE = [("WithoutExperience", "Нет опыта"),
+							   ("Between1And6", "От 1 до 6 месяцев"),
+							   ("Between6And12", "От 6 месяцев до 1 года"),
+	("NoMatter", "Не имеет значения")]
+	CHOICES_WORK_TIME_BUSY = [("1", "Полный график"), ("2", "Гибкий график"), ('3', 'Не имеет значения')]
+	CHOICES_WORK_DEPOSIT = [("1", "С залогом"), ("2", "Без залога")]
+	salary_to = forms.IntegerField(
+		label='Зарплата до', required=False
+	)
+	work_deposit = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_DEPOSIT, initial='2', required=False)
+	deposit = forms.IntegerField(
+		label='Депозит от', required=False
+	)
+	work_time_busy = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_TIME_BUSY, initial='3', required=False)
+	work_experience = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_EXPERIENCE, initial="NoMatter", required=False)
+	work_type = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_TYPE, initial="3", required=False)
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		if "specialisation" in kwargs["initial"]:
+			self.fields["specialisation"].initial = kwargs["initial"].getlist("specialisation")
+		if "region" in kwargs["initial"]:
+			self.fields["region"].initial = kwargs["initial"].getlist("region")
 
 class ProfileForm(ModelForm):
 	class Meta:
