@@ -313,6 +313,7 @@ class Resume(models.Model):
 	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
 	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
 	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=True)
+	views = models.IntegerField(verbose_name='просмотры', null=True, default=0, blank=True)
 	region = models.ForeignKey(verbose_name='Регион работы',
 							   to=Region,
 							   null=True,
@@ -335,6 +336,10 @@ class Resume(models.Model):
 				if resume.id == job_response["resume_id"]:
 					resume.status = job_response["status"]
 		return objs
+
+	def increase_views(self):
+		self.views = self.views + 1
+		self.save()
 
 	def __str__(self):
 		return self.name
@@ -461,6 +466,10 @@ class Job(models.Model):
 	def regions_name(self):
 		regions = self.region.all()
 		return regions
+
+	def increase_views(self):
+		self.views = self.views + 1
+		self.save()
 
 	@property
 	def busy_type(self):
@@ -599,6 +608,13 @@ class ResponseInvite(models.Model):
 		null=True,
 		default=None
 	)
+
+	@classmethod
+	def get_by_user(cls, user):
+		if user.is_worker:
+			return cls.objects.filter(resume__user_id=user.id)
+		else:
+			return cls.objects.filter(job__company__user_id=user.id)
 
 	@classmethod
 	def create_invite(cls, user: User, job_id: int, resume_id: int) -> bool:

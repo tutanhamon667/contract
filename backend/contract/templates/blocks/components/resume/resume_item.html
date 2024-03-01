@@ -99,7 +99,15 @@
                         <a href="/profile/job" class="btn-primary btn">Создать вакансию</a>
                     {% endif %}
                 {% endif %}
+                {% if user.is_worker %}
+                    <div class='self-resume-job-delete-block'>
+                        <form action="/resumes/delete/{{ resume.id }}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-danger" value="Удалить резюме"/>
+                        </form>
+                    </div>
 
+                {% endif %}
             </div>
         {% endif %}
     </div>

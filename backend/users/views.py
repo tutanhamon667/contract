@@ -57,7 +57,11 @@ def captcha_view(request):
             hash = request.POST["hashkey"]
             res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
             if res:
-                page = redirect(to="index")
+                redirect_url = 'index'
+                if request.session['redirect']:
+                    redirect_url = request.session['redirect']
+                    request.session['redirect'] = None
+                page = redirect(to=redirect_url)
                 page.set_cookie('captcha', hash, max_age=60*60)
                 return page
             else:

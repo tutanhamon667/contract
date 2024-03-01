@@ -8,8 +8,9 @@ from rest_framework import permissions
 from btc.views import gen_address, profile_wallet_view
 from common.views import article_view
 
-from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, profile_main_view, \
-    profile_company_view, job_profile_view, jobs_profile_view
+from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
+    profile_main_view, \
+    profile_company_view, job_profile_view, jobs_profile_view, profile_response_invite_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view
 from . import settings
 from users.views import captcha_view, profile_view,   \
@@ -52,6 +53,7 @@ urlpatterns = [
     path('profile/jobs', jobs_profile_view, name='profile_jobs'),
     path('profile/jobs/<int:job_id>', job_profile_view, name='profile_job'),
     path('profile/wallet', profile_wallet_view, name='profile_wallet'),
+    path('profile/invites', profile_response_invite_view, name='profile_response_invite'),
     path('article/<int:article_id>', article_view, name='article'),
 
 

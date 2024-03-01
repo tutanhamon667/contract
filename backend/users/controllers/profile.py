@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from common.models import Article, ArticleCategory
 from users.core.access import Access
-from users.models.user import Company, Resume, Contact, Job, Member
+from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite
 from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm
 
 
@@ -49,7 +49,6 @@ def profile_resume_view(request, resume_id):
 			})
 
 
-
 def profile_resumes_view(request):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
@@ -93,7 +92,6 @@ def profile_resumes_view(request):
 					   'categories': categories,
 					   'articles': articles
 					   })
-
 
 
 def contact_view(request, contact_id):
@@ -342,6 +340,29 @@ def jobs_profile_view(request):
 		return render(request, './blocks/profile/profile_jobs.html',
 					  {'jobs': jobs,
 					   'form': new_entity_form,
+					   'categories': categories,
+					   'articles': articles
+					   })
+
+
+def profile_response_invite_view(request):
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
+	user = request.user
+	access = Access(user)
+	code = access.check_access("profile_invite_response")
+	if code != 200:
+		if code == 401:
+			return redirect('signin')
+		else:
+			return HttpResponse(status=code)
+
+	if request.method == "GET":
+		resumes = Resume.objects.filter(user=user.id)
+		invite_response = ResponseInvite.get_by_user(user)
+		return render(request, './blocks/profile/profile_response_invite.html',
+					  {'resumes': resumes,
+					   'invite_response': invite_response,
 					   'categories': categories,
 					   'articles': articles
 					   })

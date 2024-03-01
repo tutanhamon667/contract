@@ -1,0 +1,61 @@
+{% extends "profile.html" %}
+
+{% block profile_content %}
+    {% load bootstrap_icons %}
+    {% load django_bootstrap5 %}
+    {% load static %}
+
+    <h1 class="settings-title">Мои отклики\приглашения</h1>
+    <div class="settings-main">
+        <div class="settings-main__content">
+            <form class="response_invite_filter_form" action="" method="get">
+                <input type="hidden" name="order" value="asc"/>
+                <input type="hidden" name="type" value="0"/>
+                <input type="hidden" name="status" value="1"/>
+            </form>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="status_radio" id="status_1" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="btnradio1">Собеседования</label>
+
+                <input type="radio" class="btn-check" name="status_radio" id="type_1" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio2">Приглашения</label>
+
+                <input type="radio" class="btn-check" name="status_radio" id="type_0" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio3">Ваши отклики</label>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">
+                        {% if date_order == "desc" %}
+
+                            <button id="order">Дата {% bs_icon 'arrow-bar-down' %}</button>
+                        {% else %}
+                            <input type="hidden" name="order" value="asc"/>
+                            <button id="order">Дата {% bs_icon 'arrow-bar-up' %}</button>
+                        {% endif %}
+                    </th>
+                    <th scope="col">Вакансия</th>
+                    <th scope="col">Резюме</th>
+                    <th scope="col">Работодатель</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for invite in invite_response %}
+                <tr>
+                    <td>{{ invite.create_date }}</td>
+                    <td>{{ invite.job.title }}</td>
+                    <td>{{ invite.resume.name }}</td>
+                    <td>{{ invite.job.company.name }}</td>
+                    <td>chat</td>
+                    <td>delete</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock profile_content %}

@@ -83,7 +83,7 @@ def jobs_view(request):
 			resumes = Resume.objects.filter(user=user)
 
 			form_response = ResponseForm(
-				initial={"worker": user, "type": RESPONSE_INVITE_TYPE["RESPONSE"], "resume": resumes})
+				initial={"user": user, "type": RESPONSE_INVITE_TYPE["RESPONSE"], "resume": resumes})
 		return render(request, './pages/jobs.html', {
 			'search_form': search_form,
 			'jobs': jobs,
@@ -124,6 +124,7 @@ def job_view(request, job_id):
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		job = Job.objects.get(id=job_id)
+		job.increase_views()
 		company = Company.objects.get(id=job.company_id)
 		rating = CustomerReview.get_company_rating(company.id)
 		reviews = CustomerReview.objects.filter(company_id=company.id)
@@ -299,7 +300,7 @@ def resumes_view(request):
 def resume_view(request, resume_id):
 	user = request.user
 	access = Access(user)
-	code = access.check_access("resume")
+	code = access.check_access("resume", resume_id)
 	if code != 200:
 		if code == 401:
 			return redirect('signin')
@@ -310,6 +311,7 @@ def resume_view(request, resume_id):
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		resume = Resume.objects.get(id=resume_id)
+		resume.increase_views()
 		worker = Member.objects.get(id=resume.user.id)
 		resumes = Resume.join_invites([resume])
 		company = Company.objects.get(user=user)

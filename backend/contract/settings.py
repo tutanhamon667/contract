@@ -394,7 +394,8 @@ RESPONSE_INVITE_TYPE = {
 RESPONSE_INVITE_STATUS = {
     'WAIT_FOR_ACCEPT': 0,
     'ACCEPTED': 1,
-    'DECLINED': 2
+    'DECLINED': 2,
+    'DELETED': 3
 }
 
 # Перечень контактов для моделей в users
@@ -404,3 +405,10 @@ CONTACT_TYPE = (
     ('telegram', 'Telegram'),
     ('other', 'Other')
 )
+
+USER_ACTIONS = {
+    'create': 0,
+    'update': 0,
+    'delete': 0,
+    'get': 0
+}

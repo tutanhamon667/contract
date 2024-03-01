@@ -125,3 +125,7 @@ ul.errorlist {
 .star-rating-container{
     line-height: 2;
 }
+
+.response_invite_filter_form{
+    visibility: hidden;
+}
