@@ -67,19 +67,13 @@ def jobs_view(request):
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		jobs = Job.search_filter(request, 10)
-		job_ids = []
-		for job in jobs:
-			job_ids.append(job.id)
+		if request.user.is_authenticated:
+			jobs = Job.join_invites(objs=jobs, user=request.user)
 		form_response = None
 		resumes = None
 		job_responses = []
 		if request.user.is_authenticated:
 			user = request.user
-			job_responses = ResponseInvite.objects.filter(job_id__in=job_ids).values()
-			for job in jobs:
-				for job_response in job_responses:
-					if job.id == job_response["job_id"]:
-						job.status = job_response["status"]
 			resumes = Resume.objects.filter(user=user)
 
 			form_response = ResponseForm(
@@ -89,31 +83,6 @@ def jobs_view(request):
 			'jobs': jobs,
 			'articles': articles,
 			'job_responses': job_responses,
-			'form_response': form_response,
-			'categories': categories,
-			'resumes': resumes})
-
-	if request.method == 'POST':
-		search_form = JobFilterForm(initial=request.GET)
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
-		jobs = Job.search_filter(request, 10)
-		form_response = None
-		resumes = None
-		if request.user.is_authenticated:
-			user = request.user
-			resumes = Resume.objects.filter(user=user)
-			form_response = ResponseForm(request.POST, initial={"resume": resumes})
-			job_id = request.POST["job"]
-			resume_id = request.POST["resume"]
-			res = ResponseInvite.create_response(user, job_id, resume_id)
-			if not res:
-				return HttpResponse(500)
-			messages.success(request, 'Отклик отправлен')
-		return render(request, './pages/jobs.html', {
-			'search_form': search_form,
-			'jobs': jobs,
-			'articles': articles,
 			'form_response': form_response,
 			'categories': categories,
 			'resumes': resumes})
@@ -167,68 +136,7 @@ def company_view(request, company_id):
 			'reviews': reviews,
 			'company': company,
 			'contacts': contacts, 'hashkey': hash_key, 'captcha': captcha_base64})
-	if request.method == "POST":
-		if request.user.is_authenticated == False:
-			return redirect('signin')
-		if request.user.is_customer:
-			return HttpResponse(status=403)
-		review = CustomerReview(reviewer=request.user, moderated=False)
-		form = CompanyReviewForm(request.POST, initial={"moderated": False, "reviewer": request.user})
-		hash_key = request.POST.get("hashkey")
-		res = Captcha.check_chaptcha(captcha=request.POST.get("captcha"), hash=hash_key)
-		if not res:
-			articles = Article.objects.all()
-			categories = ArticleCategory.objects.all()
-			jobs = Job.objects.filter(company_id=company_id)
-			company = Company.objects.get(id=company_id)
-			rating = CustomerReview.get_company_rating(company.id)
-			reviews = CustomerReview.get_company_reviews(company_id=company.id)
-			contacts = Contact.objects.filter(user=company.user_id)
-			messages.error(request, "Unsuccessful review. Captcha Invalid .")
-			return render(request, './pages/company.html', {
-				'jobs': jobs,
-				'form': form,
-				'articles': articles,
-				'categories': categories,
-				'rating': rating,
-				'reviews_count': len(reviews),
-				'reviews': reviews,
-				'company': company,
-				'contacts': contacts,
-				'hashkey': hash_key,
-				'captcha': SimpleCaptcha.captcha_check(request)})
-		else:
-			if request.user.is_authenticated:
-				edited_form = form.save(commit=False)
-				edited_form.reviewer = request.user
-				edited_form.moderated = False
-				edited_form.save()
-				if form.is_valid():
-					messages.success(request, "Ваш отзыв отправлен на модерацию")
-					form.clean()
 
-				articles = Article.objects.all()
-				categories = ArticleCategory.objects.all()
-				jobs = Job.objects.filter(company_id=company_id)
-				company = Company.objects.get(id=company_id)
-				rating = CustomerReview.get_company_rating(company.id)
-				reviews = CustomerReview.get_company_reviews(company_id=company.id)
-				contacts = Contact.objects.filter(user=company.user_id)
-
-				return render(request, './pages/company.html', {
-					'jobs': jobs,
-					'form': form,
-					'articles': articles,
-					'categories': categories,
-					'rating': rating,
-					'reviews_count': len(reviews),
-					'reviews': reviews,
-					'company': company,
-					'contacts': contacts,
-					'hashkey': hash_key,
-					'captcha': SimpleCaptcha.captcha_check(request)})
-			else:
-				return redirect("signin")
 
 
 def for_customers_view(request):
@@ -257,7 +165,7 @@ def resumes_view(request):
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		resumes = Resume.search_filter(request, 10)
-		resumes = Resume.join_invites(resumes)
+		resumes = Resume.join_invites(objs=resumes, user=user)
 		company = Company.objects.get(user=user)
 		jobs = Job.objects.filter(company=company)
 
@@ -270,30 +178,6 @@ def resumes_view(request):
 			'form_response': form_response,
 			'categories': categories,
 			'resumes': resumes})
-
-	if request.method == 'POST':
-		search_form = ResumeFilterForm(initial=request.GET)
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
-		jobs = Resume.search_filter(request, 10)
-		form_response = InviteForm(request.POST,
-			initial={"type": RESPONSE_INVITE_TYPE["RESPONSE"], "user": user})
-		job_id = request.POST["job"]
-		resume_id = request.POST["resume"]
-		res = ResponseInvite.create_invite(user, job_id, resume_id)
-		if not res:
-			return HttpResponse(500)
-		resumes = Resume.search_filter(request, 10)
-		resumes = Resume.join_invites(resumes)
-		messages.success(request, 'Отклик отправлен')
-		return render(request, './pages/resumes.html', {
-			'search_form': search_form,
-			'articles': articles,
-			'jobs': jobs,
-			'form_response': form_response,
-			'categories': categories,
-			'resumes': resumes})
-
 
 
 
@@ -313,33 +197,11 @@ def resume_view(request, resume_id):
 		resume = Resume.objects.get(id=resume_id)
 		resume.increase_views()
 		worker = Member.objects.get(id=resume.user.id)
-		resumes = Resume.join_invites([resume])
+		resumes = Resume.join_invites(objs=[resume], user=user)
 		company = Company.objects.get(user=user)
 		jobs = Job.objects.filter(company=company)
 		form_response = InviteForm(
 			initial={"type": RESPONSE_INVITE_TYPE["INVITE"], "user": user})
-		return render(request, './pages/resume.html', {
-			'articles': articles,
-			'jobs': jobs,
-			'worker': worker,
-			'categories': categories,
-			'form_response': form_response,
-			'resume': resumes[0]})
-	if request.method == 'POST':
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
-		form_response = InviteForm(request.POST,
-								   initial={"type": RESPONSE_INVITE_TYPE["INVITE"], "user": user})
-		job_id = request.POST["job"]
-		resume_id = request.POST["resume"]
-		res = ResponseInvite.create_invite(user, job_id, resume_id)
-		if not res:
-			return HttpResponse(500)
-		resume = Resume.objects.get(id=resume_id)
-		worker = Member.objects.get(id=resume.user.id)
-		resumes = Resume.join_invites([resume])
-		company = Company.objects.get(user=user)
-		jobs = Job.objects.filter(company=company)
 		return render(request, './pages/resume.html', {
 			'articles': articles,
 			'jobs': jobs,

@@ -70,15 +70,31 @@
                 <a href='/signin' class="btn btn-success">Войти для отклика</a>
             </div>
         {% endif %}
-        {% if short is False and user.is_worker %}
+        {% if short is False %}
             <div class="clear">
-                {% if job.status == 0 %}
+                {% if user.is_worker and job.type == 0 and job.status == 0 %}
                     <button class="btn-primary btn">Ждёт подтверждения от работодателя</button>
-                {% elif job.status == 1 %}
-                    <button class="btn-success btn">Приглашение на собеседование принято</button>
-                    <a href="#" >Перейти в чат с работодателем</a>
-                {% elif job.status == 2 %}
-                    <button class="btn-danger btn">Отклик откланён работодателем</button>
+                {% elif user.is_worker and job.type == 0 and job.status == 1 %}
+                    <button class="btn-success btn">Работодатель подтвердил собеседование</button>
+                    <a href="#">Перейти в чат с работодателем</a>
+                {% elif user.is_worker and job.type == 0 and job.status == 2 %}
+                    <button class="btn-primary btn">Отклик откланён работодателем</button>
+                {% elif user.is_worker and job.type == 0 and job.status == 3 %}
+                    <button class="btn-danger btn">Отклик удалён работодателем</button>
+                {% elif user.is_worker and job.type == 1 and job.status == 0 %}
+                    <button class="btn-primary btn">Работодатель пригласил на собеседование</button>
+                    <form action="{% url 'response_invite_update' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="request_invite_id" value="{{ job.request_invite_id }}"/>
+                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                        <input type="hidden" name="status" value="1"/>
+                        <input type="submit" class="btn btn-success" value="Принять отклик"/>
+                    </form>
+                {% elif user.is_worker and job.type == 1 and job.status == 1 %}
+                    <button class="btn-primary btn">Вы подтвердили приглашение на собеседование</button>
+                    <a href="#">Перейти в чат с работодателем</a>
+                {% elif user.is_worker and job.type == 1 and job.status == 2 %}
+                    <button class="btn-primary btn">Вы отклонили приглашение</button>
                 {% elif job.status is None %}
                     {% if resumes|length > 0 %}
                         <button class="btn btn-success" type="button" data-bs-toggle="collapse"
@@ -88,17 +104,18 @@
                         </button>
                         <div class="collapse" id="responseInvite_{{ job.id }}">
                             <div class="card card-body">
-                                <form action="" method="post">
+                                <form action="{% url 'response_invite_create' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="job" value="{{ job.id }}"/>
                                     <label for="id_resume">Резюме</label>
+                                    <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
                                     {{ form_response.resume }}
                                     <br/>
                                     <input type="submit" class="btn btn-success" value="Отправить отклик"/>
                                 </form>
                             </div>
                         </div>
-                    {% else %}
+                    {% elif user.is_worker %}
                         <a href="/profile/resume" class="btn-primary btn">Создать резюме</a>
                     {% endif %}
                 {% endif %}

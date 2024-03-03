@@ -1,0 +1,85 @@
+from django.contrib import messages
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+
+from common.models import Article, ArticleCategory
+from contract.settings import RESPONSE_INVITE_STATUS
+from users.core.access import Access
+from users.models.user import Company, Member, Resume, Contact, Job, ResponseInvite
+from users.forms import JobForm
+
+
+class ResponseInviteView:
+	def __init__(self):
+		pass
+
+	def create(self, request):
+		if request.user.is_authenticated:
+			try:
+				user = request.user
+				job_id = request.POST["job"]
+				resume_id = request.POST["resume"]
+				res = ResponseInvite.create_response(user, job_id, resume_id)
+				if not res:
+					return HttpResponse(status=500)
+				messages.success(request, 'Отклик отправлен')
+				return redirect(request.POST["redirect"])
+			except Exception as e:
+				print(e)
+				return HttpResponse(status=500)
+		else:
+			return redirect(to="signin")
+
+	def cancel(self, request):
+		if request.user.is_authenticated:
+			try:
+				user = request.user
+				res = ResponseInvite.update_response_invite(request.POST["request_invite_id"], user,
+															request.POST["status"])
+				if not res:
+					return HttpResponse(status=500)
+				messages.success(request, 'Отклик отменён')
+				return redirect(request.POST["redirect"])
+			except Exception as e:
+				print(e)
+				return HttpResponse(status=500)
+		else:
+			return redirect(to="signin")
+		pass
+
+	def update(self, request):
+		if request.user.is_authenticated:
+			try:
+				user = request.user
+				res = ResponseInvite.update_response_invite(request.POST["request_invite_id"], user,
+															request.POST["status"])
+				if not res:
+					return HttpResponse(status=500)
+				messages.success(request, 'Отклик отправлен')
+				return redirect(request.POST["redirect"])
+			except Exception as e:
+				print(e)
+				return HttpResponse(status=500)
+		else:
+			return redirect(to="signin")
+
+	def delete(self, request):
+		if request.user.is_authenticated:
+			try:
+				user = request.user
+				res = ResponseInvite.update_response_invite(request.POST["request_invite_id"], user,
+															RESPONSE_INVITE_STATUS["DELETED"])
+				response_invite = ResponseInvite.objects.get(id=request.POST["request_invite_id"])
+				response_invite.set_deleted()
+				if not res:
+					return HttpResponse(status=500)
+				messages.success(request, 'Отклик удалён')
+				return redirect(request.POST["redirect"])
+			except Exception as e:
+				print(e)
+				return HttpResponse(status=500)
+		else:
+			return redirect(to="signin")
+
+
+response_invite_view = ResponseInviteView()

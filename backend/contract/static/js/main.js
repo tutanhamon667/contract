@@ -36,8 +36,44 @@ const app = function() {
 
         })
     }
+
+    const profileResponseInvitesFilters = () => {
+        const orderBtn = $('#order')
+        const searchParams = new URLSearchParams(window.location.search);
+        let order_val = searchParams.get('order')
+        const filterForm = $('.response_invite_filter_form')
+        const status = $(filterForm).find('[name="status"]')
+        const type = $(filterForm).find('[name="type"]')
+        const order_date = $(filterForm).find('[name="order"]')
+        const page = $(filterForm).find('[name="page"]')
+        $(orderBtn).click(function () {
+            order_val = order_val === "desc" ?  "asc": "desc"
+            $(order_date).val(order_val)
+            $(filterForm).submit()
+        })
+        $("[name=\"status_radio\"]").on("change", function(el) {
+            console.log($(this).attr('id'))
+            switch ($(this).attr('id')) {
+                case 'type_1':
+                    $(type).val(1)
+                    $(status).val('any')
+                    break;
+                case 'type_0':
+                    $(type).val(0)
+                    $(status).val('any')
+                    break;
+                case 'status_1':
+                    $(type).val(null)
+                    $(status).val(1)
+                    break;
+
+            }
+            $(filterForm).submit()
+        })
+    }
     return {
         initRating:initRating,
+        profileResponseInvitesFilters:profileResponseInvitesFilters,
         radioInputChecker:radioInputChecker
     }
 }

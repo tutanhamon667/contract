@@ -7,6 +7,8 @@ from rest_framework import permissions
 
 from btc.views import gen_address, profile_wallet_view
 from common.views import article_view
+from users.controllers.comment import comment_view
+from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
     profile_main_view, \
@@ -41,6 +43,11 @@ urlpatterns = [
     path('logout', logout_view, name='logout'),
     path('jobs', jobs_view, name='jobs'),
     path('resumes', resumes_view, name='resumes'),
+    path('comment/create', comment_view.create, name='comment_create'),
+    path('response_invite/update', response_invite_view.update, name='response_invite_update'),
+    path('response_invite/delete', response_invite_view.delete, name='response_invite_delete'),
+    path('response_invite/cancel', response_invite_view.cancel, name='response_invite_cancel'),
+    path('response_invite/create', response_invite_view.create, name='response_invite_create'),
     path('resumes/<int:resume_id>', resume_view, name='resume_view'),
     path('jobs/<int:job_id>', job_view, name='job'),
     path('company/<int:company_id>', company_view, name='company'),

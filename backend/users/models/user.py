@@ -1,3 +1,4 @@
+import datetime
 from io import BytesIO
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -66,6 +67,9 @@ class Member(PermissionsMixin, AbstractBaseUser):
 
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+	deleted = models.BooleanField(default=False)
+	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
 	objects = UserManager()
 
@@ -227,6 +231,9 @@ class Company(models.Model):
 
 	is_moderated = models.BooleanField(verbose_name="Прошёл модерацию", default=False, blank=True)
 
+	deleted = models.BooleanField(default=False)
+	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
+
 	class Meta:
 		ordering = ('-name',)
 		verbose_name = 'Company'
@@ -264,6 +271,9 @@ class CustomerReview(models.Model):
 		verbose_name='Дата публикации вакансии',
 	)
 	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=False)
+
+	deleted = models.BooleanField(default=False)
+	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
 	@classmethod
 	def get_top_companies(cls, limit):
@@ -320,21 +330,26 @@ class Resume(models.Model):
 							   default=None,
 							   on_delete=models.SET_DEFAULT)
 
+	deleted = models.BooleanField(default=False)
+	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
+
 	@classmethod
 	def is_current_user(cls, _id, user):
 		resume = cls.objects.get(_id)
 		return resume.user == user.id
 
 	@classmethod
-	def join_invites(cls, objs):
+	def join_invites(cls, objs, user):
 		resumes_ids = []
 		for resume in objs:
 			resumes_ids.append(resume.id)
-		job_responses = ResponseInvite.objects.filter(resume_id__in=resumes_ids).values()
+		job_responses = ResponseInvite.objects.filter(resume_id__in=resumes_ids, job__company__user=user).values()
 		for resume in objs:
 			for job_response in job_responses:
 				if resume.id == job_response["resume_id"]:
 					resume.status = job_response["status"]
+					resume.type = job_response["type"]
+					resume.request_invite_id = job_response["id"]
 		return objs
 
 	def increase_views(self):
@@ -443,7 +458,7 @@ class Job(models.Model):
 	)
 	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
 	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
-	region = models.ManyToManyField(Region, verbose_name='Регион работы', null=True, default=None, blank=True)
+	region = models.ManyToManyField(Region, verbose_name='Регион работы',  default=None, blank=True)
 	active_search = models.BooleanField(null=True, blank=True, default=True, verbose_name='В активном поиске')
 	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0)
 	views = models.IntegerField(verbose_name='Просмотры', null=True, default=0)
@@ -453,6 +468,9 @@ class Job(models.Model):
 		verbose_name='Дата публикации вакансии',
 	)
 	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=True)
+
+	deleted = models.BooleanField(default=False)
+	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
 	class Meta:
 		ordering = ('-id',)
@@ -579,6 +597,21 @@ class Job(models.Model):
 			return objs.filter(moderated=True, active_search=True).order_by('-id')[:limit]
 
 
+	@classmethod
+	def join_invites(cls, objs, user):
+		jobs_ids = []
+		for job in objs:
+			jobs_ids.append(job.id)
+		job_responses = ResponseInvite.objects.filter(job_id__in=jobs_ids, resume__user=user).values()
+		for job in objs:
+			for job_response in job_responses:
+				if job.id == job_response["job_id"]:
+					job.status = job_response["status"]
+					job.type = job_response["type"]
+					job.request_invite_id = job_response["id"]
+		return objs
+
+
 class ResponseInvite(models.Model):
 	job = models.ForeignKey(
 		Job,
@@ -608,6 +641,40 @@ class ResponseInvite(models.Model):
 		null=True,
 		default=None
 	)
+
+	deleted = models.BooleanField(default=False)
+	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
+
+	def set_deleted(self):
+		self.deleted_at = datetime.datetime.now()
+		self.deleted = True
+		self.save()
+		return True
+
+	@classmethod
+	def filter_search(cls, objs, order="desc", status=1, type='any', page=1, limit=10):
+		order_z = ''
+		if order == 'desc':
+			order_z = '-'
+		if type != 'any' and type != '':
+			objs = objs.filter(type=type).order_by(order_z + 'create_date')
+		else:
+			objs = objs.filter(status=status).order_by(order_z + 'create_date')
+		return objs[(page - 1) * limit: limit]
+
+	@classmethod
+	def update_response_invite(self, id, user, status):
+		try:
+			if user.is_customer:
+				request = ResponseInvite.objects.get(id=int(id), job__company__user=user)
+			else:
+				request = ResponseInvite.objects.get(id=int(id), resume__user=user)
+			request.status = int(status)
+			request.save()
+			return True
+		except Exception as e:
+			print(e)
+			return False
 
 	@classmethod
 	def get_by_user(cls, user):

@@ -9,53 +9,229 @@
     <div class="settings-main">
         <div class="settings-main__content">
             <form class="response_invite_filter_form" action="" method="get">
-                <input type="hidden" name="order" value="asc"/>
-                <input type="hidden" name="type" value="0"/>
-                <input type="hidden" name="status" value="1"/>
+                <input type="hidden" name="order" value="{{ request.GET.order }}"/>
+                <input type="hidden" name="type" value="{{ request.GET.type }}"/>
+                <input type="hidden" name="status" value="{{ request.GET.status }}"/>
+                <input type="hidden" name="page" value="{{ request.GET.page }}"/>
             </form>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="status_radio" id="status_1" autocomplete="off" checked>
-                <label class="btn btn-outline-primary" for="btnradio1">Собеседования</label>
-
-                <input type="radio" class="btn-check" name="status_radio" id="type_1" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio2">Приглашения</label>
-
-                <input type="radio" class="btn-check" name="status_radio" id="type_0" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio3">Ваши отклики</label>
-            </div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">
-                        {% if date_order == "desc" %}
-
-                            <button id="order">Дата {% bs_icon 'arrow-bar-down' %}</button>
-                        {% else %}
-                            <input type="hidden" name="order" value="asc"/>
-                            <button id="order">Дата {% bs_icon 'arrow-bar-up' %}</button>
+                <input type="radio" class="btn-check" name="status_radio" id="status_1" autocomplete="off"
+                        {% if request.GET.status == "1" %}
+                       checked
                         {% endif %}
-                    </th>
-                    <th scope="col">Вакансия</th>
-                    <th scope="col">Резюме</th>
-                    <th scope="col">Работодатель</th>
-                    <th scope="col"></th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for invite in invite_response %}
-                <tr>
-                    <td>{{ invite.create_date }}</td>
-                    <td>{{ invite.job.title }}</td>
-                    <td>{{ invite.resume.name }}</td>
-                    <td>{{ invite.job.company.name }}</td>
-                    <td>chat</td>
-                    <td>delete</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                >
+                <label class="btn btn-outline-primary" for="status_1">Собеседования</label>
+
+                <input type="radio" class="btn-check" name="status_radio" id="type_1" autocomplete="off"
+                        {% if request.GET.type == "1" %}
+                       checked
+                        {% endif %}
+                >
+                <label class="btn btn-outline-primary" for="type_1">Приглашения</label>
+
+                <input type="radio" class="btn-check" name="status_radio" id="type_0" autocomplete="off"
+                        {% if request.GET.type == "0" %}
+                       checked
+                        {% endif %}
+                >
+                <label class="btn btn-outline-primary" for="type_0">Отклики</label>
+            </div>
+            {% if request.GET.status != "any" %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            {% if request.GET.order == "desc" %}
+                                <button id="order">Дата {% bs_icon 'arrow-bar-down' %}</button>
+                            {% else %}
+                                <input type="hidden" name="order" value="asc"/>
+                                <button id="order">Дата {% bs_icon 'arrow-bar-up' %}</button>
+                            {% endif %}
+                        </th>
+                        <th scope="col">Вакансия</th>
+                        <th scope="col">Резюме</th>
+                        {% if user.is_worker %}
+                            <th scope="col">Работодатель</th>
+                        {% endif %}
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for invite in invite_response %}
+                        <tr>
+                            <td>{{ invite.create_date }}</td>
+                            <td>{{ invite.job.title }}</td>
+                            <td>{{ invite.resume.name }}</td>
+                            {% if user.is_worker %}
+                                <td>{{ invite.job.company.name }}</td>
+                            {% endif %}
+                            <td>chat</td>
+                            <td>
+                                <form action="{% url 'response_invite_delete' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                    <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                    <input type="submit" class="btn btn-danger" value="Отменить и удалить"/>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            {% if request.GET.order == "desc" %}
+
+                                <button id="order">Дата {% bs_icon 'arrow-bar-down' %}</button>
+                            {% else %}
+                                <input type="hidden" name="order" value="asc"/>
+                                <button id="order">Дата {% bs_icon 'arrow-bar-up' %}</button>
+                            {% endif %}
+                        </th>
+                        <th scope="col">Вакансия</th>
+                        <th scope="col">Резюме</th>
+                        {% if user.is_worker %}
+                            <th scope="col">Работодатель</th>
+                        {% endif %}
+                        <th scope="col">Состояние</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for invite in invite_response %}
+                        <tr>
+                            <td>{{ invite.create_date }}</td>
+                            <td>{{ invite.job.title }}</td>
+                            <td>{{ invite.resume.name }}</td>
+                            {% if user.is_worker %}
+                                <td>{{ invite.job.company.name }}</td>
+                            {% endif %}
+                            {% if invite.status == 0 %}
+                                <td>Ждёт подтверждения</td>
+                            {% elif invite.status == 1 %}
+                                <td>Принято</td>
+                            {% elif invite.status == 2 %}
+                                <td>Отказ</td>
+                            {% elif invite.status == 3 %}
+                                <td>Удалено</td>
+                            {% endif %}
+                            <td>
+                                {% if invite.status == 1 %}
+                                    пеерйти в чат
+                                {% endif %}
+                                {% if invite.status == 0 and invite.type == 1 and user.is_worker %}
+                                    <form action="{% url 'response_invite_update' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                        <input type="hidden" name="status" value="1"/>
+                                        <input type="submit" class="btn btn-success"
+                                               value="принять предложение на собеседование"/>
+                                    </form>
+                                {% endif %}
+                                {% if invite.status == 0 and invite.type == 0 and user.is_customer %}
+                                    <form action="{% url 'response_invite_update' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                        <input type="hidden" name="status" value="1"/>
+                                        <input type="submit" class="btn btn-success"
+                                               value="принять соискателя на собеседование"/>
+                                    </form>
+
+                                {% endif %}
+                            </td>
+                            <td>
+
+                                {% if invite.status == 0 and invite.type == 0 and user.is_worker %}
+                                    <form action="{% url 'response_invite_delete' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                        <input type="submit" class="btn btn-success" value="Отменить и удалить"/>
+                                    </form>
+
+                                {% endif %}
+                                {% if invite.status == 0 and invite.type == 1 and user.is_customer %}
+                                    <form action="{% url 'response_invite_delete' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                        <input type="submit" class="btn btn-danger" value="Отменить и удалить"/>
+                                    </form>
+                                {% endif %}
+
+                                {% if invite.status == 0 and invite.type == 1 and user.is_worker %}
+                                    <form action="{% url 'response_invite_update' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                        <input type="hidden" name="status" value="2"/>
+                                        <input type="submit" class="btn btn-success"
+                                               value="отказаться от собеседования"/>
+                                    </form>
+
+                                {% endif %}
+                                {% if invite.status == 0 and invite.type == 0 and user.is_customer %}
+                                    <form action="{% url 'response_invite_update' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                        <input type="hidden" name="status" value="2"/>
+                                        <input type="submit" class="btn btn-primary" value="отказать соискателю"/>
+                                    </form>
+
+                                {% endif %}
+
+                                {% if invite.status == 2 and invite.type == 1 and user.is_worker %}
+                                    <form action="{% url 'response_invite_delete' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                        <input type="submit" class="btn btn-danger" value="удалить отклик"/>
+                                    </form>
+
+                                {% endif %}
+
+                                {% if invite.status == 2 and invite.type == 0 and user.is_customer %}
+                                    <form action="{% url 'response_invite_delete' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                        <input type="submit" class="btn btn-danger" value="удалить приглашение"/>
+                                    </form>
+
+                                {% endif %}
+
+                                {% if invite.status == 1 %}
+                                    <form action="{% url 'response_invite_delete' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="request_invite_id" value="{{ invite.id }}"/>
+                                    <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
+                                    <input type="submit" class="btn btn-danger" value="Отменить и удалить (покинуть чат)"/>
+                                </form>
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
 
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            const application = new app()
+            application.profileResponseInvitesFilters()
+        });
+    </script>
 {% endblock profile_content %}

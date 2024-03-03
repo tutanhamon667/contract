@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from common.models import Article, ArticleCategory
 from users.core.access import Access
+from users.core.page_builder import PageBuilder
 from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite
 from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm
 
@@ -357,12 +358,19 @@ def profile_response_invite_view(request):
 		else:
 			return HttpResponse(status=code)
 
+	page = "PROFILE_RESPONSE_INVITE"
+	builder = PageBuilder(page)
+	params = builder.build_get_params(request.GET)
+	if builder.route_with_params(request.GET):
+		return redirect(f'{request.path}?{params}')
 	if request.method == "GET":
-		resumes = Resume.objects.filter(user=user.id)
 		invite_response = ResponseInvite.get_by_user(user)
+		invite_response = ResponseInvite.filter_search(invite_response, request.GET["order"], request.GET["status"],
+													   request.GET["type"], int(request.GET["page"]))
+
 		return render(request, './blocks/profile/profile_response_invite.html',
-					  {'resumes': resumes,
-					   'invite_response': invite_response,
-					   'categories': categories,
-					   'articles': articles
-					   })
+					  {
+						  'invite_response': invite_response,
+						  'categories': categories,
+						  'articles': articles
+					  })
