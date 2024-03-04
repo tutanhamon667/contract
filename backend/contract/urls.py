@@ -62,6 +62,7 @@ urlpatterns = [
     path('profile/wallet', profile_wallet_view, name='profile_wallet'),
     path('profile/invites', profile_response_invite_view, name='profile_response_invite'),
     path('article/<int:article_id>', article_view, name='article'),
+    path('chat/', include("chat.urls")),
 
 
     #path('btc/generate_address', gen_address, name='generate_address'),

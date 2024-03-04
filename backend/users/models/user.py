@@ -59,6 +59,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
 
 	is_customer = models.BooleanField(default=False)
 	is_worker = models.BooleanField(default=False)
+	is_moderator = models.BooleanField(default=False)
 
 	is_moderated = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
@@ -671,7 +672,7 @@ class ResponseInvite(models.Model):
 				request = ResponseInvite.objects.get(id=int(id), resume__user=user)
 			request.status = int(status)
 			request.save()
-			return True
+			return request
 		except Exception as e:
 			print(e)
 			return False

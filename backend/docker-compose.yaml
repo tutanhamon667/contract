@@ -59,6 +59,19 @@ services:
           cpus: '1'
           memory: 2G
 
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6380:6379"
+    volumes:
+      - /home/redis/dаta:/root/redis
+      - /home/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=ha6e$h$40wGf
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=1
+
 volumes:
   pg_contract_data:
 

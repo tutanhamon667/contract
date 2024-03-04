@@ -1,15 +1,18 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from asgiref.sync import sync_to_async
 from contract.settings import CHAT_TYPE
 from users.models.user import Member, Job
-
+import uuid
 
 class Chat(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
     customer = models.ForeignKey(
         Member,
         related_name='chat_customer',
         default=None,
+        null=True,
+        blank=True,
         on_delete=models.PROTECT,
         verbose_name = "Работодатель"
     )
@@ -17,6 +20,8 @@ class Chat(models.Model):
         Member,
         related_name='chat_worker',
         default=None,
+        null=True,
+        blank=True,
         on_delete=models.PROTECT,
         verbose_name = "Соискатель"
     )
@@ -25,6 +30,8 @@ class Chat(models.Model):
         Member,
         related_name='chat_moderator',
         default=None,
+        null=True,
+        blank=True,
         on_delete=models.PROTECT,
         verbose_name = "Модератор"
     )
@@ -38,6 +45,17 @@ class Chat(models.Model):
 
     def __str__(self):
         return f"Компания:{self.customer.company.name} - Соискатель:{self.worker.display_name} - Модератор:{self.moderator.display_name} / Type:{self.type}"
+
+
+
+    @classmethod
+    def get_user_chats(cls, user):
+        if user.is_customer:
+            return sync_to_async(cls.objects.filter(customer=user).all)()
+        if user.is_worker:
+            return sync_to_async(cls.objects.filter(worker=user).all)()
+        if user.is_moderator:
+            return cls.objects.filter(moderator=user)
 
 
 class Message(models.Model):

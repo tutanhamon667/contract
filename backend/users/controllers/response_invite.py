@@ -2,8 +2,9 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+from chat.models import Chat
 from common.models import Article, ArticleCategory
-from contract.settings import RESPONSE_INVITE_STATUS
+from contract.settings import RESPONSE_INVITE_STATUS, CHAT_TYPE
 from users.core.access import Access
 from users.models.user import Company, Member, Resume, Contact, Job, ResponseInvite
 from users.forms import JobForm
@@ -51,10 +52,13 @@ class ResponseInviteView:
 		if request.user.is_authenticated:
 			try:
 				user = request.user
-				res = ResponseInvite.update_response_invite(request.POST["request_invite_id"], user,
-															request.POST["status"])
+				status = int(request.POST["status"])
+				res = ResponseInvite.update_response_invite(request.POST["request_invite_id"], user, status)
 				if not res:
 					return HttpResponse(status=500)
+				if status == RESPONSE_INVITE_STATUS["ACCEPTED"]:
+					chat = Chat(customer=res.job.company.user, worker=res.resume.user, type=CHAT_TYPE["RESPONSE_INVITE"])
+					chat.save()
 				messages.success(request, 'Отклик отправлен')
 				return redirect(request.POST["redirect"])
 			except Exception as e:

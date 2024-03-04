@@ -1,6 +1,7 @@
 asgiref
 channels
 daphne
+channels_redis
 certifi==2023.7.22
 cffi==1.15.1
 charset-normalizer==3.2.0

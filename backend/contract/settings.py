@@ -21,9 +21,19 @@ SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4gGultuiot8hbxlguev@bh%'
 DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
 ALLOWED_HOSTS = ['*']
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6380)],
+        },
+    },
+}
 # Application definition
 
 INSTALLED_APPS = [
+	"daphne",
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
