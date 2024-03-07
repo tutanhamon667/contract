@@ -6,7 +6,8 @@ from users.models.user import Member, Job
 import uuid
 
 class Chat(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    pkid = models.BigAutoField(primary_key=True, editable=False, default=1, )
+    uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False, unique=True)
     customer = models.ForeignKey(
         Member,
         related_name='chat_customer',
@@ -51,9 +52,9 @@ class Chat(models.Model):
     @classmethod
     def get_user_chats(cls, user):
         if user.is_customer:
-            return sync_to_async(cls.objects.filter(customer=user).all)()
+            return cls.objects.filter(customer=user)
         if user.is_worker:
-            return sync_to_async(cls.objects.filter(worker=user).all)()
+            return cls.objects.filter(worker=user)
         if user.is_moderator:
             return cls.objects.filter(moderator=user)
 
@@ -69,7 +70,8 @@ class Message(models.Model):
         on_delete=models.CASCADE
     )
     content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False, blank=True)
 
     class Meta:
         verbose_name = 'Сообщение'

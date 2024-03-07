@@ -13,8 +13,8 @@ class ChatAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'chat', 'sender', 'timestamp')
+    list_display = ('id', 'chat', 'sender', 'created')
     list_filter = ('chat', 'sender')
     search_fields = ('chat__customer__display_name', 'chat__worker__display_name', 'chat__moderator__display_name')
     list_select_related = ('chat', 'sender')
-    readonly_fields = ('id', 'timestamp')
+    readonly_fields = ('id', 'created')
