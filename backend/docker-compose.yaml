@@ -59,18 +59,28 @@ services:
           cpus: '1'
           memory: 2G
 
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    hostname: rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=contract
+      - RABBITMQ_DEFAULT_PASS=U789*(Y*(g
+    ports:
+      - 15672:15672
+      - 5673:5672
+
   redis:
     image: redis:latest
     restart: always
     ports:
       - "6380:6379"
     volumes:
-      - /home/redis/dаta:/root/redis
-      - /home/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - /home/redis/dаta2:/root/redis
+      - /home/redis/redis2.conf:/usr/local/etc/redis/redis.conf
     environment:
-      - REDIS_PASSWORD=ha6e$h$40wGf
       - REDIS_PORT=6379
-      - REDIS_DATABASES=1
+      - REDIS_DATABASES=3
 
 volumes:
   pg_contract_data:

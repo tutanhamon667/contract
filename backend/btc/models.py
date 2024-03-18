@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import binascii
 from decimal import Decimal
+from django.db import connection
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -11,32 +13,33 @@ from django.utils.translation import gettext_lazy as _
 
 from btc import settings
 from btc.validator import validate
-from users.models.user import User
+from contract.settings import OPERATION_STATUS
+from users.models.user import User, Member
+
 
 class Wallet(models.Model):
 
-    currency = models.ForeignKey('Currency', on_delete=models.CASCADE, default=None, null=True)
     balance = models.DecimalField('Balance', max_digits=18, decimal_places=8, default=0)
     holded = models.DecimalField('Holded', max_digits=18, decimal_places=8, default=0)
     unconfirmed = models.DecimalField('Unconfirmed', max_digits=18, decimal_places=8, default=0)
     label = models.CharField('Label', max_length=100, blank=True, null=True, unique=True)
-    seed = models.CharField('Seed', max_length=255, blank=False, null=False, unique=True, default='')
+    mnemonic = models.CharField('Mnemonic', max_length=255, blank=False, null=False, unique=True, default='')
     def __str__(self):
-        return u'{0} {1} "{2}"'.format(self.balance, self.currency, self.label or '')
+        return u'{0} {1} "{2}"'.format(self.balance, self.label or '')
 
     def get_address(self):
-        active = Address.objects.filter(wallet=self, active=True, currency=self.currency)[:1]
+        active = Address.objects.filter(wallet=self, active=True)[:1]
         if active:
             return active[0]
 
-        unused = Address.objects.filter(wallet=None, active=True, currency=self.currency)[:1]
+        unused = Address.objects.filter(wallet=None, active=True)[:1]
         if unused:
             free = unused[0]
             free.wallet = self
             free.save()
             return free
 
-        old = Address.objects.filter(wallet=self, active=False, currency=self.currency)[:1]
+        old = Address.objects.filter(wallet=self, active=False)[:1]
         if old:
             return old[0]
 
@@ -44,7 +47,7 @@ class Wallet(models.Model):
         if amount < 0:
             raise ValueError('Invalid amount')
 
-        if self.balance - amount < -settings.CC_ALLOW_NEGATIVE_BALANCE:
+        if self.balance - amount <= 0:
             raise ValueError('No money')
 
         Operation.objects.create(
@@ -80,37 +83,6 @@ class Wallet(models.Model):
         deposite_wallet.balance += amount
         deposite_wallet.save()
 
-    def withdraw_to_address(self, address, amount, description=""):
-        if not validate(address, self.currency.magicbyte):
-            raise ValueError('Invalid address')
-
-        if amount < 0:
-            raise ValueError('Invalid amount')
-
-        if self.balance - amount < -settings.BTC_ALLOW_NEGATIVE_BALANCE:
-            raise ValueError('No money')
-
-        tx = WithdrawTransaction.objects.create(
-            currency=self.currency,
-            amount=amount,
-            address=address,
-            wallet=self,
-        )
-        op = Operation.objects.create(
-            wallet=self,
-            balance=-amount,
-            holded=amount,
-            description=description,
-            reason=tx
-        )
-        self.balance -= amount
-        self.holded += amount
-        self.save()
-
-        return {
-            'tx': tx,
-            'op': op,
-        }
 
     def total_received(self):
         return Operation.objects.filter(wallet=self, balance__gt=0).aggregate(balance=Sum('balance'))['balance'] or Decimal('0')
@@ -135,88 +107,60 @@ class Wallet(models.Model):
     def get_operations(self):
         return Operation.objects.filter(wallet=self).order_by('-created')
 
-    def get_unpaid_dust_summary(self):
-        if not self.currency.dust:
-            return {}
 
-        txs = WithdrawTransaction.objects.filter(wallet=self, txid=None, amount__lt=self.currency.dust)
-        if len(txs) == 0:
-            return {}
 
-        from collections import defaultdict
-        tx_hash = defaultdict(lambda : Decimal('0'))
-        for tx in txs:
-            tx_hash[tx.address] += tx.amount
+class Address(models.Model):
+    address = models.CharField('Address', max_length=50, primary_key=True)
+    created = models.DateTimeField('Created', default=now)
+    active = models.BooleanField('Active', default=True)
+    label = models.CharField('Label', max_length=50, blank=True, null=True, default=None)
+    wif = models.CharField('wif', max_length=255, default='', null=False)
+    wallet = models.ForeignKey(Wallet, blank=True, null=True, related_name="addresses", on_delete=models.CASCADE)
+    user = models.ForeignKey(to=Member, on_delete=models.PROTECT, null=False, default=None)
+    balance = models.DecimalField('Balance', max_digits=18, decimal_places=8, default=0)
+    key_id = models.IntegerField('key_id', blank=True, null=True, default=None)
+    def __str__(self):
+        return u'{0}'.format(self.address)
 
-        return dict(tx_hash)
+    def get_key_info(cls):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM keys WHERE id = %s", [cls.key_id])
+            row = cursor.fetchone()
+        return row
+
+    def get_address_incoming_transactions_value(self):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT sum(value) FROM transaction_outputs WHERE key_id=%s", [self.key_id])
+            row = cursor.fetchone()
+        return row[0]
+
+    def get_address_incoming_transactions(self):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT t0.transaction_id, t0.key_id, t0.value, t1.txid, t1.date " +
+                            "FROM transaction_outputs as t0 " +
+                            "inner join transactions as t1 on t1.id = t0.transaction_id " +
+                            "WHERE key_id=%s", [self.key_id])
+            rows = cursor.fetchall()
+            result = []
+            for row in rows:
+                result.append({"transaction_id": row[0],"key_id": row[1],"value": row[2], "txid": binascii.hexlify(row[3]), "date": row[4]})
+        return result
 
 
 class Operation(models.Model):
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, default=None)
     created = models.DateTimeField('Created', default=now)
-    balance = models.DecimalField('Balance', max_digits=18, decimal_places=8, default=0)
-    holded = models.DecimalField('Holded', max_digits=18, decimal_places=8, default=0)
-    unconfirmed = models.DecimalField('Unconfirmed', max_digits=18, decimal_places=8, default=0)
+    cost_btc = models.DecimalField('Cost BTC', max_digits=18, decimal_places=8, default=0)
+    cost_usd = models.DecimalField('Cost USD', max_digits=8, decimal_places=2, default=0)
+    status = models.IntegerField(verbose_name="Status", choices=OPERATION_STATUS, default=0, blank=True)
+    amount = models.IntegerField('Months values', default=1, null=False, blank=False)
     description = models.CharField('Description', max_length=100, blank=True, null=True)
     reason_content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)
     reason_object_id = models.PositiveIntegerField(null=True, blank=True)
     reason = GenericForeignKey('reason_content_type', 'reason_object_id')
 
 
-class Address(models.Model):
-    address = models.CharField('Address', max_length=50, primary_key=True)
-    currency = models.ForeignKey('Currency', on_delete=models.CASCADE, default=None, null=True)
+class CustomerAccess(models.Model):
+    user = models.ForeignKey(Member, on_delete=models.PROTECT, null=False, blank=False, default=None)
     created = models.DateTimeField('Created', default=now)
-    active = models.BooleanField('Active', default=True)
-    label = models.CharField('Label', max_length=50, blank=True, null=True, default=None)
-    wif = models.CharField('wif', max_length=255, default='', null=False)
-    wallet = models.ForeignKey(Wallet, blank=True, null=True, related_name="addresses", on_delete=models.CASCADE)
-    user = models.ForeignKey(to=User, on_delete=models.PROTECT, null=False, default=None)
-    balance = models.DecimalField('Balance', max_digits=18, decimal_places=8, default=0)
-    def __str__(self):
-        return u'{0}, {1}'.format(self.address, self.currency.ticker)
-
-
-class Currency(models.Model):
-    ticker = models.CharField('Ticker', max_length=4, default='BTC', primary_key=True)
-    label = models.CharField('Label', max_length=20, default='Bitcoin', unique=True)
-    magicbyte = models.CharField('Magicbytes', max_length=10, default='0,5', validators=[validate_comma_separated_integer_list])
-    last_block = models.PositiveIntegerField('Last block', blank=True, null=True, default=0)
-    api_url = models.CharField('API hostname', default='http://localhost:8332', max_length=100, blank=True, null=True)
-    dust = models.DecimalField('Dust', max_digits=18, decimal_places=8, default=Decimal('0.0000543'))
-
-    class Meta:
-        verbose_name_plural = _('currencies')
-
-    def __str__(self):
-        return self.label
-
-
-class Transaction(models.Model):
-    txid = models.CharField('Txid', max_length=100)
-    address = models.CharField('Address', max_length=50)
-    currency = models.ForeignKey('Currency', on_delete=models.CASCADE)
-    processed = models.BooleanField('Processed', default=False)
-
-    class Meta:
-        unique_together = (('txid', 'address'),)
-
-
-class WithdrawTransaction(models.Model):
-    NEW = 'NEW'
-    ERROR = 'ERROR'
-    DONE = 'DONE'
-    WTX_STATES = (
-        ('NEW', 'New'),
-        ('ERROR', 'Error'),
-        ('DONE', 'Done'),
-    )
-    currency = models.ForeignKey('Currency', on_delete=models.CASCADE)
-    amount = models.DecimalField('Amount', max_digits=18, decimal_places=8)
-    address = models.CharField('Address', max_length=50)
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
-    created = models.DateTimeField('Created', default=now)
-    txid = models.CharField('Txid', max_length=100, blank=True, null=True, db_index=True)
-    walletconflicts = models.CharField('Walletconflicts txid', max_length=100, blank=True, null=True, db_index=True)
-    state = models.CharField('State', max_length=10, choices=WTX_STATES, default=NEW)
-    fee = models.DecimalField('Fee', max_digits=18, decimal_places=8, null=True, blank=True)
+    expire_at = models.DateTimeField('Created', default=now)

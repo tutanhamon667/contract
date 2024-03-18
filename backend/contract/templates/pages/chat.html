@@ -15,11 +15,17 @@
                 </div>
                 <ul class="list-unstyled chat-list mt-2 mb-0" x-data>
                     <template x-for="chat in $store.chatsData.chats">
-                        <li class="clearfix" :id="chat.chat_uuid" x-bind="chat_item">
+                        <li class="clearfix" :class="chat.active? 'chat-active': ''" :id="chat.chat_uuid" x-bind="chat_item">
                             <img :src="chat.other_user.photo" alt="avatar">
                             <div class="about">
                                 <div class="name" x-text="chat.other_user.display_name"></div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> <p x-text="chat.messages.length?chat.messages[chat.messages.length - 1].sender+ ': ' +  chat.messages[chat.messages.length - 1].message: ''"></p></div>
+                                 <div x-text="chat.chat_title"></div>
+                                <div x-text="chat.not_read_count"></div>
+                                    <p x-text="chat.messages.length?chat.messages[chat.messages.length - 1].sender+ ': ' +  chat.messages[chat.messages.length - 1].message: ''"></p>
+                                    <template  x-if="chat.messages.length && chat.messages[chat.messages.length - 1].file_name">
+                                        <a x-text="chat.messages[chat.messages.length - 1].file_name" :href="'download/' + chat.messages[chat.messages.length - 1].file_id" target="_blank"></a>
+                                    </template>
+                                </div>
                             </div>
                         </li>
                     </template>
@@ -35,21 +41,26 @@
                             </a>
                             <div class="chat-about">
                                 <h6 class="m-b-0" x-text="$store.chatsData.getOtherUser().other_user.display_name"></h6>
-                                <small>Last seen: 2 hours ago</small>
                             </div>
                         </div>
 
                     </div>
                 </div>
                 <div class="chat-history">
-                    <ul class="m-b-0" x-data="{self_nick_name: '{{ user.display_name }}'}">
-                        <template x-for="message in $store.chatsData.currentChatMessages">
+                    <ul class="m-b-0" x-data="{self_nick_name: '{{ user.display_name }}', acitve_chat:'$store.chatsData.activeChatUUID'}">
+                        <template x-for="message in $store.chatsData.getActiveChatMessages" :key="message.created">
                             <li class="clearfix">
                                 <div class="message-data" :class="message.sender == self_nick_name? 'text-right' : ''">
-                                    <span class="message-data-time"   :class="message.sender == self_nick_name? ' other-message float-right' : 'my-message'"  x-text="message.date"></span>
+                                    <span class="message-data-time"   :class="message.sender == self_nick_name? ' other-message float-right' : 'my-message'"  x-text="message.created"></span>
                                 </div>
                                 <div class="clear"></div>
-                                <div class="message "  :class="message.sender == self_nick_name? ' other-message float-right' : 'my-message'"  x-text="message.message"></div>
+                                <template  x-if="message.file_name">
+                                    <a x-text="message.file_name" :href="'download/' + message.file_id" target="_blank"></a>
+                                </template>
+                                <template  x-if="message.message">
+                                    <div class="message " :class="message.sender == self_nick_name? ' other-message float-right' : 'my-message'"  x-text="message.message"></div>
+                                </template>
+
                             </li>
                         </template>
 
@@ -58,11 +69,20 @@
                 <div class="chat-message clearfix" x-data>
                     <div class="input-group mb-0">
                         <div class="input-group-prepend">
-                            <span class="input-group-text"  id="chat-message-submit"><i class="fa fa-send"></i></span>
+                            <span class="input-group-text"  id="chat-message-submit" x-bind="chat_submit_btn"><i class="fa fa-send"></i></span>
                         </div>
                         <input type="text" class="form-control" x-bind="chat_text_input" x-model="$store.chatsData.message"  placeholder="Enter text here...">
                     </div>
                 </div>
+                 <form enctype="multipart/form-data" method="POST" action="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Select file to upload.</label>
+                        <input type="file" class="form-control" id="fileupload" placeholder="Select file">
+                    </div>
+                    <input type="submit" value="Upload" x-bind="file_upload_btn" class="btn btn-success">
+                </form>
+                <div id="uploaded_files"></div>
             </div>
         </div>
     </div>
@@ -75,6 +95,11 @@
         Content...
     </span>
 </div>
-    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="{% static 'js/alpine.js' %}" defer></script>
     <script src="{% static './js/chat.js' %}"></script>
+    <script>
+
+    const chat = new Chat({{ user.id }})
+
+    </script>
 {% endblock content %}

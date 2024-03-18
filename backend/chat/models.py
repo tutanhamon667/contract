@@ -1,12 +1,16 @@
+import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 from asgiref.sync import sync_to_async
-from contract.settings import CHAT_TYPE
-from users.models.user import Member, Job
+from django.utils import timezone
+
+from contract.settings import CHAT_TYPE, CHAT_MESSAGE_TYPE
+from users.models.user import Member, Job, ResponseInvite
 import uuid
 
 class Chat(models.Model):
-    pkid = models.BigAutoField(primary_key=True, editable=False, default=1, )
+    pkid = models.BigAutoField(primary_key=True, editable=False )
     uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False, unique=True)
     customer = models.ForeignKey(
         Member,
@@ -37,6 +41,16 @@ class Chat(models.Model):
         verbose_name = "Модератор"
     )
 
+    response_invite = models.ForeignKey(
+        ResponseInvite,
+        related_name='chat_response_invite',
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name="отклик"
+    )
+
     type = models.IntegerField(verbose_name="Тип чата", default=CHAT_TYPE["RESPONSE_INVITE"], null=False)
 
 
@@ -59,6 +73,20 @@ class Chat(models.Model):
             return cls.objects.filter(moderator=user)
 
 
+
+class FileMessage(models.Model):
+    existingPath = models.CharField(unique=True, max_length=100)
+    name = models.CharField(max_length=50)
+    eof = models.BooleanField()
+    created = models.DateTimeField(default=timezone.now())
+    uploader = models.ForeignKey(
+        Member,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE
+    )
+
+
 class Message(models.Model):
     chat = models.ForeignKey(
         Chat,
@@ -67,15 +95,19 @@ class Message(models.Model):
     )
     sender = models.ForeignKey(
         Member,
+        blank=True,
+        null=True,
         on_delete=models.CASCADE
     )
-    content = models.TextField()
+    type = models.IntegerField(verbose_name="Тип сообщения", choices=CHAT_MESSAGE_TYPE, default=0, blank=True)
+    content = models.TextField(blank=True, default=None, null=True)
     created = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False, blank=True)
-
+    file = models.ForeignKey(to=FileMessage, blank=True, default=None, null=True, on_delete=models.CASCADE)
     class Meta:
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
 
     def __str__(self):
         return f"{self.sender.first_name} - {self.sender.last_name}"
+

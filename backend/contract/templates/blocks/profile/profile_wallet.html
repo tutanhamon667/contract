@@ -2,6 +2,10 @@
 {% block profile_content %}
     {% load django_bootstrap5 %}
     <h1 class="my_order_title">BTC</h1>
-    <p>btc wallet: {{ wallet.address }}</p>
-    <p>balance: {{ balance }}</p>
+    <p>btc wallet: {{ balance.address.address }}</p>
+    <p>balance btc: {{ balance.balance_btc }}</p>
+    <p>balance usd: {{ balance.balance_usd }}$</p>
+    {% for transaction in balance.output_transactions %}
+        <p>{{ transaction.date }}  {{ transaction.txid }}  {{ transaction.value }}</p>
+    {% endfor %}
 {% endblock profile_content %}

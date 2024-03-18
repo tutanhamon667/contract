@@ -57,4 +57,6 @@ pycoin~=0.92.20230326
 django-ckeditor==6.7.1
 captcha~=0.5.0
 django-simple-captcha~=0.6.0
-bipwallet~=1.0.2
+hdwallet
+bit
+django-celery-beat

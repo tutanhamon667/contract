@@ -2,12 +2,41 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
+# CELERY_BROKER_URL = 'amqp://contract:U789*(Y*(g@localhost:5673'
+
+CELERY_BROKER_URL = 'redis://localhost:6380/1'
+CELERY_RESULT_BACKEND = 'redis://localhost:6380/1'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CACHES = {
+	"default": {
+		"BACKEND": "django_redis.cache.RedisCache",
+		"LOCATION": "redis://127.0.0.1:6380/3",
+		"OPTIONS": {
+			"CLIENT_CLASS": "django_redis.client.DefaultClient",
+		}
+	}
+}
+
+CELERY_BEAT_SCHEDULE = {
+	"update_addresses_balances": {
+		"task": "btc.tasks.update_addresses_balances",
+		"schedule": crontab(minute="*/5"),
+	},
+	"update_btc_usd": {
+		"task": "btc.tasks.update_btc_usd",
+		"schedule": crontab(minute="*/5"),
+	},
+}
 
 ASGI_APPLICATION = "contract.asgi.application"
 # Quick-start development settings - unsuitable for production
@@ -23,9 +52,9 @@ DEBUG = os.getenv('DEBUG', default='True') == 'True'
 ALLOWED_HOSTS = ['*']
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    },
+	"default": {
+		"BACKEND": "channels.layers.InMemoryChannelLayer"
+	},
 }
 # Application definition
 
@@ -53,8 +82,8 @@ INSTALLED_APPS = [
 	'btc',
 	'django_bootstrap_icons',
 	'common',
-	'channels'
-
+	'channels',
+	'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -86,7 +115,6 @@ TEMPLATES = [
 		},
 	},
 ]
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -427,6 +455,21 @@ CONTACT_TYPE = (
 	('telegram', 'Telegram'),
 	('other', 'Other')
 )
+
+CHAT_MESSAGE_TYPE = (
+	('MESSAGE', 0),
+	('SYSTEM_MESSAGE', 1),
+	('FILE_MESSAGE', 2),
+)
+
+
+OPERATION_STATUS = (
+	('PAID', 0),
+	('UNPAID', 1),
+	('REJECTED', 2),
+)
+
+
 
 USER_ACTIONS = {
 	'create': 0,

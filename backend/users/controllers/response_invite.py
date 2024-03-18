@@ -57,7 +57,7 @@ class ResponseInviteView:
 				if not res:
 					return HttpResponse(status=500)
 				if status == RESPONSE_INVITE_STATUS["ACCEPTED"]:
-					chat = Chat(customer=res.job.company.user, worker=res.resume.user, type=CHAT_TYPE["RESPONSE_INVITE"])
+					chat = Chat(customer=res.job.company.user, worker=res.resume.user, type=CHAT_TYPE["RESPONSE_INVITE"], response_invite=res)
 					chat.save()
 				messages.success(request, 'Отклик отправлен')
 				return redirect(request.POST["redirect"])

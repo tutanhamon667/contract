@@ -5,7 +5,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from btc.views import gen_address, profile_wallet_view
+from btc.views import  profile_wallet_view, update_addresses, get_btc_usd
 from common.views import article_view
 from users.controllers.comment import comment_view
 from users.controllers.response_invite import response_invite_view
@@ -60,13 +60,12 @@ urlpatterns = [
     path('profile/jobs', jobs_profile_view, name='profile_jobs'),
     path('profile/jobs/<int:job_id>', job_profile_view, name='profile_job'),
     path('profile/wallet', profile_wallet_view, name='profile_wallet'),
+    path('update_addresses', update_addresses, name='update_addresses'),
+    path('get_btc_usd', get_btc_usd, name='get_btc_usd'),
+
     path('profile/invites', profile_response_invite_view, name='profile_response_invite'),
     path('article/<int:article_id>', article_view, name='article'),
     path('chat/', include("chat.urls")),
-
-
-    #path('btc/generate_address', gen_address, name='generate_address'),
-
 
 
 
