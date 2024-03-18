@@ -37,6 +37,28 @@ const app = function() {
         })
     }
 
+     const profileJobsFilters = () => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const filterForm = $('.profile_jobs_filter_form')
+        const status = $(filterForm).find('[name="status"]')
+        const page = $(filterForm).find('[name="page"]')
+
+        $("[name=\"status_radio\"]").on("change", function(el) {
+            console.log($(this).attr('id'))
+            switch ($(this).attr('id')) {
+                case 'status_0':
+
+                    $(status).val(0)
+                    break;
+                case 'status_1':
+                    $(status).val(1)
+                    break;
+
+            }
+            $(filterForm).submit()
+        })
+    }
+
     const profileResponseInvitesFilters = () => {
         const orderBtn = $('#order')
         const searchParams = new URLSearchParams(window.location.search);
@@ -74,7 +96,8 @@ const app = function() {
     return {
         initRating:initRating,
         profileResponseInvitesFilters:profileResponseInvitesFilters,
-        radioInputChecker:radioInputChecker
+        radioInputChecker:radioInputChecker,
+        profileJobsFilters:profileJobsFilters
     }
 }
 

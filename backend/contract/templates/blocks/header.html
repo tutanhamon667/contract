@@ -1,3 +1,5 @@
+{% load static %}
+
 <div class="container">
     <nav class="navbar navbar-expand-sm navbar-light bg-body-tertiary">
         <!-- Container wrapper -->
@@ -20,7 +22,7 @@
                 <!-- Navbar brand -->
                 <a class="navbar-brand mt-2 mt-lg-0" href="/">
                     <img
-                            src="../static/img/logo.png"
+                            src="{% static "img/logo.png" %}"
                             height="30"
                             alt="MDB Logo"
                             loading="lazy"

@@ -491,6 +491,36 @@ class Job(models.Model):
 		self.save()
 
 	@property
+	def tier_name(self):
+		payments= self.jobpayment_set.filter().order_by('-expire_at')[:1]
+		if len(payments):
+			payment = payments[0]
+			return payment.job_tier.name
+		else:
+			return 'Не оплачен'
+
+	@property
+	def payment_expire(self):
+		payments = self.jobpayment_set.filter().order_by('-expire_at')[:1]
+		if len(payments):
+			payment = payments[0]
+			return payment.expire_at
+		else:
+			return 'Не был оплачен'
+
+	def get_existing_payment(self):
+		now = datetime.datetime.now()
+		payments = self.jobpayment_set.filter(expire_at__lte=now)
+		if len(payments):
+			return payments[0]
+		else:
+			return False
+
+	@property
+	def responses_count(self):
+		return ResponseInvite.objects.filter(job_id=self.id, type=0).count()
+
+	@property
 	def busy_type(self):
 		str = ''
 		if self.is_offline:

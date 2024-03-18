@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <div class="container">
+        <section>
+            <div class="row">
+                <div class="col-lg-9">
+                    {% with short=False show_company_logo=True  jobs=job single=True %}
+                        {% include "../components/job/job_component.html" %}
+                    {% endwith %}
+
+                </div>
+            </div>
+        </section>
+        <section>
+
+            <form action="" method="post">
+                {% csrf_token %}
+                {% bootstrap_form payment_form %}
+                <input type="submit" value="Обновить"/>
+            </form>
+
+        </section>
+    </div>
+{% endblock content %}

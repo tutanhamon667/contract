@@ -3,9 +3,14 @@
     {% load django_bootstrap5 %}
     <h1 class="my_order_title">BTC</h1>
     <p>btc wallet: {{ balance.address.address }}</p>
-    <p>balance btc: {{ balance.balance_btc }}</p>
-    <p>balance usd: {{ balance.balance_usd }}$</p>
+    <p>balance btc: {{ balance.get_final_balance_btc }}</p>
+    <p>balance usd: {{ balance.get_final_balance_usd }}$</p>
+    <p>Пополнения:</p>
     {% for transaction in balance.output_transactions %}
         <p>{{ transaction.date }}  {{ transaction.txid }}  {{ transaction.value }}</p>
+    {% endfor %}
+    <p>Покупки:</p>
+    {% for operation in balance.operations %}
+        <p> {{ operation.id }}  | {{ operation.reason.created }} - {{ operation.reason.expire_at }} Стоимость: {{ operation.cost_btc}} Количество месяцев :{{operation.reason.amount.amount }} Покупка:  {{ operation.reason_content_type.app_labeled_name }}</p>
     {% endfor %}
 {% endblock profile_content %}

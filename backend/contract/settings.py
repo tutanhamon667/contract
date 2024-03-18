@@ -440,6 +440,13 @@ PAGE_SETTINGS = {
 			"order": "desc"
 		}
 	},
+	"PROFILE_JOBS": {
+		"GET_PARAMS": {
+			"status": 0,
+			"page": 1,
+		}
+	},
+
 
 	"DEFAULT": {
 		"GET_PARAMS": {

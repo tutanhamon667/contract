@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -267,43 +269,6 @@ def profile_company_view(request):
 		})
 
 
-def job_profile_view(request, job_id):
-	user = request.user
-	access = Access(user)
-	code = access.check_access("profile_job")
-	if code != 200:
-		if code == 401:
-			return redirect('signin')
-		else:
-			return HttpResponse(status=code)
-	articles = Article.objects.all()
-	categories = ArticleCategory.objects.all()
-	if request.method == "GET":
-		company = Company.objects.get(user_id=user.id)
-		job = Job.objects.get(company=company.id, id=job_id)
-		if job:
-			form = JobForm(instance=job)
-			return render(request, './blocks/profile/profile_job.html', {
-				'form': form,
-				'categories': categories,
-				'articles': articles
-			})
-		else:
-			return HttpResponse(status=404)
-
-	if request.method == "POST":
-		company = Company.objects.get(user_id=user.id)
-		job = Job.objects.get(company=company.id, id=job_id)
-		form = JobForm(request.POST, instance=job)
-		form.company_id = company.id
-		if form.is_valid():
-			form.save()
-			return redirect(to='profile_jobs')
-		return render(request, './blocks/profile/profile_job.html', {
-			'form': form,
-			'categories': categories,
-			'articles': articles
-		})
 
 
 def jobs_profile_view(request):
@@ -317,34 +282,31 @@ def jobs_profile_view(request):
 			return HttpResponse(status=code)
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
-	if request.method == 'POST':
 
-		form = JobForm(request.POST, )
-		company = Company.objects.get(user_id=user.id)
-		form.company_id = company.id
-		if form.is_valid():
-			form.save()
-			return redirect(to='profile_jobs')
-		else:
-			jobs = Job.objects.filter(company=company.id)
-			return render(request, './blocks/profile/profile_jobs.html',
-						  {'jobs': jobs,
-						   'form': form,
-						   'categories': categories,
-						   'articles': articles
-						   })
+	page = "PROFILE_JOBS"
+	builder = PageBuilder(page)
+	params = builder.build_get_params(request.GET)
+	if builder.route_with_params(request.GET):
+		return redirect(f'{request.path}?{params}')
 
 	if request.method == "GET":
 		company = Company.objects.get(user_id=user.id)
-		new_entity_form = JobForm(initial={'company': company.id})
 		jobs = Job.objects.filter(company=company.id)
+		now = datetime.datetime.now()
+		jobs_paid = jobs.filter(jobpayment__created__lte=now, jobpayment__expire_at__gte=now)
+		jobs_not_paid_ids = []
+		for job_paid in jobs_paid:
+			jobs_not_paid_ids.append(job_paid.id)
+		jobs_not_paid = jobs.filter().exclude(id__in=jobs_not_paid_ids)
 		return render(request, './blocks/profile/profile_jobs.html',
 					  {'jobs': jobs,
-					   'form': new_entity_form,
+					   'jobs_not_paid': jobs_not_paid,
+					   'jobs_paid': jobs_paid,
 					   'categories': categories,
 					   'articles': articles
 					   })
-
+	else:
+		return HttpResponse(status=404)
 
 def profile_response_invite_view(request):
 	articles = Article.objects.all()

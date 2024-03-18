@@ -157,6 +157,13 @@ def resumes_view(request):
 	if code != 200:
 		if code == 401:
 			return redirect('signin')
+		if code == 503:
+			articles = Article.objects.all()
+			categories = ArticleCategory.objects.all()
+			return render(request, './pages/customer_access_denied.html', {
+				'articles': articles,
+				'categories': categories,
+				})
 		else:
 			return HttpResponse(status=code)
 
@@ -186,6 +193,13 @@ def resume_view(request, resume_id):
 	access = Access(user)
 	code = access.check_access("resume", resume_id)
 	if code != 200:
+		if code == 503:
+			articles = Article.objects.all()
+			categories = ArticleCategory.objects.all()
+			return render(request, './pages/customer_access_denied.html', {
+				'articles': articles,
+				'categories': categories,
+				})
 		if code == 401:
 			return redirect('signin')
 		else:

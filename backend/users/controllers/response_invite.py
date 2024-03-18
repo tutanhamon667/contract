@@ -17,6 +17,20 @@ class ResponseInviteView:
 	def create(self, request):
 		if request.user.is_authenticated:
 			try:
+				access = Access(request.user)
+				code = access.check_access("create_invite_response")
+				if code != 200:
+					if code == 401:
+						return redirect('signin')
+					if code == 503:
+						articles = Article.objects.all()
+						categories = ArticleCategory.objects.all()
+						return render(request, './pages/customer_access_denied.html', {
+							'articles': articles,
+							'categories': categories,
+						})
+					else:
+						return HttpResponse(status=code)
 				user = request.user
 				job_id = request.POST["job"]
 				resume_id = request.POST["resume"]

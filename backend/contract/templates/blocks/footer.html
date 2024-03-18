@@ -1,3 +1,4 @@
+
 <div class="container">
     <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
         <div class="col mb-3"></div>
@@ -17,7 +18,7 @@
                                 {% endif %}
 
                                     {% if cat_article.photo %}
-                                        <img src='../media/{{  cat_article.photo  }}' height="30" alt="{{ cat_article.get_link }}"/>
+                                        <img src='/media/{{  cat_article.photo  }}' height="30" alt="{{ cat_article.get_link }}"/>
                                     {% endif %}
                                     {{ cat_article.title }}</a>
                             </li>

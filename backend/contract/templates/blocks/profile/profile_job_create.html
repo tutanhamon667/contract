@@ -1,0 +1,12 @@
+{% extends "profile.html" %}
+{% block profile_content %}
+    {% load django_bootstrap5 %}
+    <h1 class="my_order_title">Создать вакансию</h1>
+    <form action="" method="post"  enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <input type="submit" value="Создать"/>
+    </form>
+
+{% endblock profile_content %}

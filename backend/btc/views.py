@@ -1,16 +1,22 @@
-from django.shortcuts import render
+import datetime
+
+from django.shortcuts import render, redirect
 
 from django.core.cache import cache
-
+from django.contrib.contenttypes.models import ContentType
 from btc.libs.balance import Balance
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count, get_wallet_balance, \
 	create_transaction
-from btc.models import Address as WalletAddress
+from btc.models import Address as WalletAddress, CustomerAccessPayment, Operation, Address
 from btc.tasks import update_addresses_balances, update_btc_usd
 from common.models import Article, ArticleCategory
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
+from contract.settings import OPERATION_STATUS
+from users.models.user import Member
+from dateutil.relativedelta import relativedelta
+from django.db import transaction
 
 def update_addresses(request):
 	update_addresses_balances()
@@ -20,6 +26,33 @@ def update_addresses(request):
 def get_btc_usd(request):
 	res = Balance.update_btc_usd()
 	return JsonResponse({'btc_usd': res})
+
+
+@transaction.atomic
+def customer_access(request):
+	user = request.user
+	if user.is_authenticated:
+		today = datetime.datetime.now()
+		customer_access = CustomerAccessPayment.objects.filter(created__lte=today,
+															   expire_at__gte=today, user=user)
+		if len(customer_access) == 0:
+			member = Member.objects.get(id=user.id)
+			if member.is_worker:
+				return HttpResponse(status=403)
+			d1 = datetime.datetime.now()
+			expire_date = d1 + relativedelta(months=1)
+			ca = CustomerAccessPayment(user=user, created=d1, expire_at=expire_date, amount_id=1)
+			ca.save()
+			address = Address.objects.get(user=user)
+			customer_access_content_type = ContentType.objects.get_for_model(CustomerAccessPayment)
+			new_operation = Operation(address=address, cost_btc=0, cost_usd=0,  status=0,
+									  reason_content_type=customer_access_content_type, reason_object_id=ca.id)
+			new_operation.save()
+			return redirect('profile_wallet')
+		else:
+			return redirect('index')
+	else:
+		return redirect('signin')
 
 def profile_wallet_view(request):
 	if request.user.is_authenticated:
@@ -38,9 +71,10 @@ def profile_wallet_view(request):
 				profile_address = WalletAddress(address=address["address"], wif=address["wif"], key_id=address["key_id"], wallet=wallet, user=user)
 				profile_address.save()
 			balance = Balance(user)
-			balance.get_output_transactions()
 			return render(request, './blocks/profile/profile_wallet.html', {
 				'balance': balance,
 				'categories': categories,
 				'articles': articles
 			})
+	else:
+		return redirect('signin')

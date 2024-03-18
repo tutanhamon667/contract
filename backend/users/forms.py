@@ -4,9 +4,15 @@ from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
 from django_ckeditor_5.widgets import CKEditor5Widget
 
+from btc.models import JobTier, BuyPaymentPeriod
 from users.models.common import Region
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
 	Company, CustomerReview, ResponseInvite
+
+
+class JobPaymentTarifForm(forms.Form):
+	tier = forms.ModelChoiceField(label="Тариф размещения", queryset=JobTier.objects.all(), blank=True, required=True)
+	amount = forms.ModelChoiceField(label="Количество месяцев", queryset=BuyPaymentPeriod.objects.all(), blank=True, required=True)
 
 
 class JobForm(ModelForm):

@@ -4,6 +4,7 @@ from . import models
 from .forms import WalletAdminForm
 
 
+
 class WalletAdmin(admin.ModelAdmin):
     form = WalletAdminForm
     list_display = ('id',  'balance', 'holded', 'unconfirmed', 'label', 'get_address')
@@ -23,3 +24,23 @@ class AddressAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Address, AddressAdmin)
 
+
+class BuyPaymentPeriodAdmin(admin.ModelAdmin):
+    list_display = ('id', 'amount', 'discount')
+
+admin.site.register(models.BuyPaymentPeriod, BuyPaymentPeriodAdmin)
+
+class CustomerAccessPaymentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'created', 'expire_at', 'amount')
+
+admin.site.register(models.CustomerAccessPayment, CustomerAccessPaymentAdmin)
+
+class JobPaymentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'job','job_tier', 'created', 'expire_at', 'amount')
+
+admin.site.register(models.JobPayment, JobPaymentAdmin)
+
+class JobTierAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name','cost', 'description')
+
+admin.site.register(models.JobTier, JobTierAdmin)

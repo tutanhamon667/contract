@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import binascii
+import datetime
 from decimal import Decimal
 from django.db import connection
 
@@ -14,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from btc import settings
 from btc.validator import validate
 from contract.settings import OPERATION_STATUS
-from users.models.user import User, Member
+from users.models.user import User, Member, Job
 
 
 class Wallet(models.Model):
@@ -110,6 +111,7 @@ class Wallet(models.Model):
 
 
 class Address(models.Model):
+
     address = models.CharField('Address', max_length=50, primary_key=True)
     created = models.DateTimeField('Created', default=now)
     active = models.BooleanField('Active', default=True)
@@ -153,14 +155,57 @@ class Operation(models.Model):
     cost_btc = models.DecimalField('Cost BTC', max_digits=18, decimal_places=8, default=0)
     cost_usd = models.DecimalField('Cost USD', max_digits=8, decimal_places=2, default=0)
     status = models.IntegerField(verbose_name="Status", choices=OPERATION_STATUS, default=0, blank=True)
-    amount = models.IntegerField('Months values', default=1, null=False, blank=False)
+
     description = models.CharField('Description', max_length=100, blank=True, null=True)
     reason_content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)
-    reason_object_id = models.PositiveIntegerField(null=True, blank=True)
+    reason_object_id = models.CharField(null=True, blank=True)
     reason = GenericForeignKey('reason_content_type', 'reason_object_id')
 
 
-class CustomerAccess(models.Model):
+class BuyPaymentPeriod(models.Model):
+    amount = models.IntegerField('Months values', default=1, null=False, blank=False)
+    discount = models.IntegerField('Discount', default=0, null=False, blank=False)
+
+    def __str__(self):
+        return u'{0}   Скидка: {1}%'.format(self.amount, self.discount)
+
+class CustomerAccessPayment(models.Model):
     user = models.ForeignKey(Member, on_delete=models.PROTECT, null=False, blank=False, default=None)
     created = models.DateTimeField('Created', default=now)
     expire_at = models.DateTimeField('Created', default=now)
+    amount = models.ForeignKey(BuyPaymentPeriod, on_delete=models.PROTECT, null=False, blank=False, default=None)
+
+
+class JobTier(models.Model):
+    name = models.CharField(verbose_name="tier name", blank=False, default="", null=False, max_length=255)
+    cost = models.DecimalField(verbose_name="Cost",  blank=False, null=False, max_digits=8, decimal_places=2, default=0)
+    description = models.CharField(verbose_name="Description", blank=False, default="", null=False, max_length=255)
+
+    def __str__(self):
+        return u'{0}        {1}$'.format(self.name, self.cost)
+
+
+class JobPayment(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, null=False, blank=False, default=None)
+    job_tier = models.ForeignKey(JobTier, default=None, blank=None, null=False, on_delete=models.PROTECT)
+    created = models.DateTimeField('Created', default=now)
+    expire_at = models.DateTimeField('Created', default=now)
+    amount = models.ForeignKey(BuyPaymentPeriod, on_delete=models.PROTECT, null=False, blank=False, default=None)
+
+    @classmethod
+    def get_job_active_payment(cls, job):
+        now = datetime.datetime.now()
+        payment = cls.objects.filter(expire_at__gte=now, job_id=job.id)
+        if len(payment):
+            return payment[0]
+        else:
+            return False
+
+
+
+
+
+
+
+
+

@@ -5,14 +5,15 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from btc.views import  profile_wallet_view, update_addresses, get_btc_usd
+from btc.views import profile_wallet_view, update_addresses, get_btc_usd, customer_access
 from common.views import article_view
 from users.controllers.comment import comment_view
+from users.controllers.job import profile_job_view
 from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
     profile_main_view, \
-    profile_company_view, job_profile_view, jobs_profile_view, profile_response_invite_view
+    profile_company_view, jobs_profile_view, profile_response_invite_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view
 from . import settings
 from users.views import captcha_view, profile_view,   \
@@ -58,11 +59,14 @@ urlpatterns = [
     path('profile/contact/<int:contact_id>', contact_view, name='profile_contacts'),
     path('profile/company', profile_company_view, name='profile_company_view'),
     path('profile/jobs', jobs_profile_view, name='profile_jobs'),
-    path('profile/jobs/<int:job_id>', job_profile_view, name='profile_job'),
+    path('profile/jobs/create', profile_job_view.create, name='profile_job_view_create'),
+    path('profile/jobs/delete', profile_job_view.delete, name='profile_job_view_delete'),
+    path('profile/jobs/pay_for_tier/<int:job_id>', profile_job_view.pay_for_tier, name='profile_job_view_pay_for_tier'),
+    path('profile/jobs/update/<int:job_id>', profile_job_view.update, name='profile_job_view_update'),
     path('profile/wallet', profile_wallet_view, name='profile_wallet'),
-    path('update_addresses', update_addresses, name='update_addresses'),
-    path('get_btc_usd', get_btc_usd, name='get_btc_usd'),
-
+    #path('update_addresses', update_addresses, name='update_addresses'),
+    #path('get_btc_usd', get_btc_usd, name='get_btc_usd'),
+    path('order/customer_access', customer_access, name='customer_access'),
     path('profile/invites', profile_response_invite_view, name='profile_response_invite'),
     path('article/<int:article_id>', article_view, name='article'),
     path('chat/', include("chat.urls")),
