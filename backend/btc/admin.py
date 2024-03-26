@@ -31,12 +31,12 @@ class BuyPaymentPeriodAdmin(admin.ModelAdmin):
 admin.site.register(models.BuyPaymentPeriod, BuyPaymentPeriodAdmin)
 
 class CustomerAccessPaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'created', 'expire_at', 'amount')
+    list_display = ('id', 'user', 'start_at', 'expire_at', 'amount')
 
 admin.site.register(models.CustomerAccessPayment, CustomerAccessPaymentAdmin)
 
 class JobPaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'job','job_tier', 'created', 'expire_at', 'amount')
+    list_display = ('id', 'job','job_tier', 'start_at', 'expire_at', 'amount')
 
 admin.site.register(models.JobPayment, JobPaymentAdmin)
 

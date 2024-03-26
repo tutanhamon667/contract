@@ -1,5 +1,5 @@
 from contract.settings import USER_ACTIONS
-from users.models.user import User, Resume, Job
+from users.models.user import User, Resume, Job, Company
 from btc.models import CustomerAccessPayment
 import datetime
 
@@ -12,6 +12,10 @@ class Access:
 		if entity == "profile_job_pay_tier":
 			if not self.user.is_authenticated:
 				return 401
+			if self.user.is_customer:
+				company = Company.objects.get(user=self.user)
+				if company.is_moderated is False:
+					return 403
 			if self.user.is_customer:
 				try:
 					job = Job.objects.get(company__user_id=self.user.id, id=entity_id)
@@ -27,6 +31,9 @@ class Access:
 				return 401
 			if self.user.is_customer:
 				try:
+					company = Company.objects.get(user=self.user)
+					if company.is_moderated is False:
+						return 403
 					today = datetime.datetime.now()
 					customer_access = CustomerAccessPayment.objects.get(created__lte=today,
 																		expire_at__gte=today, user=self.user)
@@ -38,6 +45,9 @@ class Access:
 				return 401
 			if self.user.is_customer:
 				try:
+					company = Company.objects.get(user=self.user)
+					if company.is_moderated is False:
+						return 403
 					today = datetime.datetime.now()
 					customer_access = CustomerAccessPayment.objects.get(created__lte=today,
 																		expire_at__gte=today, user=self.user)
@@ -76,6 +86,9 @@ class Access:
 			if not self.user.is_authenticated:
 				return 401
 			if self.user.is_customer:
+				company = Company.objects.get(user=self.user)
+				if company.is_moderated is False:
+					return 403
 				# get from db customer paid  resumes view until...
 				# if self.user.has_resume_access == False:
 				# return 403

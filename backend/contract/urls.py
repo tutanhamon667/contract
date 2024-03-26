@@ -15,6 +15,7 @@ from users.controllers.profile import profile_resumes_view, profile_resume_view,
     profile_main_view, \
     profile_company_view, jobs_profile_view, profile_response_invite_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view
+from users.controllers.test_view import TestClassView
 from . import settings
 from users.views import captcha_view, profile_view,   \
     register_view
@@ -44,6 +45,7 @@ urlpatterns = [
     path('logout', logout_view, name='logout'),
     path('jobs', jobs_view, name='jobs'),
     path('resumes', resumes_view, name='resumes'),
+    path('test_view', TestClassView.as_view(), name='test_view'),
     path('comment/create', comment_view.create, name='comment_create'),
     path('response_invite/update', response_invite_view.update, name='response_invite_update'),
     path('response_invite/delete', response_invite_view.delete, name='response_invite_delete'),
@@ -66,12 +68,10 @@ urlpatterns = [
     path('profile/wallet', profile_wallet_view, name='profile_wallet'),
     #path('update_addresses', update_addresses, name='update_addresses'),
     #path('get_btc_usd', get_btc_usd, name='get_btc_usd'),
-    path('order/customer_access', customer_access, name='customer_access'),
+    path('profile/customer_access', customer_access, name='customer_access'),
     path('profile/invites', profile_response_invite_view, name='profile_response_invite'),
     path('article/<int:article_id>', article_view, name='article'),
     path('chat/', include("chat.urls")),
-
-
 
     path('admin/', admin.site.urls),
     path('swagger/',

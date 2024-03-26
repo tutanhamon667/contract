@@ -2,6 +2,9 @@
 import binascii
 import datetime
 from decimal import Decimal
+
+from django.db import transaction
+from dateutil.relativedelta import relativedelta
 from django.db import connection
 
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -13,10 +16,11 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
 from btc import settings
+from btc.libs.balance import Balance
 from btc.validator import validate
 from contract.settings import OPERATION_STATUS
 from users.models.user import User, Member, Job
-
+from django.core.cache import cache
 
 class Wallet(models.Model):
 
@@ -152,6 +156,7 @@ class Address(models.Model):
 class Operation(models.Model):
     address = models.ForeignKey(Address, on_delete=models.CASCADE, default=None)
     created = models.DateTimeField('Created', default=now)
+    paid_at = models.DateTimeField('Paid at', default=None, null=True, blank=True)
     cost_btc = models.DecimalField('Cost BTC', max_digits=18, decimal_places=8, default=0)
     cost_usd = models.DecimalField('Cost USD', max_digits=8, decimal_places=2, default=0)
     status = models.IntegerField(verbose_name="Status", choices=OPERATION_STATUS, default=0, blank=True)
@@ -161,19 +166,21 @@ class Operation(models.Model):
     reason_object_id = models.CharField(null=True, blank=True)
     reason = GenericForeignKey('reason_content_type', 'reason_object_id')
 
+    @classmethod
+    def create_operation(cls, address, reason, reason_id, price_btc, price_usd,paid_at, status):
+        reason_content_type = ContentType.objects.get_for_model(reason)
+        new_operation = Operation(address=address, cost_btc=price_btc,paid_at=paid_at, cost_usd=price_usd, status=status,
+                                  reason_content_type=reason_content_type,
+                                  reason_object_id=reason_id)
+        new_operation.save()
+        return new_operation
+
 
 class BuyPaymentPeriod(models.Model):
     amount = models.IntegerField('Months values', default=1, null=False, blank=False)
     discount = models.IntegerField('Discount', default=0, null=False, blank=False)
-
     def __str__(self):
         return u'{0}   Скидка: {1}%'.format(self.amount, self.discount)
-
-class CustomerAccessPayment(models.Model):
-    user = models.ForeignKey(Member, on_delete=models.PROTECT, null=False, blank=False, default=None)
-    created = models.DateTimeField('Created', default=now)
-    expire_at = models.DateTimeField('Created', default=now)
-    amount = models.ForeignKey(BuyPaymentPeriod, on_delete=models.PROTECT, null=False, blank=False, default=None)
 
 
 class JobTier(models.Model):
@@ -184,12 +191,18 @@ class JobTier(models.Model):
     def __str__(self):
         return u'{0}        {1}$'.format(self.name, self.cost)
 
+class CustomerAccessPayment(models.Model):
+    user = models.ForeignKey(Member, on_delete=models.PROTECT, null=False, blank=False, default=None)
+    start_at = models.DateTimeField('Start at', default=None, null=True, blank=True)
+    expire_at = models.DateTimeField('Created', default=None, null=True, blank=True)
+    amount = models.ForeignKey(BuyPaymentPeriod, on_delete=models.PROTECT, null=False, blank=False, default=None)
+
 
 class JobPayment(models.Model):
     job = models.ForeignKey(Job, on_delete=models.PROTECT, null=False, blank=False, default=None)
     job_tier = models.ForeignKey(JobTier, default=None, blank=None, null=False, on_delete=models.PROTECT)
-    created = models.DateTimeField('Created', default=now)
-    expire_at = models.DateTimeField('Created', default=now)
+    start_at = models.DateTimeField('Start at', default=None, null=True, blank=True)
+    expire_at = models.DateTimeField('Expire at', default=None, null=True, blank=True)
     amount = models.ForeignKey(BuyPaymentPeriod, on_delete=models.PROTECT, null=False, blank=False, default=None)
 
     @classmethod
@@ -200,6 +213,36 @@ class JobPayment(models.Model):
             return payment[0]
         else:
             return False
+
+    @transaction.atomic
+    def _create_payment(self, tier, amount, job, start_at, expire_at):
+        new_job_payment = JobPayment(job=job, job_tier_id=tier.id, amount_id=amount.id, start_at=start_at, expire_at=expire_at)
+        new_job_payment.save()
+        return new_job_payment
+
+    @classmethod
+    def prolong_payment(cls,  active_job_payment, amount_id, start_at=None, expire_at=None):
+        amount = BuyPaymentPeriod.objects.get(id=amount_id)
+        job = active_job_payment.job
+        tier = active_job_payment.tier
+        return JobPayment._create_payment( tier, amount, job, start_at, expire_at)
+
+    @classmethod
+    def create_payment(cls,  tier_id, amount_id, job, start_at=None, expire_at=None):
+        d1 = datetime.datetime.now()
+        amount = BuyPaymentPeriod.objects.get(id=amount_id)
+        tier = JobTier.objects.get(id=tier_id)
+        return JobPayment._create_payment(d1, tier, amount, job, start_at, expire_at)
+
+    @transaction.atomic
+    def close_period(self, close_date, cost_btc, cost_usd):
+        self.expire_at = close_date
+
+
+
+
+
+
 
 
 

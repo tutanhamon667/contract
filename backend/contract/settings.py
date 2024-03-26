@@ -446,12 +446,216 @@ PAGE_SETTINGS = {
 			"page": 1,
 		}
 	},
-
-
 	"DEFAULT": {
 		"GET_PARAMS": {
 		}
 	}
+}
+
+MODELS = {
+	'jobs': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': True,
+		},
+		'moderator': {
+			'access': True,
+		},
+		'anonymous': {
+			'access': True,
+		}
+
+	},
+	'job': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': True,
+		},
+		'moderator': {
+			'access': True,
+		},
+		'anonymous': {
+			'access': True,
+		}
+	},
+	'resumes': {
+		'customer': {
+			'access': {
+				'paid': True
+			},
+		},
+		'worker': {
+			'access': False,
+		},
+		'moderator': {
+			'access': True,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'resume': {
+		'customer': {
+			'access': {
+				'paid': True
+			},
+		},
+		'worker': {
+			'access': False,
+		},
+		'moderator': {
+			'access': True,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'comment': {
+		'customer': {
+			'access': False
+		},
+		'worker': {
+			'access': True,
+		},
+		'moderator': {
+			'access': True,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'response_invite': {
+		'customer': {
+			'access': {
+				'paid': True
+			},
+		},
+		'worker': {
+			'access': True,
+		},
+		'moderator': {
+			'access': False,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'profile_main': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': True,
+		},
+		'moderator': {
+			'access': True,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'profile_resume': {
+		'customer': {
+			'access': False,
+		},
+		'worker': {
+			'access': True,
+		},
+		'moderator': {
+			'access': False,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'profile_contact': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': True,
+		},
+		'moderator': {
+			'access': False,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'profile_company': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': False,
+		},
+		'moderator': {
+			'access': False,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'profile_jobs': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': False,
+		},
+		'moderator': {
+			'access': False,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'profile_wallet': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': False,
+		},
+		'moderator': {
+			'access': False,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'profile_customer_access': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': False,
+		},
+		'moderator': {
+			'access': False,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
+	'profile_invites': {
+		'customer': {
+			'access': True,
+		},
+		'worker': {
+			'access': True,
+		},
+		'moderator': {
+			'access': False,
+		},
+		'anonymous': {
+			'access': False,
+		}
+	},
 
 }
 
@@ -469,14 +673,12 @@ CHAT_MESSAGE_TYPE = (
 	('FILE_MESSAGE', 2),
 )
 
-
 OPERATION_STATUS = (
 	('PAID', 0),
 	('UNPAID', 1),
-	('REJECTED', 2),
+	('HOLD', 2),
+	('REJECTED', 3),
 )
-
-
 
 USER_ACTIONS = {
 	'create': 0,
