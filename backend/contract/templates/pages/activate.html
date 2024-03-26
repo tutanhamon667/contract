@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <div class="container">
+        <section>
+            <h1>Активация аккаунта работодателя</h1>
+            <a href='/chat/{{ chat_with_moderator }}'>Перейти в чат с модератором</a>
+        </section>
+    </div>
+{% endblock content %}

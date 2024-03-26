@@ -9,13 +9,26 @@ class Access:
 		self.user = user
 
 	def check_access(self, entity: str, entity_id=None, action=USER_ACTIONS["get"]):
+
+
+		if entity == "acivate_account":
+			if not self.user.is_authenticated:
+				return 401
+			if self.user.is_customer:
+				company = Company.objects.get(user=self.user)
+				if company.is_moderated is True:
+					return 403
+				else:
+					return 200
+			else:
+				return 403
 		if entity == "profile_job_pay_tier":
 			if not self.user.is_authenticated:
 				return 401
 			if self.user.is_customer:
 				company = Company.objects.get(user=self.user)
 				if company.is_moderated is False:
-					return 403
+					return 666
 			if self.user.is_customer:
 				try:
 					job = Job.objects.get(company__user_id=self.user.id, id=entity_id)
@@ -33,7 +46,7 @@ class Access:
 				try:
 					company = Company.objects.get(user=self.user)
 					if company.is_moderated is False:
-						return 403
+						return 666
 					today = datetime.datetime.now()
 					customer_access = CustomerAccessPayment.objects.get(created__lte=today,
 																		expire_at__gte=today, user=self.user)
@@ -47,7 +60,7 @@ class Access:
 				try:
 					company = Company.objects.get(user=self.user)
 					if company.is_moderated is False:
-						return 403
+						return 666
 					today = datetime.datetime.now()
 					customer_access = CustomerAccessPayment.objects.get(created__lte=today,
 																		expire_at__gte=today, user=self.user)
@@ -88,7 +101,7 @@ class Access:
 			if self.user.is_customer:
 				company = Company.objects.get(user=self.user)
 				if company.is_moderated is False:
-					return 403
+					return 666
 				# get from db customer paid  resumes view until...
 				# if self.user.has_resume_access == False:
 				# return 403

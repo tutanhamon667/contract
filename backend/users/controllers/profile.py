@@ -3,11 +3,38 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
+
+from chat.models import Chat
 from common.models import Article, ArticleCategory
+from contract.settings import CHAT_TYPE
 from users.core.access import Access
 from users.core.page_builder import PageBuilder
 from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite
 from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm
+
+
+def activate_view(request):
+	user = request.user
+	access = Access(user)
+	code = access.check_access("acivate_account")
+	if code != 200:
+		if code == 403:
+			return redirect('profile_main')
+		else:
+			return HttpResponse(status=code)
+	try:
+		chat_with_moderator = Chat.objects.get(customer=user, type=CHAT_TYPE["VERIFICATION"])
+	except Exception as e:
+		moderator = Member.objects.filter(is_moderator=True)
+		chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
+		chat_with_moderator.save()
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
+	return render(request, './pages/activate.html', {
+				'chat_with_moderator': chat_with_moderator.uuid,
+				'categories': categories,
+				'articles': articles
+			})
 
 
 def profile_resume_view(request, resume_id):
@@ -225,6 +252,8 @@ def profile_company_view(request):
 	access = Access(user)
 	code = access.check_access("profile_company")
 	if code != 200:
+		if code == 666:
+			return redirect('activate_view')
 		if code == 401:
 			return redirect('signin')
 		else:
@@ -276,6 +305,8 @@ def jobs_profile_view(request):
 	access = Access(user)
 	code = access.check_access("profile_job")
 	if code != 200:
+		if code == 666:
+			return redirect('activate_view')
 		if code == 401:
 			return redirect('signin')
 		else:
@@ -317,6 +348,8 @@ def profile_response_invite_view(request):
 	if code != 200:
 		if code == 401:
 			return redirect('signin')
+		if code == 666:
+			return redirect('activate_view')
 		else:
 			return HttpResponse(status=code)
 

@@ -15,138 +15,92 @@ from django.shortcuts import render
 
 from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
 from contract.settings import ERRORS
-from .forms import ResumeForm, RegisterWorkerForm
 from users.models.common import Captcha
-from users.clients import (GetCustomerProfileSerializer,
-                           PostCustomerProfileSerializer)
-from users.filters import FreelancerFilter
-from users.serializers.worker_serializer import (GetWorkerProfileSerializer,
-                                                 PostWorkerProfileSerializer, WorkerViewSerializer)
-from users.models.user import Company, Member, Resume
-from users.permissions import IsUser, IsOwnerOrReadOnly
-from users.serializers.serializers import (NewEmailSerializer,
-                               PasswordResetConfirmSerializer,
-                               SendEmailResetSerializer, SetPasswordSerializer,
-                               UserCreateSerializer)
 
 from django.contrib.auth import authenticate
-from users.serializers.worker_serializer import ResumeSerializer
 from .models.advertise import Banners
 
 User = get_user_model()
 
-
 class OnlyListView(mixins.ListModelMixin, viewsets.GenericViewSet):
-    pass
+	pass
 
 
 class UserView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
-               mixins.UpdateModelMixin, viewsets.GenericViewSet):
-    pass
+			   mixins.UpdateModelMixin, viewsets.GenericViewSet):
+	pass
 
 
 def captcha_check(request):
-    image = SimpleCaptcha(width=280, height=90)
-    challenge = Captcha.get_captcha_challenge(hash=request.POST['hashkey'])
-    captcha_base64 = str(base64.b64encode(image.generate(challenge, 'png').getvalue()))
-    return captcha_base64.replace("b'", '').replace("'", "")
+	image = SimpleCaptcha(width=280, height=90)
+	challenge = Captcha.get_captcha_challenge(hash=request.POST['hashkey'])
+	captcha_base64 = str(base64.b64encode(image.generate(challenge, 'png').getvalue()))
+	return captcha_base64.replace("b'", '').replace("'", "")
+
 
 def captcha_view(request):
-    if request.method == 'POST':
-        if request.POST["captcha"] is not None:
-            hash = request.POST["hashkey"]
-            res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
-            if res:
-                redirect_url = 'index'
-                if request.session['redirect']:
-                    redirect_url = request.session['redirect']
-                    request.session['redirect'] = None
-                page = redirect(to=redirect_url)
-                page.set_cookie('captcha', hash, max_age=60*60)
-                return page
-            else:
-                return render(request, 'captcha.html',
-                              {'hashkey': hash,
-                               'captcha': captcha_check(request),
-                               'error': "Введена не верная каптча"})
-    else:
-        captcha = Captcha()
-        key, hash = captcha.generate_key()
-        image = SimpleCaptcha(width=280, height=120)
-        captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
-        return render(request, 'captcha.html', {'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "")})
-
-
-
+	if request.method == 'POST':
+		if request.POST["captcha"] is not None:
+			hash = request.POST["hashkey"]
+			res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
+			if res:
+				redirect_url = 'index'
+				if request.session['redirect']:
+					redirect_url = request.session['redirect']
+					request.session['redirect'] = None
+				page = redirect(to=redirect_url)
+				page.set_cookie('captcha', hash, max_age=60 * 60)
+				return page
+			else:
+				return render(request, 'captcha.html',
+							  {'hashkey': hash,
+							   'captcha': captcha_check(request),
+							   'error': "Введена не верная каптча"})
+	else:
+		captcha = Captcha()
+		key, hash = captcha.generate_key()
+		image = SimpleCaptcha(width=280, height=120)
+		captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
+		return render(request, 'captcha.html',
+					  {'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "")})
 
 
 def profile_view(request):
-    error = None
-    if request.method == 'GET':
-        banners = Banners.objects.all()
-        return render(request, 'profile.html',
-                      {'banners': banners})
-
-
-
-def register_view(request):
-    if request.method == "GET":
-        form = RegisterWorkerForm()
-        captcha = Captcha()
-        key, hash = captcha.generate_key()
-        image = ImageCaptcha(width=280, height=90)
-        captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
-        return render(request, 'register.html', {'form': form, 'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "") })
-    if request.method == "POST":
-        form = RegisterWorkerForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-        return render(request, 'register.html',
-                      {'form': form,
-                       'hashkey': request.POST['hashkey'],
-                       'captcha': captcha_check(request)})
-        if request.POST["captcha"] is not None:
-            hash = request.POST["hashkey"]
-            res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
-            if not res:
-                error = ERRORS['captcha']
-                return render(request, 'register.html',
-                              {'form': form,
-                               'hashkey': request.POST['hashkey'],
-                               'captcha':  captcha_check(request),
-                               'errors': error})
+	error = None
+	if request.method == 'GET':
+		banners = Banners.objects.all()
+		return render(request, 'profile.html',
+					  {'banners': banners})
 
 
 
 
 def login_view(request):
-    error = None
-    if request.method == 'POST':
-        if request.POST["captcha"] is not None:
-            hash = request.POST["hashkey"]
-            res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
-            if not res:
-                error = ERRORS['captcha']
-                return render(request, 'login.html',
-                              {'hashkey': request.POST['hashkey'],
-                               'captcha': captcha_check(request),
-                               'error':error})
-        user = authenticate(username=request.POST['login'], password=request.POST['password'])
-        if user is not None:
-            login(request, user)
-            page = redirect(to="index")
-            return page
-        else:
-            error = ERRORS['auth_login_pass']
-            return render(request, 'login.html',
-                          {'hashkey': request.POST['hashkey'], 'captcha': captcha_check(request),
-                               'error':error})
-    if request.method == 'GET':
-        captcha = Captcha()
-        key, hash = captcha.generate_key()
-        image = ImageCaptcha(width=280, height=90)
-        captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
-        return render(request, 'login.html',
-                      {'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "")})
-
+	error = None
+	if request.method == 'POST':
+		if request.POST["captcha"] is not None:
+			hash = request.POST["hashkey"]
+			res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
+			if not res:
+				error = ERRORS['captcha']
+				return render(request, 'login.html',
+							  {'hashkey': request.POST['hashkey'],
+							   'captcha': captcha_check(request),
+							   'error': error})
+		user = authenticate(username=request.POST['login'], password=request.POST['password'])
+		if user is not None:
+			login(request, user)
+			page = redirect(to="index")
+			return page
+		else:
+			error = ERRORS['auth_login_pass']
+			return render(request, 'login.html',
+						  {'hashkey': request.POST['hashkey'], 'captcha': captcha_check(request),
+						   'error': error})
+	if request.method == 'GET':
+		captcha = Captcha()
+		key, hash = captcha.generate_key()
+		image = ImageCaptcha(width=280, height=90)
+		captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
+		return render(request, 'login.html',
+					  {'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "")})

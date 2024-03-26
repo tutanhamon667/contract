@@ -33,7 +33,12 @@ def download(request, file_id):
 def index(request):
     if not request.user.is_authenticated:
         return redirect('signin')
-    return render(request, "pages/chat.html")
+    return render(request, "pages/chat.html", {"chat_id": 'null'})
+
+def index_chat(request, chat_id):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+    return render(request, "pages/chat.html", {"chat_id": chat_id})
 
 
 def upload(request, chat_id):

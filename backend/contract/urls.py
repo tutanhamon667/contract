@@ -13,12 +13,11 @@ from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
     profile_main_view, \
-    profile_company_view, jobs_profile_view, profile_response_invite_view
+    profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view
 from users.controllers.test_view import TestClassView
 from . import settings
-from users.views import captcha_view, profile_view,   \
-    register_view
+from users.views import captcha_view
 from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view
 
 schema_view = get_schema_view(
@@ -72,6 +71,7 @@ urlpatterns = [
     path('profile/invites', profile_response_invite_view, name='profile_response_invite'),
     path('article/<int:article_id>', article_view, name='article'),
     path('chat/', include("chat.urls")),
+    path('activate', activate_view, name='activate_view'),
 
     path('admin/', admin.site.urls),
     path('swagger/',

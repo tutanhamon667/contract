@@ -82,12 +82,20 @@ class ChatConsumer(WebsocketConsumer):
 
 				self_user, other_user = self.get_users_from_chat(chat, user)
 
+				if other_user.photo:
+					other_user_photo = other_user.photo.url
+				else:
+					other_user_photo = None
+				if self_user.photo:
+					self_user_photo = self_user.photo.url
+				else:
+					self_user_photo = None
 				item["other_user"] = {
-					'photo': other_user.photo.url,
+					'photo': other_user_photo,
 					'display_name': other_user.display_name
 				}
 				item["self_user"] = {
-					'photo': self_user.photo.url,
+					'photo': self_user_photo,
 					'display_name': self_user.display_name
 				}
 				not_read_messages = Message.objects.filter(chat=chat, sender=other_user, read=False)

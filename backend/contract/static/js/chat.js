@@ -1,4 +1,4 @@
-function Chat(user_id) {
+function Chat(user_id, chat_id ) {
 
     document.addEventListener('alpine:init', () => {
         class FileUpload {
@@ -131,7 +131,12 @@ function Chat(user_id) {
                             return aDate < bDate
                         })
                         Alpine.store('chatsData').chats = data.chats
-                        selectChat(null)
+                        if(chat_id !== 'null'){
+                             selectChat(chat_id)
+                        }else{
+                             selectChat()
+                        }
+
                     }
                     if (data.type === "CHAT_MESSAGE") {
                         const chat = Alpine.store('chatsData').getChatByUUID(data.chat_uuid)
