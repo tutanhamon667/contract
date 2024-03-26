@@ -41,11 +41,11 @@ def customer_access(request):
 				return HttpResponse(status=403)
 			d1 = datetime.datetime.now()
 			expire_date = d1 + relativedelta(months=1)
-			ca = CustomerAccessPayment(user=user, created=d1, expire_at=expire_date, amount_id=1)
+			ca = CustomerAccessPayment(user=user, start_at=d1, expire_at=expire_date, amount_id=1)
 			ca.save()
 			address = Address.objects.get(user=user)
 			customer_access_content_type = ContentType.objects.get_for_model(CustomerAccessPayment)
-			new_operation = Operation(address=address, cost_btc=0, cost_usd=0,  status=0,
+			new_operation = Operation(address=address, cost_btc=0, cost_usd=0,  status=0, paid_at=d1,
 									  reason_content_type=customer_access_content_type, reason_object_id=ca.id)
 			new_operation.save()
 			return redirect('profile_wallet')
