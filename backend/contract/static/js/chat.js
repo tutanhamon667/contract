@@ -59,6 +59,7 @@ function Chat(user_id, chat_id ) {
                         "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
                     }
                 });
+                const chat = Alpine.store('chatsData').getActiveChat()
                 $.ajax({
                     xhr: function () {
                         var xhr = new XMLHttpRequest();
@@ -76,7 +77,7 @@ function Chat(user_id, chat_id ) {
                         return xhr;
                     },
 
-                    url: '/chat/upload/' + "e3e8b240-df2f-4428-8b6e-749e21049737",
+                    url: '/chat/upload/' + chat.chat_uuid,
                     type: 'POST',
                     dataType: 'json',
                     cache: false,

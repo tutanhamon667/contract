@@ -37,7 +37,7 @@ class ChatConsumer(WebsocketConsumer):
 			self_user = chat.moderator
 			if chat.worker:
 				other_user = chat.worker
-			if chat.modecustomer:
+			if chat.customer:
 				other_user = chat.customer
 		return self_user, other_user
 
