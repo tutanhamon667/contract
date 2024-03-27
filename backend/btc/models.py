@@ -4,23 +4,18 @@ import datetime
 from decimal import Decimal
 
 from django.db import transaction
-from dateutil.relativedelta import relativedelta
 from django.db import connection
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.validators import validate_comma_separated_integer_list
 from django.db import models
 from django.db.models import Sum
 from django.utils.timezone import now
-from django.utils.translation import gettext_lazy as _
-
+from django.db.models import Q
 from btc import settings
-from btc.libs.balance import Balance
-from btc.validator import validate
+
 from contract.settings import OPERATION_STATUS
-from users.models.user import User, Member, Job
-from django.core.cache import cache
+from users.models.user import  Member, Job
 
 class Wallet(models.Model):
 
@@ -167,14 +162,33 @@ class Operation(models.Model):
     reason = GenericForeignKey('reason_content_type', 'reason_object_id')
 
     @classmethod
-    def create_operation(cls, address, reason, reason_id, price_btc, price_usd,paid_at, status):
+    def create_operation(cls, address, reason, reason_id, price_btc, price_usd,paid_at, status, description=""):
         reason_content_type = ContentType.objects.get_for_model(reason)
-        new_operation = Operation(address=address, cost_btc=price_btc,paid_at=paid_at, cost_usd=price_usd, status=status,
+        new_operation = Operation(address=address, cost_btc=price_btc,paid_at=paid_at, description=description, cost_usd=price_usd, status=status,
                                   reason_content_type=reason_content_type,
                                   reason_object_id=reason_id)
         new_operation.save()
         return new_operation
 
+    @property
+    def description_str(self):
+        if self.description:
+            return self.description
+        if str(self.reason) == 'CustomerAccessPayment':
+            return 'Оплата доступа к базе резюме'
+        else:
+            return f'Оплата вакансии {self.reason.job.id}'
+
+    @property
+    def status_str(self):
+        if self.status == 0:
+            return "Оплачен"
+        if self.status == 1:
+            return "Ждёт оплаты"
+        if self.status == 2:
+            return "Заморожен"
+        if self.status == 3:
+            return "Отменён"
 
 class BuyPaymentPeriod(models.Model):
     amount = models.IntegerField('Months values', default=1, null=False, blank=False)
@@ -197,6 +211,8 @@ class CustomerAccessPayment(models.Model):
     expire_at = models.DateTimeField('Created', default=None, null=True, blank=True)
     amount = models.ForeignKey(BuyPaymentPeriod, on_delete=models.PROTECT, null=False, blank=False, default=None)
 
+    def __str__(self):
+        return 'CustomerAccessPayment'
 
 class JobPayment(models.Model):
     job = models.ForeignKey(Job, on_delete=models.PROTECT, null=False, blank=False, default=None)
@@ -208,7 +224,7 @@ class JobPayment(models.Model):
     @classmethod
     def get_job_active_payment(cls, job):
         now = datetime.datetime.now()
-        payment = cls.objects.filter(expire_at__gte=now, job_id=job.id)
+        payment = cls.objects.filter(Q(expire_at__gte=now) | Q(expire_at=None), job_id=job.id)
         if len(payment):
             return payment[0]
         else:

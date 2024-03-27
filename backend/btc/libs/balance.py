@@ -17,8 +17,7 @@ class Balance:
 		self.operations = operations
 		for operation in self.operations:
 			if operation.status == 0 or operation.status == 2:
-				self.paid_value = self.paid_value = + operation.cost_btc
-		self.get_paid_operations()
+				self.paid_value = self.paid_value  + operation.cost_btc
 
 	def check_payment(self, amount_btc):
 		return self.get_final_balance_btc - amount_btc

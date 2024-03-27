@@ -324,7 +324,7 @@ def jobs_profile_view(request):
 		company = Company.objects.get(user_id=user.id)
 		jobs = Job.objects.filter(company=company.id)
 		now = datetime.datetime.now()
-		jobs_paid = jobs.filter(jobpayment__created__lte=now, jobpayment__expire_at__gte=now)
+		jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
 		jobs_not_paid_ids = []
 		for job_paid in jobs_paid:
 			jobs_not_paid_ids.append(job_paid.id)

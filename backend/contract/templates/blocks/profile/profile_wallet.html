@@ -5,12 +5,67 @@
     <p>btc wallet: {{ balance.address.address }}</p>
     <p>balance btc: {{ balance.get_final_balance_btc }}</p>
     <p>balance usd: {{ balance.get_final_balance_usd }}$</p>
-    <p>Пополнения:</p>
-    {% for transaction in balance.output_transactions %}
-        <p>{{ transaction.date }}  {{ transaction.txid }}  {{ transaction.value }}</p>
-    {% endfor %}
-    <p>Покупки:</p>
-    {% for operation in balance.operations %}
-        <p> {{ operation.id }}  | {{ operation.reason.created }} - {{ operation.reason.expire_at }} Стоимость: {{ operation.cost_btc}} Количество месяцев :{{operation.reason.amount.amount }} Покупка:  {{ operation.reason_content_type.app_labeled_name }}</p>
-    {% endfor %}
+    <section>
+        <h2>Пополнения:</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Дата</th>
+                <th scope="col">ID транзакции</th>
+                <th scope="col">Сумма пополнения</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for transaction in balance.output_transactions %}
+                <tr>
+                 <td>{{ transaction.date }} </td>
+                <td> {{ transaction.txid }} </td>
+                <td> {{ transaction.value }}</td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+
+    <section>
+        <h2>Покупки:</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">ID заказа</th>
+                <th scope="col">Дата создания</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Сумма оплаты BTC</th>
+                <th scope="col">Сумма оплаты USD</th>
+                <th scope="col">Описание</th>
+                <th scope="col">Покупка</th>
+                <th scope="col">Дата оплаты</th>
+                <th scope="col">Дата начала периода</th>
+                <th scope="col">Дата окончания периода</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for operation in balance.operations %}
+
+                <tr>
+                <td>{{ operation.id }} </td>
+                <td>{{ operation.created }} </td>
+                <td>{{ operation.status_str }}</td>
+                <td>{{ operation.cost_btc }}</td>
+                <td>{{ operation.cost_usd }}</td>
+                <td>{{ operation.description_str }}</td>
+                <td>{{ operation.reason_content_type.app_labeled_name }}</td>
+                <td>{{ operation.paid_at }}</td>
+                <td>{{ operation.reason.start_at }}</td>
+                <td>{{ operation.reason.expire_at }}</td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+
 {% endblock profile_content %}

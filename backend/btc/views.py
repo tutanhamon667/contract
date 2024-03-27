@@ -70,8 +70,8 @@ def profile_wallet_view(request):
 				address = generate_address(addresses_count + 1, wallet.mnemonic)
 				profile_address = WalletAddress(address=address["address"], wif=address["wif"], key_id=address["key_id"], wallet=wallet, user=user)
 				profile_address.save()
-			operations = Operation.objects.filter(address=address)
-			balance = Balance(address, operations)
+			operations = Operation.objects.filter(address=profile_address)
+			balance = Balance(profile_address, operations)
 			return render(request, './blocks/profile/profile_wallet.html', {
 				'balance': balance,
 				'categories': categories,
