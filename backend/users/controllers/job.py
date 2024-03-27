@@ -39,9 +39,11 @@ class JobView:
 				company = Company.objects.get(user_id=user.id)
 				form.company_id = company.id
 				if form.is_valid():
-					form.save()
+					job = form.save(commit=False)
+					job.company_id = company.id
+					job.save()
 					messages.success(request, 'Вакансия создана')
-					return redirect('profile_jobs')
+					return redirect('profile_job_view_pay_for_tier', job.id)
 				else:
 					return render(request, './blocks/profile/profile_job_create.html',
 								  {'form': form,

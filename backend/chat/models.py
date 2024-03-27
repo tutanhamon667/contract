@@ -78,7 +78,7 @@ class FileMessage(models.Model):
     existingPath = models.CharField(unique=True, max_length=100)
     name = models.CharField(max_length=50)
     eof = models.BooleanField()
-    created = models.DateTimeField(default=timezone.now())
+    created = models.DateTimeField(default=timezone.now)
     uploader = models.ForeignKey(
         Member,
         blank=True,

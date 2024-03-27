@@ -1,10 +1,8 @@
+import qrcode
+from django.core.files.storage import default_storage
 from django.http import HttpResponse
 from django.views import View
 
-class TestClassView(View):
-	def __init__(self,request,  *args, **kwargs):
-		View.__init__( request, *args, **kwargs)
-		pass
-
-	def get(self, request, *args, **kwargs):
-		return HttpResponse('test')
+def test(request):
+	img = qrcode.make('uig1ui21iug131i3l3')
+	default_storage.save('./qrcode_addresses/uig1ui21iug131i3l3.jpg', img)

@@ -1,6 +1,6 @@
 import datetime
 from io import BytesIO
-
+from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django_ckeditor_5.fields import CKEditor5Field
@@ -66,7 +66,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
 	is_admin = models.BooleanField(default=False)
 	# is_superuser = models.BooleanField(default=False)
 
-	created_at = models.DateTimeField(auto_now_add=True)
+	created_at = models.DateTimeField(default=timezone.now)
 	updated_at = models.DateTimeField(auto_now=True)
 
 	deleted = models.BooleanField(default=False)
@@ -438,30 +438,39 @@ class Job(models.Model):
 		on_delete=models.PROTECT
 	)
 	description = CKEditor5Field(
-		verbose_name='Описание вакансии', config_name='extends'
+		verbose_name='Описание вакансии', config_name='extends',null=True,
+		blank=True,
 	)
 	salary = models.BigIntegerField(
 		default=0,
+		null=True,
+		blank=True,
 		verbose_name='Зарплата'
 	)
 	salary_from = models.BigIntegerField(
 		default=0,
+		null=True,
+		blank=True,
 		verbose_name='Зарплата от'
 	)
 	salary_to = models.BigIntegerField(
 		default=0,
+		null=True,
+		blank=True,
 		verbose_name='Зарплата до'
 	)
 
 	work_experience = models.IntegerField(
 		default=0,
+		null=True,
+		blank=True,
 		verbose_name='Опыт работы в месяцах'
 	)
 	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
 	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
 	region = models.ManyToManyField(Region, verbose_name='Регион работы',  default=None, blank=True)
 	active_search = models.BooleanField(null=True, blank=True, default=True, verbose_name='В активном поиске')
-	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0)
+	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0,  blank=True)
 	views = models.IntegerField(verbose_name='Просмотры', null=True, default=0)
 
 	pub_date = models.DateTimeField(

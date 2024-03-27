@@ -1,7 +1,7 @@
 import base64
 
 from django.shortcuts import render, redirect
-
+from django.db import transaction
 from chat.models import Chat
 from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
 from contract.settings import CHAT_TYPE
@@ -83,21 +83,22 @@ def registration_customer_view(request):
 						   'hashkey': hash_key,
 						   'captcha': SimpleCaptcha.captcha_check(request)})
 		if form.is_valid():
-			user = form.save()
-			login(request, user)
-			messages.success(request, "Registration successful.")
-			company_name = request.POST.get('company_name') or None
-			customer_company = Company(user=user, name=company_name)
-			customer_company.save()
-			wallet = get_wallet()
-			addresses_count = get_addresses_count(wallet)
-			address = generate_address(addresses_count + 1, wallet.seed)
-			new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet, user=user)
-			new_address.save()
-			moderator = Member.objects.filter(is_moderator=True)
-			chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
-			chat_with_moderator.save()
-			return redirect(to='index')
+			with transaction.atomic():
+				user = form.save()
+				login(request, user)
+				messages.success(request, "Registration successful.")
+				company_name = request.POST.get('company_name') or None
+				customer_company = Company(user=user, name=company_name)
+				customer_company.save()
+				wallet = get_wallet()
+				addresses_count = get_addresses_count(wallet)
+				address = generate_address(addresses_count + 1, wallet.mnemonic)
+				new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet, user=user)
+				new_address.save()
+				moderator = Member.objects.filter(is_moderator=True)
+				chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
+				chat_with_moderator.save()
+				return redirect(to='index')
 		else:
 			messages.error(request, "Unsuccessful registration. Invalid information.")
 			return render(request, 'register.html',
@@ -126,19 +127,20 @@ def registration_worker_view(request):
 						   'hashkey': hash_key,
 						   'captcha': SimpleCaptcha.captcha_check(request)})
 		if form.is_valid():
-			user = form.save()
-			user.is_moderated = True
-			user.save()
-			login(request, user)
-			messages.success(request, "Registration successful.")
-			worker_profile = Member(user=user)
-			worker_profile.save()
-			wallet = get_wallet()
-			addresses_count = get_addresses_count(wallet)
-			address = generate_address(addresses_count + 1, wallet.seed)
-			new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet, user=worker_profile)
-			new_address.save()
-			return redirect(to='index')
+			with transaction.atomic():
+				user = form.save()
+				user.is_moderated = True
+				user.save()
+				login(request, user)
+				messages.success(request, "Registration successful.")
+				worker_profile = Member(id=user.id)
+				worker_profile.save()
+				wallet = get_wallet()
+				addresses_count = get_addresses_count(wallet)
+				address = generate_address(addresses_count + 1, wallet.mnemonic)
+				new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet, user=worker_profile)
+				new_address.save()
+				return redirect(to='index')
 
 		else:
 			messages.error(request, "Unsuccessful registration. Invalid information.")
