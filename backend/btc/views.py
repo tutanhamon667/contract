@@ -6,7 +6,7 @@ from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from btc.libs.balance import Balance
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count, get_wallet_balance, \
-	create_transaction
+	create_transaction, get_qrcode
 from btc.models import Address as WalletAddress, CustomerAccessPayment, Operation, Address
 from btc.tasks import update_addresses_balances, update_btc_usd
 from common.models import Article, ArticleCategory
@@ -72,6 +72,7 @@ def profile_wallet_view(request):
 				profile_address.save()
 			operations = Operation.objects.filter(address=profile_address)
 			balance = Balance(profile_address, operations)
+			get_qrcode(profile_address.address)
 			return render(request, './blocks/profile/profile_wallet.html', {
 				'balance': balance,
 				'categories': categories,

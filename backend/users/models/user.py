@@ -381,10 +381,12 @@ class Resume(models.Model):
 				objs = objs.filter(is_fulltime=False)
 			if _get["work_time_busy"] == '1':
 				objs = objs.filter(is_fulltime=True)
-		if "work_deposit" in _get and _get["work_deposit"] != '2':
+		if "work_deposit" in _get:
 			filters_exists = True
+			if _get["work_deposit"] == '2':
+				objs = objs.filter(deposit=0)
 			if _get["work_deposit"] == '1':
-				objs = objs.filter(deposit__gte=0)
+				objs = objs.filter(deposit__gt=0)
 		if "salary_to" in _get and _get["salary_to"] != '':
 			filters_exists = True
 			objs = objs.filter(salary__gt=0).filter(salary__lte=_get["salary_to"])
@@ -438,7 +440,7 @@ class Job(models.Model):
 		on_delete=models.PROTECT
 	)
 	description = CKEditor5Field(
-		verbose_name='Описание вакансии', config_name='extends',null=True,
+		verbose_name='Описание вакансии', config_name='extends', null=True,
 		blank=True,
 	)
 	salary = models.BigIntegerField(
@@ -468,9 +470,9 @@ class Job(models.Model):
 	)
 	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
 	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
-	region = models.ManyToManyField(Region, verbose_name='Регион работы',  default=None, blank=True)
+	region = models.ManyToManyField(Region, verbose_name='Регион работы', default=None, blank=True)
 	active_search = models.BooleanField(null=True, blank=True, default=True, verbose_name='В активном поиске')
-	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0,  blank=True)
+	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0, blank=True)
 	views = models.IntegerField(verbose_name='Просмотры', null=True, default=0)
 
 	pub_date = models.DateTimeField(
@@ -481,6 +483,7 @@ class Job(models.Model):
 
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
+	pseudo_tier_order = models.IntegerField(verbose_name='Порядок выдачи для тарифов', null=True, default=0, blank=True)
 
 	class Meta:
 		ordering = ('-id',)
@@ -501,7 +504,7 @@ class Job(models.Model):
 
 	@property
 	def tier_name(self):
-		payments= self.jobpayment_set.filter().order_by('-expire_at')[:1]
+		payments = self.jobpayment_set.filter().order_by('-expire_at')[:1]
 		if len(payments):
 			payment = payments[0]
 			return payment.job_tier.name
@@ -581,12 +584,34 @@ class Job(models.Model):
 
 	@classmethod
 	def get_hot_jobs(cls, limit):
-		return cls.objects.all().order_by('-id')[:limit]
+
+		return cls.objects.filter(jobpayment__job_tier_id=3, jobpayment__start_at__lte=timezone.now(),
+								  jobpayment__expire_at__gte=timezone.now()).order_by('-id')[:limit]
+
+	@classmethod
+	def up_tier_two(cls):
+
+		cls.objects.filter(jobpayment__job_tier_id=2, jobpayment__start_at__lte=timezone.now(),
+								  jobpayment__expire_at__gte=timezone.now()).update(pseudo_tier_order=1)
+
+	@property
+	def is_hot(self):
+		res = self.jobpayment_set.filter(job_tier_id=3, start_at__lte=timezone.now(),
+								  expire_at__gte=timezone.now())
+		if len(res):
+			return True
+		else:
+			return False
+	@classmethod
+	def down_tier_two(cls):
+
+		cls.objects.filter(jobpayment__job_tier_id=2, jobpayment__start_at__lte=timezone.now(),
+						   jobpayment__expire_at__gte=timezone.now()).update(pseudo_tier_order=0)
 
 	@classmethod
 	def search_filter(cls, request, limit):
 		_get = request.GET
-		print(_get)
+		now = datetime.datetime.now()
 		objs = cls.objects
 		filters_exists = False
 		if "title" in _get and _get["title"] != '':
@@ -609,10 +634,12 @@ class Job(models.Model):
 				objs = objs.filter(is_fulltime=False)
 			if _get["work_time_busy"] == '1':
 				objs = objs.filter(is_fulltime=True)
-		if "work_deposit" in _get and _get["work_deposit"] != '2':
+		if "work_deposit" in _get :
 			filters_exists = True
+			if _get["work_deposit"] == '2':
+				objs = objs.filter(deposit=0)
 			if _get["work_deposit"] == '1':
-				objs = objs.filter(deposit__gte=0)
+				objs = objs.filter(deposit__gt=0)
 		if "deposit" in _get and _get["deposit"] != '':
 			filters_exists = True
 			objs = objs.filter(deposit__lte=_get["deposit"])
@@ -632,10 +659,11 @@ class Job(models.Model):
 			objs = objs.filter(specialisation__in=request.GET.getlist("region"))
 
 		if not filters_exists:
-			return cls.objects.filter(moderated=True, active_search=True).order_by('-id')[:limit]
+			return cls.objects.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
+									  jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id','-pseudo_tier_order','-id')[:limit]
 		else:
-			return objs.filter(moderated=True, active_search=True).order_by('-id')[:limit]
-
+			return objs.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
+							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id','-pseudo_tier_order','-id')[:limit]
 
 	@classmethod
 	def join_invites(cls, objs, user):

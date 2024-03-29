@@ -1,25 +1,11 @@
 import qrcode
-from bit import PrivateKeyTestnet
-from django.core.files.storage import default_storage, FileSystemStorage
-from hdwallet import HDWallet
-from hdwallet.utils import generate_entropy, generate_mnemonic
-from hdwallet.symbols import BTCTEST as SYMBOL
-from typing import Optional
 
+from hdwallet.utils import generate_entropy
 from bitcoinlib.wallets import *
-from bitcoinlib.keys import HDKey
-from time import sleep
 
-
-import json
-
-from btc.celery import app
 from btc.models import Address as AddressModel, Wallet as WalletModel
 
 import requests
-
-from users.models.user import Member
-
 
 def get_wallet():
 	wallets = WalletModel.objects.all()
@@ -47,11 +33,18 @@ def generate_wallet():
 	return seed
 
 
+def get_qrcode(address):
+	path = f'media/qrcode_addresses/{address}.png'
+	if not os.path.isfile(path):
+		img = qrcode.make(address)
+		img.save(path)
+		return path
+	else:
+		return path
+
 def generate_address(index, mnemonic):
 	w1 = wallet_create_or_open('segwit_p2wpkh-testnet', keys=mnemonic, witness_type='segwit', network='testnet',db_uri="postgresql://contract:uyfuy^6jji@localhost:5433/")
 	new_key6b = w1.key_for_path(path="m/84'/1'/0'/0/" + str(index), network='testnet')
-	img = qrcode.make(new_key6b.address)
-	img.save("media/qrcode_addresses/"+new_key6b.address+".png")
 	return {"address": new_key6b.address,"wif": new_key6b.wif, "key_id": new_key6b.key_id}
 
 

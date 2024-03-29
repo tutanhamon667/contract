@@ -5,6 +5,8 @@
     <p>btc wallet: {{ balance.address.address }}</p>
     <p>balance btc: {{ balance.get_final_balance_btc }}</p>
     <p>balance usd: {{ balance.get_final_balance_usd }}$</p>
+    <h3>Для пополнения кошелька</h3>
+    <img src="/media/qrcode_addresses/{{ balance.address.address }}.png"/>
     <section>
         <h2>Пополнения:</h2>
         <table class="table">

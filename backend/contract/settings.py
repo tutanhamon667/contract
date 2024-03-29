@@ -9,10 +9,9 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
-# CELERY_BROKER_URL = 'amqp://contract:U789*(Y*(g@localhost:5673'
+CELERY_BROKER_URL = 'amqp://contract:U789*(Y*(g@localhost:5673'
 
-CELERY_BROKER_URL = 'redis://localhost:6380/1'
-CELERY_RESULT_BACKEND = 'redis://localhost:6380/1'
+
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -30,13 +29,22 @@ CACHES = {
 CELERY_BEAT_SCHEDULE = {
 	"update_addresses_balances": {
 		"task": "btc.tasks.update_addresses_balances",
-		"schedule": crontab(minute="*/5"),
+		"schedule": crontab(minute="*/1"),
 	},
 	"update_btc_usd": {
 		"task": "btc.tasks.update_btc_usd",
-		"schedule": crontab(minute="*/5"),
+		"schedule": crontab(minute="*/1"),
+	},
+	"up_tier_two": {
+		"task": "btc.tasks.up_tier_two",
+		"schedule": crontab(minute="*/3"),
+	},
+	"down_tier_two": {
+		"task": "btc.tasks.down_tier_two",
+		"schedule": crontab(minute="*/4"),
 	},
 }
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 ASGI_APPLICATION = "contract.asgi.application"
 # Quick-start development settings - unsuitable for production

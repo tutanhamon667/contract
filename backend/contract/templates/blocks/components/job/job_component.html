@@ -6,6 +6,12 @@
     {% include "./job_item.html"  %}
 {% else %}
     {% for job in jobs %}
-        {% include "./job_item.html"  %}
+        {% if job.is_hot %}
+             {% with addition_card_class=' hot-job-card'%}
+                     {% include "./job_item.html"  %}
+                {% endwith %}
+        {% else %}
+            {% include "./job_item.html"  %}
+        {% endif %}
     {% endfor %}
 {% endif %}

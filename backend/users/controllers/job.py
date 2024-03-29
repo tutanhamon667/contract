@@ -7,11 +7,9 @@ from django.shortcuts import render, redirect
 
 from btc.libs.balance import Balance
 from btc.models import JobPayment, BuyPaymentPeriod, JobTier, Address, Operation
-from chat.models import Chat
 from common.models import Article, ArticleCategory
-from contract.settings import RESPONSE_INVITE_STATUS, CHAT_TYPE
 from users.core.access import Access
-from users.models.user import Company, Member, Resume, Contact, Job, ResponseInvite
+from users.models.user import Company, Job
 from users.forms import JobForm, JobPaymentTarifForm
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache

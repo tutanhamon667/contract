@@ -10,9 +10,11 @@
         <div class="left">
             <h4 class="card-title">
                 <span class="icon-text"> <a href="/jobs/{{ job.id }}" class="link-dark">{{ job.title }}</a></span>
+                {% if job.is_hot %}
                 <span class="red-icon">
                                     {% bs_icon 'fire' %}
                                 </span>
+                {% endif %}
             </h4>
             <h3 class="card-subtitle">{{ job.final_salary }} ₽</h3>
             <div>
