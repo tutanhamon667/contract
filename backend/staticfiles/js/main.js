@@ -1,97 +1,104 @@
-$(document).ready(function(){
+const app = function() {
+    const initRating = function(el, inputSelector, editable=true){
 
-    function closeAlert() {
-        const btnClose = $('.alert-message button'),
-            alertBlock = $('.alert-message');
-        btnClose.on('click', () => {
-            alertBlock.css('display','none');
-        });
-    }
-    closeAlert();
+        const $star_rating = el //$('.star-rating .fa');
 
-    function checkInputBtn() {
-        $('.search-container form input').on('keyup', function() {
-            let empty = false;
-            $('.search-container form input').each(function() {
-                empty = $(this).val().length == 0;
-            });
-            if (empty) {
-                $('.search-container form button').attr('disabled', 'disabled');
+        const SetRatingStar = function() {
+          return $star_rating.each(function() {
+            if (parseInt($star_rating.siblings(inputSelector).val()) >= parseInt($(this).data('rating'))) {
+              return $(this).removeClass('fa-star-o').addClass('fa-star');
             } else {
-                $('.search-container form button').attr('disabled', false);
+              return $(this).removeClass('fa-star').addClass('fa-star-o');
             }
-        });
+          });
+        };
+        if(editable)
+            $star_rating.on('click', function() {
+                 $star_rating.siblings(inputSelector).val($(this).data('rating'));
+              //$star_rating.siblings('input.rating-value').val($(this).data('rating'));
+              return SetRatingStar();
+            });
+        SetRatingStar();
     }
-    checkInputBtn();
 
-    function toggleCatalog() {
-        const btnCatalog = $('.main-menu .btn'),
-            listCatalog = $('#menu-container'),
-            btnClose = $('.menu-mob-head label');
-        if ($(window).width() <= 834) {
-            btnCatalog.on('click', (e) => {
-                e.preventDefault();
-                listCatalog.addClass('active');
-                $('body').addClass('open');
-            });
-            btnClose.on('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                listCatalog.removeClass('active');
-                $('body').removeClass('open');
-                $('.menu-item-level-1>li').removeClass('active');
-            });
-        }
+    const radioInputChecker = (radio,value, input) => {
+        if (parseInt($(radio).val()) === parseInt(value)){
+                $(input).attr("disabled", "disabled")
+            }else{
+                $(input).removeAttr("disabled")
+            }
+        $(radio).on("change", function() {
+            if (parseInt($(this).val()) === parseInt(value)){
+                $(input).attr("disabled", "disabled")
+            }else{
+                $(input).removeAttr("disabled")
+            }
+
+        })
     }
-    toggleCatalog();
 
-    function openSecondLevelMenu() {
-        const listItems = $('.menu-item-level-1>li');
-        if ($(window).width() <= 834) {
-            listItems.each(function(e) {
-                $(this).find('label.name').on('click', (e) => {
-                    e.preventDefault();
-                    $(this).addClass('active');
-                });
-                $(this).find('label.go-back').on('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $(this).removeClass('active');
-                });
-            });
-        }
+     const profileJobsFilters = () => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const filterForm = $('.profile_jobs_filter_form')
+        const status = $(filterForm).find('[name="status"]')
+        const page = $(filterForm).find('[name="page"]')
+
+        $("[name=\"status_radio\"]").on("change", function(el) {
+            console.log($(this).attr('id'))
+            switch ($(this).attr('id')) {
+                case 'status_0':
+
+                    $(status).val(0)
+                    break;
+                case 'status_1':
+                    $(status).val(1)
+                    break;
+
+            }
+            $(filterForm).submit()
+        })
     }
-    openSecondLevelMenu();
 
-    function toggleMenu() {
-        const btnMenu = $('.menu-burger > label'),
-            listMenu = $('.menu-burger__wrapper'),
-            btnClose = $('.menu-mob-head label');
-        if ($(window).width() <= 834) {
-            btnMenu.on('click', (e) => {
-                e.preventDefault();
-                listMenu.addClass('active');
-                $('body').addClass('open');
-            });
-            btnClose.on('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                listMenu.removeClass('active');
-                $('body').removeClass('open');
-            });
-        }
+    const profileResponseInvitesFilters = () => {
+        const orderBtn = $('#order')
+        const searchParams = new URLSearchParams(window.location.search);
+        let order_val = searchParams.get('order')
+        const filterForm = $('.response_invite_filter_form')
+        const status = $(filterForm).find('[name="status"]')
+        const type = $(filterForm).find('[name="type"]')
+        const order_date = $(filterForm).find('[name="order"]')
+        const page = $(filterForm).find('[name="page"]')
+        $(orderBtn).click(function () {
+            order_val = order_val === "desc" ?  "asc": "desc"
+            $(order_date).val(order_val)
+            $(filterForm).submit()
+        })
+        $("[name=\"status_radio\"]").on("change", function(el) {
+            console.log($(this).attr('id'))
+            switch ($(this).attr('id')) {
+                case 'type_1':
+                    $(type).val(1)
+                    $(status).val('any')
+                    break;
+                case 'type_0':
+                    $(type).val(0)
+                    $(status).val('any')
+                    break;
+                case 'status_1':
+                    $(type).val(null)
+                    $(status).val(1)
+                    break;
+
+            }
+            $(filterForm).submit()
+        })
     }
-    toggleMenu();
-
-    $(window).on('resize', () => {
-        toggleCatalog();
-        openSecondLevelMenu();
-        toggleMenu();
-    });
-
-});
-
-
-
+    return {
+        initRating:initRating,
+        profileResponseInvitesFilters:profileResponseInvitesFilters,
+        radioInputChecker:radioInputChecker,
+        profileJobsFilters:profileJobsFilters
+    }
+}
 
 

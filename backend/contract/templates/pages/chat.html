@@ -95,8 +95,8 @@
         Content...
     </span>
 </div>
-    <script src="{% static 'js/alpine.js' %}" defer></script>
-    <script src="{% static './js/chat.js' %}"></script>
+    <script src="{% static 'contract/js/alpine.js' %}" defer></script>
+    <script src="{% static 'contract/js/chat.js' %}"></script>
     <script>
 
     const chat = new Chat({{ user.id }}, '{{ chat_id}}')

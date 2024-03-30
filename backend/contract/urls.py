@@ -71,6 +71,7 @@ urlpatterns = [
     path('profile/invites', profile_response_invite_view, name='profile_response_invite'),
     path('article/<int:article_id>', article_view, name='article'),
     path('chat/', include("chat.urls")),
+    path('api/', include("users.urls")),
     path('activate', activate_view, name='activate_view'),
 
     path('admin/', admin.site.urls),
@@ -81,6 +82,9 @@ urlpatterns = [
          schema_view.with_ui('redoc', cache_timeout=0),
          name='schema-redoc'),
 ]
+
+handler404 = "contract.views.not_found_handler"
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

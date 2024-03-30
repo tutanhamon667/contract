@@ -57,7 +57,7 @@ SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4gGultuiot8hbxlguev@bh%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["85.239.61.251", '127.0.0.1', '[::1]']
 
 CHANNEL_LAYERS = {
 	"default": {
@@ -187,13 +187,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_URL = '/static/'
 
 
-STATIC_URL = 'static/'
-
-# Add these new lines
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'static'),
 )

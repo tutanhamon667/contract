@@ -121,7 +121,10 @@
                         <a href="/profile/resume" class="btn-primary btn">Создать резюме</a>
                     {% endif %}
                 {% endif %}
-
+                {% if user.is_worker %}
+                    <label for="favorite_job_{{ job.id }}">favorite</label>
+                    <input type="checkbox" id="favorite_job_{{ job.id }}" class="favorite_job_checkbox" value="{{ job.id }}" />
+                {% endif %}
             </div>
         {% endif %}
     </div>

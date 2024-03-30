@@ -1,4 +1,19 @@
 const app = function() {
+
+    const makeRequest = function(url, data, callback){
+        $.ajax({
+            url: `/api/${url}`,
+            data: data,
+            method: "POST",
+            success: (data) => {
+                callback(true, data)
+            },
+            error: (data) => {
+                callback(false, data)
+            }
+        })
+    }
+
     const initRating = function(el, inputSelector, editable=true){
 
         const $star_rating = el //$('.star-rating .fa');
@@ -59,6 +74,16 @@ const app = function() {
         })
     }
 
+    const favoriteJobCheckboxHandler = () => {
+        $('.favorite_job_checkbox').on('change', function(e){
+            const callback = (res, data) => {
+                console.log(res)
+                console.log(data)
+            }
+            makeRequest('favorite', {job_id: $(this).attr('value'), value: $(this).is(':checked')}, callback)
+        })
+    }
+
     const profileResponseInvitesFilters = () => {
         const orderBtn = $('#order')
         const searchParams = new URLSearchParams(window.location.search);
@@ -97,8 +122,8 @@ const app = function() {
         initRating:initRating,
         profileResponseInvitesFilters:profileResponseInvitesFilters,
         radioInputChecker:radioInputChecker,
-        profileJobsFilters:profileJobsFilters
+        profileJobsFilters:profileJobsFilters,
+        favoriteJobCheckboxHandler: favoriteJobCheckboxHandler
     }
 }
-
 

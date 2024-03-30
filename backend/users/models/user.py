@@ -592,16 +592,17 @@ class Job(models.Model):
 	def up_tier_two(cls):
 
 		cls.objects.filter(jobpayment__job_tier_id=2, jobpayment__start_at__lte=timezone.now(),
-								  jobpayment__expire_at__gte=timezone.now()).update(pseudo_tier_order=1)
+						   jobpayment__expire_at__gte=timezone.now()).update(pseudo_tier_order=1)
 
 	@property
 	def is_hot(self):
 		res = self.jobpayment_set.filter(job_tier_id=3, start_at__lte=timezone.now(),
-								  expire_at__gte=timezone.now())
+										 expire_at__gte=timezone.now())
 		if len(res):
 			return True
 		else:
 			return False
+
 	@classmethod
 	def down_tier_two(cls):
 
@@ -634,7 +635,7 @@ class Job(models.Model):
 				objs = objs.filter(is_fulltime=False)
 			if _get["work_time_busy"] == '1':
 				objs = objs.filter(is_fulltime=True)
-		if "work_deposit" in _get :
+		if "work_deposit" in _get:
 			filters_exists = True
 			if _get["work_deposit"] == '2':
 				objs = objs.filter(deposit=0)
@@ -660,10 +661,13 @@ class Job(models.Model):
 
 		if not filters_exists:
 			return cls.objects.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
-									  jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id','-pseudo_tier_order','-id')[:limit]
+									  jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
+																						  '-pseudo_tier_order', '-id')[
+				   :limit]
 		else:
 			return objs.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
-							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id','-pseudo_tier_order','-id')[:limit]
+							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
+																				   '-pseudo_tier_order', '-id')[:limit]
 
 	@classmethod
 	def join_invites(cls, objs, user):
@@ -784,3 +788,13 @@ class ResponseInvite(models.Model):
 		except Exception as e:
 			print(e)
 			return False
+
+
+class FavoriteJob(models.Model):
+	user = models.ForeignKey(to=User, on_delete=models.PROTECT, verbose_name="User")
+	job = models.ForeignKey(to=Job, on_delete=models.PROTECT, verbose_name="Job")
+
+	@classmethod
+	def get_favorites(cls, user, jobs):
+		return cls.objects.filter(user=user, job__in=jobs)
+
