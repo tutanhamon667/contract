@@ -15,6 +15,7 @@ CELERY_BROKER_URL = 'amqp://contract:U789*(Y*(g@localhost:5673'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CSRF_USE_SESSIONS = True
 
 CACHES = {
 	"default": {

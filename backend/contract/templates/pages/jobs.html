@@ -7,24 +7,138 @@
         <section>
             <div class="row">
                 <div class="col-lg-3">
-                    <form action="" method="get" novalidate>
+                    <form action="" method="get" id="filter_form" novalidate>
                         {% bootstrap_form search_form %}
-                        <button type="submit" class="btn btn-primary">Search</button>
+                        <button type="submit" id="filter_jobs_btn" class="btn btn-primary">Search</button>
                     </form>
                 </div>
-                <div class="col-lg-9 job-list">
-                    {% with short=False %}
-                        {% include "../blocks/components/job/job_component.html"  %}
-                    {% endwith %}
+                <!-- <div class="col-lg-9 job-list">              {% with short=False %}
+                    {% include "../blocks/components/job/job_component.html" %}             {% endwith %}
+                </div>-->
+                <div class="col-lg-9 job-list" x-data>
+                    <template x-for="job in $store.main.jobs">
+                        <div class="card ">
+                            <div class="card-body">
+                                <div class="left">
+                                    <h4 class="card-title">
+                                        <span class="icon-text"> <a :href="'/jobs/' +job.id" class="link-dark"
+                                                                    x-text="job.title"></a></span>
+                                        <template x-if="job.payment.job_tier_id == 3">
+                                            <span class="red-icon">{% bs_icon 'fire' %}</span>
+                                        </template>
+                                    </h4>
+                                    <template x-if="job.salary_from && job.salary_to">
+                                        <h3 class="card-subtitle"
+                                            x-text="job.salary_from + ' - ' + job.salary_to +' ₽'"></h3>
+                                    </template>
+                                    <template x-if="job.salary_from && !job.salary_to">
+                                        <h3 class="card-subtitle" x-text="'от '+job.salary_from+' ₽'"></h3>
+                                    </template>
+                                    <template x-if="job.salary">
+                                        <h3 class="card-subtitle" x-text="job.salary+' ₽'"></h3>
+                                    </template>
+                                    <div>
+                                        <a class="job-card-item-customer customer-name"
+                                           :href="'/company/'+ job.company_id "
+                                           x-text="job.company.name">{% bs_icon 'check-circle' %}</a>
+                                    </div>
+                                    <div>
+                                        <span class="job-card-item-customer text-muted job-type"
+                                              x-text="job.is_offline? 'Оффлайн':'Онлайн'"></span>
+                                    </div>
+                                    <template x-if="job.deposit>0">
+                                        <span class="job-card-item-customer text-muted job-type"
+                                              x-text="'Залог: ' + job.deposit + ' ₽'"></span>
+                                    </template>
+                                    <template x-if="job.deposit===0">
+                                        <div class="left">
+                                            <p>
+                                            <span>
+                                            {% bs_icon 'currency-dollar' %}
+                                            </span>
+                                                <span class="icon-text">Без залога</span>
+                                            </p>
+
+                                        </div>
+                                    </template>
+                                    <template x-if="job.work_experience === 0">
+                                        <div class="">
+                                            <p>
+                                                <span>
+                                                {% bs_icon 'bag' %}
+                                                </span>
+                                                <span class="icon-text">Без опыта</span>
+                                            </p>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </template>
+                                    <template x-if="job.work_experience > 0">
+                                        <span class="job-card-item-customer text-muted job-type"
+                                              x-text="'Опыт:' + job.work_experience + ' месяцев'"></span>
+                                    </template>
+                                </div>
+                                <template x-if="job.company.logo">
+                                    <div class="right">
+                                        <img :src="'/media/'+job.company.logo" height="50" :alt="job.company.name"/>
+                                    </div>
+                                </template>
+                                <template x-if="$store.main.user.id>=0 && $store.main.user.is_worker ">
+                                    <div>
+
+                                        <label :for="'favorite_job_'+job.id">favorite</label>
+                                        <input type="checkbox" :id="'favorite_job_'+job.id" class="favorite_job_checkbox"
+                                               x-model="job.favorite.checked"/>
+                                    </div>
+                                </template>
+                                <template x-if="$store.main.user.id<0">
+                                     <div class="clear">
+                                        <a href='/signin' class="btn btn-success">Войти для отклика</a>
+                                    </div>
+                                </template>
+                                <template x-if="$store.main.user.id>=0">
+                                    <template x-if="$store.main.getResponseInviteElement(job.id) === 'link'">
+                                        <a href>Invite</a>
+                                    </template>
+                                    <template x-if="$store.main.getResponseInviteElement(job.id) === 'status'">
+                                        <p x-text="$store.main.getResponseInviteStatus(job.id)"></p>
+                                    </template>
+                                </template>
+                            </div>
+                        </div>
+
+                    </template>
                 </div>
             </div>
         </section>
     </div>
+    <script src="{% static 'contract/js/jobs.js' %}" defer></script>
+    <script src="{% static 'contract/js/alpine.js' %}" defer></script>
+
     <script>
-    $(document).ready(function(){
-        const application = new app()
-        application.radioInputChecker("[name='work_deposit']",2, "#id_deposit")
-        application.favoriteJobCheckboxHandler()
-    });
+        async function init() {
+            document.addEventListener('alpine:init', async () => {
+                const js = new JobsSearch()
+                const user = await js.getUser()
+                console.log(user);
+                if (user.success){
+                    js.setUser(user.data)
+                }
+                const jobs = await js.getJobs()
+                if (jobs.success){
+                    js.setJobs(jobs.data)
+                }
+
+            })
+        }
+
+        init()
+        $(document).ready(function () {
+            const application = new app()
+            application.radioInputChecker("[name='work_deposit']", 2, "#id_deposit")
+            application.favoriteJobCheckboxHandler()
+
+
+            application.jobFilterSubmit()
+        });
     </script>
 {% endblock content %}

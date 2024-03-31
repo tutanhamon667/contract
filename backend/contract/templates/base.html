@@ -22,6 +22,8 @@
     {% include "./blocks/header.html"  %}
     {% block content %}{% endblock content %}
     {% include "./blocks/footer.html"  %}
+{% csrf_token %}
+
 </body>
 
 </html>

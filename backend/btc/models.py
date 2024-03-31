@@ -2,7 +2,7 @@
 import binascii
 import datetime
 from decimal import Decimal
-
+from django.utils import timezone
 from django.db import transaction
 from django.db import connection
 
@@ -229,6 +229,16 @@ class JobPayment(models.Model):
             return payment[0]
         else:
             return False
+
+    @classmethod
+    def join_tier(cls, objs):
+        jobs_ids = []
+        for job in objs:
+            jobs_ids.append(job.id)
+        active_job_payments = cls.objects.filter(start_at__lte=timezone.now(),
+                                                        expire_at__gte=timezone.now(),
+                                                        job_id__in=jobs_ids).values()
+        return active_job_payments
 
     @transaction.atomic
     def _create_payment(self, tier, amount, job, start_at, expire_at):

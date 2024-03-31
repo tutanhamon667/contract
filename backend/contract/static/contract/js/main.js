@@ -1,9 +1,14 @@
+
 const app = function() {
 
     const makeRequest = function(url, data, callback){
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $.ajax({
             url: `/api/${url}`,
             data: data,
+            beforeSend: function(request) {
+                request.setRequestHeader("X-CSRFToken", csrftoken);
+            },
             method: "POST",
             success: (data) => {
                 callback(true, data)
@@ -84,6 +89,46 @@ const app = function() {
         })
     }
 
+    const getFavoriteJobs = () => {
+        const callback = (res, data) => {
+            console.log(res)
+            console.log(data)
+        }
+        makeRequest('get_favorite', {}, callback)
+
+    }
+
+    const jobFilterSubmit = () => {
+        $('#filter_form').on('submit', function(e){
+            e.preventDefault()
+            const params = new FormData(this);
+            const object = {};
+            params.forEach((value, key) => {
+                if(typeof object[key] == 'undefined'){
+                    object[key] = value
+                }else{
+                    if(Array.isArray(object[key])) {
+                        object[key].push(value)
+                    }else{
+                        object[key] = [object[key],value]
+
+                    }
+                }
+
+            });
+            getJobs(object)
+        })
+    }
+
+    const getJobs = (data = {}) => {
+        const callback = (res, data) => {
+            console.log(res)
+            console.log(data)
+        }
+        makeRequest('jobs', data, callback)
+
+    }
+
     const profileResponseInvitesFilters = () => {
         const orderBtn = $('#order')
         const searchParams = new URLSearchParams(window.location.search);
@@ -123,7 +168,9 @@ const app = function() {
         profileResponseInvitesFilters:profileResponseInvitesFilters,
         radioInputChecker:radioInputChecker,
         profileJobsFilters:profileJobsFilters,
-        favoriteJobCheckboxHandler: favoriteJobCheckboxHandler
+        favoriteJobCheckboxHandler: favoriteJobCheckboxHandler,
+        getJobs:getJobs,
+        jobFilterSubmit:jobFilterSubmit,
     }
 }
 

@@ -12,6 +12,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import Q
 from PIL import Image
 
+
 from contract.settings import CONTACT_TYPE, THUMBNAIL_SIZE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS
 from .common import Region
 from users.usermanager import UserManager
@@ -242,6 +243,14 @@ class Company(models.Model):
 
 	def __str__(self):
 		return self.name
+
+
+	@classmethod
+	def join_companies(cls, objs):
+		companies_ids = []
+		for job in objs:
+			companies_ids.append(job.company_id)
+		return cls.objects.filter(id__in=companies_ids).values()
 
 
 class CustomerReview(models.Model):
@@ -670,6 +679,66 @@ class Job(models.Model):
 																				   '-pseudo_tier_order', '-id')[:limit]
 
 	@classmethod
+	def search_filter_new(cls, request, limit):
+		_get = request.POST
+		now = datetime.datetime.now()
+		objs = cls.objects
+		filters_exists = False
+		if "title" in _get and _get["title"] != '':
+			filters_exists = True
+			objs = objs.filter(Q(title__icontains=_get["title"]) | Q(specialisation__name__icontains=_get["title"]) | Q(
+				specialisation__industry__name__icontains=_get["title"]))
+		if "salary_from" in _get and _get["salary_from"] != '':
+			filters_exists = True
+			objs = objs.filter(Q(salary__gt=0) | Q(salary_from__gt=0)).filter(
+				Q(salary__gte=_get["salary_from"]) | Q(salary_from__gte=_get["salary_from"]))
+		if "work_type" in _get and _get["work_type"] != '3':
+			filters_exists = True
+			if _get["work_type"] == '2':
+				objs = objs.filter(is_offline=False)
+			if _get["work_type"] == '1':
+				objs = objs.filter(is_offline=True)
+		if "work_time_busy" in _get and _get["work_time_busy"] != '3':
+			filters_exists = True
+			if _get["work_time_busy"] == '2':
+				objs = objs.filter(is_fulltime=False)
+			if _get["work_time_busy"] == '1':
+				objs = objs.filter(is_fulltime=True)
+		if "work_deposit" in _get:
+			filters_exists = True
+			if _get["work_deposit"] == '2':
+				objs = objs.filter(deposit=0)
+			if _get["work_deposit"] == '1':
+				objs = objs.filter(deposit__gt=0)
+		if "deposit" in _get and _get["deposit"] != '':
+			filters_exists = True
+			objs = objs.filter(deposit__lte=_get["deposit"])
+		if "work_experience" in _get and _get["work_experience"] != 'NoMatter':
+			filters_exists = True
+			if _get["work_experience"] == 'WithoutExperience':
+				objs = objs.filter(work_experience=0)
+			if _get["work_experience"] == 'Between1And6':
+				objs = objs.filter(work_experience__gte=1, work_experience__lte=6)
+			if _get["work_experience"] == 'Between6And12':
+				objs = objs.filter(work_experience__gte=6, work_experience__lte=12)
+		if "specialisation" in _get and _get["specialisation"] != '':
+			filters_exists = True
+			objs = objs.filter(specialisation__in=_get["specialisation"])
+		if "region" in _get and _get["region"] != '':
+			filters_exists = True
+			objs = objs.filter(specialisation__in=_get["region"])
+
+		if not filters_exists:
+			return cls.objects.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
+									  jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
+																						  '-pseudo_tier_order', '-id')[
+				   :limit]
+		else:
+			return objs.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
+							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
+																				   '-pseudo_tier_order', '-id')[:limit]
+
+	@classmethod
 	def join_invites(cls, objs, user):
 		jobs_ids = []
 		for job in objs:
@@ -682,6 +751,11 @@ class Job(models.Model):
 					job.type = job_response["type"]
 					job.request_invite_id = job_response["id"]
 		return objs
+
+
+
+
+
 
 
 class ResponseInvite(models.Model):
@@ -789,6 +863,13 @@ class ResponseInvite(models.Model):
 			print(e)
 			return False
 
+	@classmethod
+	def join_invites(cls, objs, user):
+		jobs_ids = []
+		for job in objs:
+			jobs_ids.append(job.id)
+		return cls.objects.filter(job_id__in=jobs_ids, resume__user=user).values()
+
 
 class FavoriteJob(models.Model):
 	user = models.ForeignKey(to=User, on_delete=models.PROTECT, verbose_name="User")
@@ -797,4 +878,12 @@ class FavoriteJob(models.Model):
 	@classmethod
 	def get_favorites(cls, user, jobs):
 		return cls.objects.filter(user=user, job__in=jobs)
+
+	@classmethod
+	def join_favorites(cls, objs, user):
+		jobs_ids = []
+		for job in objs:
+			jobs_ids.append(job.id)
+		return cls.objects.filter(job_id__in=jobs_ids, user=user).values()
+
 

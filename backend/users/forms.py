@@ -99,7 +99,7 @@ class JobFilterForm(forms.Form):
 	salary_from = forms.IntegerField(
 		label='Зарплата от', required=False
 	)
-	work_deposit = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_DEPOSIT, initial='2', required=False)
+	work_deposit = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_DEPOSIT, initial='1', required=False)
 	deposit = forms.IntegerField(
 		label='Депозит до', required=False
 	)
