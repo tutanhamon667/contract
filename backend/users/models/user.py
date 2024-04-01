@@ -740,12 +740,12 @@ class Job(models.Model):
 		if not filters_exists:
 			return cls.objects.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
 									  jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
-																						  '-pseudo_tier_order', '-id')[
+																						  '-pub_date', '-id')[
 				   :limit]
 		else:
 			return objs.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
 							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
-																				   '-pseudo_tier_order', '-id')[:limit]
+																				   '-pub_date', '-id')[:limit]
 
 	@classmethod
 	def join_invites(cls, objs, user):
