@@ -12,7 +12,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import Q
 from PIL import Image
 
-
+import random
 from contract.settings import CONTACT_TYPE, THUMBNAIL_SIZE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS
 from .common import Region
 from users.usermanager import UserManager
@@ -593,15 +593,18 @@ class Job(models.Model):
 
 	@classmethod
 	def get_hot_jobs(cls, limit):
-
-		return cls.objects.filter(jobpayment__job_tier_id=3, jobpayment__start_at__lte=timezone.now(),
-								  jobpayment__expire_at__gte=timezone.now()).order_by('-id')[:limit]
+		items = list(cls.objects.filter(jobpayment__job_tier_id=3, jobpayment__start_at__lte=timezone.now(),
+								  jobpayment__expire_at__gte=timezone.now()).order_by('-id'))
+		if len(items) <3:
+			return items
+		random_items = random.sample(items, 3)
+		return random_items
 
 	@classmethod
 	def up_tier_two(cls):
 
-		cls.objects.filter(jobpayment__job_tier_id=2, jobpayment__start_at__lte=timezone.now(),
-						   jobpayment__expire_at__gte=timezone.now()).update(pseudo_tier_order=1)
+		cls.objects.filter(jobpayment__job_tier_id=2, pub_date__lt=timezone.now(),
+						   jobpayment__expire_at__gte=timezone.now()).update(pub_date=timezone.now())
 
 	@property
 	def is_hot(self):
@@ -721,12 +724,18 @@ class Job(models.Model):
 				objs = objs.filter(work_experience__gte=1, work_experience__lte=6)
 			if _get["work_experience"] == 'Between6And12':
 				objs = objs.filter(work_experience__gte=6, work_experience__lte=12)
+		if "specialisation[]" in _get and _get["specialisation[]"] != '':
+			filters_exists = True
+			objs = objs.filter(specialisation__in=_get.getlist("specialisation[]"))
 		if "specialisation" in _get and _get["specialisation"] != '':
 			filters_exists = True
-			objs = objs.filter(specialisation__in=_get["specialisation"])
+			objs = objs.filter(specialisation_id=_get["specialisation"])
 		if "region" in _get and _get["region"] != '':
 			filters_exists = True
-			objs = objs.filter(specialisation__in=_get["region"])
+			objs = objs.filter(region__in=_get["region"])
+		if "region[]" in _get and _get["region[]"] != '':
+			filters_exists = True
+			objs = objs.filter(region__in=_get.getlist("region[]"))
 
 		if not filters_exists:
 			return cls.objects.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
@@ -830,35 +839,35 @@ class ResponseInvite(models.Model):
 			return cls.objects.filter(job__company__user_id=user.id)
 
 	@classmethod
-	def create_invite(cls, user: User, job_id: int, resume_id: int) -> bool:
+	def create_invite(cls, user: User, job_id: int, resume_id: int) :
 		try:
 			user_job = Job.objects.get(company__user=user, id=job_id)
 			invite = ResponseInvite.objects.filter(resume_id=resume_id, job_id=job_id)
 
 			if len(invite):
 				# Отклик уже существует
-				return False
+				return invite[0]
 			invite = ResponseInvite(resume_id=resume_id, job_id=job_id, type=RESPONSE_INVITE_TYPE["INVITE"],
 									status=RESPONSE_INVITE_STATUS["WAIT_FOR_ACCEPT"])
 			invite.save()
-			return True
+			return invite
 		except Exception as e:
 			print(e)
 			return False
 
 	@classmethod
-	def create_response(cls, user: User, job_id: int, resume_id: int) -> bool:
+	def create_response(cls, user: User, job_id: int, resume_id: int) :
 		try:
 			user_resume = Resume.objects.get(user=user, id=resume_id)
 			invite = ResponseInvite.objects.filter(resume_id=resume_id, job_id=job_id)
 
 			if len(invite):
 				# Отклик уже существует
-				return False
+				return invite[0]
 			response = ResponseInvite(resume_id=resume_id, job_id=job_id, type=RESPONSE_INVITE_TYPE["RESPONSE"],
 									  status=RESPONSE_INVITE_STATUS["WAIT_FOR_ACCEPT"])
 			response.save()
-			return True
+			return response
 		except Exception as e:
 			print(e)
 			return False

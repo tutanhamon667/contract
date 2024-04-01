@@ -38,11 +38,7 @@ CELERY_BEAT_SCHEDULE = {
 	},
 	"up_tier_two": {
 		"task": "btc.tasks.up_tier_two",
-		"schedule": crontab(minute="*/3"),
-	},
-	"down_tier_two": {
-		"task": "btc.tasks.down_tier_two",
-		"schedule": crontab(minute="*/4"),
+		"schedule": crontab(minute="*/5"),
 	},
 }
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True

@@ -13,7 +13,7 @@ from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
     profile_main_view, \
-    profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view
+    profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view
 from users.controllers.test_view import test
 from . import settings
@@ -54,6 +54,7 @@ urlpatterns = [
     path('jobs/<int:job_id>', job_view, name='job'),
     path('company/<int:company_id>', company_view, name='company'),
     path('profile/main', profile_main_view, name='profile_main'),
+    path('profile/favorite', profile_favorite_view, name='profile_favorite'),
     path('profile/resume', profile_resumes_view, name='profile_resume'),
     path('profile/resume/<int:resume_id>', profile_resume_view, name='profile_resume'),
     path('profile/contact', contacts_view, name='profile_contacts'),

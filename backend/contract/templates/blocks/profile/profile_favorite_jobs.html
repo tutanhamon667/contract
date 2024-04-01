@@ -4,17 +4,9 @@
 {% load django_bootstrap5 %}
 {% block content %}
     <div class="container" x-data>
+    <h1 class="my_order_title">Избранные вакансии</h1>
         <section>
             <div class="row">
-                <div class="col-lg-3">
-                    <form action="" method="get" id="filter_form" @submit.prevent="js.filterJobs(this)" novalidate>
-                        {% bootstrap_form search_form %}
-                        <button  id="filter_jobs_btn" class="btn btn-primary">Search</button>
-                    </form>
-                </div>
-                <!-- <div class="col-lg-9 job-list">              {% with short=False %}
-                    {% include "../blocks/components/job/job_component.html" %}             {% endwith %}
-                </div>-->
                 <div class="col-lg-9 job-list" x-data>
                     <template x-for="job in $store.main.jobs" :key="job.id">
                         <div class="card ">
@@ -97,7 +89,7 @@
                                         <a href='/signin' class="btn btn-success">Войти для отклика</a>
                                     </div>
                                 </template>
-                                <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
+                                <template x-if="$store.main.user.id>=0">
                                     <div x-data="{res: $store.main.getResponseInviteElement(job.id)}">
 
                                         <template x-if="res.element === 'link'">
@@ -163,7 +155,7 @@
                     }
                 }
 
-                const jobs = await js.getJobs()
+                const jobs = await js.getFavoriteJobs()
                 if (jobs.success) {
                     js.setJobs(jobs.data)
                 }
@@ -172,10 +164,6 @@
         }
 
         init()
-        $(document).ready(function () {
-            const application = new app()
-            application.radioInputChecker("[name='work_deposit']", 2, "#id_deposit")
 
-        });
     </script>
 {% endblock content %}

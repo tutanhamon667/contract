@@ -5,12 +5,15 @@ from django.http import HttpResponse, JsonResponse
 from btc.libs.balance import Balance
 from btc.libs.btc_wallet import get_wallet, get_addresses_count, generate_address
 from btc.models import JobPayment
+from chat.models import Chat
 from common.models import ArticleCategory, Article
 from orders.models import JobSpecialisationStat
 from btc.models import Address as WalletAddress, CustomerAccessPayment, Operation, Address
+from users.core.access import Access
 from users.models.advertise import Banners
-from users.models.user import FavoriteJob, Job, ResponseInvite, CustomerReview, Company
+from users.models.user import FavoriteJob, Job, ResponseInvite, CustomerReview, Company, Resume
 import jsonpickle
+
 
 def get_user(request):
 	try:
@@ -19,34 +22,32 @@ def get_user(request):
 		if user.is_authenticated:
 			if user.photo:
 				photo = user.photo.url
-			user = {"id":user.id,
-					   "display_name": user.display_name,
-					   "is_worker": user.is_worker,
-					   "is_customer": user.is_customer,
-					   "photo": photo}
+			user = {"id": user.id,
+					"display_name": user.display_name,
+					"is_worker": user.is_worker,
+					"is_customer": user.is_customer,
+					"photo": photo}
 		else:
-			user = {"id":-1,"display_name": None,
-					   "is_worker": None,
-					   "is_customer": None,
-					   "photo": None}
-		return JsonResponse({'success': True, 'data':user})
+			user = {"id": -1, "display_name": None,
+					"is_worker": None,
+					"is_customer": None,
+					"photo": None}
+		return JsonResponse({'success': True, 'data': user})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
 
 def favorite_job(request):
 	try:
 		if request.user.is_authenticated:
 			if request.user.is_worker:
 				job_id = int(request.POST["job_id"])
-				value = request.POST["value"]
 				favorite_job = FavoriteJob.objects.filter(user=request.user, job_id=job_id)
-				if job_id and value == 'true':
-					if len(favorite_job) == 0:
-						favorite_job = FavoriteJob(job_id=job_id, user=request.user)
-						favorite_job.save()
-				elif job_id and value == 'false':
-					if len(favorite_job) != 0:
-						favorite_job[0].delete()
+				if len(favorite_job) == 0:
+					favorite_job = FavoriteJob(job_id=job_id, user=request.user)
+					favorite_job.save()
+				elif len(favorite_job) == 1:
+					favorite_job[0].delete()
 				return JsonResponse({'success': True})
 			else:
 				return JsonResponse({'success': False, "code": 403})
@@ -54,7 +55,6 @@ def favorite_job(request):
 			return JsonResponse({'success': False, "code": 401})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
-
 
 
 def get_favorite_jobs(request):
@@ -81,7 +81,6 @@ def get_hot_jobs(request):
 		return JsonResponse({'success': True, "data": hot_jobs})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
-
 
 
 def get_categories_jobs(request):
@@ -116,6 +115,125 @@ def get_new_jobs(request):
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+def response_invite(request):
+	try:
+		user = request.user
+		access = Access(user)
+		resume_id = request.POST["resume_id"]
+		action = request.POST["action"]
+		job_id = request.POST["job_id"]
+		ri_id = request.POST["id"]
+		code = 403
+		if action == 'create':
+			if user.is_worker:
+				code = access.check_access("response_invite", resume_id, action)
+			if user.is_customer:
+				code = access.check_access("response_invite", job_id, action)
+		if action != 'create':
+			if user.is_worker:
+				code = access.check_access("response_invite", ri_id, 'update')
+			if user.is_customer:
+				code = access.check_access("response_invite", ri_id, 'update')
+
+		if code != 200:
+			if code == 401:
+				return JsonResponse({'success': False, "code": code, "msg": "unauth"})
+			elif code == 403:
+				return JsonResponse({'success': True, "code": code, "msg": "not allowed"})
+			else:
+				return JsonResponse({'success': False, "code": code})
+		status = 0
+		res = {}
+		if action == 'create':
+			if user.is_worker:
+				response = ResponseInvite.create_response(user, job_id, resume_id)
+			if user.is_customer:
+				response = ResponseInvite.create_invite(user, job_id, resume_id)
+		elif action == 'accept':
+			status = 1
+		elif action == 'decline':
+			status = 2
+		elif action == 'delete':
+			status = 3
+		if action != 'create':
+			response = ResponseInvite.update_response_invite(ri_id, user, status)
+		res["id"] = response.id
+		res["job_id"] = int(response.job_id)
+		res["resume_id"] = int(response.resume_id)
+		res["status"] = response.status
+		res["type"] = response.type
+		return JsonResponse({'success': True, "data": res})
+	except Exception as e:
+		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
+
+def get_user_resumes(request):
+	try:
+		user = request.user
+		access = Access(user)
+		code = access.check_access("self_resumes")
+		if code != 200:
+			if code == 401:
+				return JsonResponse({'success': False, "code": code, "msg": "unauth"})
+			elif code == 403:
+				return JsonResponse({'success': True, "code": code, "msg": "not allowed"})
+			else:
+				return JsonResponse({'success': False, "code": code})
+		resumes = list(Resume.objects.filter(user=user).values())
+		return JsonResponse({'success': True, "data": resumes})
+	except Exception as e:
+		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
+
+
+def favorite_jobs(request):
+	try:
+		if request.user.is_authenticated:
+
+			jobs = Job.objects.filter(favoritejob__user_id=request.user)
+			companies = Company.join_companies(jobs)
+			res = list(jobs.values())
+			payments = list(JobPayment.join_tier(objs=jobs).values())
+			companies_arr = []
+			for company in companies:
+				logo = None
+				if company["logo"]:
+					logo = company["logo"]
+				companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"]})
+			invites = []
+			favorites = []
+			if request.user.is_authenticated:
+				invites = list(ResponseInvite.join_invites(objs=jobs, user=request.user).values())
+				if request.user.is_worker:
+					favorites = list(FavoriteJob.join_favorites(objs=jobs, user=request.user).values())
+
+			for r in res:
+				r["company"] = {}
+				for company in companies_arr:
+					if company["id"] == r["company_id"]:
+						r["company"] = company
+				r["invite"] = {}
+				for invite in invites:
+					if r["id"] == invite["job_id"]:
+						if invite["status"] == 1:
+							try:
+								chat = Chat.objects.get(response_invite_id=invite["id"])
+								invite["chat"] = {"uuid": chat.uuid}
+
+							except Exception as e:
+								print(e)
+						r["invite"] = invite
+				for payment in payments:
+					if r["id"] == payment["job_id"]:
+						r["payment"] = payment
+				r["favorite"] = {}
+				for favorite in favorites:
+					if r["id"] == favorite["job_id"]:
+						favorite["checked"] = True
+						r["favorite"] = favorite
+			return JsonResponse({'success': True, "data": res})
+	except Exception as e:
+		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 def get_jobs(request):
 	try:
@@ -144,6 +262,13 @@ def get_jobs(request):
 			r["invite"] = {}
 			for invite in invites:
 				if r["id"] == invite["job_id"]:
+					if invite["status"] == 1:
+						try:
+							chat = Chat.objects.get(response_invite_id=invite["id"])
+							invite["chat"] = {"uuid": chat.uuid}
+
+						except Exception as e:
+							print(e)
 					r["invite"] = invite
 			for payment in payments:
 				if r["id"] == payment["job_id"]:
@@ -165,6 +290,7 @@ def get_menu(request):
 		return JsonResponse({'success': True, "data": {"articles": articles, "categoriest": categories}})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
 
 def get_balance(request):
 	try:

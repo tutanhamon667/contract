@@ -213,6 +213,20 @@ def contacts_view(request):
 		return redirect(to="signin")
 
 
+
+def profile_favorite_view(request):
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
+	if request.user.is_authenticated:
+		if request.method == "GET":
+
+			return render(request, './blocks/profile/profile_favorite_jobs.html', {
+				'categories': categories,
+				'articles': articles
+			})
+	else:
+		return redirect(to="signin")
+
 def profile_main_view(request):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()

@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import render, redirect
-
+from django.utils import timezone
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from btc.libs.balance import Balance
@@ -33,13 +33,13 @@ def customer_access(request):
 	user = request.user
 	if user.is_authenticated:
 		today = datetime.datetime.now()
-		customer_access = CustomerAccessPayment.objects.filter(created__lte=today,
-															   expire_at__gte=today, user=user)
+		customer_access = CustomerAccessPayment.objects.filter(start_at__lte=timezone.now(),
+															   expire_at__gte=timezone.now(), user=user)
 		if len(customer_access) == 0:
 			member = Member.objects.get(id=user.id)
 			if member.is_worker:
 				return HttpResponse(status=403)
-			d1 = datetime.datetime.now()
+			d1 = timezone.now()
 			expire_date = d1 + relativedelta(months=1)
 			ca = CustomerAccessPayment(user=user, start_at=d1, expire_at=expire_date, amount_id=1)
 			ca.save()
