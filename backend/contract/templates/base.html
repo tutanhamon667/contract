@@ -17,6 +17,8 @@
     <script src="{% static 'contract/ckeditor/ckeditor-init.js' %}"></script>
     <script src="{% static 'contract/js/jquery.js' %}"></script>
     <script src="{% static 'contract/js/main.js' %}"></script>
+    <script src="{% static 'contract/js/app.js' %}" defer></script>
+    <script src="{% static 'contract/js/alpine.js' %}" defer></script>
 </head>
 <body>
     {% include "./blocks/header.html"  %}
@@ -24,6 +26,14 @@
     {% include "./blocks/footer.html"  %}
 {% csrf_token %}
 
+<script>
+     async function init() {
+            document.addEventListener('alpine:init', async () => {
+                js = new alpineApp()
+            })
+     }
+     init()
+</script>
 </body>
 
 </html>

@@ -1,3 +1,118 @@
+@font-face {
+    font-family: "Inter";
+    src: url(../fonts/inter.ttf) format("truetype");
+}
+
+:root{
+    --bs-border-color-translucent: #EDEDED !important;
+}
+
+.password-input{
+    display: flex;
+    border: 1px solid grey;
+    border-radius: 10px;
+}
+
+.password-input>button{
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.password-input>button{
+    background-image: url('../img/eye.svg');
+}
+
+.password-input>button.hidepassword{
+    background-image: url('../img/eye-closed.svg');
+}
+.password-input> input, button{
+    border: none !important;
+    border-radius: 10px;
+}
+
+.password-input> input:focus{
+    border: none !important;
+}
+
+
+.password-input>input:active{
+    border: none !important;
+}
+
+.password-input:has(> input:focus){
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+
+.auth-form{
+    width: 400px;
+}
+p.form-caption {
+    font-family: "Inter";
+    font-weight: 500;
+    font-size: 18px;
+    padding-bottom: 20px;
+}
+
+.captcha {
+    background-color: grey;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+body {
+    font-family: "Inter";
+}
+
+h1 {
+    font-family: "Inter";
+    font-weight: bold;
+    font-size: 48px;
+}
+
+h2 {
+    font-family: "Inter";
+    font-weight: bold;
+    font-size: 32px;
+}
+
+h3 {
+    font-family: "Inter";
+    font-weight: bold;
+    font-size: 21px;
+}
+
+p {
+    font-family: "Inter";
+    font-weight: normal;
+    font-size: 14px;
+}
+
+a {
+    font-family: "Inter";
+    font-weight: normal;
+    font-size: 16px;
+    color: black;
+}
+
+a.nav-link {
+    font-family: "Inter" !important;
+    font-weight: normal !important;
+    font-size: 16px !important;
+    color: black !important;
+}
+
+span {
+    font-family: "Inter";
+    font-weight: normal;
+    font-size: 9px;
+}
+
 .btn-primary {
     --bs-btn-color: #fff;
     --bs-btn-bg: black;
@@ -15,6 +130,123 @@
     --bs-btn-disabled-border-color: black;
 }
 
+.border-color-danger {
+    border-color: #D6001C !important;
+
+}
+
+
+
+::placeholder {
+  color: #adadad;
+  opacity: 1; /* Firefox */
+}
+
+::-ms-input-placeholder { /* Edge 12 -18 */
+  color: #adadad;
+}
+
+input[type="text"]:focus{
+    border: 1px solid black;
+    outline: none !important;
+}
+.btn{
+    --bs-btn-border-radius: 10px !important;
+}
+.form-control{
+    font-family: "Inter";
+    font-weight: normal;
+    font-size: 16px;
+    border-radius: 10px;
+    line-height: 2;
+}
+
+.p-l-r-40{
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.p-t{
+    padding-top: 0px;
+}
+
+input[type="text"]:active{
+    border: 1px solid black;
+    outline: none !important;
+}
+.form-control:focus {
+  border-color: inherit !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.btn {
+
+    --bs-btn-font-family: "Inter" !important;
+    --bs-btn-font-size: 16px !important;
+    --bs-btn-font-weight: normal !important;
+    --bs-btn-line-height: 1.7 !important;
+
+}
+
+
+
+.btn-success {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #4BB24E;
+    --bs-btn-border-color: #4BB24E;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #4BB24E;
+    --bs-btn-hover-border-color: #4BB24E;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #4BB24E;
+    --bs-btn-active-border-color: #4BB24E;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #4BB24E;
+    --bs-btn-disabled-border-color: #4BB24E;
+}
+
+
+.btn-danger {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #d6001c;
+    --bs-btn-border-color: #D6001C;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #D6001C;
+    --bs-btn-hover-border-color: #D6001C;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #D6001C;
+    --bs-btn-active-border-color: #D6001C;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #D6001C;
+    --bs-btn-disabled-border-color: #D6001C;
+}
+
+.btn-white {
+    --bs-btn-color: black;
+    --bs-btn-bg: #fff;
+    --bs-btn-border-color: black;
+    --bs-btn-hover-color: black;
+    --bs-btn-hover-bg: #fff;
+    --bs-btn-hover-border-color: #adadad;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #fff;
+    --bs-btn-active-border-color: #adadad;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #adadad;
+    --bs-btn-disabled-border-color: #adadad;
+}
+
+input[type="text"]:focus.border-color-danger {
+    border-color: #D6001C !important;
+
+}
 .icon-text {
     vertical-align: middle;
     display: inline-block;
@@ -38,12 +270,12 @@ section {
     background-position-y: center;
 }
 
-.card-p-margin-5 p{
-    margin-bottom: 5px  !important;
+.card-p-margin-5 p {
+    margin-bottom: 5px !important;
     font-size: 14px;
 }
 
-section>.row>div {
+section > .row > div {
     padding-top: 10px;
 }
 
@@ -65,18 +297,19 @@ section>.row>div {
     margin-top: 10px;
 }
 
-.job-list>.card:hover {
+.job-list > .card:hover {
     background-color: #f3eeee;
 }
 
 .card-title a {
     text-decoration: none;
 }
+
 .card-title a:hover {
     text-decoration: underline;
 }
 
-.job-card-item-customer.customer-name{
+.job-card-item-customer.customer-name {
     font-size: 20px;
     color: black;
     text-decoration: none;
@@ -84,10 +317,10 @@ section>.row>div {
 
 .job-card-item-customer.customer-name:hover {
     text-decoration: underline;
-     color: black;
+    color: black;
 }
 
-.customer-name{
+.customer-name {
     margin: 0;
 }
 
@@ -101,8 +334,9 @@ ul.errorlist {
 }
 
 .card.horizontal-height {
-        min-height: 160px;
+    min-height: 160px;
 }
+
 .card {
     margin-bottom: 10px;
 }
@@ -112,20 +346,22 @@ ul.errorlist {
 }
 
 .star-rating {
-  line-height:32px;
-  font-size:1.25em;
+    line-height: 32px;
+    font-size: 1.25em;
 }
 
-.star-rating .fa-star{color: yellow;}
+.star-rating .fa-star {
+    color: yellow;
+}
 
 .card p {
     margin-bottom: 0;
 }
 
-.star-rating-container{
+.star-rating-container {
     line-height: 2;
 }
 
-.response_invite_filter_form{
+.response_invite_filter_form {
     visibility: hidden;
 }

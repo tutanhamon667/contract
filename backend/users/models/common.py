@@ -76,7 +76,7 @@ class Captcha(models.Model):
         challenge = ""
         hashkey = ""
         chars, ret = "abcdefghijklmnopqrstuvwxyz", ""
-        for i in range(4):
+        for i in range(5):
             challenge += random.choice(chars)
 
         store = cls.objects.create(challenge=challenge, response="")

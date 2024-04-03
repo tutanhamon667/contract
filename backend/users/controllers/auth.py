@@ -3,6 +3,7 @@ import base64
 from django.shortcuts import render, redirect
 from django.db import transaction
 from chat.models import Chat
+from common.models import Article, ArticleCategory
 from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
 from contract.settings import CHAT_TYPE
 from users.core.user import UserCore
@@ -25,11 +26,14 @@ def logout_view(request):
 
 
 def login_view(request):
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
 		form = AuthenticationForm()
 		key, hash_key = Captcha().generate_key()
 		captcha_base64 = SimpleCaptcha(width=280, height=90).get_base64(key)
-		return render(request, 'login.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64})
+		return render(request, 'login.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,'articles': articles,
+			'categories': categories})
 	if request.method == "POST":
 		form = AuthenticationForm(request, data=request.POST)
 		hash_key = request.POST.get("hashkey")
@@ -39,7 +43,10 @@ def login_view(request):
 			return render(request, 'login.html',
 						  {'form': form,
 						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request)})
+						   'captcha': SimpleCaptcha.captcha_check(request),
+						   'articles': articles,
+						   'categories': categories
+						   })
 
 		if form.is_valid():
 			username = form.cleaned_data.get('username')
@@ -54,23 +61,86 @@ def login_view(request):
 				return render(request, 'login.html',
 							  {'form': form,
 							   'hashkey': hash_key,
-							   'captcha': SimpleCaptcha.captcha_check(request)})
+							   'captcha': SimpleCaptcha.captcha_check(request),
+							   'articles': articles,
+							   'categories': categories
+							   })
 		else:
 			messages.error(request, "Invalid username or password.")
 			return render(request, 'login.html',
 						  {'form': form,
 						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request)})
+						   'captcha': SimpleCaptcha.captcha_check(request),
+						   'articles': articles,
+						   'categories': categories
+						   })
+
+
+
+def login_customer_view(request):
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
+	if request.method == "GET":
+		form = AuthenticationForm()
+		key, hash_key = Captcha().generate_key()
+		captcha_base64 = SimpleCaptcha(width=280, height=90).get_base64(key)
+		return render(request, 'login_customer.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,'articles': articles,
+			'categories': categories})
+	if request.method == "POST":
+		form = AuthenticationForm(request, data=request.POST)
+		hash_key = request.POST.get("hashkey")
+		res = Captcha.check_chaptcha(captcha=request.POST.get("captcha"), hash=hash_key)
+		if not res:
+			messages.error(request, "Unsuccessful login.Captcha Invalid .")
+			return render(request, 'login_customer.html',
+						  {'form': form,
+						   'hashkey': hash_key,
+						   'captcha': SimpleCaptcha.captcha_check(request),
+						   'articles': articles,
+						   'categories': categories
+						   })
+
+		if form.is_valid():
+			username = form.cleaned_data.get('username')
+			password = form.cleaned_data.get('password')
+			user_core = UserCore(User)
+			res = user_core.login(username=username, password=password, request=request)
+			if res:
+				messages.info(request, f"You are now logged in as {username}.")
+				return redirect("index")
+			else:
+				messages.error(request, res.error["msg"])
+				return render(request, 'login_customer.html',
+							  {'form': form,
+							   'hashkey': hash_key,
+							   'captcha': SimpleCaptcha.captcha_check(request),
+							   'articles': articles,
+							   'categories': categories
+							   })
+		else:
+			messages.error(request, "Invalid username or password.")
+			return render(request, 'login_customer.html',
+						  {'form': form,
+						   'hashkey': hash_key,
+						   'captcha': SimpleCaptcha.captcha_check(request),
+						   'articles': articles,
+						   'categories': categories
+						   })
 
 
 def registration_customer_view(request):
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
 		form = RegisterCustomerForm(initial={"is_customer": True})
 		captcha = Captcha()
 		key, hash_key = captcha.generate_key()
-		image = SimpleCaptcha(width=280, height=90)
+		image = SimpleCaptcha(width=340, height=120)
 		captcha_base64 = image.get_base64(key)
-		return render(request, 'register.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64})
+		return render(request, 'register.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,
+												 'articles': articles,
+												 'categories': categories
+												 })
 	if request.method == "POST":
 		form = RegisterCustomerForm(request.POST)
 
@@ -81,7 +151,10 @@ def registration_customer_view(request):
 			return render(request, 'register.html',
 						  {'form': form,
 						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request)})
+						   'captcha': SimpleCaptcha.captcha_check(request),
+						   'articles': articles,
+						   'categories': categories
+						   })
 		if form.is_valid():
 			with transaction.atomic():
 				user = form.save()
@@ -104,17 +177,25 @@ def registration_customer_view(request):
 			return render(request, 'register.html',
 						  {'form': form,
 						   'hashkey': request.POST['hashkey'],
-						   'captcha': SimpleCaptcha.captcha_check(request)})
+						   'captcha': SimpleCaptcha.captcha_check(request),
+						   'articles': articles,
+						   'categories': categories
+						   })
 
 
 def registration_worker_view(request):
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
 		form = RegisterWorkerForm(initial={"is_worker": True})
 		captcha = Captcha()
 		key, hash_key = captcha.generate_key()
-		image = SimpleCaptcha(width=280, height=90)
+		image = SimpleCaptcha(width=340, height=120)
 		captcha_base64 = image.get_base64(key)
-		return render(request, 'register.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64})
+		return render(request, 'register.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,
+												 'articles': articles,
+												 'categories': categories
+												 })
 	if request.method == "POST":
 		form = RegisterWorkerForm(request.POST)
 
@@ -125,7 +206,10 @@ def registration_worker_view(request):
 			return render(request, 'register.html',
 						  {'form': form,
 						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request)})
+						   'captcha': SimpleCaptcha.captcha_check(request),
+						   'articles': articles,
+						   'categories': categories
+						   })
 		if form.is_valid():
 			with transaction.atomic():
 				user = form.save()
@@ -147,4 +231,7 @@ def registration_worker_view(request):
 		return render(request, 'register.html',
 					  {'form': form,
 					   'hashkey': request.POST['hashkey'],
-					   'captcha': SimpleCaptcha.captcha_check(request)})
+					   'captcha': SimpleCaptcha.captcha_check(request),
+					   'articles': articles,
+					   'categories': categories
+					   })

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bootstrap_icons %}
+{% load django_bootstrap5 %}
+{% block content %}
+<section class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-6 col-xl-4 auth-form">
+                <div class="card bg-white text-black" style="border-radius: 1rem;">
+                    <div class="card-body p-4">
+
+                        <div class="">
+                            <p class="form-caption">Поиск сотрудников</p>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <input class="form-control" type="text" name="username" placeholder="Логин">
+                                </div>
+
+                                <div class="password-input mb-3" x-data>
+                                    <input class="form-control" type="text" name="password" id="password" placeholder="Пароль">
+                                    <button for="password" x-bind="PasswordToggleBtn" class="password-toggle hidepassword"></button>
+                                </div>
+
+                                <div class="captcha">
+                                    <img id="captcha-img" src="data:image/png;base64, {{ captcha }}">
+                                </div>
+                                <input type="hidden" name="ref" value="">
+                                <input type="hidden" name="hashkey" value="{{ hashkey }}">
+                                <div class="mb-3">
+                                    <label class="form-label" for="id_username"></label>
+                                    <input type="text" name="captcha" autofocus="" autocapitalize="none" class="form-control" placeholder="Введите текст с картинки" required="" id="id_captcha">
+                                </div>
+                                <button class="btn btn-primary btn-lg px-5 w-100 form-control" type="submit">Войти</button>
+                            </form>
+                            <div class="text-center">
+                                <a href="{%  url 'customer_signup' %}">Регистрация</a>
+                            </div>
+
+                        </div>
+                    </div></div>
+                <div class="card bg-white text-black" style="border-radius: 1rem;">
+                    <div class="card-body p-4">
+
+                        <div class="pb-4">
+                            <p class="form-caption">Поиск работы</p>
+                            <a class="btn btn-white w-100" href="{%  url 'worker_signin' %}">Я ищу работу</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

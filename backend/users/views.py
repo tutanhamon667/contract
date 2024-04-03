@@ -45,7 +45,7 @@ def captcha_view(request):
 			res = Captcha.check_chaptcha(captcha=request.POST["captcha"], hash=hash)
 			if res:
 				redirect_url = 'index'
-				if request.session['redirect']:
+				if 'redirect' in request.session:
 					redirect_url = request.session['redirect']
 					request.session['redirect'] = None
 				page = redirect(to=redirect_url)
@@ -59,7 +59,7 @@ def captcha_view(request):
 	else:
 		captcha = Captcha()
 		key, hash = captcha.generate_key()
-		image = SimpleCaptcha(width=280, height=120)
+		image = SimpleCaptcha(width=340, height=120)
 		captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
 		return render(request, 'captcha.html',
 					  {'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "")})

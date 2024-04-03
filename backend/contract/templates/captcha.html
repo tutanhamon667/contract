@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Captcha</title>
     {% load static %}
+
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
+    <link href="{% static 'contract/css/base.css' %}" rel="stylesheet"/>
     {% bootstrap_javascript %}
     {% bootstrap_messages %}
 </head>
@@ -16,26 +18,35 @@
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card bg-white text-black" style="border-radius: 1rem;">
-                    <div class="card-body p-5 text-center">
+                <div class="text-center">
+                    <img src="{% static "contract/img/logo-mid.svg" %}" height="100" class="rounded" alt="...">
+                </div>
 
-                        <div class="mt-md-4 pb-5">
-                            <div class="text-center">
-                                <img src="{% static "img/logo.png" %}" class="rounded" alt="...">
-                            </div>
+                <div class="card bg-white text-black" style="border-radius: 1rem;">
+                    <div class="card-body text-center">
+
+                        <div class="mt-md-4 pb-4">
 
                             <form class="form-captcha text-center" action="/captcha" method="post" autocomplete="off">
-                                <div class="text-center mb-md-2">
+                                <div class="text-center mb-md-2 captcha">
                                     <img id="captcha-img" class=" rounded" src="data:image/png;base64, {{ captcha }}">
                                 </div>
                                 <input type="hidden" name="ref" value="">
                                 <input type="hidden" name="hashkey" value="{{ hashkey }}">
                                 {% csrf_token %}
                                 <div class="mb-3">
-                                    <label class="form-label" for="id_username">Введите капчу</label>
-                                    <input type="text" name="captcha" autofocus="" autocapitalize="none" class="form-control" placeholder="captcha" required="" id="id_captcha">
+                                    <label class="form-label" for="id_username"></label>
+                                    {% if error %}
+                                        <input type="text" name="captcha" autofocus="" autocapitalize="none"
+                                           class="form-control border-color-danger" placeholder="Введите текст с картинки" required=""
+                                           id="id_captcha">
+                                    {% else %}
+                                    <input type="text" name="captcha" autofocus="" autocapitalize="none"
+                                           class="form-control" placeholder="Введите текст с картинки" required=""
+                                           id="id_captcha">
+                                    {% endif %}
                                 </div>
-                                <button class="btn btn-outline-dark btn-lg px-5" type="submit">Отправить</button>
+                                <button class="btn btn-primary btn-lg px-5 w-100" type="submit">Войти</button>
                             </form>
                         </div>
                     </div>

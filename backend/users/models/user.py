@@ -1,22 +1,17 @@
 import datetime
-from io import BytesIO
 from django.utils import timezone
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django_ckeditor_5.fields import CKEditor5Field
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.db.models import Sum, Count, Avg
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import Q
-from PIL import Image
-
 import random
-from contract.settings import CONTACT_TYPE, THUMBNAIL_SIZE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS
+from contract.settings import CONTACT_TYPE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS
 from .common import Region
 from users.usermanager import UserManager
-from django_cryptography.fields import encrypt, get_encrypted_field
+from django_cryptography.fields import encrypt
 
 
 class Member(PermissionsMixin, AbstractBaseUser):

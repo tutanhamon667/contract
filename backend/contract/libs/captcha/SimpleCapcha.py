@@ -18,13 +18,13 @@ class SimpleCaptcha(ImageCaptcha):
 
     @staticmethod
     def captcha_check(request):
-        image = SimpleCaptcha(width=280, height=90)
+        image = SimpleCaptcha(width=340, height=120)
         challenge = Captcha.get_captcha_challenge(hash=request.POST['hashkey'])
         captcha_base64 = str(base64.b64encode(image.generate(challenge, 'png').getvalue()))
         return captcha_base64.replace("b'", '').replace("'", "")
     def generate_image(self, chars: str)-> Image:
-        background = random_color(238, 255)
-        color = random_color(10, 200, random.randint(220, 255))
+        background = random_color(130, 130)
+        color = (255,255,255)
         im = self.create_captcha_image(chars, color, background)
 
         return im

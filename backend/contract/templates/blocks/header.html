@@ -20,34 +20,34 @@
             <!-- Collapsible wrapper -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Navbar brand -->
-                <a class="navbar-brand mt-2 mt-lg-0" href="/">
+                <a class="navbar-brand p-t-0 mt-lg-0" href="/">
                     <img
-                            src="{% static "contract/img/logo.png" %}"
-                            height="30"
-                            alt="MDB Logo"
+                            src="{% static "contract/img/logo-big.svg" %}"
+                            height="50"
+                            alt="Contract Logo"
                             loading="lazy"
                     />
                 </a>
-                <!-- Left links -->
+                {% with request.resolver_match.url_name as url_name %}
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/jobs">Соискателям</a>
+                        <a class="nav-link {% if url_name == 'worker_signin' %}active{% endif %}" href="{% url 'worker_signin' %}">Соискателям</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/for_customers">Работодателям</a>
+                        <a class="nav-link {% if url_name == 'customer_signin' %}active{% endif %}" href="{% url 'customer_signin' %}">Работодателям</a>
                     </li>
                     {% if user.is_customer %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/resumes">Поиск по базе резюме</a>
+                            <a class="nav-link {% if url_name == 'resumes' %}active{% endif %}" href="/resumes">Поиск по базе резюме</a>
                         </li>
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/chat">Чат</a>
+                            <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="/chat">Чат</a>
                         </li>
                     {% endif %}
                 </ul>
-                <!-- Left links -->
+                {% endwith %}
             </div>
             <!-- Collapsible wrapper -->
 
@@ -69,7 +69,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/signin">sign in</a>
+                            <a class="btn btn-primary p-l-r-40" href="/signin">Войти</a>
                         </li>
                     {% endif %}
                 </ul>

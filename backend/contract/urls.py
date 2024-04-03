@@ -14,7 +14,8 @@ from users.controllers.response_invite import response_invite_view
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
     profile_main_view, \
     profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view
-from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view
+from users.controllers.auth import registration_worker_view, registration_customer_view, login_view, logout_view, \
+    login_customer_view
 from users.controllers.test_view import test
 from . import settings
 from users.views import captcha_view
@@ -39,8 +40,11 @@ urlpatterns = [
     path('for_customers', for_customers_view, name='for_customers'),
     path('captcha', captcha_view, name='captcha'),
     path('signin', login_view, name='signin'),
-    path('signup/worker', registration_worker_view, name='register'),
-    path('signup/customer', registration_customer_view, name='register'),
+    path('worker/signin', login_view, name='worker_signin'),
+    path('customer/signin', login_customer_view, name='customer_signin'),
+
+    path('signup/worker', registration_worker_view, name='worker_signup'),
+    path('signup/customer', registration_customer_view, name='customer_signup'),
     path('logout', logout_view, name='logout'),
     path('jobs', jobs_view, name='jobs'),
     path('resumes', resumes_view, name='resumes'),
