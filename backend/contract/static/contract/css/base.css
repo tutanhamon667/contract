@@ -93,6 +93,10 @@ p {
     font-size: 14px;
 }
 
+p.form-error-msg {
+    color: #d6001c;
+}
+
 a {
     font-family: "Inter";
     font-weight: normal;

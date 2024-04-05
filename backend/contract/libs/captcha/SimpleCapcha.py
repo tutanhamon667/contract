@@ -18,7 +18,7 @@ class SimpleCaptcha(ImageCaptcha):
 
     @staticmethod
     def captcha_check(request):
-        image = SimpleCaptcha(width=340, height=120)
+        image = SimpleCaptcha(width=280, height=120)
         challenge = Captcha.get_captcha_challenge(hash=request.POST['hashkey'])
         captcha_base64 = str(base64.b64encode(image.generate(challenge, 'png').getvalue()))
         return captcha_base64.replace("b'", '').replace("'", "")

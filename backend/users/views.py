@@ -59,7 +59,7 @@ def captcha_view(request):
 	else:
 		captcha = Captcha()
 		key, hash = captcha.generate_key()
-		image = SimpleCaptcha(width=340, height=120)
+		image = SimpleCaptcha(width=280, height=120)
 		captcha_base64 = str(base64.b64encode(image.generate(key, 'png').getvalue()))
 		return render(request, 'captcha.html',
 					  {'hashkey': hash, 'captcha': captcha_base64.replace("b'", '').replace("'", "")})

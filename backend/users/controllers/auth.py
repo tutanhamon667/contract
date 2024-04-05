@@ -25,27 +25,31 @@ def logout_view(request):
 	return redirect(to="index")
 
 
-def login_view(request):
+
+
+
+def authenticate_view(request, template):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
 		form = AuthenticationForm()
 		key, hash_key = Captcha().generate_key()
 		captcha_base64 = SimpleCaptcha(width=280, height=90).get_base64(key)
-		return render(request, 'login.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,'articles': articles,
-			'categories': categories})
+		return render(request, f'pages/{template}.html',
+					  {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64, 'articles': articles,
+					   'categories': categories})
 	if request.method == "POST":
 		form = AuthenticationForm(request, data=request.POST)
 		hash_key = request.POST.get("hashkey")
 		res = Captcha.check_chaptcha(captcha=request.POST.get("captcha"), hash=hash_key)
 		if not res:
-			messages.error(request, "Unsuccessful login.Captcha Invalid .")
-			return render(request, 'login.html',
+			form.error = {"captcha": {"msg": "Каптча введена не верно."}}
+			return render(request, f'pages/{template}.html',
 						  {'form': form,
 						   'hashkey': hash_key,
 						   'captcha': SimpleCaptcha.captcha_check(request),
 						   'articles': articles,
-						   'categories': categories
+						   'categories': categories,
 						   })
 
 		if form.is_valid():
@@ -57,17 +61,18 @@ def login_view(request):
 				messages.info(request, f"You are now logged in as {username}.")
 				return redirect("index")
 			else:
-				messages.error(request, res.error["msg"])
-				return render(request, 'login.html',
+				form.error = {"username": {"msg": res.error["msg"]}, "password": {"msg": ""}}
+
+				return render(request, f'pages/{template}.html',
 							  {'form': form,
 							   'hashkey': hash_key,
 							   'captcha': SimpleCaptcha.captcha_check(request),
 							   'articles': articles,
-							   'categories': categories
+							   'categories': categories,
 							   })
 		else:
-			messages.error(request, "Invalid username or password.")
-			return render(request, 'login.html',
+			form.error = {"username": {"msg": "Пользователь не найден"}, "password": {"msg": ""}}
+			return render(request, f'pages/{template}.html',
 						  {'form': form,
 						   'hashkey': hash_key,
 						   'captcha': SimpleCaptcha.captcha_check(request),
@@ -75,57 +80,13 @@ def login_view(request):
 						   'categories': categories
 						   })
 
+
+def login_worker_view(request):
+	return authenticate_view(request, "login_worker")
 
 
 def login_customer_view(request):
-	articles = Article.objects.all()
-	categories = ArticleCategory.objects.all()
-	if request.method == "GET":
-		form = AuthenticationForm()
-		key, hash_key = Captcha().generate_key()
-		captcha_base64 = SimpleCaptcha(width=280, height=90).get_base64(key)
-		return render(request, 'login_customer.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,'articles': articles,
-			'categories': categories})
-	if request.method == "POST":
-		form = AuthenticationForm(request, data=request.POST)
-		hash_key = request.POST.get("hashkey")
-		res = Captcha.check_chaptcha(captcha=request.POST.get("captcha"), hash=hash_key)
-		if not res:
-			messages.error(request, "Unsuccessful login.Captcha Invalid .")
-			return render(request, 'login_customer.html',
-						  {'form': form,
-						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request),
-						   'articles': articles,
-						   'categories': categories
-						   })
-
-		if form.is_valid():
-			username = form.cleaned_data.get('username')
-			password = form.cleaned_data.get('password')
-			user_core = UserCore(User)
-			res = user_core.login(username=username, password=password, request=request)
-			if res:
-				messages.info(request, f"You are now logged in as {username}.")
-				return redirect("index")
-			else:
-				messages.error(request, res.error["msg"])
-				return render(request, 'login_customer.html',
-							  {'form': form,
-							   'hashkey': hash_key,
-							   'captcha': SimpleCaptcha.captcha_check(request),
-							   'articles': articles,
-							   'categories': categories
-							   })
-		else:
-			messages.error(request, "Invalid username or password.")
-			return render(request, 'login_customer.html',
-						  {'form': form,
-						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request),
-						   'articles': articles,
-						   'categories': categories
-						   })
+	return authenticate_view(request, "login_customer")
 
 
 def registration_customer_view(request):
@@ -135,7 +96,7 @@ def registration_customer_view(request):
 		form = RegisterCustomerForm(initial={"is_customer": True})
 		captcha = Captcha()
 		key, hash_key = captcha.generate_key()
-		image = SimpleCaptcha(width=340, height=120)
+		image = SimpleCaptcha(width=280, height=120)
 		captcha_base64 = image.get_base64(key)
 		return render(request, 'register.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,
 												 'articles': articles,
@@ -190,7 +151,7 @@ def registration_worker_view(request):
 		form = RegisterWorkerForm(initial={"is_worker": True})
 		captcha = Captcha()
 		key, hash_key = captcha.generate_key()
-		image = SimpleCaptcha(width=340, height=120)
+		image = SimpleCaptcha(width=280, height=120)
 		captcha_base64 = image.get_base64(key)
 		return render(request, 'register.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,
 												 'articles': articles,
@@ -222,7 +183,8 @@ def registration_worker_view(request):
 				wallet = get_wallet()
 				addresses_count = get_addresses_count(wallet)
 				address = generate_address(addresses_count + 1, wallet.mnemonic)
-				new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet, user=worker_profile)
+				new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet,
+											user=worker_profile)
 				new_address.save()
 				return redirect(to='index')
 

@@ -14,5 +14,5 @@ class UserCore:
 			login(request, user)
 			return True
 		else:
-			cls.error = {"code": 111, "msg": "Invalid username or password."}
+			cls.error = {"code": 111, "msg": "Пользователь не найден"}
 			return False

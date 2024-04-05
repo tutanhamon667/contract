@@ -38,12 +38,12 @@
                     </li>
                     {% if user.is_customer %}
                         <li class="nav-item">
-                            <a class="nav-link {% if url_name == 'resumes' %}active{% endif %}" href="/resumes">Поиск по базе резюме</a>
+                            <a class="nav-link {% if url_name == 'resumes' %}active{% endif %}" href="{% url 'resumes' %}">Поиск по базе резюме</a>
                         </li>
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="/chat">Чат</a>
+                            <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="{% url 'chat' %}">Чат</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -62,14 +62,14 @@
                             </a>
                             <ul class="dropdown-menu  dropdown-menu-end dropdown-menu-lg-start"
                                 aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="/profile/main">Профиль</a></li>
+                                <li><a class="dropdown-item" href="{% url 'profile_main' %}">Профиль</a></li>
 
-                                <li><a class="dropdown-item" href="/logout">Выйти </a></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти </a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="btn btn-primary p-l-r-40" href="/signin">Войти</a>
+                            <a class="btn btn-primary p-l-r-40" href="{% url 'worker_signin' %}">Войти</a>
                         </li>
                     {% endif %}
                 </ul>
