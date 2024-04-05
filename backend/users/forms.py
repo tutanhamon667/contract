@@ -1,10 +1,13 @@
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django_ckeditor_5.widgets import CKEditor5Widget
 
 from btc.models import JobTier, BuyPaymentPeriod
+from contract.widgets.captcha import CaptchaWidget
+from contract.widgets.password import PasswordWidget
 from users.models.common import Region
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
 	Company, CustomerReview, ResponseInvite
@@ -192,35 +195,141 @@ class ContactForm(ModelForm):
 		widgets = {'user': forms.HiddenInput()}
 
 
+
+class LoginForm(forms.Form):
+
+	login =  forms.CharField(label="Логин", required=True)
+	password = forms.CharField(widget=PasswordWidget(), required=True)
+	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
+	class Meta:
+		fields = ['login',"captcha", "password"]
+		widgets = {'password': PasswordWidget(), "captcha": CaptchaWidget()}
+
+	def clean_captcha(self):
+		data = self.cleaned_data['captcha']
+		res = self.fields["captcha"].widget.check_capctha(self.cleaned_data["captcha"])
+		if res:
+			raise ValidationError(res)
+		return data
+
+
+
 class RegisterCustomerForm(UserCreationForm):
-	company_name = forms.CharField(max_length=255)
+
+
+	company_name = forms.CharField(max_length=255, label="Название компании")
+	password1 = forms.CharField(widget=PasswordWidget(), required=True)
+	password2 = forms.CharField(widget=PasswordWidget('Повторите пароль'), required=True)
+	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
 
 	class Meta:
 		model = Member
-		fields = ['login', 'display_name', "password1", "password2", "is_customer"]
-		widgets = {"is_customer": forms.HiddenInput()}
+		fields = ['company_name','login', 'display_name',"captcha", "password1", "password2", "is_customer"]
+		widgets = {"is_customer": forms.HiddenInput(), 'password1': PasswordWidget(), 'password2': PasswordWidget(), "captcha": CaptchaWidget()}
 
+	def clean_captcha(self):
+		data = self.cleaned_data['captcha']
+		res = self.fields["captcha"].widget.check_capctha(self.cleaned_data["captcha"])
+		if res:
+			raise ValidationError(res)
+		return data
 
-def save(self, commit=True):
-	user = super(RegisterCustomerForm, self).save(commit=False)
-	if commit:
-		user.save()
-	return user
+	def clean_password2(self):
+		data = self.cleaned_data['password2']
+		res = self.fields["password2"].widget.validate(self.cleaned_data["password1"], self.cleaned_data["password2"])
+		if res:
+			raise ValidationError(res)
+		return data
+
+	def clean_login(self):
+		data = self.cleaned_data['login']
+		user = Member.objects.filter(login=self.cleaned_data["login"])
+		if len(user):
+			raise ValidationError(
+				'Логин %(value)s занят',
+				params= {'value': self.cleaned_data["login"]}
+			)
+		return data
+
+	def clean_display_name(self):
+		data = self.cleaned_data['display_name']
+		display_name = Member.objects.filter(display_name=self.cleaned_data["display_name"])
+		if len(display_name):
+			raise ValidationError(
+				'Отображаемое имя %(value)s занято',
+				params= {'value': self.cleaned_data["display_name"]}
+			)
+		return data
+
+	def clean_company_name(self):
+		data = self.cleaned_data['company_name']
+		company = Company.objects.filter(name=self.cleaned_data["company_name"])
+		if len(company):
+			raise ValidationError(
+				'Имя компании %(value)s занято',
+				params= {'value': self.cleaned_data["company_name"]}
+			)
+		return data
+
+	def save(self, commit=True):
+		user = super(RegisterCustomerForm, self).save(commit=False)
+		if commit:
+			user.save()
+		return user
 
 
 class RegisterWorkerForm(UserCreationForm):
+
+	password1 = forms.CharField(widget=PasswordWidget(), required=True)
+	password2 = forms.CharField(widget=PasswordWidget('Повторите пароль'), required=True)
+	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
+
 	class Meta:
 		model = Member
-		fields = ['login', 'display_name', "password1", "password2", "is_worker"]
-		widgets = {"is_worker": forms.HiddenInput()}
+		fields = [ 'login', 'display_name',  "password1", "password2","captcha", "is_customer"]
+		widgets = {"is_customer": forms.HiddenInput(), 'password1': PasswordWidget(), 'password2': PasswordWidget(),
+				   "captcha": CaptchaWidget()}
+
+	def clean_captcha(self):
+		data = self.cleaned_data['captcha']
+		res = self.fields["captcha"].widget.check_capctha(self.cleaned_data["captcha"])
+		if res:
+			raise ValidationError(res)
+		return data
+
+	def clean_password2(self):
+		data = self.cleaned_data['password2']
+		res = self.fields["password2"].widget.validate(self.cleaned_data["password1"], self.cleaned_data["password2"])
+		if res:
+			raise ValidationError(res)
+		return data
+
+	def clean_login(self):
+		data = self.cleaned_data['login']
+		user = Member.objects.filter(login=self.cleaned_data["login"])
+		if len(user):
+			raise ValidationError(
+				'Логин %(value)s занят',
+				params={'value': self.cleaned_data["login"]}
+			)
+		return data
+
+	def clean_display_name(self):
+		data = self.cleaned_data['display_name']
+		display_name = Member.objects.filter(display_name=self.cleaned_data["display_name"])
+		if len(display_name):
+			raise ValidationError(
+				'Отображаемое имя %(value)s занято',
+				params={'value': self.cleaned_data["display_name"]}
+			)
+		return data
 
 
-def save(self, commit=True):
-	user = super(RegisterWorkerForm, self).save(commit=False)
-	if commit:
-		user.save()
-	return user
-
+	def save(self, commit=True):
+		user = super(RegisterWorkerForm, self).save(commit=False)
+		if commit:
+			user.save()
+		return user
 
 class ResumeDeleteForm(ModelForm):
 	class Meta:

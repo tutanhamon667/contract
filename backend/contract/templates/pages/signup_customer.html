@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% load bootstrap_icons %}
+{% block content %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <section class="vh-100 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5  auth-form">
+                    <div class="card bg-white text-black" style="border-radius: 1rem;">
+                        <div class="card-body p-4">
+
+                            <div class="">
+                            <p class="form-caption">Регистрация для поиска сотрудников</p>
+                             <form method="POST" novalidate="">
+                                 {% csrf_token %}
+                                {% bootstrap_form form %}
+                                  <input type="submit" class="btn btn-primary btn-lg px-5 w-100" value="Зарегистрироваться">
+                             </form>
+
+                            </div>
+                        </div>
+                    </div>
+                      <div class="card bg-white text-black" style="border-radius: 1rem;">
+                        <div class="card-body p-4">
+
+                            <div class="pb-4">
+                                <p class="form-caption">Поиск работы</p>
+                                <a class="btn btn-white w-100" href="{% url 'worker_signup' %}">Я ищу работу</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

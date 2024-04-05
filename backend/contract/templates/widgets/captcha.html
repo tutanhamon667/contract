@@ -1,0 +1,17 @@
+<div>
+    <div class="captcha mb-3">
+        <img id="{{ widget.name }}-img" src="data:image/png;base64, {{ widget.image }}">
+    </div>
+    <input type="hidden" name="hashkey" value="{{ widget.hash }}">
+    <div class="mb-3">
+        {% if widget.error %}
+        <input type="text" name="{{ widget.name }}" autofocus="" autocapitalize="none"
+               class="form-control is-invalid" placeholder="Введите текст с картинки" required
+               id="{{ widget.name }}" value="{{ widget.value }}">
+        {% else %}
+             <input type="text" name="{{ widget.name }}" autofocus="" autocapitalize="none"
+               class="form-control" placeholder="Введите текст с картинки" required
+               id="{{ widget.name }}" value="{{ widget.value }}">
+        {% endif %}
+    </div>
+</div>

@@ -43,7 +43,7 @@
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="{% url 'chat' %}">Чат</a>
+                            <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="{% url 'chat_main' %}">Чат</a>
                         </li>
                     {% endif %}
                 </ul>

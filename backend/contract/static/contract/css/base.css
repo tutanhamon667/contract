@@ -6,6 +6,9 @@
 :root{
     --bs-border-color-translucent: #EDEDED !important;
 }
+.invalid-feedback{
+   display: block;
+}
 
 .password-input{
     display: flex;
@@ -48,7 +51,7 @@
 
 
 .auth-form{
-    width: 400px;
+    width: 420px;
 }
 p.form-caption {
     font-family: "Inter";
@@ -93,6 +96,13 @@ p {
     font-size: 14px;
 }
 
+ul.errorlist{
+    padding-left: 0px;
+     font-family: "Inter";
+    font-weight: normal;
+    font-size: 14px;
+}
+
 p.form-error-msg {
     color: #d6001c;
 }
@@ -102,6 +112,9 @@ a {
     font-weight: normal;
     font-size: 16px;
     color: black;
+}
+.form-label {
+    display: none;
 }
 
 a.nav-link {

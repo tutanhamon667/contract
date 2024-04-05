@@ -16,17 +16,17 @@ from django_cryptography.fields import encrypt
 
 class Member(PermissionsMixin, AbstractBaseUser):
 	login = models.CharField(
-		verbose_name='login',
+		verbose_name='Логин пользователя',
 		max_length=254,
 		db_index=True,
 		unique=True,
+		null=True
 	)
 
 	display_name = models.CharField(
-		verbose_name='display_name',
+		verbose_name='Отображаемое имя',
 		max_length=254,
 		default='',
-		blank=True,
 		null=True
 	)
 

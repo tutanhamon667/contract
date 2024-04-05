@@ -7,7 +7,7 @@ from common.models import Article, ArticleCategory
 from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
 from contract.settings import CHAT_TYPE
 from users.core.user import UserCore
-from users.forms import RegisterWorkerForm, RegisterCustomerForm
+from users.forms import RegisterWorkerForm, RegisterCustomerForm, LoginForm
 from users.models.common import Captcha
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -25,57 +25,33 @@ def logout_view(request):
 	return redirect(to="index")
 
 
-
-
-
 def authenticate_view(request, template):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
-		form = AuthenticationForm()
-		key, hash_key = Captcha().generate_key()
-		captcha_base64 = SimpleCaptcha(width=280, height=90).get_base64(key)
+		form = LoginForm()
 		return render(request, f'pages/{template}.html',
-					  {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64, 'articles': articles,
+					  {'form': form, 'articles': articles,
 					   'categories': categories})
 	if request.method == "POST":
-		form = AuthenticationForm(request, data=request.POST)
-		hash_key = request.POST.get("hashkey")
-		res = Captcha.check_chaptcha(captcha=request.POST.get("captcha"), hash=hash_key)
-		if not res:
-			form.error = {"captcha": {"msg": "Каптча введена не верно."}}
-			return render(request, f'pages/{template}.html',
-						  {'form': form,
-						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request),
-						   'articles': articles,
-						   'categories': categories,
-						   })
-
+		form = LoginForm(data=request.POST)
 		if form.is_valid():
-			username = form.cleaned_data.get('username')
+			login = form.cleaned_data.get('login')
 			password = form.cleaned_data.get('password')
 			user_core = UserCore(User)
-			res = user_core.login(username=username, password=password, request=request)
+			res = user_core.login(username=login, password=password, request=request)
 			if res:
-				messages.info(request, f"You are now logged in as {username}.")
 				return redirect("index")
 			else:
-				form.error = {"username": {"msg": res.error["msg"]}, "password": {"msg": ""}}
-
+				form.error = "Пользователь не найден"
 				return render(request, f'pages/{template}.html',
 							  {'form': form,
-							   'hashkey': hash_key,
-							   'captcha': SimpleCaptcha.captcha_check(request),
 							   'articles': articles,
 							   'categories': categories,
 							   })
 		else:
-			form.error = {"username": {"msg": "Пользователь не найден"}, "password": {"msg": ""}}
 			return render(request, f'pages/{template}.html',
 						  {'form': form,
-						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request),
 						   'articles': articles,
 						   'categories': categories
 						   })
@@ -89,111 +65,55 @@ def login_customer_view(request):
 	return authenticate_view(request, "login_customer")
 
 
-def registration_customer_view(request):
+def signup_user(request, is_customer, template):
+
+
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
-		form = RegisterCustomerForm(initial={"is_customer": True})
-		captcha = Captcha()
-		key, hash_key = captcha.generate_key()
-		image = SimpleCaptcha(width=280, height=120)
-		captcha_base64 = image.get_base64(key)
-		return render(request, 'register.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,
+		if is_customer:
+			form = RegisterCustomerForm(initial={"is_customer": is_customer})
+		else:
+			form = RegisterWorkerForm(initial={"is_customer": is_customer})
+		return render(request, f'pages/{template}.html', {'form': form,
 												 'articles': articles,
 												 'categories': categories
 												 })
 	if request.method == "POST":
-		form = RegisterCustomerForm(request.POST)
-
-		hash_key = request.POST.get("hashkey")
-		res = Captcha.check_chaptcha(captcha=request.POST.get("captcha"), hash=hash_key)
-		if not res:
-			messages.error(request, "Unsuccessful registration.Captcha Invalid .")
-			return render(request, 'register.html',
-						  {'form': form,
-						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request),
-						   'articles': articles,
-						   'categories': categories
-						   })
-		if form.is_valid():
-			with transaction.atomic():
+		if is_customer:
+			form = RegisterCustomerForm(request.POST)
+		else:
+			form = RegisterWorkerForm(request.POST)
+		with (transaction.atomic()):
+			if form.is_valid():
 				user = form.save()
 				login(request, user)
-				messages.success(request, "Registration successful.")
-				company_name = request.POST.get('company_name') or None
-				customer_company = Company(user=user, name=company_name)
-				customer_company.save()
+				if is_customer:
+					company_name = request.POST.get('company_name')
+					customer_company = Company(user=user, name=company_name)
+					customer_company.save()
 				wallet = get_wallet()
 				addresses_count = get_addresses_count(wallet)
 				address = generate_address(addresses_count + 1, wallet.mnemonic)
 				new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet, user=user)
 				new_address.save()
-				moderator = Member.objects.filter(is_moderator=True)
-				chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
-				chat_with_moderator.save()
+				if is_customer:
+					moderator = Member.objects.filter(is_moderator=True)
+					chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
+					chat_with_moderator.save()
 				return redirect(to='index')
-		else:
-			messages.error(request, "Unsuccessful registration. Invalid information.")
-			return render(request, 'register.html',
-						  {'form': form,
-						   'hashkey': request.POST['hashkey'],
-						   'captcha': SimpleCaptcha.captcha_check(request),
-						   'articles': articles,
-						   'categories': categories
-						   })
+			else:
 
+				return render(request, f'pages/{template}.html',
+							  {'form': form,
+							   'articles': articles,
+							   'categories': categories
+							   })
+
+
+
+def registration_customer_view(request):
+	return signup_user(request, True, "signup_customer")
 
 def registration_worker_view(request):
-	articles = Article.objects.all()
-	categories = ArticleCategory.objects.all()
-	if request.method == "GET":
-		form = RegisterWorkerForm(initial={"is_worker": True})
-		captcha = Captcha()
-		key, hash_key = captcha.generate_key()
-		image = SimpleCaptcha(width=280, height=120)
-		captcha_base64 = image.get_base64(key)
-		return render(request, 'register.html', {'form': form, 'hashkey': hash_key, 'captcha': captcha_base64,
-												 'articles': articles,
-												 'categories': categories
-												 })
-	if request.method == "POST":
-		form = RegisterWorkerForm(request.POST)
-
-		hash_key = request.POST.get("hashkey")
-		res = Captcha.check_chaptcha(captcha=request.POST.get("captcha"), hash=hash_key)
-		if not res:
-			messages.error(request, "Unsuccessful registration.Captcha Invalid .")
-			return render(request, 'register.html',
-						  {'form': form,
-						   'hashkey': hash_key,
-						   'captcha': SimpleCaptcha.captcha_check(request),
-						   'articles': articles,
-						   'categories': categories
-						   })
-		if form.is_valid():
-			with transaction.atomic():
-				user = form.save()
-				user.is_moderated = True
-				user.save()
-				login(request, user)
-				messages.success(request, "Registration successful.")
-				worker_profile = Member(id=user.id)
-				worker_profile.save()
-				wallet = get_wallet()
-				addresses_count = get_addresses_count(wallet)
-				address = generate_address(addresses_count + 1, wallet.mnemonic)
-				new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet,
-											user=worker_profile)
-				new_address.save()
-				return redirect(to='index')
-
-		else:
-			messages.error(request, "Unsuccessful registration. Invalid information.")
-		return render(request, 'register.html',
-					  {'form': form,
-					   'hashkey': request.POST['hashkey'],
-					   'captcha': SimpleCaptcha.captcha_check(request),
-					   'articles': articles,
-					   'categories': categories
-					   })
+	return signup_user(request, False, "signup_worker")
