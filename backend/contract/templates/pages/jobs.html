@@ -9,7 +9,7 @@
                 <div class="col-lg-3">
                     <form action="" method="get" id="filter_form" @submit.prevent="js.filterJobs(this)" novalidate>
                         {% bootstrap_form search_form %}
-                        <button  id="filter_jobs_btn" class="btn btn-primary">Search</button>
+                        <button id="filter_jobs_btn" class="btn btn-primary">Search</button>
                     </form>
                 </div>
                 <!-- <div class="col-lg-9 job-list">              {% with short=False %}
@@ -110,23 +110,25 @@
 
                                             <template x-for="action in res.actions" :key="action.action">
                                                 <div>
-                                                       <template x-if="action.action !== 'create'">
-                                                    <button x-on:click="js.sendResponse(action.action, res.id)"
-                                                            x-text="action.text"></button>
-                                                </template>
-                                                <template x-if="action.action === 'create'">
-                                                    <div>
-                                                        <button x-on:click="js.sendResponse(action.action, res.id, job.id)"
-                                                            x-text="action.text"></button>
-                                                    <select name="resume" x-model="$store.main.selectedResume" class="">
-                                                        <template x-for="resume in $store.main.resumes"
-                                                                  :key="resume.id">
-                                                            <option :value="resume.id" x-text="resume.name"></option>
-                                                        </template>
-                                                    </select>
-                                                    </div>
+                                                    <template x-if="action.action !== 'create'">
+                                                        <button x-on:click="js.sendResponse(action.action, res.id)"
+                                                                x-text="action.text"></button>
+                                                    </template>
+                                                    <template x-if="action.action === 'create'">
+                                                        <div>
+                                                            <button x-on:click="js.sendResponse(action.action, res.id, job.id)"
+                                                                    x-text="action.text"></button>
+                                                            <select name="resume" x-model="$store.main.selectedResume"
+                                                                    class="">
+                                                                <template x-for="resume in $store.main.resumes"
+                                                                          :key="resume.id">
+                                                                    <option :value="resume.id"
+                                                                            x-text="resume.name"></option>
+                                                                </template>
+                                                            </select>
+                                                        </div>
 
-                                                </template>
+                                                    </template>
                                                 </div>
 
                                             </template>
@@ -142,39 +144,41 @@
             </div>
         </section>
     </div>
-    <script src="{% static 'contract/js/jobs.js' %}" defer></script>
-    <script src="{% static 'contract/js/alpine.js' %}" defer></script>
+    <script src="{% static 'contract/js/jobs.js' %}"></script>
 
     <script>
-        let js = null
 
-        async function init() {
-            document.addEventListener('alpine:init', async () => {
-                js = new JobsSearch()
-                const user = await js.getUser()
-                console.log(user);
-                if (user.success) {
-                    js.setUser(user.data)
-                    if (user.data.is_worker) {
-                        const resumes = await js.getResumes()
-                        if (resumes.success) {
-                            js.setResumes(resumes.data)
-                        }
+
+        async function initJobsPage() {
+
+            const js = new JobsSearch()
+            const user = await js.getUser()
+            console.log(user);
+            if (user.success) {
+                js.setUser(user.data)
+                if (user.data.is_worker) {
+                    const resumes = await js.getResumes()
+                    if (resumes.success) {
+                        js.setResumes(resumes.data)
                     }
                 }
+            }
 
-                const jobs = await js.getJobs()
-                if (jobs.success) {
-                    js.setJobs(jobs.data)
-                }
+            const jobs = await js.getJobs()
+            if (jobs.success) {
+                js.setJobs(jobs.data)
+            }
 
-            })
+
         }
 
-        init()
+        document.addEventListener('alpine:init', async () => {
+            initJobsPage()
+        })
         $(document).ready(function () {
             const application = new app()
             application.radioInputChecker("[name='work_deposit']", 2, "#id_deposit")
+
 
         });
     </script>

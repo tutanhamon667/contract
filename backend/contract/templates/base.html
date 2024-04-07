@@ -18,21 +18,21 @@
     <script src="{% static 'contract/js/jquery.js' %}"></script>
     <script src="{% static 'contract/js/main.js' %}"></script>
     <script src="{% static 'contract/js/app.js' %}" defer></script>
-    <script src="{% static 'contract/js/alpine.js' %}" defer></script>
 </head>
-<body>
-    {% include "./blocks/header.html"  %}
-    {% block content %}{% endblock content %}
-    {% include "./blocks/footer.html"  %}
+<body data-media-url="{% get_media_prefix %}">
+{% include "./blocks/header.html" %}
+{% block content %}{% endblock content %}
+{% include "./blocks/footer.html" %}
 {% csrf_token %}
-
+<script src="{% static 'contract/js/alpine.js' %}"></script>
 <script>
-     async function init() {
-            document.addEventListener('alpine:init', async () => {
-                js = new alpineApp()
-            })
-     }
-     init()
+    async function init() {
+        document.addEventListener('alpine:init', async () => {
+            const js = new alpineApp()
+        })
+    }
+
+    init()
 </script>
 </body>
 

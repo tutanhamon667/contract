@@ -3,56 +3,60 @@
     src: url(../fonts/inter.ttf) format("truetype");
 }
 
-:root{
+:root {
     --bs-border-color-translucent: #EDEDED !important;
 }
-.invalid-feedback{
-   display: block;
+
+.invalid-feedback {
+    display: block;
 }
 
-.password-input{
+.password-input {
     display: flex;
     border: 1px solid grey;
     border-radius: 10px;
 }
 
-.password-input>button{
+.password-input > button {
     width: 50px;
     height: 50px;
     background-color: white;
     background-repeat: no-repeat;
     background-position: center;
 }
-.password-input>button{
+
+.password-input > button {
     background-image: url('../img/eye.svg');
 }
 
-.password-input>button.hidepassword{
+.password-input > button.hidepassword {
     background-image: url('../img/eye-closed.svg');
 }
-.password-input> input, button{
+
+.password-input > input, button {
     border: none !important;
     border-radius: 10px;
 }
 
-.password-input> input:focus{
+.password-input > input:focus {
     border: none !important;
 }
 
 
-.password-input>input:active{
+.password-input > input:active {
     border: none !important;
 }
 
-.password-input:has(> input:focus){
+.password-input:has(> input:focus) {
     border: 1px solid black;
     border-radius: 10px;
 }
 
 
-.auth-form{
+.auth-form {
     width: 420px;
 }
+
 p.form-caption {
     font-family: "Inter";
     font-weight: 500;
@@ -90,15 +94,37 @@ h3 {
     font-size: 21px;
 }
 
+h3.f-20 {
+    font-family: "Inter";
+    font-weight: normal;
+    font-size: 20px;
+}
+
+h4 {
+    font-family: "Inter";
+    font-weight: 600;
+    font-size: 18px;
+}
+
+h5 {
+    font-family: "Inter";
+    font-weight: 600;
+    font-size: 16px;
+}
+
 p {
     font-family: "Inter";
     font-weight: normal;
     font-size: 14px;
 }
 
-ul.errorlist{
+.vacancy-description span {
+    font-size: 12px;
+}
+
+ul.errorlist {
     padding-left: 0px;
-     font-family: "Inter";
+    font-family: "Inter";
     font-weight: normal;
     font-size: 14px;
 }
@@ -107,14 +133,72 @@ p.form-error-msg {
     color: #d6001c;
 }
 
-a {
+a:has(.card) {
+    text-decoration: none;
+}
+
+a:has(.card):hover {
+    color: black;
+}
+
+header a {
     font-family: "Inter";
     font-weight: normal;
     font-size: 16px;
     color: black;
 }
+
+.h-icon {
+    margin-right: 5px;
+}
+
+a {
+    font-family: "Inter";
+    font-weight: normal;
+    font-size: 14px;
+    color: black;
+}
+
+
 .form-label {
     display: none;
+}
+
+footer a.nav-link {
+    font-family: "Inter" !important;
+    font-weight: normal !important;
+    font-size: 14px !important;
+    color: black !important;
+}
+
+.text-shadow{
+    color: #9d9d9d !important;
+}
+
+.border-grey {
+    border: 1px solid #ededed;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.mr-5 {
+    margin-right: 5px;
+}
+
+.mt-15 {
+    margin-top: .35rem ;
+}
+
+.company-logo-mini {
+    border-radius: 10px;
+    padding: 3px;
+    background-color: #EDEDED;
+}
+
+
+
+.ml-5 {
+    margin-left: 5px;
 }
 
 a.nav-link {
@@ -153,24 +237,25 @@ span {
 }
 
 
-
 ::placeholder {
-  color: #adadad;
-  opacity: 1; /* Firefox */
+    color: #adadad;
+    opacity: 1; /* Firefox */
 }
 
 ::-ms-input-placeholder { /* Edge 12 -18 */
-  color: #adadad;
+    color: #adadad;
 }
 
-input[type="text"]:focus{
+input[type="text"]:focus {
     border: 1px solid black;
     outline: none !important;
 }
-.btn{
+
+.btn {
     --bs-btn-border-radius: 10px !important;
 }
-.form-control{
+
+.form-control {
     font-family: "Inter";
     font-weight: normal;
     font-size: 16px;
@@ -178,23 +263,24 @@ input[type="text"]:focus{
     line-height: 2;
 }
 
-.p-l-r-40{
+.p-l-r-40 {
     padding-left: 40px;
     padding-right: 40px;
 }
 
-.p-t{
+.p-t {
     padding-top: 0px;
 }
 
-input[type="text"]:active{
+input[type="text"]:active {
     border: 1px solid black;
     outline: none !important;
 }
+
 .form-control:focus {
-  border-color: inherit !important;
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
+    border-color: inherit !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
 }
 
 .btn {
@@ -205,7 +291,6 @@ input[type="text"]:active{
     --bs-btn-line-height: 1.7 !important;
 
 }
-
 
 
 .btn-success {
@@ -260,10 +345,39 @@ input[type="text"]:active{
     --bs-btn-disabled-border-color: #adadad;
 }
 
+.card {
+    --bs-card-spacer-y: 1rem;
+    --bs-card-spacer-x: 1rem;
+    --bs-card-title-spacer-y: 0.5rem;
+    --bs-card-border-width: 1px;
+    --bs-card-border-color: var(--bs-border-color-translucent);
+    --bs-card-border-radius: 0.375rem;
+    --bs-card-box-shadow: ;
+    --bs-card-inner-border-radius: calc(0.375rem - 1px);
+    --bs-card-cap-padding-y: 0.5rem;
+    --bs-card-cap-padding-x: 1rem;
+    --bs-card-cap-bg: #ededed;
+    --bs-card-cap-color: ;
+    --bs-card-height: ;
+    --bs-card-color: ;
+    --bs-card-bg: #fff;
+    --bs-card-img-overlay-padding: 1rem;
+    --bs-card-group-margin: 0.75rem;
+}
+.card:hover{
+    --bs-card-cap-bg: #e1e1e1;
+    --bs-card-bg: #ededed;
+}
+.carousel-indicators [data-bs-target]{
+    width: 10px;
+    height: 10px;
+}
+
 input[type="text"]:focus.border-color-danger {
     border-color: #D6001C !important;
 
 }
+
 .icon-text {
     vertical-align: middle;
     display: inline-block;
@@ -311,11 +425,23 @@ section > .row > div {
     border-left: 4px solid red;
 
     border-radius: 5px;
-    margin-top: 10px;
 }
 
 .job-list > .card:hover {
     background-color: #f3eeee;
+}
+a:has(.card) {
+    text-decoration: none;
+}
+a:has(.card):hover {
+    color: black;
+}
+
+a:has(.best-customers-card) {
+    text-decoration: none;
+}
+a:has(.best-customers-card):hover {
+    color: black;
 }
 
 .card-title a {
@@ -351,7 +477,10 @@ ul.errorlist {
 }
 
 .card.horizontal-height {
-    min-height: 160px;
+    min-height: 131px;
+}
+.card .salary {
+    font-weight: 600;
 }
 
 .card {

@@ -567,15 +567,15 @@ class Job(models.Model):
 	@property
 	def final_salary(self):
 		if self.salary > 0:
-			return self.salary
+			return f'{self.salary:_}'.replace('_', ' ')
 		else:
 			if self.salary_from and self.salary_to:
-				return f'{self.salary_from} - {self.salary_to}'
+				return f'{self.salary_from:_} - {self.salary_to:_}'.replace('_', ' ')
 			else:
 				if self.salary_from > 0:
-					return f' от {self.salary_from}'
+					return f'от {self.salary_from:_}'.replace('_', ' ')
 				else:
-					return f'до {self.salary_to}'
+					return f'до {self.salary_to:_}'.replace('_', ' ')
 
 	@classmethod
 	def is_current_user(cls, _id, user):

@@ -3,70 +3,70 @@
 {% load django_bootstrap5 %}
 
 {% if col %}
-    <div class={{ col }}>
+    <div class="{{ col }}">
 {% endif %}
+
 <div class="card {{ addition_card_class }}">
     <div class="card-body">
-        <div class="left">
-            <h4 class="card-title">
-                <span class="icon-text"> <a href="/jobs/{{ job.id }}" class="link-dark">{{ job.title }}</a></span>
-                {% if job.is_hot %}
-                <span class="red-icon">
-                                    {% bs_icon 'fire' %}
-                                </span>
-                {% endif %}
-            </h4>
-            <h3 class="card-subtitle">{{ job.final_salary }} ₽</h3>
-            <div>
-                <a class="job-card-item-customer customer-name"
-                   href="/company/{{ job.company.id }}">{{ job.company.name }} {% bs_icon 'check-circle' %}</a>
-            </div>
-            {% if short is False %}
-                {% with region=job.regions_name %}
-                    {% include "../busy_type.html" %}
-                {% endwith %}
-            {% endif %}
-            <div class="">
-                {% if job.deposit is 0 %}
-                    <div class="left">
-                        <p>
-                        <span>
-                        {% bs_icon 'currency-dollar' %}
-                        </span>
-                            <span class="icon-text">Без залога</span>
-                        </p>
-
-                    </div>
-                {% else %}
-                    {% if short is False %}
-                        <span class="job-card-item-customer text-muted job-type">Залог: {{ job.deposit }} ₽</span>
-                    {% endif %}
-                {% endif %}
-                <div class="">
-                    {% if job.work_experience is 0 %}
-                        <p>
-                        <span>
-                        {% bs_icon 'bag' %}
-                        </span>
-                            <span class="icon-text">Без опыта</span>
-                        </p>
+        <div class="row">
+            <div class="col-9">
+                <div class="d-flex">
+                    <a href="/jobs/{{ job.id }}" class="link-dark">
+                        <h4>{{ job.title }}</h4>
+                    </a>
+                    {% if job.is_hot %}
+                        <img src="{% static 'contract/img/icons/hot.svg' %}" height="22" class="ml-5 company-logo-mini">
                     {% endif %}
                 </div>
-                <div class="clear">
+                <h3 class="card-subtitle salary">{{ job.final_salary }} ₽</h3>
+                <div class="d-flex ">
+                    <a class="text-shadow"
+                       href="/company/{{ job.company.id }}">{{ job.company.name }}</a> <img
+                        src="{% static 'contract/img/icons/approved.svg' %}" height="12" class="ml-5 mt-15"/>
+                </div>
+                {% if short is False %}
+                    {% with region=job.regions_name %}
+                        {% include "../busy_type.html" %}
+                    {% endwith %}
+                {% endif %}
+                <div class="vacancy-description">
                     {% if job.work_experience > 0 %}
                         {% if short is False %}
                             <span class="job-card-item-customer text-muted job-type">Опыт: {{ job.work_experience }} месяцев</span>
                         {% endif %}
                     {% endif %}
                 </div>
+                {% if short is False and  job.deposit is not 0 %}
+                    <span class="job-card-item-customer text-muted job-type">Залог: {{ job.deposit }} ₽</span>
+                {% endif %}
+                <div class="d-flex vacancy-description">
+                    {% if job.work_experience is 0 %}
+                        <div class="d-flex mr-5">
+
+                            <img src="{% static 'contract/img/icons/bag.svg' %}" height="10" class="mt-1 mr-5">
+                            <span>Без опыта</span>
+
+                        </div>
+                    {% endif %}
+                    {% if job.deposit is 0 %}
+                        <div class="d-flex">
+                            <img src="{% static 'contract/img/icons/zalog.svg' %}" height="10" class="mt-1 mr-5">
+                            <span>Без залога</span>
+                        </div>
+
+                    {% endif %}
+                </div>
+
             </div>
 
+
+            {% if show_company_logo is True %}
+                <div class="col-3 text-center">
+                    <img src="/media/{{ job.company.logo }}" height="50" alt="{{ job.company.name }}"
+                         class="company-logo-mini"/>
+                </div>
+            {% endif %}
         </div>
-        {% if show_company_logo is True %}
-            <div class="right">
-                <img src="/media/{{ job.company.logo }}" height="50" alt="{{ job.company.name }}"/>
-            </div>
-        {% endif %}
         {% if short is False and not user %}
             <div class="clear">
                 <a href='/signin' class="btn btn-success">Войти для отклика</a>
@@ -123,10 +123,13 @@
                 {% endif %}
                 {% if user.is_worker %}
                     <label for="favorite_job_{{ job.id }}">favorite</label>
-                    <input type="checkbox" id="favorite_job_{{ job.id }}" class="favorite_job_checkbox" value="{{ job.id }}" />
+                    <input type="checkbox" id="favorite_job_{{ job.id }}" class="favorite_job_checkbox"
+                           value="{{ job.id }}"/>
                 {% endif %}
             </div>
         {% endif %}
+
+
     </div>
 </div>
 {% if col %}

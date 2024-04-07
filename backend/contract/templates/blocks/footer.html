@@ -1,9 +1,9 @@
-
+{% load static %}
 <div class="container">
-    <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
-        <div class="col mb-3"></div>
+    <footer class="row row-py-5 my-5 border-top">
+        <div class="col-xl-2 col-lg-2  d-lg-block d-md-none d-sm-none  mb-3 text-center"><img src="{% static "contract/img/logo-mid.svg" %}" height="85" class="rounded" alt="..."></div>
         {% for category in categories %}
-            <div class="col mb-3">
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 mb-3">
                 <h5>{{ category.title }}</h5>
                 <ul class="nav flex-column">
                     {% for cat_article in articles %}
@@ -18,7 +18,7 @@
                                 {% endif %}
 
                                     {% if cat_article.photo %}
-                                        <img src='/media/{{  cat_article.photo  }}' height="30" alt="{{ cat_article.get_link }}"/>
+                                        <img class="mr-5" src='{% get_media_prefix %}{{  cat_article.photo  }}' height="30" alt="{{ cat_article.get_link }}"/>
                                     {% endif %}
                                     {{ cat_article.title }}</a>
                             </li>
