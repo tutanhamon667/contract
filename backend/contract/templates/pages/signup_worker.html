@@ -4,15 +4,7 @@
 {% load bootstrap_icons %}
 {% block content %}
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    <section class="vh-100 gradient-custom">
-        <div class="container py-5 h-100">
+        <div class="container">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5  auth-form">
                     <div class="card bg-white text-black" style="border-radius: 1rem;">
@@ -40,5 +32,5 @@
                 </div>
             </div>
         </div>
-    </section>
+
 {% endblock content %}
