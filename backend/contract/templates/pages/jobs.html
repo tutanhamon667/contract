@@ -4,7 +4,7 @@
 {% load django_bootstrap5 %}
 {% block content %}
     <div class="container" x-data>
-        <section>
+        <section x-init="initJobs()">
             <div class="row">
                 <div class="col-lg-3">
                     <form action="" method="get" id="filter_form" @submit.prevent="js.filterJobs(this)" novalidate>
@@ -147,37 +147,12 @@
     <script src="{% static 'contract/js/jobs.js' %}"></script>
 
     <script>
-
-
-        async function initJobsPage() {
-
-            const js = new JobsSearch()
-            const user = await js.getUser()
-            console.log(user);
-            if (user.success) {
-                js.setUser(user.data)
-                if (user.data.is_worker) {
-                    const resumes = await js.getResumes()
-                    if (resumes.success) {
-                        js.setResumes(resumes.data)
-                    }
-                }
-            }
-
-            const jobs = await js.getJobs()
-            if (jobs.success) {
-                js.setJobs(jobs.data)
-            }
-
-
+        const initJobs = () => {
+            application.initJobs()
         }
-
-        document.addEventListener('alpine:init', async () => {
-            initJobsPage()
-        })
         $(document).ready(function () {
             const application = new app()
-            application.radioInputChecker("[name='work_deposit']", 2, "#id_deposit")
+            application.radioInputChecker("[name='work_deposit']", 1, "#id_deposit")
 
 
         });

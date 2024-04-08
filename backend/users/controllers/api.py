@@ -37,6 +37,25 @@ def get_user(request):
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+def get_balance(request):
+	try:
+		if request.user.is_authenticated:
+			if request.user.is_customer:
+				address = WalletAddress.objects.filter(user=request.user.id)
+				profile_address = address[0]
+				operations = Operation.objects.filter(address=profile_address)
+				balance = Balance(profile_address, operations)
+
+				return JsonResponse({'success': True, 'data': {'btc': balance.get_final_balance_btc,
+															   'usd': balance.get_final_balance_usd}})
+			else:
+				return JsonResponse({'success': False, "code": 403})
+		else:
+			return JsonResponse({'success': False, "code": 401})
+	except Exception as e:
+		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
+
 def favorite_job(request):
 	try:
 		if request.user.is_authenticated:
@@ -185,7 +204,6 @@ def get_user_resumes(request):
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
-
 def favorite_jobs(request):
 	try:
 		if request.user.is_authenticated:
@@ -234,6 +252,7 @@ def favorite_jobs(request):
 			return JsonResponse({'success': True, "data": res})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
 
 def get_jobs(request):
 	try:

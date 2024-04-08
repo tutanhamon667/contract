@@ -25,7 +25,7 @@ def logout_view(request):
 	return redirect(to="index")
 
 
-def authenticate_view(request, template):
+def authenticate_view(request, template, redirect_to):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
@@ -41,7 +41,7 @@ def authenticate_view(request, template):
 			user_core = UserCore(User)
 			res = user_core.login(username=login, password=password, request=request)
 			if res:
-				return redirect("index")
+				return redirect(redirect_to)
 			else:
 				form.error = "Пользователь не найден"
 				return render(request, f'pages/{template}.html',
@@ -58,14 +58,14 @@ def authenticate_view(request, template):
 
 
 def login_worker_view(request):
-	return authenticate_view(request, "login_worker")
+	return authenticate_view(request, "login_worker", "index")
 
 
 def login_customer_view(request):
-	return authenticate_view(request, "login_customer")
+	return authenticate_view(request, "login_customer", "for_customers")
 
 
-def signup_user(request, is_customer, template):
+def signup_user(request, is_customer, template, redirect_to):
 
 
 	articles = Article.objects.all()
@@ -101,7 +101,7 @@ def signup_user(request, is_customer, template):
 					moderator = Member.objects.filter(is_moderator=True)
 					chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
 					chat_with_moderator.save()
-				return redirect(to='index')
+				return redirect(to=redirect_to)
 			else:
 
 				return render(request, f'pages/{template}.html',
@@ -111,9 +111,9 @@ def signup_user(request, is_customer, template):
 							   })
 
 
-
 def registration_customer_view(request):
-	return signup_user(request, True, "signup_customer")
+	return signup_user(request, True, "signup_customer", "for_customers")
+
 
 def registration_worker_view(request):
-	return signup_user(request, False, "signup_worker")
+	return signup_user(request, False, "signup_worker", "index")

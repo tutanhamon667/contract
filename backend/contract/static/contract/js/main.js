@@ -42,13 +42,10 @@ const app = function() {
     }
 
     const radioInputChecker = (radio,value, input) => {
-        if (parseInt($(radio).val()) === parseInt(value)){
-                $(input).attr("disabled", "disabled")
-            }else{
-                $(input).removeAttr("disabled")
-            }
+        $(input).attr("disabled", "disabled")
+
         $(radio).on("change", function() {
-            if (parseInt($(this).val()) === parseInt(value)){
+            if (parseInt($(this).val()) !== parseInt(value)){
                 $(input).attr("disabled", "disabled")
             }else{
                 $(input).removeAttr("disabled")

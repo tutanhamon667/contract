@@ -1,0 +1,25 @@
+<div class="multiselect" x-data>
+    {% for item in widget.items %}
+        <div class="d-flex multiselect-item">
+         {% if item.selected %}
+            <button for="{{ widget.name }}" x-bind="checkboxInput"
+                    class="checkboxInput checked"></button>
+            {% else %}
+             <button for="{{ widget.name }}" x-bind="checkboxInput"
+                    class="checkboxInput"></button>
+            {% endif %}
+            <div  class="multiselect-name" id="{{ widget.name }}_item_{{ item.id }}"><p>{{ item.name }}</p></div>
+        </div>
+
+    {% endfor %}
+    <select multiple name="{{ widget.name }}" id="{{ widget.name }}" style="">
+        {% for item in widget.items %}
+            {% if item.selected %}
+        <option value="{{ item.id }}" selected>{{ item.name }}</option>
+            {% else %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+
+</div>

@@ -3,7 +3,7 @@
 {% load static %}
 {% load django_bootstrap5 %}
 {% block content %}
-    <div class="container" x-data>
+    <div class="container" x-data x-init="application.getFavoriteJobs()">
     <h1 class="my_order_title">Избранные вакансии</h1>
         <section>
             <div class="row">
@@ -80,7 +80,7 @@
                                         <label :for="'favorite_job_'+job.id">favorite</label>
                                         <input type="checkbox" :id="'favorite_job_'+job.id"
                                                class="favorite_job_checkbox"
-                                               @click="js.setFavorite(job.id)"
+                                               @click="application.setFavorite(job.id)"
                                                x-model="job.favorite.checked"/>
                                     </div>
                                 </template>
@@ -103,12 +103,12 @@
                                             <template x-for="action in res.actions" :key="action.action">
                                                 <div>
                                                        <template x-if="action.action !== 'create'">
-                                                    <button x-on:click="js.sendResponse(action.action, res.id)"
+                                                    <button x-on:click="application.sendResponse(action.action, res.id)"
                                                             x-text="action.text"></button>
                                                 </template>
                                                 <template x-if="action.action === 'create'">
                                                     <div>
-                                                        <button x-on:click="js.sendResponse(action.action, res.id, job.id)"
+                                                        <button x-on:click="application.sendResponse(action.action, res.id, job.id)"
                                                             x-text="action.text"></button>
                                                     <select name="resume" x-model="$store.main.selectedResume" class="">
                                                         <template x-for="resume in $store.main.resumes"
@@ -134,36 +134,5 @@
             </div>
         </section>
     </div>
-    <script src="{% static 'contract/js/jobs.js' %}" defer></script>
-    <script src="{% static 'contract/js/alpine.js' %}" defer></script>
 
-    <script>
-        let js = null
-
-        async function init() {
-            document.addEventListener('alpine:init', async () => {
-                js = new JobsSearch()
-                const user = await js.getUser()
-                console.log(user);
-                if (user.success) {
-                    js.setUser(user.data)
-                    if (user.data.is_worker) {
-                        const resumes = await js.getResumes()
-                        if (resumes.success) {
-                            js.setResumes(resumes.data)
-                        }
-                    }
-                }
-
-                const jobs = await js.getFavoriteJobs()
-                if (jobs.success) {
-                    js.setJobs(jobs.data)
-                }
-
-            })
-        }
-
-        init()
-
-    </script>
 {% endblock content %}

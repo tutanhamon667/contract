@@ -730,17 +730,17 @@ class Job(models.Model):
 			objs = objs.filter(region__in=_get["region"])
 		if "region[]" in _get and _get["region[]"] != '':
 			filters_exists = True
-			objs = objs.filter(region__in=_get.getlist("region[]"))
+			objs = objs.filter(region__in=_get.getlist("region[]")).order_by('id')
 
 		if not filters_exists:
 			return cls.objects.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
 									  jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
-																						  '-pub_date', '-id')[
+																						  '-pub_date', '-id').distinct()[
 				   :limit]
 		else:
 			return objs.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
 							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
-																				   '-pub_date', '-id')[:limit]
+																				   '-pub_date', '-id').distinct()[:limit]
 
 	@classmethod
 	def join_invites(cls, objs, user):

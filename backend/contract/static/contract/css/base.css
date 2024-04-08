@@ -7,8 +7,44 @@
     --bs-border-color-translucent: #EDEDED !important;
 }
 
+.nowrap{
+    white-space: nowrap;
+}
+.fl-d-row{
+    flex-direction: row;
+}
+
+ul.head-right-row{
+  min-width: 300px;
+}
+
+ul.head-right-row > li:first-child:nth-last-child(1) {
+/* -or- li:only-child { */
+    width: 100%;
+}
+
+/* two items */
+ul.head-right-row > li:first-child:nth-last-child(2),
+ul.head-right-row > li:first-child:nth-last-child(2) ~ li {
+    width: 50%;
+}
+
+/* three items */
+ul.head-right-row > li:first-child:nth-last-child(3),
+ul.head-right-row > li:first-child:nth-last-child(3) ~ li {
+    width: 33.3333%;
+}
+
+ul.head-right-row > li{
+
+    text-align: center;
+}
+
 .invalid-feedback {
     display: block;
+}
+.nav-link{
+    white-space: nowrap;
 }
 
 .password-input {
@@ -52,6 +88,60 @@
     border-radius: 10px;
 }
 
+
+.checkboxInput.checked {
+    background-image: url("../img/icons/checkbox-true.svg");
+}
+
+.form-check-input:checked[type=radio] {
+    background-image: url("../img/icons/radio-true.svg");
+}
+
+
+.form-check-input[type=radio] {
+    background-image: url("../img/icons/radio-false.svg");
+}
+.form-check-input:checked {
+    background-color: white;
+    border-color: white;
+}
+
+.multiselect {
+    max-height: 150px;
+    overflow-y: scroll;
+}
+.multiselect select {
+    display: none;
+}
+.multiselect-name{
+    height: 15px;
+    line-height: 1.1;
+    margin-left: 5px;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+.checkboxInput {
+    width: 15px;
+    height: 15px;
+    background-position: center;
+    background-size: 14px 14px;
+    background-image: url(../img/icons/checkbox-false.svg);
+    border: none;
+    border-radius: 0;
+    background-repeat: no-repeat;
+}
 
 .auth-form {
     width: 420px;
@@ -120,6 +210,8 @@ p {
 
 .vacancy-description span {
     font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 ul.errorlist {
@@ -477,10 +569,11 @@ ul.errorlist {
 }
 
 .card.horizontal-height {
-    min-height: 131px;
+    min-height: 123px;
 }
 .card .salary {
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .card {

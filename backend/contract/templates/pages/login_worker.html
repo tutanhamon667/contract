@@ -13,8 +13,7 @@
                         <div class="">
                             <p class="form-caption">Поиск работы</p>
                             <form method="POST">
-                                {% csrf_token %}
-                                <p class="form-error-msg">{{ form.error }}</p>
+                                  <p class="form-error-msg">{{ form.error }}</p>
                                 {% csrf_token %}
                                 {% bootstrap_form form %}
 

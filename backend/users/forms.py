@@ -7,6 +7,7 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 
 from btc.models import JobTier, BuyPaymentPeriod
 from contract.widgets.captcha import CaptchaWidget
+from contract.widgets.multiselect import MultiselectWidget
 from contract.widgets.password import PasswordWidget
 from users.models.common import Region
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
@@ -90,6 +91,8 @@ class CompanyReviewForm(ModelForm):
 
 
 class JobFilterForm(forms.Form):
+	region =  forms.CharField( )
+	specialisation = forms.CharField()
 	region = forms.ModelMultipleChoiceField(label="Регион рабоы", queryset=Region.objects.all(), blank=True,
 											required=False)
 	specialisation = forms.ModelMultipleChoiceField(label="Специализация", queryset=Specialisation.objects.all(),
@@ -103,11 +106,11 @@ class JobFilterForm(forms.Form):
 							   ("Between6And12", "От 6 месяцев до 1 года"),
 							   ("NoMatter", "Не имеет значения")]
 	CHOICES_WORK_TIME_BUSY = [("1", "Полный график"), ("2", "Гибкий график"), ('3', 'Не имеет значения')]
-	CHOICES_WORK_DEPOSIT = [("1", "С залогом"), ("2", "Без залога")]
+	CHOICES_WORK_DEPOSIT = [("1", "С залогом"), ("2", "Без залога"), ("0", "Не имеет значения")]
 	salary_from = forms.IntegerField(
 		label='Зарплата от', required=False
 	)
-	work_deposit = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_DEPOSIT, initial='1',
+	work_deposit = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_DEPOSIT, initial='0',
 									 required=False)
 	deposit = forms.IntegerField(
 		label='Депозит до', required=False
@@ -120,13 +123,22 @@ class JobFilterForm(forms.Form):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		if "specialisation" in kwargs["initial"]:
-			self.fields["specialisation"].initial = kwargs["initial"].getlist("specialisation")
 		if "region" in kwargs["initial"]:
-			self.fields["region"].initial = kwargs["initial"].getlist("region")
+			multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all(), selected=kwargs["initial"]["region"])
+		else:
+			multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all())
+		if "title" in kwargs["initial"]:
+			self.fields["title"].initial = kwargs["initial"]["title"]
+		if "specialisation" in kwargs["initial"]:
+			multiselect_specialisation_widget = MultiselectWidget(label='Специализация', items=Specialisation.objects.all(), selected=kwargs["initial"]["specialisation"])
+		else:
+			multiselect_specialisation_widget = MultiselectWidget(label='Специализация',  items=Specialisation.objects.all())
 
+		self.fields["specialisation"].widget = multiselect_specialisation_widget
+		self.fields["region"].widget = multiselect_region_widget
 
 class ResumeFilterForm(forms.Form):
+
 	region = forms.ModelMultipleChoiceField(label="Регион рабоы", queryset=Region.objects.all(), blank=True,
 											required=False)
 	specialisation = forms.ModelMultipleChoiceField(label="Специализация", queryset=Specialisation.objects.all(),

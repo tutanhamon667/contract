@@ -10,7 +10,7 @@ urlpatterns = [
 
     path("response_invite", response_invite, name="response_invite"),
     path("user_resumes", get_user_resumes, name="user_resumes"),
-
+    path("balance", get_balance, name="balance"),
     path("menu", get_menu, name="menu"),
     path("user", get_user, name="user"),
     path("hot_jobs", get_hot_jobs, name="hot_jobs"),
