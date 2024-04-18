@@ -1,8 +1,11 @@
 version: '3.1'
 services:
   pg_db:
-    image:  docker.io/bitnami/postgresql-repmgr:latest
-
+    image: postgres:latest
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     command:
       - "postgres"
       - "-c"
@@ -38,13 +41,6 @@ services:
       - POSTGRES_USER=contract
       - POSTGRES_DB=contract
       - PGDATA=/var/lib/postgresql/data/pgdata
-      - REPMGR_PASSWORD=repmgrpassword
-      - REPMGR_PRIMARY_HOST=51.210.73.174
-      - REPMGR_PRIMARY_PORT=5433
-      - REPMGR_CONNECT_TIMEOUT=1
-      - REPMGR_RECONNECT_ATTEMPTS=2
-      - REPMGR_RECONNECT_INTERVAL=1
-      - REPMGR_MASTER_RESPONSE_TIMEOUT=5
     volumes:
       - pg_contract_data:/var/lib/postgresql/data
     ports:
@@ -52,7 +48,7 @@ services:
     networks:
       - main
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U contract -d contract"]
+      test: [ "CMD-SHELL", "pg_isready -U contract -d contract" ]
       interval: 10s
       timeout: 5s
       retries: 5
