@@ -6,21 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load django_bootstrap5 %}
     {% bootstrap_messages %}
-    {% load static %}
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'contract/js/bootstrap.min.js' %}"></script>
+
+    <link href="{% static 'contract/css/bootstrap.min.css' %}" rel="stylesheet"/>
 </head>
 <body>
 <section>
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <img src="{% static 'img/logo.png' %}" alt="" height="100"/>
+                <img src="{% static 'contract/img/logo.png' %}" alt="" height="100"/>
                 <a class="btn btn-primary" href="/">На главную</a>
             </div>
             <div class="col-md-6">
-                <img src="{% static 'img/404.png' %}" alt=""/>
+                <img src="{% static 'contract/img/404.png' %}" alt=""/>
             </div>
         </div>
     </div>

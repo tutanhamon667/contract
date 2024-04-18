@@ -61,3 +61,10 @@ hdwallet
 bit
 django-celery-beat
 qrcode
+django_bootstrap5
+django_ckeditor_5
+django_bootstrap_icons
+django_cryptography
+bitcoinlib
+django_redis
+jsonpickle
