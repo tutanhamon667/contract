@@ -72,19 +72,19 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Member)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('first_name', 'last_name',
+    list_display = ('id', 'first_name', 'last_name','display_name',
                     'login', 'is_staff', 'is_active', 'is_moderator',
                     'is_customer', 'is_worker')
     list_filter = ('login', 'last_name',)
     fieldsets = (
-        (None, {'fields': ('login',)}),
+        (None, {'fields': ('login','display_name')}),
         ('Personal info', {'fields': ('first_name', 'last_name')}),
         ('Function', {'fields': ('is_customer', 'is_worker', 'is_moderator')})
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('login', 'first_name', 'last_name',
+            'fields': ('login', 'first_name', 'last_name', 'display_name',
                        'is_customer', 'is_worker', 'is_active', 'is_moderator',
                        'password1', 'password2'),
         }),

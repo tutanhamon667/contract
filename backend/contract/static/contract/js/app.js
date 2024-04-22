@@ -9,7 +9,7 @@ const alpineApp = function () {
             const input = e.currentTarget.closest('div').querySelector('input')
             if (this.showPassword) {
                 input.setAttribute('type', 'text')
-            }else{
+            } else {
                 input.setAttribute('type', 'password')
             }
 
@@ -38,7 +38,9 @@ const alpineApp = function () {
         })
 
     }
-
+    function numberWithSpace(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
     Alpine.store('main', {
         jobs: [],
         user: {},
@@ -46,6 +48,66 @@ const alpineApp = function () {
         balance: "",
         resumes: [],
         filters: {},
+        getWorkExpString: (value) => {
+            switch (value) {
+                case 'NoMatter':
+                    return 'Без опыта'
+                case 'Between1And6':
+                    return 'Опыт От 1 до 6 месяцев'
+                case 'Between6And12':
+                    return 'Опыт От 6 месяцев до 1 года'
+                case 'Between12And24':
+                    return 'Опыт От 1 до 2 лет'
+                case 'More24':
+                    return 'Опыт От 2 лет'
+
+            }
+        },
+        getRegionsStr: (job, hide_many = true) => {
+            if (!job.is_offline){
+                if(hide_many){
+                    if (job.regions.length > 3) {
+                        const length = job.regions.length - 3
+                        const regions_to_display = job.regions.slice(0,3)
+                        let region_names = regions_to_display.map(i=>i.name).join(', ')
+                        return 'Оффлайн занятость: ' + region_names + ' и ещё ' + length
+                    }else {
+                        let region_names = job.regions.map(i=>i.name).join(', ')
+                        return 'Оффлайн занятость: ' + region_names
+                    }
+                }
+                let region_names = job.regions.map(i=>i.name).join(', ')
+                return 'Оффлайн занятость: ' + region_names
+            }else{
+                return 'Онлайн занятость'
+            }
+        },
+        getDepositStr: (job) => {
+            if (!job.deposit){
+                return 'Без залога'
+            }else{
+                return `Залог: ${numberWithSpace(job.deposit)} ₽`
+            }
+        },
+        getSalaryStr: (job) => {
+
+            if (!job.salary_from && !job.salary_to) {
+                return "Не указана"
+            }
+
+            if (job.salary_from === job.salary_to) {
+                return numberWithSpace(job.salary_from) + " ₽"
+            }
+            if (job.salary_from && job.salary_to) {
+                return `от ${numberWithSpace(job.salary_from)} до ${numberWithSpace(job.salary_to)}  ₽`
+            }
+            if (job.salary_from && !job.salary_to) {
+                return `от ${numberWithSpace(job.salary_from)} ₽`
+            }
+            if (!job.salary_from && job.salary_to) {
+                return `до ${numberWithSpace(job.salary_to)} ₽`
+            }
+        },
         getJobs: async (data = {}) => {
             if (typeof data.page === 'undefined')
                 data.page = 0
@@ -113,12 +175,17 @@ const alpineApp = function () {
                     }
                 }
                 if (typeof job.invite.id === 'undefined') {
-                    return {
-                        element: 'form',
-                        text: '',
-                        actions: [{action: "create", text: 'Отправить отклик'}],
-                        id: null
+                    if (Alpine.store('main').resumes.length){
+                         return {
+                            element: 'form',
+                            text: '',
+                            actions: [{action: "create", text: 'Отправить отклик'}],
+                            id: null
+                        }
+                    }else{
+                        return {element: 'link', link: '/profile/resume', text: 'Создать резюме для отклика'}
                     }
+
                 }
             }
             return ''
@@ -252,7 +319,7 @@ const alpineApp = function () {
 
     this.getBalance = async () => {
         const data = await Alpine.store('main').getBalance()
-        if (data.success){
+        if (data.success) {
             Alpine.store('main').balance = data.data.usd + ' $/' + data.data.btc + ' btc'
         }
     }
@@ -264,29 +331,29 @@ const alpineApp = function () {
         }
     }
 
-    this.initJobs = async  () => {
-          const user = await this.getUser()
-            if (user.success) {
-                this.setUser(user.data)
-                if (user.data.is_worker) {
-                    const resumes = await this.getResumes()
-                    if (resumes.success) {
-                        this.setResumes(resumes.data)
-                    }
+    this.initJobs = async () => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+            if (user.data.is_worker) {
+                const resumes = await this.getResumes()
+                if (resumes.success) {
+                    this.setResumes(resumes.data)
                 }
             }
+        }
 
-            await this.filterJobs()
+        await this.filterJobs()
 
 
     }
-       Alpine.bind('checkboxInput', {
+    Alpine.bind('checkboxInput', {
         type: 'button',
         checked: false,
-         selected:[],
-           '@init'(e){
+        selected: [],
+        '@init'(e) {
             console.log(e)
-           },
+        },
         '@click'(e) {
             let checked = !e.currentTarget.classList.contains('checked')
             e.currentTarget.classList.toggle('checked')
@@ -302,7 +369,7 @@ const alpineApp = function () {
                     }
 
                 });
-            }else{
+            } else {
                 selected.forEach(function (option) {
                     if (option.value === id) {
                         option.selected = false;
@@ -314,8 +381,6 @@ const alpineApp = function () {
         },
 
     })
-
-
 
 
 }

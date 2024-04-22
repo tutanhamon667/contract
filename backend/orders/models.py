@@ -1,8 +1,10 @@
 from django.db import models as basic_models
-from users.models.user import Member, Company, Specialisation, User
+from users.models.user import Member, Company, Specialisation, User, Industry
 
 
 class JobSpecialisationStat(basic_models.Model):
+
+    industry = basic_models.ForeignKey(to=Industry, verbose_name="Индустрия", on_delete=basic_models.PROTECT)
 
     name = basic_models.CharField(
         verbose_name='Название категории', max_length=50
@@ -17,10 +19,6 @@ class JobSpecialisationStat(basic_models.Model):
         verbose_name='Количество'
     )
 
-    min_one = basic_models.BigIntegerField(
-        default=0,
-        verbose_name='минимальная зп 1'
-    )
     min_from = basic_models.BigIntegerField(
         default=0,
         verbose_name='минимальная зп 2'
@@ -35,9 +33,12 @@ class JobSpecialisationStat(basic_models.Model):
 
     @property
     def get_min(self):
-        if int(self.min_from or 0) + int(self.min_to or 0) + int(self.min_one or 0) == 0:
-            return 0
+        if self.min_from is None:
+            self.min_from = 0
+        if self.min_to is None:
+            self.min_to = 0
+        if self.min_from > self.min_to:
+            return self.min_to
         else:
-            arr = filter(lambda x: int(x or 0)>0, [self.min_from, self.min_to, self.min_one])
-            return min(arr)
+            return self.min_from
 

@@ -1,16 +1,13 @@
-
-CREATE OR REPLACE VIEW public.job_categories_info
- AS
  SELECT count(ojc.id) AS count,
     ojc.id,
+    ind.id as industry_id,
     ojc.name,
-	ojc.icon,
-    min(o.salary) AS min_one,
+    ind.icon,
     min(o.salary_from) AS min_from,
     min(o.salary_to) AS min_to
    FROM users_specialisation ojc
+     JOIN users_industry ind ON ind.id = ojc.industry_id
      JOIN users_job o ON o.specialisation_id = ojc.id
-  GROUP BY ojc.id, ojc.name, ojc.icon;
-
-ALTER TABLE public.job_categories_info
-    OWNER TO contract;
+	 JOIN btc_jobpayment bj on bj.job_id = o.id
+	WHERE bj.expire_at > NOW()
+  GROUP BY ojc.id, ojc.name, ind.icon, ind.id;

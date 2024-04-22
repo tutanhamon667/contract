@@ -323,8 +323,8 @@ class JobView:
 									messages.success(request, f'Заказ №{new_job_payment.id} ждёт оплаты')
 									return redirect('profile_jobs')
 			except Exception as e:
-				print(e)
-				return HttpResponse(status=500)
+					print(e)
+					return HttpResponse(status=500)
 		else:
 			return redirect(to="signin")
 

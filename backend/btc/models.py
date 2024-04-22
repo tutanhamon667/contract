@@ -25,7 +25,7 @@ class Wallet(models.Model):
     label = models.CharField('Label', max_length=100, blank=True, null=True, unique=True)
     mnemonic = models.CharField('Mnemonic', max_length=255, blank=False, null=False, unique=True, default='')
     def __str__(self):
-        return u'{0} {1} "{2}"'.format(self.balance, self.label or '')
+        return u'{0} {1}'.format(self.balance, self.label or '')
 
     def get_address(self):
         active = Address.objects.filter(wallet=self, active=True)[:1]
@@ -133,7 +133,10 @@ class Address(models.Model):
         with connection.cursor() as cursor:
             cursor.execute("SELECT sum(value) FROM transaction_outputs WHERE key_id=%s", [self.key_id])
             row = cursor.fetchone()
-        return row[0]
+            if row[0] is not None:
+                return row[0]
+            else:
+                return 0
 
     def get_address_incoming_transactions(self):
         with connection.cursor() as cursor:

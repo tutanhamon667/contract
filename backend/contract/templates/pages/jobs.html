@@ -7,145 +7,160 @@
         <section x-init="initJobs()">
             <div class="row">
                 <div class="col-lg-3">
-                    <form action="" method="get" id="filter_form" @submit.prevent="js.filterJobs(this)" novalidate>
-                        {% bootstrap_form search_form %}
-                        <button id="filter_jobs_btn" class="btn btn-primary">Search</button>
+                    <h4>Фильтры поиска</h4>
+                    <form action="" method="get" id="filter_form" @submit.prevent="application.filterJobs(this)"
+                          novalidate>
+                        {% for hidden_field in search_form.hidden_fields %}
+                            {{ hidden_field.errors }}
+                            {{ hidden_field }}
+                        {% endfor %}
+                        {% for field in search_form.visible_fields %}
+                            <div class="form-field">
+                                <p>{{ field.label_tag }}</p>
+                                <div>
+                                    {{ field }}
+                                    {{ field.help_text }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <button id="filter_jobs_btn" class="btn btn-primary width-100">Применить</button>
                     </form>
                 </div>
-                <!-- <div class="col-lg-9 job-list">              {% with short=False %}
-                    {% include "../blocks/components/job/job_component.html" %}             {% endwith %}
-                </div>-->
                 <div class="col-lg-9 job-list" x-data>
                     <template x-for="job in $store.main.jobs" :key="job.id">
-                        <div class="card ">
+
+                            <div class=" hot-job-card card">
+
                             <div class="card-body">
-                                <div class="left">
-                                    <h4 class="card-title">
-                                        <span class="icon-text"> <a :href="'/jobs/' +job.id" class="link-dark"
-                                                                    x-text="job.title"></a></span>
-                                        <template x-if="job.payment.job_tier_id == 3">
-                                            <span class="red-icon">{% bs_icon 'fire' %}</span>
-                                        </template>
-                                    </h4>
-                                    <template x-if="job.salary_from && job.salary_to">
-                                        <h3 class="card-subtitle"
-                                            x-text="job.salary_from + ' - ' + job.salary_to +' ₽'"></h3>
-                                    </template>
-                                    <template x-if="job.salary_from && !job.salary_to">
-                                        <h3 class="card-subtitle" x-text="'от '+job.salary_from+' ₽'"></h3>
-                                    </template>
-                                    <template x-if="job.salary">
-                                        <h3 class="card-subtitle" x-text="job.salary+' ₽'"></h3>
-                                    </template>
-                                    <div>
-                                        <a class="job-card-item-customer customer-name"
-                                           :href="'/company/'+ job.company_id "
-                                           x-text="job.company.name">{% bs_icon 'check-circle' %}</a>
-                                    </div>
-                                    <div>
-                                        <span class="job-card-item-customer text-muted job-type"
-                                              x-text="job.is_offline? 'Оффлайн':'Онлайн'"></span>
-                                    </div>
-                                    <template x-if="job.deposit>0">
-                                        <span class="job-card-item-customer text-muted job-type"
-                                              x-text="'Залог: ' + job.deposit + ' ₽'"></span>
-                                    </template>
-                                    <template x-if="job.deposit===0">
-                                        <div class="left">
-                                            <p>
-                                            <span>
-                                            {% bs_icon 'currency-dollar' %}
-                                            </span>
-                                                <span class="icon-text">Без залога</span>
-                                            </p>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="d-flex">
+                                            <a :href="'/jobs/' +job.id" class="title">
+                                                <h4 class="title" x-text="job.title"></h4>
+                                            </a>
+                                            <template x-if="job.payment.job_tier_id == 3">
+                                                <img src="{% static 'contract/img/icons/hot.svg' %}" height="22"
+                                                     class="ml-5 company-logo-mini">
+                                            </template>
 
                                         </div>
-                                    </template>
-                                    <template x-if="job.work_experience === 0">
-                                        <div class="">
-                                            <p>
-                                                <span>
-                                                {% bs_icon 'bag' %}
-                                                </span>
-                                                <span class="icon-text">Без опыта</span>
-                                            </p>
+
+                                        <h3 class="card-subtitle salary"
+                                            x-text="$store.main.getSalaryStr(job)"></h3>
+
+
+                                        <div class="d-flex ">
+                                            <a :href="'/company/'+ job.company_id "
+                                               x-text="job.company.name" class=" shop-name"></a> <img
+                                                src="/staticfiles/contract/img/icons/approved.svg" height="16"
+                                                class="ml-5 mt-15">
                                         </div>
-                                        <div class="clear"></div>
-                                    </template>
-                                    <template x-if="job.work_experience > 0">
-                                        <span class="job-card-item-customer text-muted job-type"
-                                              x-text="'Опыт:' + job.work_experience + ' месяцев'"></span>
-                                    </template>
+                                        <div class="work-description-container">
+                                            <div>
+                                                  <span class="job-card-item-customer  work-type"
+                                                        x-text="$store.main.getRegionsStr(job)"></span>
+                                            </div>
+                                            <div class="d-flex vacancy-description">
+
+                                                <div class="d-flex mr-15">
+                                                    <img src="/staticfiles/contract/img/icons/bag.svg" height="16"
+                                                         class="mt-1 mr-5">
+                                                    <span class="work-experience"
+                                                          x-text="$store.main.getWorkExpString(job.work_experience)"></span>
+                                                </div>
+
+                                                <div class="d-flex">
+                                                    <img src="/staticfiles/contract/img/icons/zalog.svg" height="16"
+                                                         class="mt-1 mr-5">
+                                                    <span class="work-deposit"
+                                                          x-text="$store.main.getDepositStr(job)"></span>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <template x-if="job.company.logo">
+                                            <img :src="'/media/'+job.company.logo" height="50" class="company-logo-mini"
+                                                 :alt="job.company.name"/>
+                                        </template>
+                                        <template x-if="!job.company.logo">
+                                            <div class="">
+                                                <span x-text="job.company.name"></span>
+                                            </div>
+                                        </template>
+                                    </div>
                                 </div>
-                                <template x-if="job.company.logo">
-                                    <div class="right">
-                                        <img :src="'/media/'+job.company.logo" height="50" :alt="job.company.name"/>
-                                    </div>
-                                </template>
-                                <template x-if="$store.main.user.id>=0 && $store.main.user.is_worker ">
-                                    <div>
+                                <div class="row mt-15">
+                                    <div class="col-10">
+                                        <template x-if="$store.main.user.id>=0 && $store.main.user.is_worker ">
+                                            <div>
 
-                                        <label :for="'favorite_job_'+job.id">favorite</label>
-                                        <input type="checkbox" :id="'favorite_job_'+job.id"
-                                               class="favorite_job_checkbox"
-                                               @click="js.setFavorite(job.id)"
-                                               x-model="job.favorite.checked"/>
-                                    </div>
-                                </template>
-                                <template x-if="$store.main.user.id<0">
-                                    <div class="clear">
-                                        <a href='/signin' class="btn btn-success">Войти для отклика</a>
-                                    </div>
-                                </template>
-                                <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
-                                    <div x-data="{res: $store.main.getResponseInviteElement(job.id)}">
-
-                                        <template x-if="res.element === 'link'">
-                                            <a :href="res.link">Перейти в чат</a>
+                                                <label :for="'favorite_job_'+job.id">favorite</label>
+                                                <input type="checkbox" :id="'favorite_job_'+job.id"
+                                                       class="favorite_job_checkbox"
+                                                       @click="application.setFavorite(job.id)"
+                                                       x-model="job.favorite.checked"/>
+                                            </div>
                                         </template>
-                                        <template x-if="res.element === 'status'">
-                                            <p x-text="res.text"></p>
+                                        <template x-if="$store.main.user.id<0">
+                                            <a href='worker/signin' class="btn btn-success">Войти для отклика</a>
                                         </template>
-                                        <template x-if="res.element === 'form'">
+                                        <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
+                                            <div x-data="{res: $store.main.getResponseInviteElement(job.id)}">
 
-                                            <template x-for="action in res.actions" :key="action.action">
-                                                <div>
-                                                    <template x-if="action.action !== 'create'">
-                                                        <button x-on:click="js.sendResponse(action.action, res.id)"
-                                                                x-text="action.text"></button>
-                                                    </template>
-                                                    <template x-if="action.action === 'create'">
+                                                <template x-if="res.element === 'link'">
+                                                    <a :href="res.link" x-text="res.text"></a>
+                                                </template>
+                                                <template x-if="res.element === 'status'">
+                                                    <p x-text="res.text"></p>
+                                                </template>
+                                                <template x-if="res.element === 'form'">
+
+                                                    <template x-for="action in res.actions" :key="action.action">
                                                         <div>
-                                                            <button x-on:click="js.sendResponse(action.action, res.id, job.id)"
-                                                                    x-text="action.text"></button>
-                                                            <select name="resume" x-model="$store.main.selectedResume"
-                                                                    class="">
-                                                                <template x-for="resume in $store.main.resumes"
-                                                                          :key="resume.id">
-                                                                    <option :value="resume.id"
-                                                                            x-text="resume.name"></option>
-                                                                </template>
-                                                            </select>
+                                                            <template x-if="action.action !== 'create'">
+                                                                <button x-on:click="application.sendResponse(action.action, res.id)"
+                                                                        x-text="action.text"></button>
+                                                            </template>
+                                                            <template x-if="action.action === 'create'">
+                                                                <div>
+                                                                    <button x-on:click="application.sendResponse(action.action, res.id, job.id)"
+                                                                            x-text="action.text"></button>
+                                                                    <select name="resume"
+                                                                            x-model="$store.main.selectedResume"
+                                                                            class="">
+                                                                        <template x-for="resume in $store.main.resumes"
+                                                                                  :key="resume.id">
+                                                                            <option :value="resume.id"
+                                                                                    x-text="resume.name"></option>
+                                                                        </template>
+                                                                    </select>
+                                                                </div>
+
+                                                            </template>
                                                         </div>
 
                                                     </template>
-                                                </div>
 
-                                            </template>
-
+                                                </template>
+                                            </div>
                                         </template>
                                     </div>
-                                </template>
+                                    <div class="col-2">
+
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
-
                     </template>
                 </div>
             </div>
         </section>
     </div>
-    <script src="{% static 'contract/js/jobs.js' %}"></script>
-
     <script>
         const initJobs = () => {
             application.initJobs()
@@ -153,8 +168,7 @@
         $(document).ready(function () {
             const application = new app()
             application.radioInputChecker("[name='work_deposit']", 1, "#id_deposit")
-
-
+            application.radioMultiSelectChecker("[name='work_type']", 1, "button[for=\"region\"]", "#region")
         });
     </script>
 {% endblock content %}

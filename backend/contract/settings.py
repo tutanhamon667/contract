@@ -52,7 +52,7 @@ ASGI_APPLICATION = "contract.asgi.application"
 SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4gGultuiot8hbxlguev@bh%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', default='True') == 'False'
+DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
 ALLOWED_HOSTS = ["51.210.73.174", '127.0.0.1', '[::1]']
 
@@ -688,3 +688,27 @@ USER_ACTIONS = {
 	'delete': 0,
 	'get': 0
 }
+
+CHOICES_WORK_TYPE_FILTER = [("1", "Оффлайн"), ("2", "Онлайн"), ("3", "Не имеет значения")]
+
+CHOICES_WORK_TIME_BUSY_FILTER = [("1", "Полный график"), ("2", "Гибкий график"), ('3', 'Не имеет значения')]
+CHOICES_WORK_DEPOSIT_FILTER = [("1", "С залогом"), ("2", "Без залога"), ("0", "Не имеет значения")]
+
+CHOICES_WORK_TYPE = [(0, "Оффлайн занятость"),
+						   (1, "Онлайн занятость")]
+
+CHOICES_WORK_TIMEWORK = [(0, "Полный график"),
+						   (1, "Гибкий график")]
+
+CHOICES_WORK_EXPERIENCE = [("WithoutExperience", "Нет опыта"),
+						   ("Between1And6", "От 1 до 6 месяцев"),
+						   ("Between6And12", "От 6 месяцев до 1 года"),
+						   ("Between12And24", "От 1 года до 2 лет"),
+						   ("More24", "От 2 лет")]
+
+CHOICES_WORK_EXPERIENCE_FILTER = [("WithoutExperience", "Нет опыта"),
+						   ("Between1And6", "От 1 до 6 месяцев"),
+						   ("Between6And12", "От 6 месяцев до 1 года"),
+						   ("Between12And24", "От 1 года до 2 лет"),
+						   ("More24", "От 2 лет"),
+						   ("NoMatter", "Не имеет значения")]

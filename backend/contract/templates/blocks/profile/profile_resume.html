@@ -4,7 +4,8 @@
         <h1 class="my_order_title">Моё резюме</h1>
         <form action="" method="post" >
             {% csrf_token %}
-            {% bootstrap_form form %}
+            {{ form.media }}
+            {{ form.as_div }}
             <input type="submit" value="Обновить" />
         </form>
 {% endblock profile_content %}

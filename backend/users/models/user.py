@@ -8,7 +8,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import Q
 import random
-from contract.settings import CONTACT_TYPE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS
+from contract.settings import CONTACT_TYPE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS, CHOICES_WORK_EXPERIENCE, \
+	CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK
 from .common import Region
 from users.usermanager import UserManager
 from django_cryptography.fields import encrypt
@@ -26,6 +27,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
 	display_name = models.CharField(
 		verbose_name='Отображаемое имя',
 		max_length=254,
+		unique=True,
 		default='',
 		null=True
 	)
@@ -309,8 +311,7 @@ class Resume(models.Model):
 		verbose_name = 'Резюме пользователя'
 		verbose_name_plural = 'Резюме пользователей'
 
-	name = models.CharField(null=False, max_length=255, verbose_name='Наименование должности', default='')
-	description = models.CharField(null=False, max_length=255, verbose_name='Описание должности', default='')
+	name = models.CharField(null=False, max_length=255, verbose_name='Заголовок резюме', default='')
 	user = models.ForeignKey(to=Member,
 							 on_delete=models.CASCADE,
 							 related_name='f_resume_member',
@@ -320,13 +321,17 @@ class Resume(models.Model):
 									   default=None,
 									   null=True,
 									   related_name='f_resume_stack',
-									   verbose_name='Профессия')
+									   verbose_name='Специализация')
 	active_search = models.BooleanField(null=True, default=True, verbose_name='В активном поиске')
-	salary = models.IntegerField(verbose_name='Желаемая заработная плата', null=True, default=0)
+	salary = models.IntegerField(verbose_name='Желаемый уровень дохода', null=True, default=0)
 	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0)
-	work_experience = models.IntegerField(verbose_name='Опыт работы (месяцы)', null=True, default=0)
-	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
-	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
+	work_experience = models.CharField(verbose_name='Опыт работы', choices=CHOICES_WORK_EXPERIENCE,
+									   default="NoMatter",
+									   null=True,
+									   blank=True, )
+
+	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False, choices=CHOICES_WORK_TYPE)
+	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False, choices=CHOICES_WORK_TIMEWORK)
 	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=True)
 	views = models.IntegerField(verbose_name='просмотры', null=True, default=0, blank=True)
 	region = models.ForeignKey(verbose_name='Регион работы',
@@ -334,7 +339,10 @@ class Resume(models.Model):
 							   null=True,
 							   default=None,
 							   on_delete=models.SET_DEFAULT)
-
+	description = CKEditor5Field(
+		verbose_name='Описание вакансии', config_name='extends', null=True,
+		blank=True,
+	)
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
@@ -447,12 +455,6 @@ class Job(models.Model):
 		verbose_name='Описание вакансии', config_name='extends', null=True,
 		blank=True,
 	)
-	salary = models.BigIntegerField(
-		default=0,
-		null=True,
-		blank=True,
-		verbose_name='Зарплата'
-	)
 	salary_from = models.BigIntegerField(
 		default=0,
 		null=True,
@@ -466,24 +468,23 @@ class Job(models.Model):
 		verbose_name='Зарплата до'
 	)
 
-	work_experience = models.IntegerField(
-		default=0,
-		null=True,
-		blank=True,
-		verbose_name='Опыт работы в месяцах'
-	)
+	work_experience = models.CharField(verbose_name='Опыт работы в месяцах', choices=CHOICES_WORK_EXPERIENCE,
+									   default="NoMatter",
+									   null=True,
+									   blank=True,)
+
 	is_offline = models.BooleanField(verbose_name='Оффлайн работа', null=False, default=False)
 	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False)
 	region = models.ManyToManyField(Region, verbose_name='Регион работы', default=None, blank=True)
-	active_search = models.BooleanField(null=True, blank=True, default=True, verbose_name='В активном поиске')
-	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0, blank=True)
+	active_search = models.BooleanField(blank=True, default=True, verbose_name='В активном поиске')
+	deposit = models.IntegerField(verbose_name='Залог',  default=0, blank=True)
 	views = models.IntegerField(verbose_name='Просмотры', null=True, default=0)
 
 	pub_date = models.DateTimeField(
 		auto_now_add=True,
 		verbose_name='Дата публикации вакансии',
 	)
-	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=True)
+	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=False)
 
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
@@ -566,16 +567,18 @@ class Job(models.Model):
 
 	@property
 	def final_salary(self):
-		if self.salary > 0:
-			return f'{self.salary:_}'.replace('_', ' ')
+		if self.salary_from is None:
+			self.salary_from = 0
+		if self.salary_to is None:
+			self.salary_to = 0
+		if self.salary_from and self.salary_to:
+			return f'{self.salary_from:_} - {self.salary_to:_}'.replace('_', ' ')
 		else:
-			if self.salary_from and self.salary_to:
-				return f'{self.salary_from:_} - {self.salary_to:_}'.replace('_', ' ')
-			else:
-				if self.salary_from > 0:
-					return f'от {self.salary_from:_}'.replace('_', ' ')
-				else:
-					return f'до {self.salary_to:_}'.replace('_', ' ')
+			if self.salary_from != 0:
+				return f'от {self.salary_from:_}'.replace('_', ' ')
+			if self.salary_to != 0:
+				return f'до {self.salary_to:_}'.replace('_', ' ')
+			return 'Не указана'
 
 	@classmethod
 	def is_current_user(cls, _id, user):
@@ -584,11 +587,13 @@ class Job(models.Model):
 
 	@classmethod
 	def get_new_jobs(cls, limit):
-		return cls.objects.all().order_by('-id')[:limit]
+		return cls.objects.filter( jobpayment__start_at__lte=timezone.now(), moderated=True, deleted=False, active_search=True,
+								  jobpayment__expire_at__gte=timezone.now()).order_by('-id').order_by('-id')[:limit]
 
 	@classmethod
 	def get_hot_jobs(cls, limit):
 		items = list(cls.objects.filter(jobpayment__job_tier_id=3, jobpayment__start_at__lte=timezone.now(),
+										moderated=True, deleted=False,active_search=True,
 								  jobpayment__expire_at__gte=timezone.now()).order_by('-id'))
 		if len(items) <3:
 			return items
@@ -653,12 +658,7 @@ class Job(models.Model):
 			objs = objs.filter(deposit__lte=_get["deposit"])
 		if "work_experience" in _get and _get["work_experience"] != 'NoMatter':
 			filters_exists = True
-			if _get["work_experience"] == 'WithoutExperience':
-				objs = objs.filter(work_experience=0)
-			if _get["work_experience"] == 'Between1And6':
-				objs = objs.filter(work_experience__gte=1, work_experience__lte=6)
-			if _get["work_experience"] == 'Between6And12':
-				objs = objs.filter(work_experience__gte=6, work_experience__lte=12)
+			objs = objs.filter(work_experience=_get["work_experience"])
 		if "specialisation" in _get and _get["specialisation"] != '':
 			filters_exists = True
 			objs = objs.filter(specialisation__in=request.GET.getlist("specialisation"))
@@ -688,14 +688,19 @@ class Job(models.Model):
 				specialisation__industry__name__icontains=_get["title"]))
 		if "salary_from" in _get and _get["salary_from"] != '':
 			filters_exists = True
-			objs = objs.filter(Q(salary__gt=0) | Q(salary_from__gt=0)).filter(
-				Q(salary__gte=_get["salary_from"]) | Q(salary_from__gte=_get["salary_from"]))
+			objs = objs.filter(Q(salary_from__lte=_get["salary_from"]) | Q(salary_to__gte=_get["salary_from"]))
 		if "work_type" in _get and _get["work_type"] != '3':
 			filters_exists = True
 			if _get["work_type"] == '2':
 				objs = objs.filter(is_offline=False)
 			if _get["work_type"] == '1':
 				objs = objs.filter(is_offline=True)
+			if "region" in _get and _get["region"] != '':
+				filters_exists = True
+				objs = objs.filter(region__in=_get["region"])
+			if "region[]" in _get and _get["region[]"] != '':
+				filters_exists = True
+				objs = objs.filter(region__in=_get.getlist("region[]")).order_by('id')
 		if "work_time_busy" in _get and _get["work_time_busy"] != '3':
 			filters_exists = True
 			if _get["work_time_busy"] == '2':
@@ -713,32 +718,22 @@ class Job(models.Model):
 			objs = objs.filter(deposit__lte=_get["deposit"])
 		if "work_experience" in _get and _get["work_experience"] != 'NoMatter':
 			filters_exists = True
-			if _get["work_experience"] == 'WithoutExperience':
-				objs = objs.filter(work_experience=0)
-			if _get["work_experience"] == 'Between1And6':
-				objs = objs.filter(work_experience__gte=1, work_experience__lte=6)
-			if _get["work_experience"] == 'Between6And12':
-				objs = objs.filter(work_experience__gte=6, work_experience__lte=12)
+			objs = objs.filter(work_experience=_get["work_experience"])
 		if "specialisation[]" in _get and _get["specialisation[]"] != '':
 			filters_exists = True
-			objs = objs.filter(specialisation__in=_get.getlist("specialisation[]"))
+			objs = objs.filter(specialisation__industry_id__in=_get.getlist("specialisation[]"))
 		if "specialisation" in _get and _get["specialisation"] != '':
 			filters_exists = True
-			objs = objs.filter(specialisation_id=_get["specialisation"])
-		if "region" in _get and _get["region"] != '':
-			filters_exists = True
-			objs = objs.filter(region__in=_get["region"])
-		if "region[]" in _get and _get["region[]"] != '':
-			filters_exists = True
-			objs = objs.filter(region__in=_get.getlist("region[]")).order_by('id')
+			objs = objs.filter(specialisation__industry_id=_get["specialisation"])
+
 
 		if not filters_exists:
-			return cls.objects.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
+			return cls.objects.filter(moderated=True, deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
 									  jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
 																						  '-pub_date', '-id').distinct()[
 				   :limit]
 		else:
-			return objs.filter(moderated=True, active_search=True, jobpayment__start_at__lte=timezone.now(),
+			return objs.filter(moderated=True,  deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
 							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
 																				   '-pub_date', '-id').distinct()[:limit]
 

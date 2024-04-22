@@ -330,6 +330,8 @@ function Chat(user_id, chat_id ) {
                 if (Alpine.store('chatsData').chats.length) {
                     id = Alpine.store('chatsData').chats[0].chat_uuid
                     Alpine.store('chatsData').setActiveChat(id)
+                }else {
+                    return
                 }
             }
             Alpine.store('chatsData').setActiveChat(id)

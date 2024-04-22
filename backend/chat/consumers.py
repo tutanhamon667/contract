@@ -53,7 +53,7 @@ class ChatConsumer(WebsocketConsumer):
 			)
 
 			response = []
-			chats = Chat.get_user_chats(user)
+			chats = Chat.get_user_chats(user) or []
 			for chat in chats:
 				async_to_sync(self.channel_layer.group_add)(
 					str(chat.uuid), self.channel_name
@@ -114,7 +114,7 @@ class ChatConsumer(WebsocketConsumer):
 		text_data_json = json.loads(text_data)
 		message = text_data_json
 
-		if message["type"] == "JOIN_CHAT":
+		if message["type"] == "JOIN_CHAT" and "chat_uuid" in message:
 			chat = Chat.objects.get(uuid=message["chat_uuid"])
 			messages = Message.objects.filter(chat=chat).order_by('id')
 			response = []

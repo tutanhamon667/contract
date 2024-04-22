@@ -54,6 +54,26 @@ const app = function() {
         })
     }
 
+    const radioMultiSelectChecker = (radio,value, input, pseudo_el) => {
+        $(input).each(function(item){
+            $(this).attr("disabled", "disabled")
+        })
+        $(pseudo_el).attr("disabled", "disabled")
+        $(radio).on("change", function() {
+            if (parseInt($(this).val()) !== parseInt(value)){
+               $(input).each(function(item){
+                    $(this).attr("disabled", "disabled")
+                })
+                $(pseudo_el).attr("disabled", "disabled")
+            }else{
+                $(input).each(function(item){
+                    $(this).removeAttr("disabled")
+                })
+                $(pseudo_el).removeAttr("disabled")
+            }
+
+        })
+    }
      const profileJobsFilters = () => {
         const searchParams = new URLSearchParams(window.location.search);
         const filterForm = $('.profile_jobs_filter_form')
@@ -168,6 +188,7 @@ const app = function() {
         favoriteJobCheckboxHandler: favoriteJobCheckboxHandler,
         getJobs:getJobs,
         jobFilterSubmit:jobFilterSubmit,
+        radioMultiSelectChecker:radioMultiSelectChecker
     }
 }
 

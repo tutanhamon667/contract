@@ -259,6 +259,12 @@ def get_jobs(request):
 		jobs = Job.search_filter_new(request, 10)
 		companies = Company.join_companies(jobs)
 		res = list(jobs.values())
+		for job in res:
+			item_regions = None
+			for job_db in jobs:
+				if job_db.id == job["id"]:
+					item_regions = job_db.region
+			job["regions"] = list(item_regions.values())
 		payments = list(JobPayment.join_tier(objs=jobs).values())
 		companies_arr = []
 		for company in companies:

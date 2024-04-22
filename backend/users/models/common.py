@@ -22,6 +22,10 @@ MAX_RANDOM_KEY = 18446744073709551616  # 2 << 63
 class Region(models.Model):
     name = models.CharField(null=False, max_length=50)
 
+    class Meta:
+        verbose_name = 'Регион'
+        verbose_name_plural = 'Регионы'
+
     def __str__(self):
         return self.name
 

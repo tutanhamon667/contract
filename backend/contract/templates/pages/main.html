@@ -42,41 +42,40 @@
             </div>
             <div class="products-category-container">
                 {% for category in categories_stat %}
-                    {% if forloop.counter|divisibleby:5 %}
+                    {% if forloop.counter is 4 %}  <!--HIDE CONTAINER-->
+                        <p>
+                            <a class="link-dark" data-bs-toggle="collapse" href="#collapseExample" role="button"
+                               aria-expanded="false" aria-controls="collapseExample">
+                                Показать все должности
+                            </a>
+                        </p>
+
                         <div class="collapse" id="collapseExample">
                     {% endif %}
-                {% if forloop.counter|divisibleby:5  or   forloop.first %}
-                    <div class="row">
-                {% endif %}
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
-                    <a href="/jobs?specialisation={{ category.id }}">
-                        <div class="card">
-                            <div class="card-header d-flex">
-                                <img src="static/contract/img/icons/{{ category.icon }}.svg" width="18" height="18"
-                                     class="h-icon"/>
-                                <h5>{{ category.name }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <h4 class="card-title">Минимальная зп: {{ category.get_min }} ₽</h4>
-                                <p class="card-text">Вакансий: {{ category.count }}</p>
+                    {% if forloop.counter|divisibleby:4 or forloop.first %}<!--ROW-->
+                        <div class="row">
+                    {% endif %}
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                                <a href="/jobs?specialisation={{ category.industry_id }}">
+                                    <div class="card">
+                                        <div class="card-header d-flex">
+                                            <img src="{% get_static_prefix %}contract/img/icons/{{ category.icon }}.svg" width="18" height="18"
+                                                 class="h-icon"/>
+                                            <h5>{{ category.name }}</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="card-title">Минимальная зп: {{ category.get_min }} ₽</h4>
+                                            <p class="card-text">Вакансий: {{ category.count }}</p>
 
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
+                    {% if forloop.counter|divisibleby:4   or  forloop.last %} <!--ROW-->
                         </div>
-                    </a>
-                </div>
+                    {% endif %}
 
-                {% if forloop.counter|divisibleby:4   or  forloop.last %}
-                    </div>
-                {% endif %}
-                {% if forloop.counter|divisibleby:4 %}
-                    <p>
-                        <a class="link-dark" data-bs-toggle="collapse" href="#collapseExample" role="button"
-                           aria-expanded="false" aria-controls="collapseExample">
-                            Показать все должности
-                        </a>
-                    </p>
-                {% endif %}
-                {% if forloop.last %}
+                {% if categories_stat|length > 4  %}
                     </div>
                 {% endif %}
 
@@ -99,9 +98,16 @@
                         <a href="/company/{{ best_customer.company.id }}">
                             <div class="best-customers-card text-center">
                                 <div>
+                                    {% if best_customer.company.logo %}
                                     <img src="{% get_media_prefix %}{{ best_customer.company.logo }}"
                                          alt="{{ best_customer.company.name }}" width="80" class="company-logo-mini"
                                          height="80">
+                                    {% else %}
+                                        <div class="no-photo">
+                                            <span>{{ best_customer.company.name|make_list|first }}</span>
+                                        </div>
+
+                                    {% endif %}
                                 </div>
 
                                 <div class="card-body">

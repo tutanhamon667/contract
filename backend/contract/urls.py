@@ -78,7 +78,7 @@ urlpatterns = [
     path('api/', include("users.urls")),
     path('activate', activate_view, name='activate_view'),
 
-    path('admin/', admin.site.urls),
+    path('admin', admin.site.urls),
     path('swagger/',
          schema_view.with_ui('swagger', cache_timeout=0),
          name='schema-swagger-ui'),

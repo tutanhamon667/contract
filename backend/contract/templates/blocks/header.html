@@ -74,7 +74,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 fl-d-row head-right-row">
                     {% if user.is_authenticated %}
                         {% if user.is_customer %}
-                            <li class="nav-item">
+                            <li class="nav-item balance-header">
                                 <p class="balance" x-init="application.getBalance()" x-text="$store.main.balance"></p>
                             </li>
                         {% endif %}
@@ -107,11 +107,11 @@
                         </li>
                     {% else %}
                         {% with request.resolver_match.url_name as url_name %}
-                         {% if url_name == 'index' %}
+
                           <li class="nav-item">
                             <a class="btn btn-white  nowrap" href="{% url 'worker_signup' %}">Создать резюме</a>
                         </li>
-                         {% endif %}
+
                         {% if url_name == 'for_customer' %}
                           <li class="nav-item">
                             <a class="btn btn-white nowrap" href="{% url 'customer_signup' %}">Создать вакансию</a>

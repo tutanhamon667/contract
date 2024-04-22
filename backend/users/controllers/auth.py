@@ -72,9 +72,9 @@ def signup_user(request, is_customer, template, redirect_to):
 	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
 		if is_customer:
-			form = RegisterCustomerForm(initial={"is_customer": is_customer})
+			form = RegisterCustomerForm(initial={"is_customer": True})
 		else:
-			form = RegisterWorkerForm(initial={"is_customer": is_customer})
+			form = RegisterWorkerForm(initial={"is_worker": True})
 		return render(request, f'pages/{template}.html', {'form': form,
 												 'articles': articles,
 												 'categories': categories
@@ -95,12 +95,14 @@ def signup_user(request, is_customer, template, redirect_to):
 				wallet = get_wallet()
 				addresses_count = get_addresses_count(wallet)
 				address = generate_address(addresses_count + 1, wallet.mnemonic)
-				new_address = WalletAddress(address=address["address"], wif=address["wif"], wallet=wallet, user=user)
+				new_address = WalletAddress(address=address["address"], key_id=address["key_id"], wif=address["wif"], wallet=wallet, user=user)
 				new_address.save()
 				if is_customer:
 					moderator = Member.objects.filter(is_moderator=True)
-					chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
-					chat_with_moderator.save()
+					if len(moderator):
+						chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
+						chat_with_moderator.save()
+
 				return redirect(to=redirect_to)
 			else:
 

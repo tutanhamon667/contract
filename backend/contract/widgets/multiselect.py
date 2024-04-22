@@ -1,7 +1,7 @@
 from django import forms
 from django.template import loader
 from django.utils.safestring import mark_safe
-
+import collections.abc
 
 class MultiselectWidget(forms.Widget):
 	template_name = "../templates/widgets/multiselect.html"
@@ -22,13 +22,21 @@ class MultiselectWidget(forms.Widget):
 			self.error = "Пароли не совпадают"
 		return self.error
 
+	def build_attrs(self, base_attrs, extra_attrs=None):
+		"""Build an attribute dictionary."""
+		return {**base_attrs, **(extra_attrs or {})}
+
 	def get_context(self, name, value, attrs=None):
 		items = list(self.items.values())
 		if self.selected:
 			for item in items:
-				for selected in self.selected:
-					if int(selected) == item["id"]:
+				if isinstance(self.selected, str) is True:
+					if int(self.selected) == item["id"]:
 						item["selected"] = True
+				else:
+					for selected in self.selected:
+						if int(selected) == item["id"]:
+							item["selected"] = True
 		return {'widget': {
 			'name': name,
 			'value': value,
