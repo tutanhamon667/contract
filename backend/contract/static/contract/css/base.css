@@ -258,6 +258,10 @@ form p label{
     background-repeat: no-repeat;
 }
 
+.checkboxInput.checked {
+    background-image: url(../img/icons/checkbox-true.svg);
+}
+
 .auth-form {
     width: 420px;
 }
