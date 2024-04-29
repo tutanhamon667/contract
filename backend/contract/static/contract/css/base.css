@@ -11,6 +11,51 @@
     height: 50px;
     width: 50px;
 }
+
+.favorite_job_checkbox {
+    display:none;
+}
+.flex{
+    display: flex;
+}
+
+.pagination-btn.active-page {
+    background: #e7e5e5;
+}
+
+.pagination-btn {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 1px solid grey !important;
+}
+
+.pagination-btn:hover {
+    background: #e7e5e5;
+}
+
+.favorite_job_checkbox + .favorite-label {
+    display:inline-block;
+    padding: 0 0 0 0px;
+    background:url("../img/icons/heart-empty.svg") no-repeat;
+    background-position: center;
+    height: 50px;
+    width: 50px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-size: 50%;
+}
+.favorite_job_checkbox:checked + .favorite-label {
+    background:url("../img/icons/heart.svg") no-repeat;
+    background-position: center;
+    height: 50px;
+    width: 50px;
+    border: 1px solid black;
+    border-radius: 5px;
+    display:inline-block;
+    background-size: 50%;
+}
+
 .no-photo span{
     display: block;
     width: 100%;
@@ -84,7 +129,7 @@
     margin-bottom: 10px;
 }
 ul.head-right-row{
-  min-width: 300px;
+  min-width: 350px;
 }
 
 ul.head-right-row > li:first-child:nth-last-child(1) {

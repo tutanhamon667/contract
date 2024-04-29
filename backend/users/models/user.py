@@ -677,9 +677,16 @@ class Job(models.Model):
 																				   '-pseudo_tier_order', '-id')[:limit]
 
 	@classmethod
-	def search_filter_new(cls, request, limit):
+	def search_filter_new(cls, request):
+
 		_get = request.POST
 		now = datetime.datetime.now()
+		limit = 1
+		page = 0
+		if "page" in _get:
+			page = int(_get["page"])
+		if "limit" in _get:
+			limit = int(_get["limit"])
 		objs = cls.objects
 		filters_exists = False
 		if "title" in _get and _get["title"] != '':
@@ -728,14 +735,24 @@ class Job(models.Model):
 
 
 		if not filters_exists:
-			return cls.objects.filter(moderated=True, deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
+			obj_count = len(cls.objects.filter(moderated=True, deleted=False, active_search=True,
+											   jobpayment__start_at__lte=timezone.now(),
+											   jobpayment__expire_at__gte=timezone.now()).order_by(
+				'-jobpayment__job_tier_id',
+				'-pub_date', '-id').distinct())
+			objs = cls.objects.filter(moderated=True, deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
 									  jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
 																						  '-pub_date', '-id').distinct()[
-				   :limit]
+				   page*limit:page*limit + limit]
+			return obj_count, objs
 		else:
-			return objs.filter(moderated=True,  deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
+			obj_count = len(objs.filter(moderated=True,  deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
 							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
-																				   '-pub_date', '-id').distinct()[:limit]
+																				   '-pub_date', '-id').distinct())
+			objs =  objs.filter(moderated=True,  deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
+							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
+																				   '-pub_date', '-id').distinct()[page*limit:page*limit + limit]
+			return obj_count, objs
 
 	@classmethod
 	def join_invites(cls, objs, user):

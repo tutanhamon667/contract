@@ -37,24 +37,6 @@ def get_user(request):
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
-def get_balance(request):
-	try:
-		if request.user.is_authenticated:
-			if request.user.is_customer:
-				address = WalletAddress.objects.filter(user=request.user.id)
-				profile_address = address[0]
-				operations = Operation.objects.filter(address=profile_address)
-				balance = Balance(profile_address, operations)
-
-				return JsonResponse({'success': True, 'data': {'btc': balance.get_final_balance_btc,
-															   'usd': balance.get_final_balance_usd}})
-			else:
-				return JsonResponse({'success': False, "code": 403})
-		else:
-			return JsonResponse({'success': False, "code": 401})
-	except Exception as e:
-		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
-
 
 def favorite_job(request):
 	try:
@@ -256,7 +238,7 @@ def favorite_jobs(request):
 
 def get_jobs(request):
 	try:
-		jobs = Job.search_filter_new(request, 10)
+		jobs_count, jobs = Job.search_filter_new(request)
 		companies = Company.join_companies(jobs)
 		res = list(jobs.values())
 		for job in res:
@@ -303,7 +285,7 @@ def get_jobs(request):
 				if r["id"] == favorite["job_id"]:
 					favorite["checked"] = True
 					r["favorite"] = favorite
-		return JsonResponse({'success': True, "data": res})
+		return JsonResponse({'success': True, "data": res, "count": jobs_count})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
@@ -333,7 +315,7 @@ def get_balance(request):
 					profile_address.save()
 				operations = Operation.objects.filter(address=profile_address)
 				balance = Balance(profile_address, operations)
-				return JsonResponse({'success': True, "data": {"usd": balance.balance_usd, "btc": balance.balance_btc}})
+				return JsonResponse({'success': True, "data": {"usd": balance.get_final_balance_usd, "btc": round(balance.get_final_balance_btc, 8)}})
 			else:
 				return JsonResponse({'success': False, "code": 403})
 		else:

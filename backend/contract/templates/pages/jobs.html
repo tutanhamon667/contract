@@ -27,9 +27,9 @@
                     </form>
                 </div>
                 <div class="col-lg-9 job-list" x-data>
-                    <template x-for="job in $store.main.jobs" :key="job.id">
+                    <template x-for="job in $store.main.jobs" :key="job.id + '_' + job.invite.id">
 
-                            <div class=" hot-job-card card">
+                        <div :class="['card', job.payment.job_tier_id == 3? 'hot-job-card ':'' ]">
 
                             <div class="card-body">
                                 <div class="row">
@@ -91,20 +91,22 @@
                                                 <span x-text="job.company.name"></span>
                                             </div>
                                         </template>
-                                    </div>
-                                </div>
-                                <div class="row mt-15">
-                                    <div class="col-10">
                                         <template x-if="$store.main.user.id>=0 && $store.main.user.is_worker ">
-                                            <div>
+                                            <div class="mt-2">
 
-                                                <label :for="'favorite_job_'+job.id">favorite</label>
+
                                                 <input type="checkbox" :id="'favorite_job_'+job.id"
                                                        class="favorite_job_checkbox"
                                                        @click="application.setFavorite(job.id)"
                                                        x-model="job.favorite.checked"/>
+                                                <label class="favorite-label" :for="'favorite_job_'+job.id"></label>
                                             </div>
                                         </template>
+                                    </div>
+                                </div>
+                                <div class="row mt-15">
+                                    <div class="col-10">
+
                                         <template x-if="$store.main.user.id<0">
                                             <a href='worker/signin' class="btn btn-success">Войти для отклика</a>
                                         </template>
@@ -115,6 +117,8 @@
                                                     <a :href="res.link" x-text="res.text"></a>
                                                 </template>
                                                 <template x-if="res.element === 'status'">
+                                                    <p class="response-invite-result"
+                                                                       x-text="job.invite.msg"></p>
                                                     <p x-text="res.text"></p>
                                                 </template>
                                                 <template x-if="res.element === 'form'">
@@ -127,18 +131,23 @@
                                                             </template>
                                                             <template x-if="action.action === 'create'">
                                                                 <div>
-                                                                    <button x-on:click="application.sendResponse(action.action, res.id, job.id)"
-                                                                            x-text="action.text"></button>
-                                                                    <select name="resume"
-                                                                            x-model="$store.main.selectedResume"
-                                                                            class="">
-                                                                        <template x-for="resume in $store.main.resumes"
-                                                                                  :key="resume.id">
-                                                                            <option :value="resume.id"
-                                                                                    x-text="resume.name"></option>
-                                                                        </template>
-                                                                    </select>
+                                                                    <div class="flex">
+                                                                        <button class="btn btn-success mr-5"
+                                                                                x-on:click="application.sendResponse(action.action, res.id, job.id)"
+                                                                                x-text="action.text"></button>
+                                                                        <select name="resume"
+                                                                                x-model="$store.main.selectedResume"
+                                                                                class="form-control">
+                                                                            <template
+                                                                                    x-for="resume in $store.main.resumes"
+                                                                                    :key="resume.id">
+                                                                                <option :value="resume.id"
+                                                                                        x-text="resume.name"></option>
+                                                                            </template>
+                                                                        </select>
+                                                                    </div>
                                                                 </div>
+
 
                                                             </template>
                                                         </div>
@@ -155,6 +164,26 @@
 
                                 </div>
                             </div>
+                        </div>
+                    </template>
+
+                    <template x-if="$store.main.jobs.length <= $store.main.jobCount">
+                        <div class="pagination-container flex" >
+                            <template x-for="paginationItem in $store.main.pagination">
+                                <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">
+                                    <template x-if="paginationItem.active">
+                                        <button @click="application.setJobsPage(paginationItem.text)" x-text="paginationItem.text+1"
+                                                class="mr-5 pagination-btn active-page"></button>
+                                    </template>
+                                    <template x-if="!paginationItem.active">
+                                        <button @click="application.setJobsPage(paginationItem.text)" x-text="paginationItem.text+1"
+                                                class="mr-5 pagination-btn"></button>
+                                    </template>
+                                </div>
+
+
+                            </template>
+
                         </div>
                     </template>
                 </div>

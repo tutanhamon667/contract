@@ -44,10 +44,12 @@ const alpineApp = function () {
     Alpine.store('main', {
         jobs: [],
         user: {},
+        jobCount: 0,
         selectedResume: null,
         balance: "",
         resumes: [],
-        filters: {},
+        filters: {page: 0, limit: 3},
+        pagination: [],
         getWorkExpString: (value) => {
             switch (value) {
                 case 'NoMatter':
@@ -62,6 +64,16 @@ const alpineApp = function () {
                     return 'Опыт От 2 лет'
 
             }
+        },
+        createPaginationArray: () => {
+            const arrayLength = Math.ceil(Alpine.store('main').jobCount/Alpine.store('main').filters.limit)
+            let pagination = new Array(arrayLength)
+            const iterator = pagination.keys();
+
+            for (const key of iterator) {
+              pagination[key] = {text:key, active: Alpine.store('main').filters.page == key}
+            }
+            return pagination
         },
         getRegionsStr: (job, hide_many = true) => {
             if (!job.is_offline){
@@ -89,6 +101,7 @@ const alpineApp = function () {
                 return `Залог: ${numberWithSpace(job.deposit)} ₽`
             }
         },
+
         getSalaryStr: (job) => {
 
             if (!job.salary_from && !job.salary_to) {
@@ -110,7 +123,8 @@ const alpineApp = function () {
         },
         getJobs: async (data = {}) => {
             if (typeof data.page === 'undefined')
-                data.page = 0
+                data.page = Alpine.store('main').filters.page
+                data.limit = Alpine.store('main').filters.limit
             return makeRequest('jobs', data)
         },
         getFavoriteJobs: async (data = {}) => {
@@ -179,7 +193,7 @@ const alpineApp = function () {
                          return {
                             element: 'form',
                             text: '',
-                            actions: [{action: "create", text: 'Отправить отклик'}],
+                            actions: [{action: "create", text: 'Откликнуться'}],
                             id: null
                         }
                     }else{
@@ -224,6 +238,7 @@ const alpineApp = function () {
         },
 
     })
+
     this.getJobs = async (filters) => {
         return Alpine.store('main').getJobs(filters)
     }
@@ -232,6 +247,13 @@ const alpineApp = function () {
         Alpine.store('main').setJobs(data)
     }
 
+    this.setJobsCount = (data) => {
+        Alpine.store('main').jobCount = data
+    }
+    this.setPagination = (data) => {
+        Alpine.store('main').pagination = []
+        Alpine.store('main').pagination = data
+    }
     this.getFavoriteJobs = async () => {
         const jobs = await Alpine.store('main').getFavoriteJobs()
         if (jobs.success) {
@@ -272,18 +294,33 @@ const alpineApp = function () {
     }
 
     this.sendResponse = async (action, id, job_id) => {
+
+
         const resume_id = Alpine.store('main').selectedResume
         const result = await Alpine.store('main').sendResponseInvite(action, id, job_id, resume_id)
         if (result.success === true) {
-            this.setJobs([])
-            const res = await this.getJobs()
-            if (res.success) {
-                this.setJobs(res.data)
+            let ind = null
+            const job = Alpine.store('main').jobs.find((i, index) => {
+                if (i.id === job_id) {
+                    ind = index
+                    return true
+                }
+                return false
+            })
+            if (job) {
+                let msg = ""
+                if (action === "create"){
+                    msg = "Ваш отклик успешно отправлен!"
+                }
+                result.data.msg = msg
+                job.invite = result.data
+
             } else {
                 alert(res.msg)
             }
         }
     }
+
     this.setFavorite = async (job_id) => {
         const result = await Alpine.store('main').setFavorite(job_id)
     }
@@ -293,10 +330,40 @@ const alpineApp = function () {
 
     }
 
+    this.setJobsPage =  async (page) => {
+        const form = document.querySelector('#filter_form')
+        const params = new FormData(form);
+        const object = {"page": page, limit: Alpine.store('main').filters.limit};
+        params.forEach((value, key) => {
+            if (typeof object[key] == 'undefined') {
+                object[key] = value
+            } else {
+                if (Array.isArray(object[key])) {
+                    object[key].push(value)
+                } else {
+                    object[key] = [object[key], value]
+
+                }
+            }
+        });
+        Alpine.store('main').filters = object
+        const res = await this.getJobs(object)
+        if (res.success) {
+            this.setJobs(res.data)
+            this.setJobsCount(res.count)
+            const pagination = Alpine.store('main').createPaginationArray()
+            this.setPagination(pagination)
+        } else {
+            alert(res.msg)
+        }
+    }
+
+
     this.filterJobs = async (el) => {
         const form = document.querySelector('#filter_form')
         const params = new FormData(form);
-        const object = {};
+        Alpine.store('main').filters.page = 0
+        const object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
         params.forEach((value, key) => {
             if (typeof object[key] == 'undefined') {
                 object[key] = value
@@ -312,6 +379,9 @@ const alpineApp = function () {
         const res = await this.getJobs(object)
         if (res.success) {
             this.setJobs(res.data)
+            this.setJobsCount(res.count)
+            const pagination = Alpine.store('main').createPaginationArray()
+            this.setPagination(pagination)
         } else {
             alert(res.msg)
         }
@@ -380,7 +450,10 @@ const alpineApp = function () {
 
         },
 
+
+
     })
+
 
 
 }
