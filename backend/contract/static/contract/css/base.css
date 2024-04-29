@@ -33,6 +33,9 @@
 .pagination-btn:hover {
     background: #e7e5e5;
 }
+.response-invite-result{
+    color: #3af83a;
+}
 
 .favorite_job_checkbox + .favorite-label {
     display:inline-block;
@@ -634,6 +637,35 @@ input[type="text"]:active {
     --bs-card-bg: #fff;
     --bs-card-img-overlay-padding: 1rem;
     --bs-card-group-margin: 0.75rem;
+}
+
+.hide-btn{
+    color: black !important;
+    text-decoration: underline !important;
+}
+
+.text-big{
+    font-size: 18px !important;
+}
+
+.hide-btn:hover{
+    cursor: pointer;
+}
+
+.hidden{
+    display: none;
+}
+
+.btn-large{
+    min-height: 50px;
+    line-height: 2.2;
+    font-size: large;
+
+}
+
+.card.no-hover:hover{
+    --bs-card-cap-bg: rgba(225, 225, 225, 0);
+    --bs-card-bg: rgba(237, 237, 237, 0);
 }
 .card:hover{
     --bs-card-cap-bg: #e1e1e1;

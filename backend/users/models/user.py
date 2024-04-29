@@ -128,6 +128,10 @@ class Contact(models.Model):
 		resume = cls.objects.get(_id)
 		return resume.user == user.id
 
+	@classmethod
+	def get_company_contacts(cls, company_id):
+		return cls.objects.filter(user__company=company_id).values()
+
 	class Meta:
 		verbose_name = 'Контакт'
 		verbose_name_plural = 'Контакты'
@@ -248,6 +252,10 @@ class Company(models.Model):
 		for job in objs:
 			companies_ids.append(job.company_id)
 		return cls.objects.filter(id__in=companies_ids).values()
+
+	@classmethod
+	def join_company(cls, job):
+		return cls.objects.get(id=job.company_id).values()
 
 
 class CustomerReview(models.Model):
@@ -588,7 +596,12 @@ class Job(models.Model):
 	@classmethod
 	def get_new_jobs(cls, limit):
 		return cls.objects.filter( jobpayment__start_at__lte=timezone.now(), moderated=True, deleted=False, active_search=True,
-								  jobpayment__expire_at__gte=timezone.now()).order_by('-id').order_by('-id')[:limit]
+								  jobpayment__expire_at__gte=timezone.now()).order_by('-id')[:limit]
+
+	@classmethod
+	def get_paid_job(cls, id):
+		return cls.objects.filter(id=id, jobpayment__start_at__lte=timezone.now(), moderated=True, deleted=False, active_search=True,
+								  jobpayment__expire_at__gte=timezone.now())
 
 	@classmethod
 	def get_hot_jobs(cls, limit):

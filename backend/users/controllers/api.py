@@ -11,8 +11,9 @@ from orders.models import JobSpecialisationStat
 from btc.models import Address as WalletAddress, CustomerAccessPayment, Operation, Address
 from users.core.access import Access
 from users.models.advertise import Banners
-from users.models.user import FavoriteJob, Job, ResponseInvite, CustomerReview, Company, Resume
-import jsonpickle
+from users.models.user import FavoriteJob, Job, ResponseInvite, CustomerReview, Company, Resume, Contact
+
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 def get_user(request):
@@ -288,6 +289,66 @@ def get_jobs(request):
 		return JsonResponse({'success': True, "data": res, "count": jobs_count})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
+
+
+def get_job(request):
+	try:
+		jobs = Job.get_paid_job(request.POST["id"])
+		res = list(jobs.values())
+		companies = Company.join_companies(jobs)
+
+		for job in res:
+			item_regions = None
+			for job_db in jobs:
+				if job_db.id == job["id"]:
+					item_regions = job_db.region
+			job["regions"] = list(item_regions.values())
+		payments = list(JobPayment.join_tier(objs=jobs).values())
+		companies_arr = []
+		for company in companies:
+			logo = None
+			if company["logo"]:
+				logo = company["logo"]
+			companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"]})
+		invites = []
+		favorites = []
+		if request.user.is_authenticated:
+			invites = list(ResponseInvite.join_invites(objs=jobs, user=request.user).values())
+			if request.user.is_worker:
+				favorites = list(FavoriteJob.join_favorites(objs=jobs, user=request.user).values())
+
+		for r in res:
+			r["company"] = {}
+			for company in companies_arr:
+				if company["id"] == r["company_id"]:
+					r["company"] = company
+			r["invite"] = {}
+			for invite in invites:
+				if r["id"] == invite["job_id"]:
+					if invite["status"] == 1:
+						try:
+							chat = Chat.objects.get(response_invite_id=invite["id"])
+							invite["chat"] = {"uuid": chat.uuid}
+
+						except Exception as e:
+							print(e)
+					r["invite"] = invite
+			for payment in payments:
+				if r["id"] == payment["job_id"]:
+					r["payment"] = payment
+			r["favorite"] = {}
+			for favorite in favorites:
+				if r["id"] == favorite["job_id"]:
+					favorite["checked"] = True
+					r["favorite"] = favorite
+		res = res[0]
+		contacts = list(Contact.get_company_contacts(res["company"]["id"]))
+		res["contacts"] = contacts
+		return JsonResponse({'success': True, "data": res})
+	except Exception as e:
+		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
 
 
 def get_menu(request):

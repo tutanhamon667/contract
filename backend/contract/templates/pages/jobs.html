@@ -58,7 +58,7 @@
                                         <div class="work-description-container">
                                             <div>
                                                   <span class="job-card-item-customer  work-type"
-                                                        x-text="$store.main.getRegionsStr(job)"></span>
+                                                        x-html="$store.main.getRegionsStr(job)"></span>
                                             </div>
                                             <div class="d-flex vacancy-description">
 
@@ -117,9 +117,12 @@
                                                     <a :href="res.link" x-text="res.text"></a>
                                                 </template>
                                                 <template x-if="res.element === 'status'">
-                                                    <p class="response-invite-result"
-                                                                       x-text="job.invite.msg"></p>
-                                                    <p x-text="res.text"></p>
+                                                    <div>
+                                                        <p class="response-invite-result"
+                                                           x-text="job.invite.msg"></p>
+                                                        <p x-text="res.text"></p>
+                                                    </div>
+
                                                 </template>
                                                 <template x-if="res.element === 'form'">
 
@@ -168,15 +171,17 @@
                     </template>
 
                     <template x-if="$store.main.jobs.length <= $store.main.jobCount">
-                        <div class="pagination-container flex" >
+                        <div class="pagination-container flex">
                             <template x-for="paginationItem in $store.main.pagination">
                                 <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">
                                     <template x-if="paginationItem.active">
-                                        <button @click="application.setJobsPage(paginationItem.text)" x-text="paginationItem.text+1"
+                                        <button @click="application.setJobsPage(paginationItem.text)"
+                                                x-text="paginationItem.text+1"
                                                 class="mr-5 pagination-btn active-page"></button>
                                     </template>
                                     <template x-if="!paginationItem.active">
-                                        <button @click="application.setJobsPage(paginationItem.text)" x-text="paginationItem.text+1"
+                                        <button @click="application.setJobsPage(paginationItem.text)"
+                                                x-text="paginationItem.text+1"
                                                 class="mr-5 pagination-btn"></button>
                                     </template>
                                 </div>

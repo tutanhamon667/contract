@@ -14,7 +14,16 @@ const alpineApp = function () {
             }
 
         },
+    })
 
+    Alpine.bind('hideRegionsBtn', {
+        type: 'span',
+        show: false,
+        '@click'(e) {
+            this.show = !this.show
+            const span = e.currentTarget.closest('.hide-container').querySelector('.hide-content')
+            span.classList.toggle('hidden')
+        },
     })
 
 
@@ -43,6 +52,7 @@ const alpineApp = function () {
     }
     Alpine.store('main', {
         jobs: [],
+        job: null,
         user: {},
         jobCount: 0,
         selectedResume: null,
@@ -81,8 +91,11 @@ const alpineApp = function () {
                     if (job.regions.length > 3) {
                         const length = job.regions.length - 3
                         const regions_to_display = job.regions.slice(0,3)
+                        const regions_to_hide = job.regions.splice(3)
                         let region_names = regions_to_display.map(i=>i.name).join(', ')
-                        return 'Оффлайн занятость: ' + region_names + ' и ещё ' + length
+                        let region_names_display = regions_to_hide.map(i=>i.name).join(', ')
+                        return 'Оффлайн занятость: ' + region_names + ' <span class="hide-container"><span class="hide-btn  work-type"   x-bind="hideRegionsBtn">и ещё ' + length +
+                            '</span><span class="hide-content hidden  work-type">: '+region_names_display+'</span></span>'
                     }else {
                         let region_names = job.regions.map(i=>i.name).join(', ')
                         return 'Оффлайн занятость: ' + region_names
@@ -135,6 +148,12 @@ const alpineApp = function () {
         setJobs: (data) => {
             Alpine.store('main').jobs = data
         },
+        getJob: async (data = {}) => {
+            return makeRequest('job', data)
+        },
+        setJob: (data) => {
+            Alpine.store('main').job = data
+        },
         sendResponse: async (action, id) => {
             return makeRequest('response_invite', {action: action, id: id})
         },
@@ -159,10 +178,10 @@ const alpineApp = function () {
         setFavorite: async (job_id) => {
             return makeRequest('favorite', {job_id: job_id})
         },
-        getResponseInviteElement: (id) => {
+        getResponseInviteElement: (id, singleJob = false) => {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
-                const job = Alpine.store('main').jobs.find(el => el.id === id)
+                let job = !singleJob? Alpine.store('main').jobs.find(el => el.id === id): Alpine.store('main').job
                 if (job.invite.status === 1) {
                     return {element: 'link', link: '/chat/' + job.invite.chat.uuid, text: 'Перейти в чат'}
                 }
@@ -245,6 +264,14 @@ const alpineApp = function () {
 
     this.setJobs = (data) => {
         Alpine.store('main').setJobs(data)
+    }
+
+    this.getJob = async (id) => {
+        return   makeRequest('job', {id:id})
+    }
+
+    this.setJob = (data) => {
+        Alpine.store('main').setJob(data)
     }
 
     this.setJobsCount = (data) => {
@@ -401,6 +428,30 @@ const alpineApp = function () {
         }
     }
 
+    this.getJob = async (id) => {
+        const res = await  makeRequest('job', {id: id})
+        if (res.success) {
+            this.setJob(res.data)
+        } else {
+            alert(res.msg)
+        }
+    }
+
+    this.initJob = async (id) => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+            if (user.data.is_worker) {
+                const resumes = await this.getResumes()
+                if (resumes.success) {
+                    this.setResumes(resumes.data)
+                }
+            }
+        }
+
+        await this.getJob(id)
+    }
+
     this.initJobs = async () => {
         const user = await this.getUser()
         if (user.success) {
@@ -414,8 +465,6 @@ const alpineApp = function () {
         }
 
         await this.filterJobs()
-
-
     }
     Alpine.bind('checkboxInput', {
         type: 'button',

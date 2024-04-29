@@ -6,6 +6,7 @@ from .controllers.api import *
 urlpatterns = [
     path("favorite", favorite_job, name="favorite"),
     path("jobs", get_jobs, name="jobs"),
+    path("job", get_job, name="job"),
     path("favorite_jobs", favorite_jobs, name="favorite_jobs"),
 
     path("response_invite", response_invite, name="response_invite"),
