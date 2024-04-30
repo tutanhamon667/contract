@@ -61,7 +61,9 @@ const alpineApp = function () {
         balance: "",
         resumes: [],
         filters: {page: 0, limit: 3},
+        reviews_filters: {page: 0, limit: 3},
         pagination: [],
+        reviews_pagination: [],
         getWorkExpString: (value, needExpWord = true) => {
             switch (value) {
                 case 'NoMatter':
@@ -86,13 +88,13 @@ const alpineApp = function () {
 
             }
         },
-        createPaginationArray: () => {
-            const arrayLength = Math.ceil(Alpine.store('main').jobCount / Alpine.store('main').filters.limit)
+        createPaginationArray: (count, filters) => {
+            const arrayLength = Math.ceil(count / filters.limit)
             let pagination = new Array(arrayLength)
             const iterator = pagination.keys();
 
             for (const key of iterator) {
-                pagination[key] = {text: key, active: Alpine.store('main').filters.page == key}
+                pagination[key] = {text: key, active: filters.page === key}
             }
             return pagination
         },
@@ -290,6 +292,16 @@ const alpineApp = function () {
         object["company_id"] = Alpine.store('main').company.id
         const result = await makeRequest('create_review', object)
         if (result.success) {
+            const successMsg = document.querySelector("#review-form-success-msg")
+            successMsg.innerText = "Спасибо за отзыв, он будет отображаться, после модерации"
+        } else {
+            const errorMsg = document.querySelector("#review-form-error-msg")
+            for (let error in result.data) {
+                let div = document.createElement('p');
+                div.className = "form-error-msg";
+                div.innerText = result.data[error][0];
+                document.querySelector(`[name='${error}']`).closest('div').append(div)
+            }
 
         }
         console.log(result)
@@ -310,8 +322,9 @@ const alpineApp = function () {
     this.getCompany = async (id) => {
         return makeRequest('company', {id: id})
     }
-    this.getCompanyReviews = async (id) => {
-        return makeRequest('company_reviews', {company_id: id})
+    this.getCompanyReviews = async (filters={}) => {
+        Object.assign(filters, Alpine.store('main').reviews_filters)
+        return makeRequest('company_reviews', filters)
     }
 
 
@@ -401,6 +414,17 @@ const alpineApp = function () {
     this.getResponseInviteElement = () => {
 
     }
+    this.setReviewsPage = async (page) => {
+        const object = {"page": page, limit: Alpine.store('main').reviews_filters.limit, company_id: Alpine.store('main').company.id};
+        Alpine.store('main').reviews_filters = object
+        const reviews = await this.getCompanyReviews(object)
+        if (reviews.success) {
+            Alpine.store('main').reviews = reviews.data
+            Alpine.store('main').reviewsCount = reviews.count
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').reviewsCount, Alpine.store('main').reviews_filters)
+            Alpine.store('main').reviews_pagination = pagination
+        }
+    }
 
     this.setJobsPage = async (page) => {
         const object = {"page": page, limit: Alpine.store('main').filters.limit};
@@ -426,7 +450,7 @@ const alpineApp = function () {
         if (res.success) {
             this.setJobs(res.data)
             this.setJobsCount(res.count)
-            const pagination = Alpine.store('main').createPaginationArray()
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
             this.setPagination(pagination)
         } else {
             alert(res.msg)
@@ -460,7 +484,7 @@ const alpineApp = function () {
         if (res.success) {
             this.setJobs(res.data)
             this.setJobsCount(res.count)
-            const pagination = Alpine.store('main').createPaginationArray()
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
             this.setPagination(pagination)
         } else {
             alert(res.msg)
@@ -521,9 +545,12 @@ const alpineApp = function () {
         if (company.success) {
             Alpine.store('main').company = company.data
         }
-        const reviews = await this.getCompanyReviews(id)
+        const reviews = await this.getCompanyReviews({company_id:id})
         if (reviews.success) {
             Alpine.store('main').reviews = reviews.data
+            Alpine.store('main').reviewsCount = reviews.count
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').reviewsCount, Alpine.store('main').reviews_filters)
+            Alpine.store('main').reviews_pagination = pagination
         }
     }
 
@@ -532,14 +559,14 @@ const alpineApp = function () {
         return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear()
     }
 
-    this.getJobRatingArray = (rating1) => {
-        let rating = 3.4
+    this.getJobRatingArray = (rating) => {
         const res = []
         for (let i = 0; i <= 4; i++) {
 
             if (rating >= 1) res.push(2)
             if (rating > 0 && rating < 1) res.push(1)
             if (rating < 0) res.push(0)
+            if (rating === 0) res.push(0)
             rating = rating - 1
         }
         return res

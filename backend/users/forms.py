@@ -105,6 +105,7 @@ class CompanyReviewForm(forms.Form):
     )
     captcha = forms.CharField(widget=CaptchaWidget(), required=True)
     rating = forms.IntegerField(label='Оценка', max_value=5, initial=5)
+    company_id = forms.IntegerField(widget= forms.HiddenInput())
     class Meta:
         fields = ['company_id', 'comment', 'rating', 'reviewer', "captcha", "hashkey"]
         widgets = {'company_id': forms.HiddenInput(),

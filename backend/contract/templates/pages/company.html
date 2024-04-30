@@ -205,21 +205,55 @@ font-size: 14px;"></span>
                                             class="mr-5 pagination-btn"></button>
                                 </template>
                             </div>
-
-
                         </template>
-
                     </div>
                 </template>
 
             </div>
             <div class="row">
                 <h4>Отзывы о работодателе</h4>
+                <template x-if="$store.main.reviews">
+                    <template x-for="review in $store.main.reviews" :key="'review_'+ review.id">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="title" x-text="review.reviewer"></h4>
+                                <div class="d-flex ">
+                                    <template
+                                            x-for="item in application.getJobRatingArray(review.rating)">
+                                        <label :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
+                                    </template>
+                                </div>
+                                <p x-text="review.comment"></p>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template x-if="$store.main.reviews">
+                    <template x-if="$store.main.reviews.length <= $store.main.reviewsCount">
+                        <div class="pagination-container flex">
+                            <template x-for="paginationItem in $store.main.reviews_pagination">
+                                <div :key="'pagination_' + index + '_page_' + $store.main.reviews_filters.page">
+                                    <template x-if="paginationItem.active">
+                                        <button @click="application.setReviewsPage(paginationItem.text)"
+                                                x-text="paginationItem.text+1"
+                                                class="mr-5 pagination-btn active-page"></button>
+                                    </template>
+                                    <template x-if="!paginationItem.active">
+                                        <button @click="application.setReviewsPage(paginationItem.text)"
+                                                x-text="paginationItem.text+1"
+                                                class="mr-5 pagination-btn"></button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </template>
             </div>
             <div class="row">
                 <h4>Оставьте отзыв о работодателе</h4>
                 <div class="col-lg-4 col-md-6 col-sm-12">
-                    <form method="post" action="/api/create_review"  @submit.prevent="application.createReview" id="reviewForm">
+                    <form method="post" action="/api/create_review" @submit.prevent="application.createReview"
+                          id="reviewForm">
                         <p id="review-form-error-msg" class="form-error-msg"></p>
                         <p id="review-form-success-msg" class="form-success-msg"></p>
                         {% bootstrap_form review_form %}

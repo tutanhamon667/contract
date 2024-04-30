@@ -316,7 +316,7 @@ class CustomerReview(models.Model):
 	@classmethod
 	def get_company_reviews(cls, company_id, moderated=True, page=0, limit=1000000):
 		count =  len(cls.objects.filter(company_id=company_id, moderated=moderated))
-		reviews = cls.objects.filter(company_id=company_id, moderated=moderated)[page*limit:page*limit + limit]
+		reviews = cls.objects.filter(company_id=company_id, moderated=moderated).order_by('-id')[page*limit:page*limit + limit]
 		return count, reviews
 
 class Resume(models.Model):

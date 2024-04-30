@@ -393,16 +393,20 @@ def company_reviews(request):
         page = None
         limit = None
         if "page" in request.POST:
-            page = request.POST["page"]
+            page = int(request.POST["page"])
         if "limit" in request.POST:
-            limit = request.POST["limit"]
-        if page and limit:
+            limit = int(request.POST["limit"])
+        if page is not None and limit is not None:
             count, reviews = CustomerReview.get_company_reviews(company_id=id, moderated=True, page=page, limit=limit)
         else:
             count, reviews = CustomerReview.get_company_reviews(company_id=id, moderated=True)
 
-        reviews = list(reviews.values())
-        return JsonResponse({'success': True, "data": reviews, "count": count})
+        reviews_array = []
+        for review in reviews:
+            reviews_array.append({"comment":review.comment, "id":review.id, "pub_date":review.pub_date, "rating":review.rating,
+                                  "reviewer":review.reviewer.display_name})
+
+        return JsonResponse({'success': True, "data": reviews_array, "count": count})
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
