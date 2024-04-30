@@ -257,6 +257,10 @@ class Company(models.Model):
 	def join_company(cls, job):
 		return cls.objects.get(id=job.company_id).values()
 
+	@classmethod
+	def get_active_company(cls, id):
+		return cls.objects.filter(id=id, is_moderated=True, deleted=False)
+
 
 class CustomerReview(models.Model):
 	company = models.ForeignKey(
@@ -310,9 +314,10 @@ class CustomerReview(models.Model):
 		return res
 
 	@classmethod
-	def get_company_reviews(cls, company_id, moderated=True):
-		return cls.objects.filter(company_id=company_id, moderated=moderated)
-
+	def get_company_reviews(cls, company_id, moderated=True, page=0, limit=1000000):
+		count =  len(cls.objects.filter(company_id=company_id, moderated=moderated))
+		reviews = cls.objects.filter(company_id=company_id, moderated=moderated)[page*limit:page*limit + limit]
+		return count, reviews
 
 class Resume(models.Model):
 	class Meta:
@@ -702,6 +707,9 @@ class Job(models.Model):
 			limit = int(_get["limit"])
 		objs = cls.objects
 		filters_exists = False
+		if "company_id" in _get and _get["company_id"] != '':
+			filters_exists = True
+			objs = objs.filter(company_id=_get["company_id"])
 		if "title" in _get and _get["title"] != '':
 			filters_exists = True
 			objs = objs.filter(Q(title__icontains=_get["title"]) | Q(specialisation__name__icontains=_get["title"]) | Q(

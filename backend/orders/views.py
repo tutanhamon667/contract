@@ -110,32 +110,10 @@ def job_view(request, job_id):
 
 def company_view(request, company_id):
 	if request.method == 'GET':
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
-		jobs = Job.objects.filter(company_id=company_id)
 		company = Company.objects.get(id=company_id)
-		rating = CustomerReview.get_company_rating(company.id)
-		reviews = CustomerReview.get_company_reviews(company_id=company.id)
-		contacts = Contact.objects.filter(user=company.user_id)
-		form = CompanyReviewForm(initial={"company": company, "reviewer": request.user})
-		resumes = []
-		if request.user.is_authenticated:
-			resumes = Resume.objects.filter(user=request.user)
-		captcha = Captcha()
-		key, hash_key = captcha.generate_key()
-		image = SimpleCaptcha(width=280, height=90)
-		captcha_base64 = image.get_base64(key)
-		return render(request, './pages/company.html', {
-			'jobs': jobs,
-			'form': form,
-			'articles': articles,
-			'resumes': resumes,
-			'categories': categories,
-			'rating': rating,
-			'reviews_count': len(reviews),
-			'reviews': reviews,
-			'company': company,
-			'contacts': contacts, 'hashkey': hash_key, 'captcha': captcha_base64})
+
+		review_form = CompanyReviewForm(initial={"company_id": company_id})
+		return render(request, './pages/company.html', {'company': company,"review_form":review_form})
 
 
 

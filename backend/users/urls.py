@@ -7,7 +7,10 @@ urlpatterns = [
     path("favorite", favorite_job, name="favorite"),
     path("jobs", get_jobs, name="jobs"),
     path("job", get_job, name="job"),
+    path("company", get_company, name="company"),
     path("favorite_jobs", favorite_jobs, name="favorite_jobs"),
+    path("company_reviews", company_reviews, name="company_reviews"),
+    path("create_review", create_review, name="create_review"),
 
     path("response_invite", response_invite, name="response_invite"),
     path("user_resumes", get_user_resumes, name="user_resumes"),

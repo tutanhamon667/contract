@@ -6,6 +6,34 @@
 :root {
     --bs-border-color-translucent: #EDEDED !important;
 }
+
+.filter-grey{
+    filter: invert(0%) sepia(100%) saturate(100%) hue-rotate(0deg) brightness(100%) contrast(1%);
+}
+
+.rating-star{
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border: none;
+    display: block;
+    width: 25px;
+    height: 25px;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.star-empty{
+    background: url('../img/icons/star_shape.svg');
+}
+.star-half{
+    background: url('../img/icons/star_half.svg');
+}
+.star-fill{
+    background: url('../img/icons/star.svg');
+}
+
 .no-photo{
     text-align: right;
     height: 50px;
