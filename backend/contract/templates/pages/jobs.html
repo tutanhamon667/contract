@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-lg-3">
                     <h4>Фильтры поиска</h4>
-                    <form action="" method="get" id="filter_form" @submit.prevent="application.filterJobs(this)"
+                    <form action="" method="get" id="filter_form" @submit.prevent="application.filterJobs()"
                           novalidate>
                         {% for hidden_field in search_form.hidden_fields %}
                             {{ hidden_field.errors }}

@@ -64,48 +64,20 @@ def main_view(request):
 def jobs_view(request):
 	if request.method == 'GET':
 		search_form = JobFilterForm(initial=request.GET)
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
-		jobs = Job.search_filter(request, 10)
-		if request.user.is_authenticated:
-			jobs = Job.join_invites(objs=jobs, user=request.user)
-		form_response = None
-		resumes = None
-		job_responses = []
-		if request.user.is_authenticated:
-			user = request.user
-			resumes = Resume.objects.filter(user=user)
 
-			form_response = ResponseForm(
-				initial={"user": user, "type": RESPONSE_INVITE_TYPE["RESPONSE"], "resume": resumes})
 		return render(request, './pages/jobs.html', {
 			'search_form': search_form,
-			'jobs': jobs,
-			'articles': articles,
-			'job_responses': job_responses,
-			'form_response': form_response,
-			'categories': categories,
-			'resumes': resumes})
+			})
 
 
 def job_view(request, job_id):
 	if request.method == 'GET':
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
+
 		job = Job.objects.get(id=job_id)
 		job.increase_views()
-		company = Company.objects.get(id=job.company_id)
-		rating = CustomerReview.get_company_rating(company.id)
-		reviews = CustomerReview.objects.filter(company_id=company.id)
-		contacts = Contact.objects.filter(user=company.user_id)
 		return render(request, './pages/job.html', {
-			'job': job,
-			'articles': articles,
-			'categories': categories,
-			'rating': rating,
-			'reviews_count': len(reviews),
-			'company': company,
-			'contacts': contacts})
+			'job': job
+		})
 
 
 def company_view(request, company_id):

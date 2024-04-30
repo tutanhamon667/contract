@@ -6,46 +6,44 @@
     <div class="container" x-data>
         <section x-init="initCompany()">
             <template x-if="$store.main.company">
-                <div class="card no-hover">
-                    <div class="card-body">
-                        <template x-if="$store.main.company.logo">
-                            <img :src="'/media/'+$store.main.company.logo" height="50" width="50"
-                                 class="company-logo-mini"
-                                 :alt="$store.main.company.name"/>
-                        </template>
-                        <div class="d-flex ">
-                            <a :href="'/company/'+ $store.main.company_id "
-                               x-text="$store.main.company.name" class=" shop-name"></a> <img
-                                src="/staticfiles/contract/img/icons/approved.svg" height="16"
-                                class="ml-5" style="margin-top: 3px">
-                        </div>
-                        <div class="d-flex ">
-                            <p class="text-big bold" x-text="$store.main.company.rating"></p>
-                            <template
-                                    x-for="item in application.getJobRatingArray($store.main.company.rating)">
-                                <label :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
+                <div>
+                    <div class="card no-hover">
+                        <div class="card-body">
+                            <template x-if="$store.main.company.logo">
+                                <img :src="'/media/'+$store.main.company.logo" height="50" width="50"
+                                     class="company-logo-mini"
+                                     :alt="$store.main.company.name"/>
                             </template>
-                            <span class="nowrap"
-                                  x-text="application.getCommentsCountStr($store.main.company.reviews)" style="line-height: 2;
+                            <div class="d-flex ">
+                                <a :href="'/company/'+ $store.main.company_id "
+                                   x-text="$store.main.company.name" class=" shop-name"></a> <img
+                                    src="/staticfiles/contract/img/icons/approved.svg" height="16"
+                                    class="ml-5" style="margin-top: 3px">
+                            </div>
+                            <div class="d-flex ">
+                                <p class="text-big bold" x-text="$store.main.company.rating"></p>
+                                <template
+                                        x-for="item in application.getJobRatingArray($store.main.company.rating)">
+                                    <label :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
+                                </template>
+                                <span class="nowrap"
+                                      x-text="application.getCommentsCountStr($store.main.company.reviews)" style="line-height: 2;
 font-size: 14px;"></span>
+                            </div>
+                            <template x-for="contact in $store.main.company.contacts"
+                                      :key="'contact_'+ contact.id">
+                                <div><a :href="contact.value" x-text="contact.value"></a></div>
+                            </template>
                         </div>
-                        <template x-for="contact in $store.main.company.contacts"
-                                  :key="'contact_'+ contact.id">
-
-                            <div><a :href="contact.value" x-text="contact.value"></a></div>
-
-
-                        </template>
                     </div>
-                    <div>
+                    <div class="mt-5">
                         <h4>О нас</h4>
                         <div x-html="$store.main.company.about"></div>
                     </div>
-
                 </div>
             </template>
 
-            <div class="row">
+            <div class="row mt-5">
                 <h4>Наши вакансии</h4>
                 <template x-for="job in $store.main.jobs" :key="job.id + '_' + job.invite.id">
 
@@ -210,7 +208,7 @@ font-size: 14px;"></span>
                 </template>
 
             </div>
-            <div class="row">
+            <div class="row mt-5">
                 <h4>Отзывы о работодателе</h4>
                 <template x-if="$store.main.reviews">
                     <template x-for="review in $store.main.reviews" :key="'review_'+ review.id">
@@ -249,7 +247,7 @@ font-size: 14px;"></span>
                     </template>
                 </template>
             </div>
-            <div class="row">
+            <div class="row mt-5">
                 <h4>Оставьте отзыв о работодателе</h4>
                 <div class="col-lg-4 col-md-6 col-sm-12">
                     <form method="post" action="/api/create_review" @submit.prevent="application.createReview"
