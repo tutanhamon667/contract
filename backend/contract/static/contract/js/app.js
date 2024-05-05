@@ -58,6 +58,7 @@ const alpineApp = function () {
         user: {},
         jobCount: 0,
         selectedResume: null,
+        selectedJob: null,
         balance: "",
         resumes: [],
         filters: {page: 0, limit: 3},
@@ -66,6 +67,8 @@ const alpineApp = function () {
         reviews_pagination: [],
         getWorkExpString: (value, needExpWord = true) => {
             switch (value) {
+                case 'WithoutExperience':
+                    return 'Без опыта'
                 case 'NoMatter':
                     return 'Без опыта'
                 case 'Between1And6':
@@ -126,6 +129,13 @@ const alpineApp = function () {
             } else {
                 return `Залог: ${numberWithSpace(job.deposit)} ₽`
             }
+        },
+
+        getResumeSalaryStr: (job) => {
+            if (!job.salary) {
+                return "Не указана"
+            }
+            return numberWithSpace(job.salary) + " ₽"
         },
 
         getSalaryStr: (job) => {
@@ -236,6 +246,8 @@ const alpineApp = function () {
             }
             return ''
         },
+
+
         getResponseInviteStatus: (id) => {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
@@ -251,7 +263,53 @@ const alpineApp = function () {
                 }
             }
             return ''
-        }
+        },
+
+        getResponseInviteResumeElement: (id, singleJob = false) => {
+            const user = Alpine.store('main').user
+            if (user.id >= 0) {
+                let resume = !singleJob ? Alpine.store('main').filtered_resumes.find(el => el.id === id) : Alpine.store('main').resume
+                if (resume.invite.status === 1) {
+                    return {element: 'link', link: '/chat/' + resume.invite.chat.uuid, text: 'Перейти в чат'}
+                }
+                if (resume.invite.status === 2) {
+                    return {element: 'status', text: 'Отклик отклонён'}
+                }
+                if (resume.invite.status === 3) {
+                    return {element: 'status', text: 'Отклик удалён'}
+                }
+                if (resume.invite.status === 0) {
+                    if (resume.invite.type === 0) {
+                        return {
+                            element: 'form',
+                            text: '',
+                            actions: [{action: "accept", text: 'Начать чат с кандидатом'}, {
+                                action: "decline",
+                                text: 'Отказаться'
+                            }],
+                            id: resume.invite.id
+                        }
+                    }
+                    if (resume.invite.type === 1) {
+                        return {element: 'status', text: 'Ждёт подтверждение от соискателя'}
+                    }
+                }
+                if (typeof resume.invite.id === 'undefined') {
+                    if (Alpine.store('main').customerJobs.length) {
+                        return {
+                            element: 'form',
+                            text: 'Выберете вакансию для приглашения',
+                            actions: [{action: "create", text: 'Пригласить'}],
+                            id: null
+                        }
+                    } else {
+                        return {element: 'link', link: '/profile/jobs', text: 'Создать вакансию для приглашения'}
+                    }
+
+                }
+            }
+            return ''
+        },
 
 
     })
@@ -315,6 +373,10 @@ const alpineApp = function () {
         Alpine.store('main').setJobs(data)
     }
 
+    this.setFilterResumes = (data) => {
+        Alpine.store('main').filtered_resumes = data
+    }
+
     this.getJob = async (id) => {
         return makeRequest('job', {id: id})
     }
@@ -322,14 +384,21 @@ const alpineApp = function () {
     this.getCompany = async (id) => {
         return makeRequest('company', {id: id})
     }
-    this.getCompanyReviews = async (filters={}) => {
+    this.getCompanyReviews = async (filters = {}) => {
         Object.assign(filters, Alpine.store('main').reviews_filters)
         return makeRequest('company_reviews', filters)
     }
-
+    this.getReviewsAboutWorker = async (filters = {}) => {
+        Object.assign(filters, Alpine.store('main').reviews_filters)
+        return makeRequest('worker_reviews', filters)
+    }
 
     this.setJob = (data) => {
         Alpine.store('main').setJob(data)
+    }
+
+    this.setResumesCount = (data) => {
+        Alpine.store('main').resumesCount = data
     }
 
     this.setJobsCount = (data) => {
@@ -380,9 +449,8 @@ const alpineApp = function () {
 
     this.sendResponse = async (action, id, job_id) => {
 
-
-        const resume_id = Alpine.store('main').selectedResume
-        const result = await Alpine.store('main').sendResponseInvite(action, id, job_id, resume_id)
+        const selectedItem = Alpine.store('main').selectedResume || Alpine.store('main').resumes[0].id
+        const result = await Alpine.store('main').sendResponseInvite(action, id, job_id, selectedItem)
         if (result.success === true) {
             let ind = null
             const job = Alpine.store('main').jobs.find((i, index) => {
@@ -406,6 +474,34 @@ const alpineApp = function () {
         }
     }
 
+    this.sendInvite = async (action, id, resume_id) => {
+
+        const selectedItem = Alpine.store('main').selectedJob || Alpine.store('main').customerJobs[0].id
+
+        const result = await Alpine.store('main').sendResponseInvite(action, id, resume_id, selectedItem)
+        if (result.success === true) {
+            let ind = null
+            const resume = Alpine.store('main').filtered_resumes.find((i, index) => {
+                if (i.id === resume_id) {
+                    ind = index
+                    return true
+                }
+                return false
+            })
+            if (resume) {
+                let msg = ""
+                if (action === "create") {
+                    msg = "Ваш приглашение успешно отправлено!"
+                }
+                result.data.msg = msg
+                resume.invite = result.data
+
+            } else {
+                alert(res.msg)
+            }
+        }
+    }
+
     this.setFavorite = async (job_id) => {
         const result = await Alpine.store('main').setFavorite(job_id)
     }
@@ -415,7 +511,11 @@ const alpineApp = function () {
 
     }
     this.setReviewsPage = async (page) => {
-        const object = {"page": page, limit: Alpine.store('main').reviews_filters.limit, company_id: Alpine.store('main').company.id};
+        const object = {
+            "page": page,
+            limit: Alpine.store('main').reviews_filters.limit,
+            company_id: Alpine.store('main').company.id
+        };
         Alpine.store('main').reviews_filters = object
         const reviews = await this.getCompanyReviews(object)
         if (reviews.success) {
@@ -451,6 +551,70 @@ const alpineApp = function () {
             this.setJobs(res.data)
             this.setJobsCount(res.count)
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
+            this.setPagination(pagination)
+        } else {
+            alert(res.msg)
+        }
+    }
+
+    this.setResumesPage = async (page) => {
+        const object = {"page": page, limit: Alpine.store('main').filters.limit};
+        const form = document.querySelector('#filter_form')
+        if (form) {
+            const params = new FormData(form);
+            params.forEach((value, key) => {
+                if (typeof object[key] == 'undefined') {
+                    object[key] = value
+                } else {
+                    if (Array.isArray(object[key])) {
+                        object[key].push(value)
+                    } else {
+                        object[key] = [object[key], value]
+
+                    }
+                }
+            });
+        }
+
+        Alpine.store('main').filters = object
+        const res = await makeRequest('filter_resumes', object)
+        if (res.success) {
+            this.setFilterResumes(res.data)
+            this.setResumesCount(res.count)
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').resumesCount, Alpine.store('main').filters)
+            this.setPagination(pagination)
+        } else {
+            alert(res.msg)
+        }
+    }
+
+    this.filterResumes = async (filters = {}) => {
+        Alpine.store('main').filters.page = 0
+        let object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
+        object = Object.assign(object, filters)
+        const form = document.querySelector('#filter_form')
+        if (form) {
+            const params = new FormData(form);
+
+            params.forEach((value, key) => {
+                if (typeof object[key] == 'undefined') {
+                    object[key] = value
+                } else {
+                    if (Array.isArray(object[key])) {
+                        object[key].push(value)
+                    } else {
+                        object[key] = [object[key], value]
+
+                    }
+                }
+            });
+        }
+
+        const res = await makeRequest('filter_resumes', object)
+        if (res.success) {
+            this.setFilterResumes(res.data)
+            this.setResumesCount(res.count)
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').resumesCount, Alpine.store('main').filters)
             this.setPagination(pagination)
         } else {
             alert(res.msg)
@@ -514,6 +678,15 @@ const alpineApp = function () {
         }
     }
 
+    this.getResume = async (id) => {
+        const res = await makeRequest('resume', {id: id})
+        if (res.success) {
+            Alpine.store('main').resume = res.data
+        } else {
+            alert(res.msg)
+        }
+    }
+
     this.initJob = async (id) => {
         const user = await this.getUser()
         if (user.success) {
@@ -545,7 +718,7 @@ const alpineApp = function () {
         if (company.success) {
             Alpine.store('main').company = company.data
         }
-        const reviews = await this.getCompanyReviews({company_id:id})
+        const reviews = await this.getCompanyReviews({company_id: id})
         if (reviews.success) {
             Alpine.store('main').reviews = reviews.data
             Alpine.store('main').reviewsCount = reviews.count
@@ -592,6 +765,45 @@ const alpineApp = function () {
 
         await this.filterJobs()
     }
+
+    this.initResumes = async () => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+            if (user.data.is_customer) {
+                const customerJobs = await this.getJobs({user_id: user.data.id, page: 0, limit: 1000000})
+                if (customerJobs.success) {
+                    Alpine.store('main').customerJobs = customerJobs.data
+                }
+            }
+        }
+
+        await this.filterResumes()
+    }
+
+    this.initResumePage = async (id) => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+            if (user.data.is_customer) {
+                const customerJobs = await this.getJobs({user_id: user.data.id, page: 0, limit: 1000000})
+                if (customerJobs.success) {
+                    Alpine.store('main').customerJobs = customerJobs.data
+                }
+            }
+        }
+
+
+        await this.getResume(id)
+        const reviews = await this.getReviewsAboutWorker({resume_id: id})
+        if (reviews.success) {
+            Alpine.store('main').reviews = reviews.data
+            Alpine.store('main').reviewsCount = reviews.count
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').reviewsCount, Alpine.store('main').reviews_filters)
+            Alpine.store('main').reviews_pagination = pagination
+        }
+    }
+
     Alpine.bind('checkboxInput', {
         type: 'button',
         checked: false,

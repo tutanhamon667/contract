@@ -3,27 +3,211 @@
 {% load static %}
 {% load django_bootstrap5 %}
 {% block content %}
-    <div class="container">
-        <section>
+    <div class="container" x-data>
+        <section x-init="initResumes()">
             <div class="row">
                 <div class="col-lg-3">
-                    <form action="" method="get" novalidate>
-                        {% bootstrap_form search_form %}
-                        <button type="submit" class="btn btn-primary">Search</button>
+                    <h4>Фильтры поиска</h4>
+                    <form action="" method="get" id="filter_form" @submit.prevent="application.filterResumes()"
+                          novalidate>
+                        {% for hidden_field in search_form.hidden_fields %}
+                            {{ hidden_field.errors }}
+                            {{ hidden_field }}
+                        {% endfor %}
+                        {% for field in search_form.visible_fields %}
+                            <div class="form-field">
+                                <p>{{ field.label_tag }}</p>
+                                <div>
+                                    {{ field }}
+                                    {{ field.help_text }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <button id="filter_jobs_btn" class="btn btn-primary width-100">Применить</button>
                     </form>
                 </div>
-                <div class="col-lg-9 job-list">
-                    {% with short=False %}
-                        {% include "../blocks/components/resume/resume_component.html"  %}
-                    {% endwith %}
+                <div class="col-lg-9 job-list" x-data>
+                    <template x-for="resume in $store.main.filtered_resumes" :key="resume.id + '_' + resume.invite.id">
+
+                        <div class="card">
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="d-flex">
+                                            <a :href="'/resumes/' +resume.id" class="title">
+                                                <h4 class="title" x-text="resume.name"></h4>
+                                            </a>
+                                        </div>
+
+                                        <h3 class="card-subtitle salary"
+                                            x-text="$store.main.getResumeSalaryStr(resume)"></h3>
+
+                                        <div class="">
+                                            <a x-text="resume.display_name" class=" shop-name"></a>
+                                        </div>
+                                        <div class="work-description-container">
+                                            <div>
+                                                  <span class="job-card-item-customer  work-type"
+                                                        x-html="$store.main.getRegionsStr(resume)"></span>
+                                            </div>
+                                            <div class="vacancy-description">
+
+                                                <div class="d-flex mr-15">
+                                                    <span class="work-experience  mr-5 text-shadow">Опыт работы: </span>
+                                                    <span class="work-experience"
+                                                          x-text="$store.main.getWorkExpString(resume.work_experience, false)"></span>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <span class="work-experience  mr-5 text-shadow">График работы: </span>
+                                                    <span class="work-deposit"
+                                                          x-text="$store.main.getWorkTimeString(resume.is_fulltime)"></span>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <span class="work-experience  mr-5 text-shadow">Залог: </span>
+                                                    <span class="work-deposit"
+                                                          x-text="$store.main.getDepositStr(resume)"></span>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <template x-if="resume.photo">
+                                            <img :src="resume.photo" height="50" class="company-logo-mini"/>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="row mt-15">
+                                    <div class="col-10">
+
+                                        <template x-if="$store.main.user.id>=0  && $store.main.user.is_customer">
+                                            <div x-data="{res: $store.main.getResponseInviteResumeElement(resume.id)}">
+
+                                                <template x-if="res.element === 'link'">
+                                                    <a :href="res.link" class="btn btn-primary" x-text="res.text"></a>
+                                                </template>
+                                                <template x-if="res.element === 'status'">
+                                                    <div>
+                                                        <p class="response-invite-result"
+                                                           x-text="resume.invite.msg"></p>
+                                                        <p x-text="res.text"></p>
+                                                    </div>
+
+                                                </template>
+                                                <template x-if="res.element === 'form'">
+
+                                                    <template x-for="action in res.actions" :key="action.action">
+                                                        <div>
+                                                            <template x-if="action.action !== 'create'">
+                                                                <button x-on:click="application.sendInvite(action.action, res.id)"
+                                                                        x-text="action.text"></button>
+                                                            </template>
+                                                            <template x-if="action.action === 'create'">
+                                                                <div>
+                                                                    <div class="">
+
+                                                                        <div x-data="{showInviteForm:false}">
+                                                                            <div x-show="showInviteForm === true">
+                                                                                <p x-text="res.text"></p>
+                                                                                <div class="row">
+                                                                                    <div class="col">
+                                                                                        <select name="job"
+                                                                                                x-model="$store.main.selectedJob"
+                                                                                                class="form-control">
+                                                                                            <template
+                                                                                                    x-for="job in $store.main.customerJobs"
+                                                                                                    :key="job.id">
+                                                                                                <option :value="job.id"
+                                                                                                        x-text="job.title"></option>
+                                                                                            </template>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col">
+                                                                                        <button class="btn btn-success mr-5 w-100 mt-15"
+                                                                                                x-on:click="application.sendInvite(action.action, res.id, resume.id)"
+                                                                                                x-text="action.text"></button>
+                                                                                    </div>
+                                                                                    <div class="col">
+                                                                                        <button class="btn btn-white mr-5 w-100 mt-15"
+                                                                                                x-on:click="showInviteForm = !showInviteForm">
+                                                                                            Отменить
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <div class="row"
+                                                                                 x-show="showInviteForm === false">
+                                                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                                                    <button class="btn btn-primary mr-5 w-100 mt-15"
+                                                                                            x-on:click="showInviteForm = !showInviteForm">
+                                                                                        Пригласить
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+
+                                                            </template>
+                                                        </div>
+
+                                                    </template>
+
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="col-2">
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template x-if="$store.main.filtered_resumes">
+                        <template x-if="$store.main.filtered_resumes.length <= $store.main.resumesCount">
+                            <div class="pagination-container flex">
+                                <template x-for="paginationItem in $store.main.pagination">
+                                    <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">
+                                        <template x-if="paginationItem.active">
+                                            <button @click="application.setJobsPage(paginationItem.text)"
+                                                    x-text="paginationItem.text+1"
+                                                    class="mr-5 pagination-btn active-page"></button>
+                                        </template>
+                                        <template x-if="!paginationItem.active">
+                                            <button @click="application.setJobsPage(paginationItem.text)"
+                                                    x-text="paginationItem.text+1"
+                                                    class="mr-5 pagination-btn"></button>
+                                        </template>
+                                    </div>
+
+
+                                </template>
+
+                            </div>
+                        </template>
+                    </template>
+
                 </div>
             </div>
         </section>
     </div>
     <script>
-    $(document).ready(function(){
-        const application = new app()
-        application.radioInputChecker("[name='work_deposit']",2, "#id_deposit")
-    });
+        const initResumes = () => {
+            application.initResumes()
+        }
+        $(document).ready(function () {
+            const application = new app()
+            application.radioInputChecker("[name='work_deposit']", 1, "#id_deposit")
+            application.radioMultiSelectChecker("[name='work_type']", 1, "button[for=\"region\"]", "#region")
+        });
     </script>
 {% endblock content %}

@@ -7,33 +7,40 @@
         <section x-init="initCompany()">
             <template x-if="$store.main.company">
                 <div>
-                    <div class="card no-hover">
-                        <div class="card-body">
-                            <template x-if="$store.main.company.logo">
-                                <img :src="'/media/'+$store.main.company.logo" height="50" width="50"
-                                     class="company-logo-mini"
-                                     :alt="$store.main.company.name"/>
-                            </template>
-                            <div class="d-flex ">
-                                <a :href="'/company/'+ $store.main.company_id "
-                                   x-text="$store.main.company.name" class=" shop-name"></a> <img
-                                    src="/staticfiles/contract/img/icons/approved.svg" height="16"
-                                    class="ml-5" style="margin-top: 3px">
-                            </div>
-                            <div class="d-flex ">
-                                <p class="text-big bold" x-text="$store.main.company.rating"></p>
-                                <template
-                                        x-for="item in application.getJobRatingArray($store.main.company.rating)">
-                                    <label :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
+                    <div >
+                        <div>
+                            <div class="d-flex">
+                                <template x-if="$store.main.company.logo">
+                                    <img :src="'/media/'+$store.main.company.logo" height="130" width="130"
+                                         class="company-logo-mini mr-5"
+                                         :alt="$store.main.company.name"/>
                                 </template>
-                                <span class="nowrap"
-                                      x-text="application.getCommentsCountStr($store.main.company.reviews)" style="line-height: 2;
+                                <div class="ml-5">
+                                    <div class="d-flex ">
+                                        <h3 x-text="$store.main.company.name" class=" shop-name"></h3> <img
+                                            src="/staticfiles/contract/img/icons/approved.svg" height="16"
+                                            class="ml-5" style="margin-top: 3px">
+                                    </div>
+                                    <div class="d-flex ">
+                                        <p class="text-big bold" x-text="$store.main.company.rating"></p>
+                                        <template
+                                                x-for="item in application.getJobRatingArray($store.main.company.rating)">
+                                            <label :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
+                                        </template>
+                                        <span class="nowrap"
+                                              x-text="application.getCommentsCountStr($store.main.company.reviews)"
+                                              style="line-height: 2;
 font-size: 14px;"></span>
+                                    </div>
+                                    <template x-for="contact in $store.main.company.contacts"
+                                              :key="'contact_'+ contact.id">
+                                        <div><a :href="contact.value" x-text="contact.value"></a></div>
+                                    </template>
+                                </div>
+
                             </div>
-                            <template x-for="contact in $store.main.company.contacts"
-                                      :key="'contact_'+ contact.id">
-                                <div><a :href="contact.value" x-text="contact.value"></a></div>
-                            </template>
+
+
                         </div>
                     </div>
                     <div class="mt-5">

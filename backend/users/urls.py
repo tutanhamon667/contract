@@ -2,7 +2,6 @@ from django.urls import path
 
 from .controllers.api import *
 
-
 urlpatterns = [
     path("favorite", favorite_job, name="favorite"),
     path("jobs", get_jobs, name="jobs"),
@@ -10,8 +9,11 @@ urlpatterns = [
     path("company", get_company, name="company"),
     path("favorite_jobs", favorite_jobs, name="favorite_jobs"),
     path("company_reviews", company_reviews, name="company_reviews"),
+    path("worker_reviews", worker_reviews, name="worker_reviews"),
     path("create_review", create_review, name="create_review"),
+    path("create_worker_review", create_worker_review, name="create_worker_review"),
 
+    path("filter_resumes", filter_resumes, name="filter_resumes"),
     path("response_invite", response_invite, name="response_invite"),
     path("user_resumes", get_user_resumes, name="user_resumes"),
     path("balance", get_balance, name="balance"),

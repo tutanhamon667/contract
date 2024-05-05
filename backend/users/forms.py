@@ -128,6 +128,36 @@ class CompanyReviewForm(forms.Form):
         return data
 
 
+
+class WorkerReviewForm(forms.Form):
+    comment = forms.CharField(
+        label='Комментарий', max_length=200, required=True
+    )
+    captcha = forms.CharField(widget=CaptchaWidget(), required=True)
+    rating = forms.IntegerField(label='Оценка', max_value=5, initial=5)
+    resume_id = forms.IntegerField(widget= forms.HiddenInput())
+    class Meta:
+        fields = ['resume_id', 'comment', 'rating', 'reviewer', "captcha", "hashkey"]
+        widgets = {'resume_id': forms.HiddenInput(),
+                   "captcha": CaptchaWidget(), 'hashkey': forms.HiddenInput()}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if len(args):
+            catcha_widget = CaptchaWidget(args[0]["hashkey"])
+        else:
+            catcha_widget = CaptchaWidget()
+
+        self.fields["captcha"].widget = catcha_widget
+
+    def clean_captcha(self):
+        data = self.cleaned_data['captcha']
+        res = self.fields["captcha"].widget.check_capctha(self.cleaned_data["captcha"], self.data["hashkey"])
+        if res:
+            raise ValidationError(res)
+        return data
+
+
 class JobFilterForm(forms.Form):
     title = forms.CharField(
         label='Название вакансии', max_length=200, required=False
@@ -185,40 +215,59 @@ class JobFilterForm(forms.Form):
 
 
 class ResumeFilterForm(forms.Form):
-    region = forms.ModelMultipleChoiceField(label="Регион рабоы", queryset=Region.objects.all(), blank=True,
-                                            required=False)
-    specialisation = forms.ModelMultipleChoiceField(label="Специализация", queryset=Specialisation.objects.all(),
-                                                    blank=True, required=False)
-    name = forms.CharField(
+    title = forms.CharField(
         label='Название вакансии', max_length=200, required=False
     )
-    CHOICES_WORK_TYPE = [("1", "Оффлайн"), ("2", "Онлайн"), ("3", "Не имеет значения")]
-    CHOICES_WORK_EXPERIENCE = [("WithoutExperience", "Нет опыта"),
-                               ("Between1And6", "От 1 до 6 месяцев"),
-                               ("Between6And12", "От 6 месяцев до 1 года"),
-                               ("NoMatter", "Не имеет значения")]
-    CHOICES_WORK_TIME_BUSY = [("1", "Полный график"), ("2", "Гибкий график"), ('3', 'Не имеет значения')]
-    CHOICES_WORK_DEPOSIT = [("1", "С залогом"), ("2", "Без залога")]
+    work_type = forms.ChoiceField(label="Тип занятости", widget=forms.RadioSelect, choices=CHOICES_WORK_TYPE_FILTER,
+                                  initial="3", required=False)
+    region = forms.ModelMultipleChoiceField(label="Регион", queryset=Region.objects.all(), blank=True,
+                                            required=False)
     salary_to = forms.IntegerField(
-        label='Зарплата до', required=False
+        label='Уровень дохода, ₽', required=False
     )
-    work_deposit = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_DEPOSIT, initial='2',
+
+    specialisation = forms.ModelMultipleChoiceField(label="Специализация", queryset=Specialisation.objects.all(),
+                                                    blank=True, required=False)
+
+    work_experience = forms.ChoiceField(label="Опыт работы", widget=forms.RadioSelect,
+                                        choices=CHOICES_WORK_EXPERIENCE_FILTER, initial="NoMatter",
+                                        required=False)
+
+    work_deposit = forms.ChoiceField(label="Залог", widget=forms.RadioSelect, choices=CHOICES_WORK_DEPOSIT_FILTER,
+                                     initial='0',
                                      required=False)
     deposit = forms.IntegerField(
-        label='Депозит от', required=False
+        label='Сумма залога, ₽', required=False
     )
-    work_time_busy = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_TIME_BUSY, initial='3',
+    work_time_busy = forms.ChoiceField(label="График работы", widget=forms.RadioSelect,
+                                       choices=CHOICES_WORK_TIME_BUSY_FILTER, initial='3',
                                        required=False)
-    work_experience = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_EXPERIENCE, initial="NoMatter",
-                                        required=False)
-    work_type = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES_WORK_TYPE, initial="3", required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if "specialisation" in kwargs["initial"]:
-            self.fields["specialisation"].initial = kwargs["initial"].getlist("specialisation")
+        for field in self.fields:
+            if field != 'work_time_busy' and field != 'work_experience' and field != 'work_type' and field != 'work_deposit' and field != 'region':
+                self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+            else:
+                self.fields[field].widget.attrs.update({'class': 'form-radio-input', 'autocomplete': 'off'})
+            if field == 'region':
+                self.fields[field].widget.attrs.update({'class': 'subform-field', 'autocomplete': 'off'})
+
         if "region" in kwargs["initial"]:
-            self.fields["region"].initial = kwargs["initial"].getlist("region")
+            multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all(),
+                                                          selected=kwargs["initial"]["region"])
+        else:
+            multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all())
+        if "title" in kwargs["initial"]:
+            self.fields["title"].initial = kwargs["initial"]["title"]
+        if "specialisation" in kwargs["initial"]:
+            multiselect_specialisation_widget = MultiselectWidget(label='Специализация', items=Industry.objects.all(),
+                                                                  selected=kwargs["initial"]["specialisation"])
+        else:
+            multiselect_specialisation_widget = MultiselectWidget(label='Специализация', items=Industry.objects.all())
+
+        self.fields["specialisation"].widget = multiselect_specialisation_widget
+        self.fields["region"].widget = multiselect_region_widget
 
 
 class ProfileForm(ModelForm):

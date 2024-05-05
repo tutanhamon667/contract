@@ -12,7 +12,7 @@ from common.models import ArticleCategory, Article
 from orders.models import JobSpecialisationStat
 from btc.models import Address as WalletAddress, CustomerAccessPayment, Operation, Address
 from users.core.access import Access
-from users.forms import CompanyReviewForm
+from users.forms import CompanyReviewForm, WorkerReviewForm
 from users.models.advertise import Banners
 from users.models.user import FavoriteJob, Job, ResponseInvite, CustomerReview, Company, Resume, Contact
 
@@ -103,6 +103,49 @@ def create_review(request):
     else:
         return JsonResponse({'success': False, "data": {}, 'code': 403})
 
+def create_worker_review(request):
+    user = request.user
+    if user.is_authenticated and user.is_customer:
+        print(request.POST)
+        review_form = WorkerReviewForm(request.POST)
+        if review_form.is_valid():
+            resume = Resume.objects.get(id=review_form.cleaned_data.get("resume_id"))
+            review = CustomerReview(reviewer=request.user, moderated=False,
+                                    worker_id=resume.user.id
+                                    , rating=review_form.cleaned_data.get("rating")
+                                    , comment=review_form.cleaned_data.get("comment"))
+            review.save()
+            return JsonResponse({'success': True, "data": {} })
+        else:
+            return JsonResponse({'success': False, "data": review_form.errors, "code": 400})
+    else:
+        return JsonResponse({'success': False, "data": {}, 'code': 403})
+
+
+def worker_reviews(request):
+    try:
+        id = request.POST["resume_id"]
+        page = None
+        limit = None
+        if "page" in request.POST:
+            page = int(request.POST["page"])
+        if "limit" in request.POST:
+            limit = int(request.POST["limit"])
+        resume = Resume.objects.get(id=id)
+        if page is not None and limit is not None:
+            count, reviews = CustomerReview.get_worker_reviews(user_id=resume.user.id, moderated=True, page=page, limit=limit)
+        else:
+            count, reviews = CustomerReview.get_worker_reviews(user_id=resume.user.id, moderated=True)
+
+        reviews_array = []
+        for review in reviews:
+            reviews_array.append(
+                {"comment": review.comment, "id": review.id, "pub_date": review.pub_date, "rating": review.rating,
+                 "reviewer": review.reviewer.company.name})
+
+        return JsonResponse({'success': True, "data": reviews_array, "count": count})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 def get_categories_jobs(request):
     try:
@@ -255,6 +298,52 @@ def favorite_jobs(request):
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
+
+
+def filter_resumes(request):
+    try:
+        user = request.user
+        access = Access(user)
+        code = access.check_access("resume")
+        if code != 200:
+            return JsonResponse({'success': False, "code": code})
+        resumes_count, resumes = Resume.search_filter(request)
+        res = list(resumes.values())
+        for resume in res:
+            item_regions = None
+            for resume_db in resumes:
+                if resume_db.id == resume["id"]:
+                    resume["display_name"] = resume_db.user.display_name
+                    item_regions = resume_db.region
+                    if resume_db.user.photo:
+                        resume["photo"] = resume_db.user.photo.url
+                    else:
+                        resume["photo"] = None
+            if item_regions:
+                resume["regions"] = list(item_regions.values())
+            else:
+                resume["regions"] = []
+
+        invites = []
+        if request.user.is_authenticated:
+            invites = list(ResponseInvite.join_responses(objs=resumes, user=request.user).values())
+
+        for r in res:
+            r["invite"] = {}
+            for invite in invites:
+                if r["id"] == invite["job_id"]:
+                    if invite["status"] == 1:
+                        try:
+                            chat = Chat.objects.get(response_invite_id=invite["id"])
+                            invite["chat"] = {"uuid": chat.uuid}
+
+                        except Exception as e:
+                            print(e)
+                    r["invite"] = invite
+
+        return JsonResponse({'success': True, "data": res, "count": resumes_count})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 def get_jobs(request):
     try:

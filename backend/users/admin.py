@@ -58,7 +58,7 @@ class RegionAdmin(admin.ModelAdmin):
 
 @admin.register(Resume)
 class ResumeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'specialisation', 'salary', 'deposit', 'work_experience', 'region',)
+    list_display = ('user', 'specialisation', 'salary', 'deposit', 'work_experience',)
     empty_value_display = '-пусто-'
 
 

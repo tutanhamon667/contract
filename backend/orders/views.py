@@ -11,7 +11,7 @@ from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
 from contract.settings import RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS
 from orders.models import JobSpecialisationStat
 from users.core.access import Access
-from users.forms import JobFilterForm, CompanyReviewForm, ResponseForm, InviteForm, ResumeFilterForm
+from users.forms import JobFilterForm, CompanyReviewForm, ResponseForm, InviteForm, ResumeFilterForm, WorkerReviewForm
 from users.models.common import Captcha
 from users.models.user import Member, Company, CustomerReview, Specialisation, Job, Contact, Resume, ResponseInvite
 from users.models.advertise import Banners
@@ -119,22 +119,12 @@ def resumes_view(request):
 
 	if request.method == 'GET':
 		search_form = ResumeFilterForm(initial=request.GET)
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
-		resumes = Resume.search_filter(request, 10)
-		resumes = Resume.join_invites(objs=resumes, user=user)
-		company = Company.objects.get(user=user)
-		jobs = Job.objects.filter(company=company)
-
 		form_response = InviteForm(
 			initial={"type": RESPONSE_INVITE_TYPE["RESPONSE"], "user": user})
 		return render(request, './pages/resumes.html', {
 			'search_form': search_form,
-			'jobs': jobs,
-			'articles': articles,
 			'form_response': form_response,
-			'categories': categories,
-			'resumes': resumes})
+})
 
 
 
@@ -156,20 +146,13 @@ def resume_view(request, resume_id):
 			return HttpResponse(status=code)
 
 	if request.method == 'GET':
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
+
 		resume = Resume.objects.get(id=resume_id)
 		resume.increase_views()
-		worker = Member.objects.get(id=resume.user.id)
-		resumes = Resume.join_invites(objs=[resume], user=user)
-		company = Company.objects.get(user=user)
-		jobs = Job.objects.filter(company=company)
+		review_form = WorkerReviewForm(initial={"resume_id": resume.id})
 		form_response = InviteForm(
 			initial={"type": RESPONSE_INVITE_TYPE["INVITE"], "user": user})
 		return render(request, './pages/resume.html', {
-			'articles': articles,
-			'jobs': jobs,
-			'worker': worker,
-			'categories': categories,
+			'review_form': review_form,
 			'form_response': form_response,
-			'resume': resumes[0]})
+			'resume': resume})

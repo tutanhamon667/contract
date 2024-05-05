@@ -263,6 +263,14 @@ class Company(models.Model):
 
 
 class CustomerReview(models.Model):
+	worker = models.ForeignKey(
+		Member,
+		on_delete=models.CASCADE,
+		related_name='review_worker',
+		default=None,
+		null=True,
+		unique=False
+	)
 	company = models.ForeignKey(
 		Company,
 		on_delete=models.CASCADE,
@@ -319,6 +327,12 @@ class CustomerReview(models.Model):
 		reviews = cls.objects.filter(company_id=company_id, moderated=moderated).order_by('-id')[page*limit:page*limit + limit]
 		return count, reviews
 
+	@classmethod
+	def get_worker_reviews(cls, user_id, moderated=True, page=0, limit=1000000):
+		count =  len(cls.objects.filter(worker=user_id, moderated=moderated))
+		reviews = cls.objects.filter(worker=user_id, moderated=moderated).order_by('-id')[page*limit:page*limit + limit]
+		return count, reviews
+
 class Resume(models.Model):
 	class Meta:
 		verbose_name = 'Резюме пользователя'
@@ -347,11 +361,7 @@ class Resume(models.Model):
 	is_fulltime = models.BooleanField(verbose_name='Полная занятость', null=False, default=False, choices=CHOICES_WORK_TIMEWORK)
 	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=True)
 	views = models.IntegerField(verbose_name='просмотры', null=True, default=0, blank=True)
-	region = models.ForeignKey(verbose_name='Регион работы',
-							   to=Region,
-							   null=True,
-							   default=None,
-							   on_delete=models.SET_DEFAULT)
+	region = models.ManyToManyField(Region, verbose_name='Регион работы', default=None, blank=True)
 	description = CKEditor5Field(
 		verbose_name='Описание вакансии', config_name='extends', null=True,
 		blank=True,
@@ -386,20 +396,40 @@ class Resume(models.Model):
 		return self.name
 
 	@classmethod
-	def search_filter(cls, request, limit):
-		_get = request.GET
-		print(_get)
+	def search_filter(cls, request):
+
+		_get = request.POST
+		now = datetime.datetime.now()
+		limit = 1
+		page = 0
+		if "page" in _get:
+			page = int(_get["page"])
+		if "limit" in _get:
+			limit = int(_get["limit"])
 		objs = cls.objects
 		filters_exists = False
-		if "name" in _get and _get["name"] != '':
+		if "company_id" in _get and _get["company_id"] != '':
 			filters_exists = True
-			objs = objs.filter(Q(name__icontains=_get["name"]) | Q(specialisation__name__icontains=_get["name"]))
+			objs = objs.filter(company_id=_get["company_id"])
+		if "title" in _get and _get["title"] != '':
+			filters_exists = True
+			objs = objs.filter(Q(title__icontains=_get["title"]) | Q(specialisation__name__icontains=_get["title"]) | Q(
+				specialisation__industry__name__icontains=_get["title"]))
+		if "salary_to" in _get and _get["salary_to"] != '':
+			filters_exists = True
+			objs = objs.filter(salary__lte=_get["salary_to"])
 		if "work_type" in _get and _get["work_type"] != '3':
 			filters_exists = True
 			if _get["work_type"] == '2':
 				objs = objs.filter(is_offline=False)
 			if _get["work_type"] == '1':
 				objs = objs.filter(is_offline=True)
+			if "region" in _get and _get["region"] != '':
+				filters_exists = True
+				objs = objs.filter(region__in=_get["region"])
+			if "region[]" in _get and _get["region[]"] != '':
+				filters_exists = True
+				objs = objs.filter(region__in=_get.getlist("region[]")).order_by('id')
 		if "work_time_busy" in _get and _get["work_time_busy"] != '3':
 			filters_exists = True
 			if _get["work_time_busy"] == '2':
@@ -412,31 +442,29 @@ class Resume(models.Model):
 				objs = objs.filter(deposit=0)
 			if _get["work_deposit"] == '1':
 				objs = objs.filter(deposit__gt=0)
-		if "salary_to" in _get and _get["salary_to"] != '':
-			filters_exists = True
-			objs = objs.filter(salary__gt=0).filter(salary__lte=_get["salary_to"])
 		if "deposit" in _get and _get["deposit"] != '':
 			filters_exists = True
 			objs = objs.filter(deposit__gte=_get["deposit"])
 		if "work_experience" in _get and _get["work_experience"] != 'NoMatter':
 			filters_exists = True
-			if _get["work_experience"] == 'WithoutExperience':
-				objs = objs.filter(work_experience=0)
-			if _get["work_experience"] == 'Between1And6':
-				objs = objs.filter(work_experience__gte=1, work_experience__lte=6)
-			if _get["work_experience"] == 'Between6And12':
-				objs = objs.filter(work_experience__gte=6, work_experience__lte=12)
+			objs = objs.filter(work_experience=_get["work_experience"])
+		if "specialisation[]" in _get and _get["specialisation[]"] != '':
+			filters_exists = True
+			objs = objs.filter(specialisation__industry_id__in=_get.getlist("specialisation[]"))
 		if "specialisation" in _get and _get["specialisation"] != '':
 			filters_exists = True
-			objs = objs.filter(specialisation__in=request.GET.getlist("specialisation"))
-		if "region" in _get and _get["region"] != '':
-			filters_exists = True
-			objs = objs.filter(specialisation__in=request.GET.getlist("region"))
+			objs = objs.filter(specialisation__industry_id=_get["specialisation"])
+
 
 		if not filters_exists:
-			return cls.objects.filter(moderated=True, active_search=True).order_by('-id')[:limit]
+			obj_count = len(cls.objects.filter(moderated=True, deleted=False, active_search=True).order_by('-id').distinct())
+			objs = cls.objects.filter(moderated=True, deleted=False, active_search=True).order_by('-id').distinct()[
+				   page*limit:page*limit + limit]
+			return obj_count, objs
 		else:
-			return objs.filter(moderated=True, active_search=True).order_by('-id')[:limit]
+			obj_count = len(objs.filter(moderated=True,  deleted=False, active_search=True).order_by('-id').distinct())
+			objs =  objs.filter(moderated=True,  deleted=False, active_search=True).order_by('-id').distinct()[page*limit:page*limit + limit]
+			return obj_count, objs
 
 
 class Job(models.Model):
@@ -906,6 +934,13 @@ class ResponseInvite(models.Model):
 		for job in objs:
 			jobs_ids.append(job.id)
 		return cls.objects.filter(job_id__in=jobs_ids, resume__user=user).values()
+
+	@classmethod
+	def join_responses(cls, objs, user):
+		resume_ids = []
+		for resume in objs:
+			resume_ids.append(resume.id)
+		return cls.objects.filter(resume_id__in=resume_ids, job__company__user=user).values()
 
 
 class FavoriteJob(models.Model):
