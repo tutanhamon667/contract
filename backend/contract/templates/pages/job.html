@@ -71,7 +71,7 @@
                                                         отклика</a>
                                                 </template>
                                                 <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
-                                                    <div x-data="{res: $store.main.getResponseInviteElement($store.main.job.id, true)}">
+                                                    <div x-data="{res: $store.main.getResponseInviteElement($store.main.job.invite)}">
 
                                                         <template x-if="res.element === 'link'">
                                                             <a class="btn btn-white btn-large w-100" :href="res.link"

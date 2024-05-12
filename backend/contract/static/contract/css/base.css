@@ -496,6 +496,13 @@ footer a.nav-link {
 }
 
 
+.company-logo-big {
+    border-radius: 100px;
+    width: 130px;
+    height: 130px;
+    padding: 3px;
+    background-color: #EDEDED;
+}
 
 .ml-5 {
     margin-left: 5px;

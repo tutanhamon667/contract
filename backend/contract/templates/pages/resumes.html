@@ -84,7 +84,7 @@
                                     <div class="col-10">
 
                                         <template x-if="$store.main.user.id>=0  && $store.main.user.is_customer">
-                                            <div x-data="{res: $store.main.getResponseInviteResumeElement(resume.id)}">
+                                            <div x-data="{res: $store.main.getResponseInviteResumeElement(resume.invite)}">
 
                                                 <template x-if="res.element === 'link'">
                                                     <a :href="res.link" class="btn btn-primary" x-text="res.text"></a>

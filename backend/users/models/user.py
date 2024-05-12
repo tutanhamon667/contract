@@ -132,6 +132,10 @@ class Contact(models.Model):
 	def get_company_contacts(cls, company_id):
 		return cls.objects.filter(user__company=company_id).values()
 
+	@classmethod
+	def get_worker_contacts(cls, user_id):
+		return cls.objects.filter(user=user_id).values()
+
 	class Meta:
 		verbose_name = 'Контакт'
 		verbose_name_plural = 'Контакты'
@@ -307,8 +311,9 @@ class CustomerReview(models.Model):
 		result = []
 		res = cls.objects.values('company').annotate(avg_rating=Avg('rating'))
 		for item in res:
-			company = Company.objects.get(id=item['company'])
-			result.append({'company': company, 'rating': item['avg_rating']})
+			if item['company'] is not None:
+				company = Company.objects.get(id=item['company'])
+				result.append({'company': company, 'rating': item['avg_rating']})
 		return result
 
 	@classmethod
@@ -387,6 +392,10 @@ class Resume(models.Model):
 					resume.type = job_response["type"]
 					resume.request_invite_id = job_response["id"]
 		return objs
+
+	@classmethod
+	def get_active_resume(cls, id):
+		return cls.objects.filter(id=id, moderated=True, active_search=True)
 
 	def increase_views(self):
 		self.views = self.views + 1
@@ -845,6 +854,7 @@ class ResponseInvite(models.Model):
 		verbose_name='Дата публикации вакансии',
 	)
 
+
 	answer_date = models.DateTimeField(
 		auto_now_add=False,
 		verbose_name='Дата ответа на отклик\приглашение',
@@ -886,6 +896,15 @@ class ResponseInvite(models.Model):
 		except Exception as e:
 			print(e)
 			return False
+
+
+	@classmethod
+	def get_resume_invites(cls, resume_id):
+		return cls.objects.filter(resume_id=resume_id, type=1)
+
+	@classmethod
+	def get_resume_responses(cls, resume_id):
+		return cls.objects.filter(resume_id=resume_id, type=0)
 
 	@classmethod
 	def get_by_user(cls, user):

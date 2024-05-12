@@ -221,6 +221,9 @@ def response_invite(request):
             status = 3
         if action != 'create':
             response = ResponseInvite.update_response_invite(ri_id, user, status)
+        if action == 'delete':
+            ri = ResponseInvite.objects.get(id=ri_id)
+            ri.set_deleted()
         res["id"] = response.id
         res["job_id"] = int(response.job_id)
         res["resume_id"] = int(response.resume_id)
@@ -331,7 +334,7 @@ def filter_resumes(request):
         for r in res:
             r["invite"] = {}
             for invite in invites:
-                if r["id"] == invite["job_id"]:
+                if r["id"] == invite["resume_id"]:
                     if invite["status"] == 1:
                         try:
                             chat = Chat.objects.get(response_invite_id=invite["id"])
@@ -472,6 +475,66 @@ def get_company(request):
         company["rating"] = rating
         company["reviews"] = len(reviews)
         return JsonResponse({'success': True, "data": company})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
+
+def get_resume_statistics(request):
+    try:
+        user = request.user
+        access = Access(user)
+        code = access.check_access("resume")
+        if code != 200:
+            return JsonResponse({'success': False, "code": code})
+        result = {}
+        resume_id = request.POST["id"]
+        resume = Resume.objects.get(id=resume_id)
+        worker = resume.user
+        result["created_at"] = worker.created_at
+        responses = list(ResponseInvite.get_resume_responses(resume_id).values())
+        invites = list(ResponseInvite.get_resume_invites(resume_id).values())
+        result["invites"] = invites
+        result["responses"] = responses
+        return JsonResponse({'success': True, "data": result})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
+def get_resume(request):
+    try:
+        user = request.user
+        access = Access(user)
+        code = access.check_access("resume")
+        if code != 200:
+            return JsonResponse({'success': False, "code": code})
+        id = request.POST["id"]
+        resume = Resume.get_active_resume(id)
+        resume_obj = list(resume.values())[0]
+        reviews = list(CustomerReview.objects.filter(worker_id=resume[0].user.id))
+        contacts = list(Contact.get_worker_contacts(resume[0].user.id))
+        resume_obj["contacts"] = contacts
+        resume_obj["photo"] = resume[0].user.photo.url
+        resume_obj["display_name"] = resume[0].user.display_name
+        resume_obj["reviews"] = len(reviews)
+        invites = list(ResponseInvite.join_responses(objs=resume, user=request.user).values())
+        item_regions = resume[0].region
+
+        if item_regions:
+            resume_obj["regions"] = list(item_regions.values())
+        else:
+            resume_obj["regions"] = []
+
+        resume_obj["invite"] = {}
+        for invite in invites:
+            if resume_obj["id"] == invite["resume_id"]:
+                if invite["status"] == 1:
+                    try:
+                        chat = Chat.objects.get(response_invite_id=invite["id"])
+                        invite["chat"] = {"uuid": chat.uuid}
+                    except Exception as e:
+                        print(e)
+                resume_obj["invite"] = invite
+
+        return JsonResponse({'success': True, "data": resume_obj})
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 

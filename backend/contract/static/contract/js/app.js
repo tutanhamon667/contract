@@ -192,6 +192,9 @@ const alpineApp = function () {
         sendResponseInvite: async (action, id, job_id, resume_id) => {
             return makeRequest('response_invite', {action: action, id: id, job_id: job_id, resume_id: resume_id})
         },
+        sendInvite: async (action, id, resume_id, job_id) => {
+            return makeRequest('response_invite', {action: action, id: id, job_id: job_id, resume_id: resume_id})
+        },
         getResumes: async () => {
             return makeRequest('user_resumes', {})
         },
@@ -201,21 +204,21 @@ const alpineApp = function () {
         setFavorite: async (job_id) => {
             return makeRequest('favorite', {job_id: job_id})
         },
-        getResponseInviteElement: (id, singleJob = false) => {
+        getResponseInviteElement: (invite) => {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
-                let job = !singleJob ? Alpine.store('main').jobs.find(el => el.id === id) : Alpine.store('main').job
-                if (job.invite.status === 1) {
-                    return {element: 'link', link: '/chat/' + job.invite.chat.uuid, text: 'Перейти в чат'}
+
+                if (invite.status === 1) {
+                    return {element: 'link', link: '/chat/' + invite.chat.uuid, text: 'Перейти в чат'}
                 }
-                if (job.invite.status === 2) {
+                if (invite.status === 2) {
                     return {element: 'status', text: 'Отклик отклонён'}
                 }
-                if (job.invite.status === 3) {
+                if (invite.status === 3) {
                     return {element: 'status', text: 'Отклик удалён'}
                 }
-                if (job.invite.status === 0) {
-                    if (job.invite.type === 1) {
+                if (invite.status === 0) {
+                    if (invite.type === 1) {
                         return {
                             element: 'form',
                             text: 'Работодатель вас пригласил на собеседование',
@@ -223,14 +226,14 @@ const alpineApp = function () {
                                 action: "decline",
                                 text: 'Отклонить приглашение'
                             }],
-                            id: job.invite.id
+                            id: invite.id
                         }
                     }
-                    if (job.invite.type === 0) {
+                    if (invite.type === 0) {
                         return {element: 'status', text: 'Ждёт подтверждение от работодателя'}
                     }
                 }
-                if (typeof job.invite.id === 'undefined') {
+                if (typeof invite.id === 'undefined') {
                     if (Alpine.store('main').resumes.length) {
                         return {
                             element: 'form',
@@ -265,21 +268,20 @@ const alpineApp = function () {
             return ''
         },
 
-        getResponseInviteResumeElement: (id, singleJob = false) => {
+        getResponseInviteResumeElement: (invite) => {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
-                let resume = !singleJob ? Alpine.store('main').filtered_resumes.find(el => el.id === id) : Alpine.store('main').resume
-                if (resume.invite.status === 1) {
-                    return {element: 'link', link: '/chat/' + resume.invite.chat.uuid, text: 'Перейти в чат'}
+                if (invite.status === 1) {
+                    return {element: 'link', link: '/chat/' + invite.chat.uuid, text: 'Перейти в чат'}
                 }
-                if (resume.invite.status === 2) {
+                if (invite.status === 2) {
                     return {element: 'status', text: 'Отклик отклонён'}
                 }
-                if (resume.invite.status === 3) {
+                if (invite.status === 3) {
                     return {element: 'status', text: 'Отклик удалён'}
                 }
-                if (resume.invite.status === 0) {
-                    if (resume.invite.type === 0) {
+                if (invite.status === 0) {
+                    if (invite.type === 0) {
                         return {
                             element: 'form',
                             text: '',
@@ -287,14 +289,14 @@ const alpineApp = function () {
                                 action: "decline",
                                 text: 'Отказаться'
                             }],
-                            id: resume.invite.id
+                            id: invite.id
                         }
                     }
-                    if (resume.invite.type === 1) {
+                    if (invite.type === 1) {
                         return {element: 'status', text: 'Ждёт подтверждение от соискателя'}
                     }
                 }
-                if (typeof resume.invite.id === 'undefined') {
+                if (typeof invite.id === 'undefined') {
                     if (Alpine.store('main').customerJobs.length) {
                         return {
                             element: 'form',
@@ -328,7 +330,40 @@ const alpineApp = function () {
         },
 
     })
+    this.createWorkerReview = async (el) => {
+        const form = document.querySelector('#reviewForm')
+        let object = {}
+        if (form) {
+            const params = new FormData(form);
+            params.forEach((value, key) => {
+                if (typeof object[key] == 'undefined') {
+                    object[key] = value
+                } else {
+                    if (Array.isArray(object[key])) {
+                        object[key].push(value)
+                    } else {
+                        object[key] = [object[key], value]
 
+                    }
+                }
+            });
+        }
+        object["resume_id"] = Alpine.store('main').resume.id
+        const result = await makeRequest('create_worker_review', object)
+        if (result.success) {
+            const successMsg = document.querySelector("#review-form-success-msg")
+            successMsg.innerText = "Спасибо за отзыв, он будет отображаться, после модерации"
+        } else {
+            const errorMsg = document.querySelector("#review-form-error-msg")
+            for (let error in result.data) {
+                let div = document.createElement('p');
+                div.className = "form-error-msg";
+                div.innerText = result.data[error][0];
+                document.querySelector(`[name='${error}']`).closest('div').append(div)
+            }
+
+        }
+    }
     this.createReview = async (el) => {
         const form = document.querySelector('#reviewForm')
         let object = {}
@@ -452,14 +487,10 @@ const alpineApp = function () {
         const selectedItem = Alpine.store('main').selectedResume || Alpine.store('main').resumes[0].id
         const result = await Alpine.store('main').sendResponseInvite(action, id, job_id, selectedItem)
         if (result.success === true) {
-            let ind = null
-            const job = Alpine.store('main').jobs.find((i, index) => {
-                if (i.id === job_id) {
-                    ind = index
-                    return true
-                }
-                return false
-            })
+            const job = Alpine.store('main').job && Alpine.store('main').job.id === job_id ?
+                Alpine.store('main').job : Alpine.store('main').jobs.find((i, index) => {
+                    return i.id === job_id
+                })
             if (job) {
                 let msg = ""
                 if (action === "create") {
@@ -475,19 +506,14 @@ const alpineApp = function () {
     }
 
     this.sendInvite = async (action, id, resume_id) => {
-
         const selectedItem = Alpine.store('main').selectedJob || Alpine.store('main').customerJobs[0].id
-
-        const result = await Alpine.store('main').sendResponseInvite(action, id, resume_id, selectedItem)
+        const result = await Alpine.store('main').sendInvite(action, id, resume_id, selectedItem)
         if (result.success === true) {
-            let ind = null
-            const resume = Alpine.store('main').filtered_resumes.find((i, index) => {
-                if (i.id === resume_id) {
-                    ind = index
-                    return true
-                }
-                return false
-            })
+            let resume = Alpine.store('main').resume && Alpine.store('main').resume.id === resume_id ?
+                Alpine.store('main').resume : Alpine.store('main').filtered_resumes.find((i, index) => {
+                    return i.id === resume_id
+                })
+
             if (resume) {
                 let msg = ""
                 if (action === "create") {
@@ -507,17 +533,23 @@ const alpineApp = function () {
     }
 
 
-    this.getResponseInviteElement = () => {
-
-    }
-    this.setReviewsPage = async (page) => {
-        const object = {
+    this.setReviewsPage = async (page, isWorkerReviews = false) => {
+        let object = {
             "page": page,
             limit: Alpine.store('main').reviews_filters.limit,
-            company_id: Alpine.store('main').company.id
         };
+        if (!isWorkerReviews) {
+            object = Object.assign(object, {company_id: Alpine.store('main').company.id})
+        } else {
+            object = Object.assign(object, {resume_id: Alpine.store('main').resume.id})
+        }
         Alpine.store('main').reviews_filters = object
-        const reviews = await this.getCompanyReviews(object)
+        let reviews = null
+        if (!isWorkerReviews) {
+            reviews = await this.getCompanyReviews(object)
+        } else {
+            reviews = await this.getReviewsAboutWorker(object)
+        }
         if (reviews.success) {
             Alpine.store('main').reviews = reviews.data
             Alpine.store('main').reviewsCount = reviews.count
@@ -686,6 +718,22 @@ const alpineApp = function () {
             alert(res.msg)
         }
     }
+    this.getResumeStatistics = async (id) => {
+        const res = await makeRequest('resume_statistics', {id: id})
+        if (res.success) {
+            const ri_arr = res.data.invites.concat(res.data.responses)
+            const chats = ri_arr.filter(i => i.type === 1 || i.type === 2).length
+            Alpine.store('main').resume_statistics = {
+                created_at: res.data.created_at,
+                responses: res.data.responses,
+                invites: res.data.invites,
+                chats: chats && res.data.responses.length ? chats / (res.data.responses.length + res.data.invites.length) * 100 : 0
+            }
+        } else {
+            alert(res.msg)
+        }
+    }
+
 
     this.initJob = async (id) => {
         const user = await this.getUser()
@@ -793,8 +841,9 @@ const alpineApp = function () {
             }
         }
 
-
         await this.getResume(id)
+        await this.getResumeStatistics(id)
+
         const reviews = await this.getReviewsAboutWorker({resume_id: id})
         if (reviews.success) {
             Alpine.store('main').reviews = reviews.data
