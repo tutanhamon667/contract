@@ -35,7 +35,6 @@ class ResumeForm(ModelForm):
         fields = ['id', 'user', 'name', 'specialisation', 'salary', 'deposit', 'work_experience', 'is_offline',
                   'region',
                   'is_fulltime', 'description']
-        widgets = {'user': forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

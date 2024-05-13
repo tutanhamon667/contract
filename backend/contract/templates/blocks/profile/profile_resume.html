@@ -1,11 +1,12 @@
 {% extends "profile.html" %}
+{% load django_bootstrap5 %}
 {% block profile_content %}
         {% load django_bootstrap5 %}
         <h1 class="my_order_title">Моё резюме</h1>
         <form action="" method="post" >
             {% csrf_token %}
             {{ form.media }}
-            {{ form.as_div }}
+            {% bootstrap_form form %}
             <input type="submit" value="Обновить" />
         </form>
 {% endblock profile_content %}

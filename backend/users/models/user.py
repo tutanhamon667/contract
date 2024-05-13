@@ -1,4 +1,7 @@
 import datetime
+
+
+from django.forms import ModelForm
 from django.utils import timezone
 from django.http import HttpResponse
 from django_ckeditor_5.fields import CKEditor5Field
@@ -338,6 +341,8 @@ class CustomerReview(models.Model):
 		reviews = cls.objects.filter(worker=user_id, moderated=moderated).order_by('-id')[page*limit:page*limit + limit]
 		return count, reviews
 
+
+
 class Resume(models.Model):
 	class Meta:
 		verbose_name = 'Резюме пользователя'
@@ -354,6 +359,7 @@ class Resume(models.Model):
 									   null=True,
 									   related_name='f_resume_stack',
 									   verbose_name='Специализация')
+
 	active_search = models.BooleanField(null=True, default=True, verbose_name='В активном поиске')
 	salary = models.IntegerField(verbose_name='Желаемый уровень дохода', null=True, default=0)
 	deposit = models.IntegerField(verbose_name='Залог', null=True, default=0)
@@ -373,6 +379,7 @@ class Resume(models.Model):
 	)
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
+
 
 	@classmethod
 	def is_current_user(cls, _id, user):
