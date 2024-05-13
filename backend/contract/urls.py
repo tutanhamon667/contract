@@ -19,7 +19,8 @@ from users.controllers.auth import registration_worker_view, registration_custom
 from users.controllers.test_view import test
 from . import settings
 from users.views import captcha_view
-from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view
+from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
+    favorite_view, worker_responses_invites_view
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -57,7 +58,7 @@ urlpatterns = [
     path('jobs/<int:job_id>', job_view, name='job'),
     path('company/<int:company_id>', company_view, name='company'),
     path('profile/main', profile_main_view, name='profile_main'),
-    path('favorite', profile_favorite_view, name='favorite_jobs_main'),
+    path('favorite', favorite_view, name='favorite_jobs_main'),
     path('profile/resume', profile_resumes_view, name='profile_resume'),
     path('profile/resume/<int:resume_id>', profile_resume_view, name='profile_resume'),
     path('profile/contact', contacts_view, name='profile_contacts'),
@@ -72,7 +73,7 @@ urlpatterns = [
     #path('update_addresses', update_addresses, name='update_addresses'),
     #path('get_btc_usd', get_btc_usd, name='get_btc_usd'),
     path('profile/customer_access', customer_access, name='customer_access'),
-    path('profile/invites', profile_response_invite_view, name='profile_response_invite'),
+    path('responses_invites', worker_responses_invites_view, name='responses_invites_page'),
     path('article/<int:article_id>', article_view, name='article'),
     path('chat/', include("chat.urls")),
     path('api/', include("users.urls")),

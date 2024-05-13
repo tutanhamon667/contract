@@ -873,15 +873,19 @@ class ResponseInvite(models.Model):
 		return True
 
 	@classmethod
-	def filter_search(cls, objs, order="desc", status=1, type='any', page=1, limit=10):
+	def filter_search(cls, user, order="desc", status=1, type=None, page=0, limit=10):
+		objs = cls.get_by_user(user)
 		order_z = ''
+		count = 0
 		if order == 'desc':
 			order_z = '-'
-		if type != 'any' and type != '':
+		if type is not None:
 			objs = objs.filter(type=type).order_by(order_z + 'create_date')
+			count = len(objs)
 		else:
 			objs = objs.filter(status=status).order_by(order_z + 'create_date')
-		return objs[(page - 1) * limit: limit]
+			count = len(objs)
+		return objs[page * limit: page*limit + limit], count
 
 	@classmethod
 	def update_response_invite(self, id, user, status):

@@ -10,6 +10,8 @@ urlpatterns = [
     path("company", get_company, name="company"),
     path("favorite_jobs", favorite_jobs, name="favorite_jobs"),
     path("company_reviews", company_reviews, name="company_reviews"),
+    path("respones_invites", get_responses_invites, name="responses_invites"),
+
     path("worker_reviews", worker_reviews, name="worker_reviews"),
     path("create_review", create_review, name="create_review"),
     path("create_worker_review", create_worker_review, name="create_worker_review"),

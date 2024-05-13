@@ -70,6 +70,15 @@ def jobs_view(request):
 			})
 
 
+def favorite_view(request):
+	if request.method == 'GET':
+		return render(request, './pages/favorite.html', {	})
+
+def worker_responses_invites_view(request):
+	if request.method == 'GET':
+		return render(request, './pages/worker_ri.html', {	})
+
+
 def job_view(request, job_id):
 	if request.method == 'GET':
 

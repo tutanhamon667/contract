@@ -41,6 +41,46 @@ def get_user(request):
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+def get_responses_invites(request):
+    try:
+        if request.user.is_authenticated:
+            page = None
+            limit = None
+            type = None
+            status = None
+            order = None
+            if "page" in request.POST:
+                page = int(request.POST["page"])
+            if "limit" in request.POST:
+                limit = int(request.POST["limit"])
+            if "type" in request.POST and request.POST["type"] :
+                type = int(request.POST["type"])
+            if "status" in request.POST:
+                status = int(request.POST["status"])
+            if "order" in request.POST:
+                order = request.POST["order"]
+            count = 0
+            ris, count = ResponseInvite.filter_search(user=request.user, order=order, type=type, status=status,page=page, limit=limit)
+            res = []
+            for ri in ris:
+
+
+                obj = model_to_dict(ri)
+                obj["chat"] = {}
+                obj["create_date"] = ri.create_date
+                obj["job"] = model_to_dict(ri.job,["title", "id"] )
+                obj["worker"] = model_to_dict(ri.resume.user, ["id", "display_name"])
+                obj["resume"] = model_to_dict(ri.resume, ["id", "name"])
+                obj["company"] = model_to_dict(ri.job.company, ["id", "name"])
+                if ri.status == 1:
+                    chat = Chat.objects
+                res.append(obj)
+            return JsonResponse({'success': True, "data": res, "count": count})
+        else:
+            return JsonResponse({'success': False, "code": 401})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
 def favorite_job(request):
     try:
         if request.user.is_authenticated:

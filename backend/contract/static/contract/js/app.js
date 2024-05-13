@@ -60,6 +60,7 @@ const alpineApp = function () {
         selectedResume: null,
         selectedJob: null,
         balance: "",
+        responsesInvites: [],
         resumes: [],
         filters: {page: 0, limit: 3},
         reviews_filters: {page: 0, limit: 3},
@@ -654,6 +655,22 @@ const alpineApp = function () {
     }
 
 
+    this.getFavoriteJobs = async (filters = {}) => {
+        Alpine.store('main').filters.page = 0
+        let object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
+        object = Object.assign(object, filters)
+
+        const res = await Alpine.store('main').getFavoriteJobs(object)
+        if (res.success) {
+            this.setJobs(res.data)
+            this.setJobsCount(res.count)
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
+            this.setPagination(pagination)
+        } else {
+            alert(res.msg)
+        }
+    }
+
     this.filterJobs = async (filters = {}) => {
         Alpine.store('main').filters.page = 0
         let object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
@@ -812,6 +829,60 @@ const alpineApp = function () {
         }
 
         await this.filterJobs()
+    }
+
+    this.initFavoriteJobsPage = async () => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+            if (user.data.is_worker) {
+                const resumes = await this.getResumes()
+                if (resumes.success) {
+                    this.setResumes(resumes.data)
+                }
+            }
+        }
+
+        await this.initFavoriteJobs()
+    }
+
+    this.getTableDateOrderEl = (filters) => {
+        if (filters.order === "desc"){
+            return "<button @click='application.setRIFilters({order: \"asc\"})'>Дата up</button>"
+        }else{
+             return "<button @click='application.setRIFilters({order: \"desc\"})'>Дата down</button>"
+        }
+    }
+
+
+    this.getWorkerResponsesInvites = async (filters = {}) => {
+
+        let object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
+        object = Object.assign(object, filters)
+        Alpine.store('main').filters = object
+        const res = await makeRequest("respones_invites", object)
+        if (res.success) {
+            Alpine.store('main').responsesInvites = res.data
+            Alpine.store('main').responsesInvitesCount = res.count
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').responsesInvitesCount, Alpine.store('main').filters)
+            this.setPagination(pagination)
+        } else {
+            alert(res.msg)
+        }
+    }
+
+    this.setRIFilters = async (filters) => {
+        let object = Object.assign(Alpine.store('main').filters, filters)
+        await this.getWorkerResponsesInvites(object)
+    }
+
+    this.initWorkerResponsesInvitesPage = async () => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+        }
+        const initFilters = {page: 0, limit: 3, status:1, order: "desc"}
+        await this.getWorkerResponsesInvites(initFilters)
     }
 
     this.initResumes = async () => {
