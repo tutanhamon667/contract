@@ -41,6 +41,22 @@ def get_user(request):
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+def get_counters(request):
+    try:
+        if request.user.is_authenticated:
+            if request.user.is_worker:
+                not_viewed_response_invites = list(ResponseInvite.objects.filter(resume__user=request.user, viewed_by_worker=False).values())
+            else:
+                not_viewed_response_invites = list(
+                    ResponseInvite.objects.filter(job__company__user=request.user, viewed_by_customer=False).values())
+            data = {}
+            data["ri"] = not_viewed_response_invites
+            return JsonResponse({'success': True, 'data': data})
+        else:
+            return JsonResponse({'success': False, "code": 401})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
 def get_responses_invites(request):
     try:
         if request.user.is_authenticated:
@@ -61,6 +77,12 @@ def get_responses_invites(request):
                 order = request.POST["order"]
             count = 0
             ris, count = ResponseInvite.filter_search(user=request.user, order=order, type=type, status=status,page=page, limit=limit)
+            if request.user.is_worker:
+                for ri in ris:
+                    ResponseInvite.objects.filter(id=ri.id).update(viewed_by_worker=True)
+            else:
+                for ri in ris:
+                    ResponseInvite.objects.filter(id=ri.id).update(viewed_by_customer=True)
             res = []
             for ri in ris:
 
@@ -73,8 +95,10 @@ def get_responses_invites(request):
                 obj["resume"] = model_to_dict(ri.resume, ["id", "name"])
                 obj["company"] = model_to_dict(ri.job.company, ["id", "name"])
                 if ri.status == 1:
-                    chat = Chat.objects
+                    chat = Chat.objects.get(response_invite_id=obj["id"])
+                    obj["chat"] = {"uuid": str(chat.uuid)}
                 res.append(obj)
+
             return JsonResponse({'success': True, "data": res, "count": count})
         else:
             return JsonResponse({'success': False, "code": 401})
@@ -223,15 +247,17 @@ def response_invite(request):
     try:
         user = request.user
         access = Access(user)
-        resume_id = request.POST["resume_id"]
+
         action = request.POST["action"]
-        job_id = request.POST["job_id"]
+
         ri_id = request.POST["id"]
         code = 403
         if action == 'create':
             if user.is_worker:
+                resume_id = request.POST["resume_id"]
                 code = access.check_access("response_invite", resume_id, action)
             if user.is_customer:
+                job_id = request.POST["job_id"]
                 code = access.check_access("response_invite", job_id, action)
         if action != 'create':
             if user.is_worker:
@@ -248,7 +274,10 @@ def response_invite(request):
                 return JsonResponse({'success': False, "code": code})
         status = 0
         res = {}
+        response = None
         if action == 'create':
+            resume_id = request.POST["resume_id"]
+            job_id = request.POST["job_id"]
             if user.is_worker:
                 response = ResponseInvite.create_response(user, job_id, resume_id)
             if user.is_customer:
@@ -261,9 +290,29 @@ def response_invite(request):
             status = 3
         if action != 'create':
             response = ResponseInvite.update_response_invite(ri_id, user, status)
+        if action == 'accept':
+            if user.is_worker:
+                chat = Chat(customer=response.job.company.user, worker=user, response_invite=response)
+                chat.save()
+            if user.is_customer:
+                chat = Chat(customer=user, worker=response.resume.user, response_invite=response)
+                chat.save()
+        if action == 'decline':
+            chat = Chat.objects.get(response_invite=response)
+            if user.is_worker:
+                chat.deleted_by_worker = True
+            else:
+                chat.deleted_by_customer = True
+            chat.save()
         if action == 'delete':
             ri = ResponseInvite.objects.get(id=ri_id)
-            ri.set_deleted()
+            if user.is_worker:
+                ri.deleted_by_worker = True
+            else:
+                ri.deleted_by_customer = True
+            ri.save()
+            if ri.deleted_by_customer and ri.deleted_by_worker:
+                ri.set_deleted()
         res["id"] = response.id
         res["job_id"] = int(response.job_id)
         res["resume_id"] = int(response.resume_id)

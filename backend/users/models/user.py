@@ -863,6 +863,11 @@ class ResponseInvite(models.Model):
 		default=None
 	)
 
+	deleted_by_customer = models.BooleanField(default=False)
+	deleted_by_worker = models.BooleanField(default=False)
+	viewed_by_customer = models.BooleanField(default=False)
+	viewed_by_worker = models.BooleanField(default=False)
+
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
@@ -882,7 +887,7 @@ class ResponseInvite(models.Model):
 		if type is not None:
 			objs = objs.filter(type=type).order_by(order_z + 'create_date')
 			count = len(objs)
-		else:
+		if status is not None:
 			objs = objs.filter(status=status).order_by(order_z + 'create_date')
 			count = len(objs)
 		return objs[page * limit: page*limit + limit], count
@@ -913,9 +918,9 @@ class ResponseInvite(models.Model):
 	@classmethod
 	def get_by_user(cls, user):
 		if user.is_worker:
-			return cls.objects.filter(resume__user_id=user.id)
+			return cls.objects.filter(resume__user_id=user.id, deleted_by_worker=False)
 		else:
-			return cls.objects.filter(job__company__user_id=user.id)
+			return cls.objects.filter(job__company__user_id=user.id, deleted_by_customer=False)
 
 	@classmethod
 	def create_invite(cls, user: User, job_id: int, resume_id: int) :

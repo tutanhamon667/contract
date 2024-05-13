@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+
+    <div class="container" x-data>
+        <h1>Кандидаты</h1>
+        <section x-init="initRI()">
+            <div class="d-flex">
+                <div class="px-1">
+                    <a class="btn" :class="application.getRIToggleBtnClass(null, 1)" @click="application.setRIFilters({status: 1, type: null})">Собеседования
+                    </a>
+                    <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 1).length">
+                        <span class="counter-text"
+                              x-text="$store.main.counters.ri.filter(i => i.status === 1).length"></span>
+                    </template>
+                </div>
+                <div class="px-1">
+                    <a class="btn"  :class="application.getRIToggleBtnClass(0, 0)" @click="application.setRIFilters({status: 0, type: 0})">Отклики</a>
+                    <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 0 && i.type === 0).length">
+                        <span class="counter-text"
+                              x-text="$store.main.counters.ri.filter(i => i.status === 0 && i.type === 0).length"></span>
+                    </template>
+                </div>
+                <div class="px-1">
+                    <a class="btn"  :class="application.getRIToggleBtnClass(1, 0)" @click="application.setRIFilters({status: 0, type: 1})">Приглашенные</a>
+                    <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 0 && i.type === 1).length">
+                        <span class="counter-text"
+                              x-text="$store.main.counters.ri.filter(i => i.status === 0 && i.type === 1).length"></span>
+                    </template>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="link" scope="col"
+                                x-html="application.getTableDateOrderEl($store.main.filters)"></th>
+                            <th scope="col">Вакансия</th>
+                            <th scope="col">Ник кандидата</th>
+                            <th scope="col">Резюме</th>
+                            <th scope="col" colspan="3" class="text-end"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <template x-for="ri in $store.main.responsesInvites">
+                            <tr>
+                                <td class="normal" scope="row"
+                                    x-text="application.formatShortDate(ri.create_date)"></td>
+                                <td class="link"><a :href="'/jobs/'+ ri.job.id" x-text="ri.job.title"></a></td>
+                                <td><p x-text="ri.worker.display_name"></p>
+                                <td class="link"><a :href="'/resumes/'+ ri.resume.id" x-text="ri.resume.name"></a>
+                                </td>
+                                <td colspan="3" class="text-end link">
+                                    <template x-if="$store.main.user.id>=0  && $store.main.user.is_customer">
+                                        <div x-data="{item: $store.main.getResponseInviteExtraElement(ri)}">
+                                            <div class="">
+                                                <template x-for="(res, index) in item">
+                                                    <div class="right mr-5">
+                                                        <template x-if="res.element === 'link'">
+                                                            <a :href="res.link" x-text="res.text"
+                                                               :class="res.class"></a>
+                                                        </template>
+
+                                                        <template x-if="res.element === 'status'">
+                                                            <div>
+
+                                                                <p x-text="res.text"></p>
+                                                            </div>
+
+                                                        </template>
+                                                        <template x-if="res.element === 'form'">
+
+                                                            <template x-for="action in res.actions"
+                                                                      :key="action.action">
+                                                                <div class="right mr-5">
+                                                                    <template x-if="action.action !== 'create'">
+                                                                        <button x-on:click="application.updateResponse(action.action, res.id)"
+                                                                                x-text="action.text"
+                                                                                :class="action.class"
+                                                                                class="link"></button>
+                                                                    </template>
+
+                                                                </div>
+
+                                                            </template>
+
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+
+                                        </div>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+
+
+                        </tbody>
+                    </table>
+                    <template x-if=" $store.main.pagination.length > 1">
+                        <div class="pagination-container flex">
+                            <template x-for="paginationItem in $store.main.pagination">
+                                <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">
+                                    <template x-if="paginationItem.active">
+                                        <button @click="application.setRIFilters({page:paginationItem.text})"
+                                                x-text="paginationItem.text+1"
+                                                class="mr-5 pagination-btn active-page"></button>
+                                    </template>
+                                    <template x-if="!paginationItem.active">
+                                        <button @click="application.setRIFilters({page:paginationItem.text})"
+                                                x-text="paginationItem.text+1"
+                                                class="mr-5 pagination-btn"></button>
+                                    </template>
+                                </div>
+
+
+                            </template>
+
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <script>
+        const initRI = () => {
+            application.initCustomerResponsesInvitesPage()
+        }
+    </script>
+
+
+
+
+{% endblock content %}

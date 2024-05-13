@@ -76,7 +76,27 @@ def favorite_view(request):
 
 def worker_responses_invites_view(request):
 	if request.method == 'GET':
+		user = request.user
+		access = Access(user)
+		code = access.check_access("worker_responses_invites_view")
+		if code != 200:
+			if code == 401:
+				return redirect('signin')
+			else:
+				return HttpResponse(status=code)
 		return render(request, './pages/worker_ri.html', {	})
+
+def customer_responses_invites_view(request):
+	if request.method == 'GET':
+		user = request.user
+		access = Access(user)
+		code = access.check_access("customer_responses_invites_view")
+		if code != 200:
+			if code == 401:
+				return redirect('signin')
+			else:
+				return HttpResponse(status=code)
+		return render(request, './pages/customer_ri.html', {})
 
 
 def job_view(request, job_id):

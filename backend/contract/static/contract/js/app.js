@@ -251,6 +251,82 @@ const alpineApp = function () {
             return ''
         },
 
+         getResponseInviteExtraElement: (invite) => {
+            const user = Alpine.store('main').user
+            if (user.id >= 0) {
+
+                if (invite.status === 1) {
+                    return [
+                    { element: 'form',
+                            text: '',
+
+                            actions: [ {
+                                class:'danger',
+                                action: "decline",
+                                text: 'Покинуть чат'
+                            }],
+                            id: invite.id},{element: 'link', link: '/chat/' + invite.chat.uuid, text: 'Перейти в чат'},]
+                }
+                if (invite.status === 2) {
+                    return [{element: 'status', text: 'Отклик отклонён'}]
+                }
+                if (invite.status === 3) {
+                    return [{element: 'status', text: 'Отклик удалён'}]
+                }
+                if (invite.status === 0) {
+                    if ( user.is_customer) {
+                        if (invite.type === 0 ) {
+                            return [{
+                                element: 'form',
+
+                                text: '',
+                                actions: [{action: "accept", text: 'Принять приглашение'}, {
+                                    action: "decline",
+                                    class:'danger',
+                                    text: 'Отказаться'
+                                }],
+                                id: invite.id
+                            }]
+                        }
+                        if (invite.type === 1 ) {
+                            return [{element: 'status', text: 'Ждёт подтверждение'}]
+                        }
+                    }else{
+                          if (invite.type === 0 ) {
+                            return [{
+                                element: 'form',
+
+                                text: '',
+                                actions: [{action: "accept", text: 'Принять приглашение'}, {
+                                    action: "decline",
+                                    class:'danger',
+                                    text: 'Отказаться'
+                                }],
+                                id: invite.id
+                            }]
+                        }
+                        if (invite.type === 1 ) {
+                          return [{element: 'status', text: 'Ждёт подтверждение'}]
+                        }1
+                    }
+
+                }
+                if (typeof invite.id === 'undefined') {
+                    if (Alpine.store('main').resumes.length) {
+                        return {
+                            element: 'form',
+                            text: '',
+                            actions: [{action: "create", text: 'Откликнуться'}],
+                            id: null
+                        }
+                    } else {
+                        return {element: 'link', link: '/profile/resume', text: 'Создать резюме для отклика'}
+                    }
+
+                }
+            }
+            return ''
+        },
 
         getResponseInviteStatus: (id) => {
             const user = Alpine.store('main').user
@@ -482,7 +558,14 @@ const alpineApp = function () {
             }
         }
     }
+    this.updateResponse = async (action, id) => {
 
+        const result = await Alpine.store('main').sendResponseInvite(action, id)
+        if (result.success === true) {
+            await this.setRIFilters({})
+            await this.getCounters()
+        }
+    }
     this.sendResponse = async (action, id, job_id) => {
 
         const selectedItem = Alpine.store('main').selectedResume || Alpine.store('main').resumes[0].id
@@ -848,9 +931,9 @@ const alpineApp = function () {
 
     this.getTableDateOrderEl = (filters) => {
         if (filters.order === "desc"){
-            return "<button @click='application.setRIFilters({order: \"asc\"})'>Дата up</button>"
+            return "<button @click='application.setRIFilters({order: \"asc\"})'>Дата ↑</button>"
         }else{
-             return "<button @click='application.setRIFilters({order: \"desc\"})'>Дата down</button>"
+             return "<button @click='application.setRIFilters({order: \"desc\"})'>Дата ↓</button>"
         }
     }
 
@@ -866,14 +949,26 @@ const alpineApp = function () {
             Alpine.store('main').responsesInvitesCount = res.count
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').responsesInvitesCount, Alpine.store('main').filters)
             this.setPagination(pagination)
+            await this.getCounters()
         } else {
             alert(res.msg)
         }
     }
 
     this.setRIFilters = async (filters) => {
+        Alpine.store('main').responsesInvites = []
+         Alpine.store('main').responsesInvitesCount = 0
         let object = Object.assign(Alpine.store('main').filters, filters)
         await this.getWorkerResponsesInvites(object)
+    }
+
+    this.initCustomerResponsesInvitesPage = async () => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+        }
+        const initFilters = {page: 0, limit: 3, status:1, order: "desc"}
+        await this.getWorkerResponsesInvites(initFilters)
     }
 
     this.initWorkerResponsesInvitesPage = async () => {
@@ -898,6 +993,26 @@ const alpineApp = function () {
         }
 
         await this.filterResumes()
+    }
+
+    this.getRIToggleBtnClass = (type, status) => {
+        const filters = Alpine.store('main').filters
+        if (filters.type == type && filters.status === status){
+            return 'btn-primary'
+        }else{
+            return 'btn-white'
+        }
+    }
+
+    this.getTextWithCounter = (text, count) => {
+
+    }
+
+    this.getCounters = async() => {
+        const counters = await makeRequest('get_counters')
+        if (counters.success){
+            Alpine.store('main').counters = counters.data
+        }
     }
 
     this.initResumePage = async (id) => {

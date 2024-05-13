@@ -51,6 +51,11 @@ class Chat(models.Model):
         verbose_name="отклик"
     )
 
+    deleted_by_customer = models.BooleanField(default=False)
+    deleted_by_worker = models.BooleanField(default=False)
+    deleted_by_moderator = models.BooleanField(default=False)
+
+
     type = models.IntegerField(verbose_name="Тип чата", default=CHAT_TYPE["RESPONSE_INVITE"], null=False)
 
 

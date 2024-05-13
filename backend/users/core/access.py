@@ -9,6 +9,20 @@ class Access:
 		self.user = user
 
 	def check_access(self, entity: str, entity_id=None, action=USER_ACTIONS["get"]):
+		if entity == "customer_responses_invites_view":
+			if not self.user.is_authenticated:
+				return 401
+			if self.user.is_customer:
+				return 200
+			else:
+				return 403
+		if entity == "worker_responses_invites_view":
+			if not self.user.is_authenticated:
+				return 401
+			if self.user.is_worker:
+				return 200
+			else:
+				return 403
 		if entity == "response_invite":
 			if not self.user.is_authenticated:
 				return 401

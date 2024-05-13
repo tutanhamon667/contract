@@ -20,7 +20,7 @@ from users.controllers.test_view import test
 from . import settings
 from users.views import captcha_view
 from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
-    favorite_view, worker_responses_invites_view
+    favorite_view, worker_responses_invites_view, customer_responses_invites_view
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -74,6 +74,7 @@ urlpatterns = [
     #path('get_btc_usd', get_btc_usd, name='get_btc_usd'),
     path('profile/customer_access', customer_access, name='customer_access'),
     path('responses_invites', worker_responses_invites_view, name='responses_invites_page'),
+    path('candidats', customer_responses_invites_view, name='candidats_page'),
     path('article/<int:article_id>', article_view, name='article'),
     path('chat/', include("chat.urls")),
     path('api/', include("users.urls")),

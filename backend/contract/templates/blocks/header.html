@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="container">
+<div class="container" x-data>
     <nav class="navbar navbar-expand-md navbar-light bg-body-tertiary" style="min-width: 370px">
         <!-- Container wrapper -->
         <div class="container-fluid">
@@ -35,6 +35,16 @@
                                 <a class="nav-link {% if url_name == 'resumes' %}active{% endif %}"
                                    href="{% url 'resumes' %}">Поиск по базе резюме</a>
                             </li>
+                             <li class="nav-item">
+                                <a class="nav-link {% if url_name == 'candidats_page' %}active{% endif %}"
+                                   href="{% url 'candidats_page' %}">
+                                    Кандидаты
+                                    <template x-if="$store.main.counters && $store.main.counters.ri.length">
+                                        <span class="counter-text" x-text="$store.main.counters.ri.length"></span>
+                                    </template>
+
+                                </a>
+                            </li>
                         {% endif %}
                         {% if user.is_worker %}
                             <li class="nav-item">
@@ -47,6 +57,9 @@
                                 <a class="nav-link {% if url_name == 'responses_invites_page' %}active{% endif %}"
                                    href="{% url 'responses_invites_page' %}">
                                     Приглашения
+                                    <template x-if="$store.main.counters && $store.main.counters.ri.length">
+                                        <span class="counter-text" x-text="$store.main.counters.ri.length"></span>
+                                    </template>
                                 </a>
                             </li>
                         {% endif %}
