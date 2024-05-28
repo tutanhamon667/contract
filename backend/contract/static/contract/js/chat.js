@@ -1,5 +1,23 @@
 function Chat(user_id, chat_id ) {
 
+    const makeRequest = function(url, data, callback){
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        $.ajax({
+            url: `/api/${url}`,
+            data: data,
+            beforeSend: function(request) {
+                request.setRequestHeader("X-CSRFToken", csrftoken);
+            },
+            method: "POST",
+            success: (data) => {
+                callback(true, data)
+            },
+            error: (data) => {
+                callback(false, data)
+            }
+        })
+    }
+
     document.addEventListener('alpine:init', () => {
         class FileUpload {
 
@@ -159,7 +177,7 @@ function Chat(user_id, chat_id ) {
                         }
 
                         setTimeout(() => {
-                            document.querySelector('.chat-history ul').scroll(0, 10000000000000)
+                            document.querySelector('.MessageList').scroll(0, 10000000000000)
                             const chat = Alpine.store('chatsData').getActiveChat()
                             if (chat && chat.messages.length) {
                                 const data = {
@@ -176,7 +194,7 @@ function Chat(user_id, chat_id ) {
                         const chat = Alpine.store('chatsData').chats.find(item => item.chat_uuid === data.chat_uuid)
                         chat.messages = data.messages
                         setTimeout(() => {
-                            document.querySelector('.chat-history ul').scroll(0, 10000000000000)
+                            document.querySelector('.MessageList').scroll(0, 10000000000000)
                             const chat = Alpine.store('chatsData').getActiveChat()
                             if (chat && chat.messages.length) {
                                 const data = {
@@ -234,6 +252,7 @@ function Chat(user_id, chat_id ) {
                 }
                 return res
             },
+
             setActiveChat: (uuid) => {
                 Alpine.store('chatsData').chats.forEach(item => item.active = false)
                 Alpine.store('chatsData').chats.forEach(item => {
@@ -270,25 +289,32 @@ function Chat(user_id, chat_id ) {
                 }
 
 
+            },
+            formatShortTime: (date) => {
+                const d = new Date(date);
+                return ("0" + d.getHours()).slice(-2) + ":" + ("0" + (d.getMinutes() + 1)).slice(-2)
+            },
+
+            formatShortDate: (date) => {
+                const d = new Date(date);
+                return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear()
+            },
+            sendMessage: () => {
+                 if (Alpine.store('chatsData').message || Alpine.store('chatsData').file_id) {
+                    let chat = Alpine.store('chatsData').getActiveChat()
+                    socket.chatSocket.send(JSON.stringify({
+                        type: 'SEND_MESSAGE',
+                        chat_uuid: chat.chat_uuid,
+                        message_type: Alpine.store('chatsData').file_id ? 2 : 0,
+                        file_id: Alpine.store('chatsData').file_id,
+                        message: Alpine.store('chatsData').message
+                    }))
+                    Alpine.store('chatsData').message = ''
+                    Alpine.store('chatsData').file_id = null
+                }
             }
 
         })
-
-        const sendMessage = () => {
-             if (Alpine.store('chatsData').message || Alpine.store('chatsData').file_id) {
-                let chat = Alpine.store('chatsData').getActiveChat()
-                socket.chatSocket.send(JSON.stringify({
-                    type: 'SEND_MESSAGE',
-                    chat_uuid: chat.chat_uuid,
-                    message_type: Alpine.store('chatsData').file_id ? 2 : 0,
-                    file_id: Alpine.store('chatsData').file_id,
-                    message: Alpine.store('chatsData').message
-                }))
-                Alpine.store('chatsData').message = ''
-                Alpine.store('chatsData').file_id = null
-                document.querySelector('#fileupload').value = null
-            }
-        }
 
         Alpine.bind('chat_text_input', {
             type: 'text',
@@ -297,7 +323,7 @@ function Chat(user_id, chat_id ) {
             },
             '@keypress'(event) {
                 if (event.key === 'Enter') {
-                    sendMessage()
+                    Alpine.store('chatsData').sendMessage()
                 }
 
             }
@@ -305,13 +331,13 @@ function Chat(user_id, chat_id ) {
         Alpine.bind('chat_submit_btn', {
             type: 'button',
             '@click'(e) {
-                 sendMessage()
+                 Alpine.store('chatsData').sendMessage()
             },
 
         })
         Alpine.bind('chat_item', {
             '@click'(event) {
-                selectChat(event.srcElement.closest("li").id)
+                selectChat(event.srcElement.closest('.ListItem').id)
 
             },
         })
@@ -338,7 +364,7 @@ function Chat(user_id, chat_id ) {
             socket.chatSocket.send(JSON.stringify({type: 'JOIN_CHAT', chat_uuid: id}))
             const test = Alpine.store('chatsData').chats
             setTimeout(() => {
-                document.querySelector('.chat-history ul').scroll(0, 10000000000000)
+                document.querySelector('.MessageList').scroll(0, 10000000000000)
                 const chat = Alpine.store('chatsData').getActiveChat()
                 if (chat && chat.messages.length) {
                     const data = {

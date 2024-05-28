@@ -75,8 +75,10 @@ class ChatConsumer(WebsocketConsumer):
 				else:
 					last_message = []
 				chat_title = ''
+				ri_id = None
 				if chat.response_invite:
 					chat_title = chat.response_invite.job.title
+					ri_id = chat.response_invite_id
 				item = {"self_user": None, "other_user": None, "chat_uuid": str(chat.uuid), "messages": last_message,
 						"not_read_count": 0, "chat_title": chat_title}
 
@@ -92,14 +94,16 @@ class ChatConsumer(WebsocketConsumer):
 					self_user_photo = None
 				item["other_user"] = {
 					'photo': other_user_photo,
-					'display_name': other_user.display_name
+					'display_name': other_user.display_name,
+					'is_moderator': other_user.is_moderator
 				}
 				item["self_user"] = {
 					'photo': self_user_photo,
-					'display_name': self_user.display_name
+					'display_name': self_user.display_name,
 				}
 				not_read_messages = Message.objects.filter(chat=chat, sender=other_user, read=False)
 				item["not_read_count"] = len(not_read_messages)
+				item["ri_id"] = ri_id
 				response.append(item)
 			self.accept()
 			self.send(text_data=json.dumps({"type": "CHAT_LIST", "chats": response}))

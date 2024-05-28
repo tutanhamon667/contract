@@ -11,7 +11,7 @@
 
         <div class="Transition full-height">
             <div id="Main" class="left-column-shown left-column-open Transition_slide Transition_slide-active">
-                <div id="LeftColumn" class="Transition">
+                <div id="LeftColumn" class="Transition chat-panel chat-list">
                     <div id="LeftColumn-main" class="Transition_slide Transition_slide-active">
                         <div class="LeftMainHeader">
                             <div id="LeftMainHeader" class="left-header">
@@ -52,78 +52,118 @@
                         <div class="Transition">
                             <div class="ChatFolders not-open not-shown Transition_slide Transition_slide-active">
                                 <div class="Transition" x-data>
-                                    <template x-for="chat in $store.chatsData.chats">
-                                    <div class="chat-list custom-scroll Transition_slide Transition_slide-active"
-                                         style="transition: none 0s ease 0s; transform: translate3d(0px, 0px, 0px);">
-                                        <div class="overscroll-trigger" style="display: block;"></div>
-                                        <div style="position: relative;">
-                                            <div class="ListItem Chat chat-item-clickable private" style="top: 0px;"><a
-                                                    class="ListItem-button" role="button" href="#488699562"
-                                                    tabindex="0">
-                                                <div class="status status-clickable">
-                                                    <div class="Avatar size-large peer-color-1" id="peer-story488699562"
-                                                         data-peer-id="488699562">
-                                                        <div class="inner"><img
-                                                                src=""
-                                                                class="Avatar__media avatar-media opacity-transition slow open shown"
-                                                                alt="Артем К" decoding="async" draggable="false"></div>
-                                                    </div>
-                                                    <div class="avatar-badge-wrapper">
-                                                        <div class="avatar-online"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="info">
-                                                    <div class="info-row">
-                                                        <div class="title QljEeKI5"><h3 dir="auto" role="button"
-                                                                                        class="fullName AS54Cntu">Артем
-                                                            К</h3>
-                                                        </div>
-                                                        <div class="separator"></div>
-                                                        <div class="LastMessageMeta"><span class="time">Sun</span></div>
-                                                    </div>
-                                                    <div class="subtitle">
-                                                        <p
-                                                                class="last-message shared-canvas-container"
-                                                                dir="ltr"><span
-                                                                class="media-preview"><img
-                                                                src=""
-                                                                alt="" class="media-preview--image"
-                                                                draggable="false"><span>https://www.fontanka.ru/2024/05/25/73622801/</span></span>
-                                                        </p>
-                                                        <div class="ChatBadge-transition open shown">
-                                                            <div class="ChatBadge muted unread"><span
-                                                                    class="tgKbsVmz"><span>2</span><span>1</span><span>1</span></span>
+                                    <div class="chat-list custom-scroll Transition_slide"
+                                         style="transition: none 0s ease 0s; transform: translate3d(0px, 0px, 0px);"
+                                    >
+                                        <template x-for="chat in $store.chatsData.chats">
+                                            <div :class="chat.active? 'chat-active': ''"
+
+                                                 :key="chat.chat_uuid"
+                                                 x-bind="chat_item">
+                                                <div class="overscroll-trigger" style="display: block;"></div>
+                                                <div style="position: relative;">
+                                                    <div class="ListItem Chat chat-item-clickable private"
+                                                         :id="chat.chat_uuid"
+                                                         style="top: 0px;">
+                                                        <div class="ListItem-button">
+                                                            <div class="ripple-container"></div>
+                                                            <div class="status status-clickable ">
+                                                                <div class="Avatar size-large peer-color-1"
+                                                                     id="peer-story488699562"
+                                                                     data-peer-id="488699562">
+                                                                    <div class="inner">
+                                                                        <template x-if="chat.other_user.photo">
+                                                                            <img :src="chat.other_user.photo? chat.other_user.photo: '/media/company/images/logo.png'"
+                                                                                 alt="avatar"
+                                                                                 class="Avatar__media avatar-media opacity-transition slow open shown "
+                                                                                 :alt="chat.other_user.display_name"
+                                                                            >
+                                                                        </template>
+
+                                                                        <template x-if="!chat.other_user.photo">
+                                                                            <div class="empty-photo-chat Avatar__media avatar-media"></div>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="avatar-badge-wrapper">
+                                                                    <div class="avatar-online"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="info" style="flex:1;">
+                                                                <div class="info-row">
+                                                                    <div class="title QljEeKI5">
+                                                                        <template x-if="chat.other_user.is_moderator">
+                                                                              <p dir="auto" class="fullName AS54Cntu red"
+                                                                               x-text="chat.other_user.display_name + ' (модератор)'">
+                                                                            </p>
+                                                                        </template>
+                                                                         <template x-if="!chat.other_user.is_moderator">
+                                                                              <p dir="auto" class="fullName AS54Cntu"
+                                                                           x-text="chat.other_user.display_name">
+                                                                        </p>
+                                                                        </template>
+
+                                                                    </div>
+                                                                    <div class="separator"></div>
+                                                                    <div class="LastMessageMeta">
+                                                                        <span class="time"
+                                                                              x-text="chat.messages.length?$store.chatsData.formatShortDate(chat.messages[chat.messages.length - 1].created):''"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="subtitle">
+                                                                    <div class="subtitle QljEeKI5" style="">
+                                                                        <p class="last-message shared-canvas-container"
+                                                                           x-text="chat.messages.length?chat.messages[chat.messages.length - 1].sender+ ': ' +  chat.messages[chat.messages.length - 1].message: ''"></p>
+                                                                    </div>
+                                                                    <template
+                                                                            x-if="chat.messages.length && chat.messages[chat.messages.length - 1].file_name">
+                                                                        <a x-text="chat.messages[chat.messages.length - 1].file_name"
+                                                                           :href="'download/' + chat.messages[chat.messages.length - 1].file_id"
+                                                                           target="_blank"></a>
+                                                                    </template>
+                                                                    <div class="ChatBadge-transition open shown">
+                                                                        <template x-if="chat.not_read_count !== 0">
+                                                                            <div class="ChatBadge muted unread">
+                                                                                 <span x-text="chat.not_read_count"
+                                                                                       styler="display: inline-flex;
+                                                                             white-space: pre;"></span>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
-                                            </a></div>
+
+                                            </div>
+
                                         </template>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="NewChatButton">
+                                <button type="button" class="Button default primary round" aria-label="New Message"
+                                        title="New Message" tabindex="-1"><i class="icon icon-new-chat-filled"></i><i
+                                        class="icon icon-close"></i></button>
+                                <div class="Menu compact">
+                                    <div role="presentation"
+                                         class="bubble menu-container custom-scroll bottom right opacity-transition fast not-open not-shown"
+                                         style="transform-origin: right bottom;">
+                                        <div role="menuitem" tabindex="0" class="MenuItem compact"><i
+                                                class="icon icon-channel"></i>Связаться с модератором
                                         </div>
 
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="NewChatButton">
-                            <button type="button" class="Button default primary round" aria-label="New Message"
-                                    title="New Message" tabindex="-1"><i class="icon icon-new-chat-filled"></i><i
-                                    class="icon icon-close"></i></button>
-                            <div class="Menu compact">
-                                <div role="presentation"
-                                     class="bubble menu-container custom-scroll bottom right opacity-transition fast not-open not-shown"
-                                     style="transform-origin: right bottom;">
-                                    <div role="menuitem" tabindex="0" class="MenuItem compact"><i
-                                            class="icon icon-channel"></i>Связаться с модератором
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
-                <div id="MiddleColumn" class="mask-image-disabled"
-                     style="--composer-hidden-scale: 1; --toolbar-hidden-scale: 1; --unpin-hidden-scale: 1.941860465116279; --toolbar-unpin-hidden-scale: 0.5149700598802395,; --composer-translate-x: 0px; --toolbar-translate-x: 0px; --pattern-color: #0A0A0A8C;">
+                <div id="MiddleColumn" class="mask-image-disabled chat-panel chat-list"
+                     style=" --composer-hidden-scale: 1; --toolbar-hidden-scale: 1; --unpin-hidden-scale: 1.941860465116279; --toolbar-unpin-hidden-scale: 0.5149700598802395,; --composer-translate-x: 0px; --toolbar-translate-x: 0px; --pattern-color: #0A0A0A8C;"
+                     x-data>
                     <div class="C6IaXYew nXhZtCma"></div>
                     <div id="middle-column-portals"></div>
                     <div class="messages-layout">
@@ -135,60 +175,22 @@
                                                 title="Back">
                                             <div class="animated-close-icon state-back"></div>
                                         </button>
-                                        <div class="unread-count active">146</div>
                                     </div>
                                     <div class="chat-info-wrapper">
                                         <div class="ChatInfo">
-                                            <div class="Avatar size-medium peer-color-5 interactive"
-                                                 id="peer-story115263265" data-peer-id="115263265">
-
-                                            </div>
                                             <div class="info">
-                                                <div class="title QljEeKI5"><h3 dir="auto" role="button"
-                                                                                class="fullName AS54Cntu">Ella️</h3>
+                                                <div class="title QljEeKI5">
+                                                    <p class="fullName AS54Cntu"
+                                                        x-text="$store.chatsData.getOtherUser().other_user.display_name"></p>
                                                 </div>
-                                                <span class="status"><span class="user-status" dir="auto">last seen recently</span></span>
+                                            </div>
+                                            <div class="chat-action-container">
+                                                <div class="mr-15">
+                                                    <span class="chat-exit-btn"><i class="chat-exit-icon mr-5 "></i><span>Покинуть чат</span> </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="HeaderPinnedMessageWrapper Guj4V7W_ opacity-transition fast open shown">
-                                <button type="button" class="Button smaller translucent round"
-                                        aria-label="Unpin message" title="Unpin message"><i class="icon icon-close"></i>
-                                </button>
-                                <div class="GgG7nh8p">
-
-                                    <div class="Transition ud4LJMTI">
-                                        <div class="Transition_slide Transition_slide-active">
-                                            <div class="_M8tJtJD"></div>
-                                        </div>
-                                    </div>
-                                    <div class="LPdDfCw0">
-                                        <div class="bY9umAoY" dir="auto"><span
-                                                class="tgKbsVmz"><span>P</span><span>i</span><span>n</span><span>n</span><span>e</span><span>d</span><span> </span><span>M</span><span>e</span><span>s</span><span>s</span><span>a</span><span>g</span><span>e</span><span> </span></span>
-                                        </div>
-                                        <div class="Transition lo853Tki">
-                                            <div class="Transition_slide Transition_slide-active"><p dir="auto"
-                                                                                                     class="Ko14czNN">
-                                                <span>Я тебе рекомендую взять макбарен</span></p></div>
-                                        </div>
-                                    </div>
-                                    <div class="ripple-container"></div>
-                                </div>
-                            </div>
-                            <div class="header-tools">
-                                <div class="HeaderActions">
-                                    <button type="button" class="Button smaller translucent round"
-                                            aria-label="Search this chat" title="Search this chat"><i
-                                            class="icon icon-search" aria-hidden="true"></i></button>
-                                    <button type="button" class="Button smaller translucent round" aria-label="Call"
-                                            title="Call"><i class="icon icon-phone" aria-hidden="true"></i></button>
-                                    <button type="button" class="Button smaller translucent round has-ripple"
-                                            aria-label="More actions" title="More actions"><i class="icon icon-more"
-                                                                                              aria-hidden="true"></i>
-                                        <div class="ripple-container"></div>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -198,30 +200,94 @@
                                      data-normal-height="819">
                                     <div class="messages-container">
                                         <div class="backwards-trigger"></div>
-                                        <div class="message-date-group">
-                                            <div class="sticky-date interactive"><span dir="auto">Friday</span></div>
-                                            <div id="message49819"
-                                                 class="Message message-list-item allow-selection last-in-group last-in-list open shown"
-                                                 data-message-id="49819">
-                                                <div class="bottom-marker" data-message-id="49819"
-                                                     data-should-update-views="false"></div>
-                                                <div class="message-select-control"></div>
-                                                <div class="message-content-wrapper can-select-text">
-                                                    <div class="message-content peer-color-5 text has-shadow has-solid-background has-appendix"
-                                                         dir="auto" style="">
-                                                        <div class="content-inner" dir="auto">
-                                                            <div class="text-content clearfix with-meta" dir="auto">
-                                                                Счастье в том, чтобы не зависеть от кого-то или
-                                                                чего-то<span class="MessageMeta" dir="ltr"
-                                                                             data-ignore-on-paste="true"><span
-                                                                    class="message-time">22:43</span></span></div>
+                                        <div class="message-date-group"
+                                             x-data="{self_nick_name: '{{ user.display_name }}', acitve_chat:'$store.chatsData.activeChatUUID'}">
+                                            <template x-for="message in $store.chatsData.getActiveChatMessages">
+
+                                                <div id="message49819"
+                                                     class="Message message-list-item allow-selection last-in-group own last-in-list open shown"
+
+                                                     data-message-id="49819" :key="message.created">
+                                                    <div class="bottom-marker" data-message-id="49819"
+                                                         data-should-update-views="false"></div>
+                                                    <div class="message-select-control"></div>
+                                                    <div class="message-content-wrapper can-select-text">
+                                                        <div class="message-content peer-color-5 text has-shadow has-solid-background has-appendix"
+                                                             dir="auto" style="">
+                                                            <div class="content-inner" dir="auto">
+                                                                <div class="text-content clearfix with-meta" dir="auto">
+                                                                    <template x-if="message.file_name">
+                                                                        <a x-text="message.file_name"
+                                                                           :href="'download/' + message.file_id"
+                                                                           target="_blank"></a>
+                                                                        <span class="MessageMeta" dir="ltr"
+                                                                              data-ignore-on-paste="true"><span
+                                                                                class="message-time"
+                                                                                x-text="message.created"></span></span>
+                                                                    </template>
+                                                                    <template x-if="message.message">
+                                                                        <div class="message-container">
+                                                                            <div class="message-photo">
+                                                                                <template
+                                                                                        x-if="message.sender_id == $store.chatsData.user_id">
+                                                                                    <div>
+                                                                                        <template
+                                                                                                x-if="$store.chatsData.getActiveChat().self_user.photo">
+                                                                                            <img :src="$store.chatsData.getActiveChat().self_user.photo"
+                                                                                                 alt="avatar"
+                                                                                                 class="Avatar__media avatar-media opacity-transition slow open shown "
+                                                                                            >
+                                                                                        </template>
+
+                                                                                        <template
+                                                                                                x-if="!$store.chatsData.getActiveChat().self_user.photo">
+                                                                                            <div class="empty-photo-chat Avatar__media avatar-media"></div>
+                                                                                        </template>
+                                                                                    </div>
+
+                                                                                </template>
+                                                                                <template
+                                                                                        x-if="message.sender_id !== $store.chatsData.user_id">
+                                                                                    <div>
+                                                                                        <template
+                                                                                                x-if="$store.chatsData.getActiveChat().other_user.photo">
+                                                                                            <img :src="$store.chatsData.getActiveChat().other_user.photo"
+                                                                                                 alt="avatar"
+                                                                                                 class="Avatar__media avatar-media opacity-transition slow open shown "
+                                                                                            >
+                                                                                        </template>
+
+                                                                                        <template
+                                                                                                x-if="!$store.chatsData.getActiveChat().other_user.photo">
+                                                                                            <div class="empty-photo-chat Avatar__media avatar-media"></div>
+                                                                                        </template>
+                                                                                    </div>
+
+                                                                                </template>
+
+
+                                                                            </div>
+                                                                            <div class="message-content">
+                                                                                <div class="message-info">
+                                                                                    <div class="message-sender"
+                                                                                         x-text="message.sender"></div>
+                                                                                    <div class="message-date"
+                                                                                         x-text="$store.chatsData.formatShortTime(message.created)"></div>
+                                                                                </div>
+                                                                                <div class="message-text"
+                                                                                     x-text="message.message"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+                                                            <div class="message-action-buttons"></div>
+
+
                                                         </div>
-                                                        <div class="message-action-buttons"></div>
-
-
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </template>
                                         </div>
                                         <div class="forwards-trigger"></div>
                                         <div class="fab-trigger"></div>
@@ -236,173 +302,34 @@
 
                                                 <div id="message-input-text">
                                                     <div class="custom-scroll input-scroller">
-                                                        <div class="input-scroller-content">
-                                                            <div id="editable-message-text"
-                                                                 class="form-control allow-selection"
-                                                                 contenteditable="true" role="textbox" dir="auto"
-                                                                 tabindex="0" aria-label="Message"
-                                                                 style="transition: color 50ms linear 0s !important;"></div>
-                                                            <span class="placeholder-text" dir="auto">Message</span>
+                                                        <div class="input-scroller-content d-flex">
+                                                            <input type="text" class="form-control"
+                                                                   x-bind="chat_text_input"
+                                                                   x-model="$store.chatsData.message"
+                                                                   placeholder="Напишите сообщение ...">
+                                                            <button class="chat-send-message-btn"
+                                                                    id="chat-message-submit"
+                                                                    x-on:click="$store.chatsData.sendMessage()"></button>
 
-                                                            <div class="absolute-video-container"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="custom-scroll input-scroller clone">
-                                                        <div class="input-scroller-content">
-                                                            <div class="form-control allow-selection clone"
-                                                                 dir="auto"></div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="AttachMenu">
-                                                    <button id="attach-menu-button" type="button"
-                                                            class="Button AttachMenu--button default translucent round"
-                                                            aria-label="Add an attachment"
-                                                            aria-controls="attach-menu-controls" aria-haspopup="true"
-                                                            title="Add an attachment"><i class="icon icon-attach"
-                                                                                         aria-hidden="true"></i>
-                                                    </button>
 
-                                                </div>
-                                                <div class="_8sFuAomM composer-tooltip custom-scroll-x not-open not-shown"></div>
-                                                <div class="StickerTooltip composer-tooltip custom-scroll not-open not-shown hidden"></div>
-                                                <div class="EmojiTooltip composer-tooltip custom-scroll-x not-open not-shown"></div>
                                             </div>
                                         </div>
 
-
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                     </div>
-                    <div></div>
                 </div>
-                <div id="RightColumn-wrapper" class="is-hidden">
-                    <div class="overlay-backdrop"></div>
-                    <div id="RightColumn">
-                        <div class="RightHeader">
-                            <button type="button" class="Button close-button smaller translucent round"
-                                    aria-label="Back" title="Back">
-                                <div class="animated-close-icon state-back no-transition"></div>
-                            </button>
-                            <div class="Transition"></div>
-                        </div>
-                        <div class="Transition"></div>
-                    </div>
-                </div>
-                <div></div>
+
             </div>
         </div>
 
 
-        <div class="row clearfix">
-            <div class="col-lg-12">
-                <div class="card chat-app">
-                    <div id="plist" class="people-list">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fa fa-search"></i></span>
-                            </div>
-                            <input type="text" class="form-control" placeholder="Search...">
-                        </div>
-                        <ul class="list-unstyled chat-list mt-2 mb-0" x-data>
-                            <template x-for="chat in $store.chatsData.chats">
-                                <li class="clearfix" :class="chat.active? 'chat-active': ''" :id="chat.chat_uuid"
-                                    x-bind="chat_item">
-                                    <img :src="chat.other_user.photo" alt="avatar">
-                                    <div class="about">
-                                        <div class="name" x-text="chat.other_user.display_name"></div>
-                                        <div x-text="chat.chat_title"></div>
-                                        <div x-text="chat.not_read_count"></div>
-                                        <p x-text="chat.messages.length?chat.messages[chat.messages.length - 1].sender+ ': ' +  chat.messages[chat.messages.length - 1].message: ''"></p>
-                                        <template
-                                                x-if="chat.messages.length && chat.messages[chat.messages.length - 1].file_name">
-                                            <a x-text="chat.messages[chat.messages.length - 1].file_name"
-                                               :href="'download/' + chat.messages[chat.messages.length - 1].file_id"
-                                               target="_blank"></a>
-                                        </template>
-                                    </div>
-                    </div>
-                    </li>
-                    </template>
-
-                    </ul>
-                </div>
-                <div class="chat" x-data>
-                    <div class="chat-header clearfix">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                    <img :src="$store.chatsData.getOtherUser().other_user.photo" alt="avatar">
-                                </a>
-                                <div class="chat-about">
-                                    <h6 class="m-b-0"
-                                        x-text="$store.chatsData.getOtherUser().other_user.display_name"></h6>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="chat-history">
-                        <ul class="m-b-0"
-                            x-data="{self_nick_name: '{{ user.display_name }}', acitve_chat:'$store.chatsData.activeChatUUID'}">
-                            <template x-for="message in $store.chatsData.getActiveChatMessages" :key="message.created">
-                                <li class="clearfix">
-                                    <div class="message-data"
-                                         :class="message.sender == self_nick_name? 'text-right' : ''">
-                                        <span class="message-data-time"
-                                              :class="message.sender == self_nick_name? ' other-message float-right' : 'my-message'"
-                                              x-text="message.created"></span>
-                                    </div>
-                                    <div class="clear"></div>
-                                    <template x-if="message.file_name">
-                                        <a x-text="message.file_name" :href="'download/' + message.file_id"
-                                           target="_blank"></a>
-                                    </template>
-                                    <template x-if="message.message">
-                                        <div class="message "
-                                             :class="message.sender == self_nick_name? ' other-message float-right' : 'my-message'"
-                                             x-text="message.message"></div>
-                                    </template>
-
-                                </li>
-                            </template>
-
-                        </ul>
-                    </div>
-                    <div class="chat-message clearfix" x-data>
-                        <div class="input-group mb-0">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="chat-message-submit" x-bind="chat_submit_btn"><i
-                                        class="fa fa-send"></i></span>
-                            </div>
-                            <input type="text" class="form-control" x-bind="chat_text_input"
-                                   x-model="$store.chatsData.message" placeholder="Enter text here...">
-                        </div>
-                    </div>
-                    <form enctype="multipart/form-data" method="POST" action="">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label>Select file to upload.</label>
-                            <input type="file" class="form-control" id="fileupload" placeholder="Select file">
-                        </div>
-                        <input type="submit" value="Upload" x-bind="file_upload_btn" class="btn btn-success">
-                    </form>
-                    <div id="uploaded_files"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-    <div x-data="{ open: false }">
-        <button @click="open = !open">Expand</button>
-
-        <span x-show="open">
-        Content...
-    </span>
-    </div>
     <script src="{% static 'contract/js/chat.js' %}"></script>
     <script>
 
