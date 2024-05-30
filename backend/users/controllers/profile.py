@@ -10,7 +10,7 @@ from contract.settings import CHAT_TYPE
 from users.core.access import Access
 from users.core.page_builder import PageBuilder
 from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite
-from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm
+from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm
 
 
 def activate_view(request):
@@ -236,9 +236,11 @@ def profile_main_view(request):
 		error = None
 		if request.method == "GET":
 			member = Member.objects.get(id=user.id)
-			form = ProfileForm(instance=member)
+			profile_form = ProfileForm(instance=member)
+			change_pass_form = PasswordChangeForm()
 			return render(request, './blocks/profile/profile_main.html', {
-				'form': form,
+				'profile_form': profile_form,
+				'change_pass_form': change_pass_form,
 				'categories': categories,
 				'articles': articles
 			})
@@ -256,7 +258,7 @@ def profile_main_view(request):
 				'articles': articles
 			})
 	else:
-		return redirect(to="signin")
+		return redirect(to="worker_signin")
 
 
 def profile_company_view(request):

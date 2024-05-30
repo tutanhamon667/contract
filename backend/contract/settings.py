@@ -700,6 +700,9 @@ CHOICES_WORK_TYPE = [(0, "Оффлайн занятость"),
 CHOICES_WORK_TIMEWORK = [(0, "Полный график"),
 						   (1, "Гибкий график")]
 
+CHOICES_IS_ACTIVE = [(False, "Пассивный"),
+						   (True, "Активный")]
+
 CHOICES_WORK_EXPERIENCE = [("WithoutExperience", "Нет опыта"),
 						   ("Between1And6", "От 1 до 6 месяцев"),
 						   ("Between6And12", "От 6 месяцев до 1 года"),

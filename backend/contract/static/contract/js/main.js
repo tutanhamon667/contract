@@ -146,6 +146,18 @@ const app = function() {
 
     }
 
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+          $('#profilePhoto').attr('src', e.target.result).width(90).height(90);
+        };
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
     const profileResponseInvitesFilters = () => {
         const orderBtn = $('#order')
         const searchParams = new URLSearchParams(window.location.search);
@@ -181,6 +193,7 @@ const app = function() {
         })
     }
     return {
+        readURL:readURL,
         initRating:initRating,
         profileResponseInvitesFilters:profileResponseInvitesFilters,
         radioInputChecker:radioInputChecker,

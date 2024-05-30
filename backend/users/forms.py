@@ -7,7 +7,8 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 
 from btc.models import JobTier, BuyPaymentPeriod
 from contract.settings import CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_WORK_EXPERIENCE, \
-    CHOICES_WORK_EXPERIENCE_FILTER, CHOICES_WORK_DEPOSIT_FILTER, CHOICES_WORK_TIME_BUSY_FILTER, CHOICES_WORK_TYPE_FILTER
+    CHOICES_WORK_EXPERIENCE_FILTER, CHOICES_WORK_DEPOSIT_FILTER, CHOICES_WORK_TIME_BUSY_FILTER, \
+    CHOICES_WORK_TYPE_FILTER, CHOICES_IS_ACTIVE
 from contract.widgets.captcha import CaptchaWidget
 from contract.widgets.multiselect import MultiselectWidget
 from contract.widgets.password import PasswordWidget
@@ -270,9 +271,32 @@ class ResumeFilterForm(forms.Form):
 
 
 class ProfileForm(ModelForm):
+    is_active = forms.ChoiceField(label="Статус поиска", widget=forms.RadioSelect, choices=CHOICES_IS_ACTIVE,
+                      initial=1)
     class Meta:
         model = Member
-        fields = ['id', 'photo', 'login', 'display_name', 'first_name', 'last_name', 'photo']
+        fields = ['id', 'photo', 'is_active']
+
+
+class PasswordChangeForm(forms.Form):
+
+    new_password = forms.CharField(widget=PasswordWidget('Старый пароль'), required=True)
+    password1 = forms.CharField(widget=PasswordWidget('Новый пароль'), required=True)
+    password2 = forms.CharField(widget=PasswordWidget('Повторите новый пароль'), required=True)
+
+    class Meta:
+        fields = [ "new_password", "password1", "password2" ]
+        widgets = {'password1': PasswordWidget(), 'password2': PasswordWidget(),
+                   "new_password": PasswordWidget()}
+
+    def clean_password2(self):
+        data = self.cleaned_data['password2']
+        res = self.fields["password2"].widget.validate(self.cleaned_data["password1"], self.cleaned_data["password2"])
+        if res:
+            raise ValidationError(res)
+        return data
+
+
 
 
 class CompanyForm(ModelForm):
