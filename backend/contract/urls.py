@@ -12,7 +12,7 @@ from users.controllers.job import profile_job_view
 from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
-    profile_main_view, \
+    profile_main_view, change_password,profile_resume_edit_view,\
     profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, logout_view, \
     login_customer_view, login_worker_view
@@ -21,6 +21,8 @@ from . import settings
 from users.views import captcha_view
 from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
     favorite_view, worker_responses_invites_view, customer_responses_invites_view
+
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -42,7 +44,7 @@ urlpatterns = [
     path('captcha', captcha_view, name='captcha'),
     path('worker/signin', login_worker_view, name='worker_signin'),
     path('customer/signin', login_customer_view, name='customer_signin'),
-
+   
     path('worker/signup', registration_worker_view, name='worker_signup'),
     path('customer/signup', registration_customer_view, name='customer_signup'),
     path('logout', logout_view, name='logout'),
@@ -54,13 +56,15 @@ urlpatterns = [
     path('response_invite/delete', response_invite_view.delete, name='response_invite_delete'),
     path('response_invite/cancel', response_invite_view.cancel, name='response_invite_cancel'),
     path('response_invite/create', response_invite_view.create, name='response_invite_create'),
+    path('profile/change_password', change_password, name='change_password'),
     path('resumes/<int:resume_id>', resume_view, name='resume_view'),
     path('jobs/<int:job_id>', job_view, name='job'),
     path('company/<int:company_id>', company_view, name='company'),
     path('profile/main', profile_main_view, name='profile_main'),
     path('favorite', favorite_view, name='favorite_jobs_main'),
-    path('profile/resume', profile_resumes_view, name='profile_resume'),
+    path('profile/resume', profile_resumes_view, name='profile_resumes'),
     path('profile/resume/<int:resume_id>', profile_resume_view, name='profile_resume'),
+    path('profile/resume/edit/<int:resume_id>', profile_resume_edit_view, name='profile_resume_edit'),
     path('profile/contact', contacts_view, name='profile_contacts'),
     path('profile/contact/<int:contact_id>', contact_view, name='profile_contacts'),
     path('profile/company', profile_company_view, name='profile_company_view'),

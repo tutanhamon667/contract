@@ -694,11 +694,11 @@ CHOICES_WORK_TYPE_FILTER = [("1", "Оффлайн"), ("2", "Онлайн"), ("3"
 CHOICES_WORK_TIME_BUSY_FILTER = [("1", "Полный график"), ("2", "Гибкий график"), ('3', 'Не имеет значения')]
 CHOICES_WORK_DEPOSIT_FILTER = [("1", "С залогом"), ("2", "Без залога"), ("0", "Не имеет значения")]
 
-CHOICES_WORK_TYPE = [(0, "Оффлайн занятость"),
-						   (1, "Онлайн занятость")]
+CHOICES_WORK_TYPE = [(False, "Оффлайн занятость"),
+						   (True, "Онлайн занятость")]
 
-CHOICES_WORK_TIMEWORK = [(0, "Полный график"),
-						   (1, "Гибкий график")]
+CHOICES_WORK_TIMEWORK = [(False, "Полный график"),
+						   (True, "Гибкий график")]
 
 CHOICES_IS_ACTIVE = [(False, "Пассивный"),
 						   (True, "Активный")]

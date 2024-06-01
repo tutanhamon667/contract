@@ -13,6 +13,8 @@ urlpatterns = [
     path("respones_invites", get_responses_invites, name="responses_invites"),
     path("get_counters", get_counters, name="get_counters"),
 
+    path('contacts', get_contacts, name='my_contacts'),
+
     path("worker_reviews", worker_reviews, name="worker_reviews"),
     path("create_review", create_review, name="create_review"),
     path("create_worker_review", create_worker_review, name="create_worker_review"),

@@ -7,6 +7,17 @@
     --bs-border-color-translucent: #EDEDED !important;
 }
 
+.red{
+    color: red;
+}
+
+.form-item {
+    padding-bottom: 15px;
+}
+
+.form-item .form-item-label{
+    font-weight: 600;
+}
 
 .filter-grey{
     filter: invert(0%) sepia(100%) saturate(100%) hue-rotate(0deg) brightness(100%) contrast(1%);

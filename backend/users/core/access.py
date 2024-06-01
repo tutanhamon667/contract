@@ -61,6 +61,14 @@ class Access:
 			if self.user.is_worker:
 				return 200
 			return 403
+		if entity == "self_contacts":
+			if not self.user.is_authenticated:
+				return 401
+			if self.user.is_customer:
+				return 200
+			if self.user.is_worker:
+				return 200
+			return 403
 		if entity == "acivate_account":
 			if not self.user.is_authenticated:
 				return 401
@@ -103,6 +111,21 @@ class Access:
 					return 200
 				except Exception as e:
 					return 503
+		
+		if entity == "profile_resume_edit":
+			if not self.user.is_authenticated:
+				return 401
+			if self.user.is_customer:
+				return 503
+			if self.user.is_worker and entity_id:
+				try:
+					owner = Resume.objects.get(user=self.user, id=entity_id)
+					return 200
+				except Exception as e:
+					print(e)
+					return 403
+			else:
+				return 403
 		if entity == "resume":
 			if not self.user.is_authenticated:
 				return 401

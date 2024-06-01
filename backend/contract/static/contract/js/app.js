@@ -105,7 +105,10 @@ const alpineApp = function () {
         getRegionsStr: (job, hide_many = true) => {
             if (!job.is_offline) {
                 if (hide_many) {
-                    if (job.regions.length > 3) {
+                    if(!job.regions) {
+                        return 'Онлайн занятость'
+                    }
+                    if (job.regions && job.regions.length > 3) {
                         const length = job.regions.length - 3
                         const regions_to_display = job.regions.slice(0, 3)
                         const regions_to_hide = job.regions.splice(3)
@@ -818,6 +821,15 @@ const alpineApp = function () {
             alert(res.msg)
         }
     }
+    this.getContacts = async () => {
+        const res = await makeRequest('contacts', {})
+        if (res.success) {
+            Alpine.store('main').contacts = res.data
+        } else {
+            alert(res.msg)
+        }
+    }
+
     this.getResumeStatistics = async (id) => {
         const res = await makeRequest('resume_statistics', {id: id})
         if (res.success) {
@@ -995,6 +1007,18 @@ const alpineApp = function () {
         await this.filterResumes()
     }
 
+    this.initUserResumes = async () => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+            const resumes = await this.getResumes()
+            if (resumes.success) {
+                Alpine.store('main').user_resumes = resumes.data
+            }
+        }
+    }
+
+
     this.getRIToggleBtnClass = (type, status) => {
         const filters = Alpine.store('main').filters
         if (filters.type == type && filters.status === status){
@@ -1037,6 +1061,16 @@ const alpineApp = function () {
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').reviewsCount, Alpine.store('main').reviews_filters)
             Alpine.store('main').reviews_pagination = pagination
         }
+    }
+
+    this.initProfileResumePage = async (id) => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+            await this.getResume(id)
+            await this.getContacts()
+        }
+
     }
 
     Alpine.bind('checkboxInput', {

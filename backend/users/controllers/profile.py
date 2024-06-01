@@ -1,5 +1,7 @@
 import datetime
 
+
+from django.forms import model_to_dict
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -10,8 +12,9 @@ from contract.settings import CHAT_TYPE
 from users.core.access import Access
 from users.core.page_builder import PageBuilder
 from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite
-from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm
-
+from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm as PasswordChange
+from django.contrib.auth import authenticate, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 def activate_view(request):
 	user = request.user
@@ -37,6 +40,55 @@ def activate_view(request):
 			})
 
 
+
+
+def profile_resume_edit_view(request, resume_id):
+	user = request.user
+	access = Access(user)
+	code = access.check_access("profile_resume_edit", resume_id)
+	if code != 200:
+		if code == 401:
+			return redirect('signin')
+		else:
+			return HttpResponse(status=code)
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
+
+	if request.method == "GET":
+		resume = Resume.objects.get(user=user.id, id=resume_id)
+		if resume:
+			region_ids = resume.region.values_list('id', flat=True)	
+			initial =  model_to_dict(resume)
+			initial['region'] = region_ids
+			form = ResumeForm(instance=resume, initial=initial)
+			return render(request, './blocks/profile/profile_resume_edit.html', {
+				'resume': resume,
+				'form': form,
+				'categories': categories,
+				'articles': articles
+			})
+		else:
+			return HttpResponse(status=404)
+
+	if request.method == "POST":
+		resume = Resume.objects.get(user=user.id, id=resume_id)
+		form =ResumeForm(initial= model_to_dict(resume))
+		user_id = int(request.POST.get('user'))
+		if user_id != user.id:
+			print('fuck off wrong user')
+			return HttpResponse(status=403)
+		else:
+			if form.is_valid():
+				form.save()
+				return redirect(to='profile_resume')
+			return render(request, './blocks/profile/profile_resume_edit.html', {
+				'form': form,
+				'resume': resume,
+				'categories': categories,
+				'articles': articles
+			})
+
+
 def profile_resume_view(request, resume_id):
 	user = request.user
 	access = Access(user)
@@ -52,31 +104,14 @@ def profile_resume_view(request, resume_id):
 	if request.method == "GET":
 		resume = Resume.objects.get(user=user.id, id=resume_id)
 		if resume:
-			form = ResumeForm(instance=resume)
 			return render(request, './blocks/profile/profile_resume.html', {
-				'form': form,
+				'resume': resume,
 				'categories': categories,
 				'articles': articles
 			})
 		else:
 			return HttpResponse(status=404)
 
-	if request.method == "POST":
-		resume = Resume.objects.get(user=user.id, id=resume_id)
-		form = ResumeForm(request.POST, instance=resume)
-		user_id = int(request.POST.get('user'))
-		if user_id != user.id:
-			print('fuck off wrong user')
-			return HttpResponse(status=403)
-		else:
-			if form.is_valid():
-				form.save()
-				return redirect(to='profile_resume')
-			return render(request, './blocks/profile/profile_resume.html', {
-				'form': form,
-				'categories': categories,
-				'articles': articles
-			})
 
 
 def profile_resumes_view(request):
@@ -131,17 +166,6 @@ def contact_view(request, contact_id):
 		user = request.user
 		print(user)
 		error = None
-		if request.method == "GET":
-			contact = Contact.objects.get(user=user.id, id=contact_id)
-			if contact:
-				form = ContactForm(instance=contact)
-				return render(request, './blocks/profile/profile_contact.html', {
-					'form': form,
-					'categories': categories,
-					'articles': articles
-				})
-			else:
-				return HttpResponse(status=404)
 
 		if request.method == "POST":
 			contact = Contact.objects.get(user=user.id, id=contact_id)
@@ -237,7 +261,7 @@ def profile_main_view(request):
 		if request.method == "GET":
 			member = Member.objects.get(id=user.id)
 			profile_form = ProfileForm(instance=member)
-			change_pass_form = PasswordChangeForm()
+			change_pass_form = PasswordChange()
 			return render(request, './blocks/profile/profile_main.html', {
 				'profile_form': profile_form,
 				'change_pass_form': change_pass_form,
@@ -385,3 +409,39 @@ def profile_response_invite_view(request):
 						  'categories': categories,
 						  'articles': articles
 					  })
+
+def copy_errors(source_form, target_form):
+    for field, errors in source_form.errors.items():
+        for error in errors:
+            target_form.add_error(field, error)
+
+def change_password(request):
+	if request.user.is_authenticated:
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
+		if request.method == 'POST':
+			form = PasswordChangeForm(request.user, request.POST)
+			if form.is_valid():
+				user = form.save()
+				update_session_auth_hash(request, user) 
+				messages.success(request, 'Пароль был успешно изменён')
+			else:
+				articles = Article.objects.all()
+				categories = ArticleCategory.objects.all()
+				member = Member.objects.get(id=request.user.id)
+				profile_form = ProfileForm(instance=member)
+				
+				change_pass_form = PasswordChange({})
+				change_pass_form.is_valid()
+				change_pass_form.errors.clear()
+				copy_errors(form, change_pass_form)
+				return render(request, './blocks/profile/profile_main.html', {
+					'profile_form': profile_form,
+					'change_pass_form': change_pass_form,
+					'categories': categories,
+					'articles': articles
+				})
+
+			return redirect('profile_main')
+	else:
+		redirect('worker_signin')

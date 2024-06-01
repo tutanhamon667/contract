@@ -1,5 +1,5 @@
 import json
-
+from rest_framework import generics
 from django.core import serializers
 from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
@@ -588,14 +588,33 @@ def get_resume_statistics(request):
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
+
+
+
+def get_contacts(request):
+    try:
+        user = request.user
+        access = Access(user)
+        code = access.check_access("self_contacts")
+        if code != 200:
+            return JsonResponse({'success': False, "code": code})
+        if request.user.is_customer:
+            contacts = list(Contact.get_company_contacts(request.user.id))
+        else:
+            contacts = list(Contact.get_worker_contacts(request.user.id))
+        return JsonResponse({'success': True, "data": contacts})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
 def get_resume(request):
     try:
         user = request.user
         access = Access(user)
-        code = access.check_access("resume")
+        id = request.POST["id"]
+        code = access.check_access("resume",id )
         if code != 200:
             return JsonResponse({'success': False, "code": code})
-        id = request.POST["id"]
+       
         resume = Resume.get_active_resume(id)
         resume_obj = list(resume.values())[0]
         reviews = list(CustomerReview.objects.filter(worker_id=resume[0].user.id))

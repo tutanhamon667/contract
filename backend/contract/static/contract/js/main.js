@@ -60,7 +60,8 @@ const app = function() {
         })
         $(pseudo_el).attr("disabled", "disabled")
         $(radio).on("change", function() {
-            if (parseInt($(this).val()) !== parseInt(value)){
+
+            if ($(this).val() !==  value){
                $(input).each(function(item){
                     $(this).attr("disabled", "disabled")
                 })

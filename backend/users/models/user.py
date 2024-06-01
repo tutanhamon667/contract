@@ -374,7 +374,7 @@ class Resume(models.Model):
 	views = models.IntegerField(verbose_name='просмотры', null=True, default=0, blank=True)
 	region = models.ManyToManyField(Region, verbose_name='Регион работы', default=None, blank=True)
 	description = CKEditor5Field(
-		verbose_name='Описание вакансии', config_name='extends', null=True,
+		verbose_name='Расскажите о себе', config_name='extends', null=True,
 		blank=True,
 	)
 	deleted = models.BooleanField(default=False)

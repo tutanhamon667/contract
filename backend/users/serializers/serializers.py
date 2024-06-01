@@ -2,10 +2,13 @@ from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from djoser import serializers as djoser_serializers
 from rest_framework import serializers
+from users.models.user import Member, Contact
 
 from users.models.user import Resume
 
 User = get_user_model()
+
+
 
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):

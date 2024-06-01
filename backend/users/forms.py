@@ -25,11 +25,14 @@ class JobPaymentTarifForm(forms.Form):
 
 class ResumeForm(ModelForm):
     is_offline = forms.ChoiceField(label="Тип занятости", widget=forms.RadioSelect, choices=CHOICES_WORK_TYPE,
-                                   initial=1)
+                                   initial=True)
     is_fulltime = forms.ChoiceField(label="График работы", widget=forms.RadioSelect, choices=CHOICES_WORK_TIMEWORK,
-                                    initial=1)
+                                    initial=True)
     work_experience = forms.ChoiceField(label="Опыт работы", widget=forms.RadioSelect, choices=CHOICES_WORK_EXPERIENCE,
                                         initial=1)
+
+    specialisation = forms.ModelMultipleChoiceField(label="Специализация", queryset=Specialisation.objects.all(),
+                                                    blank=True, required=False)
 
     class Meta:
         model = Resume
@@ -44,7 +47,14 @@ class ResumeForm(ModelForm):
                 self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
 
         self.fields['description'].widget.attrs.update({'class': 'form-control django_ckeditor_5'})
+        if "region" in kwargs["initial"]:
+            multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all(),
+                                                          selected=kwargs["initial"]["region"])
+        else:
+            multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all())
 
+
+        self.fields["region"].widget = multiselect_region_widget
 
 class JobForm(ModelForm):
     class Meta:
@@ -280,21 +290,15 @@ class ProfileForm(ModelForm):
 
 class PasswordChangeForm(forms.Form):
 
-    new_password = forms.CharField(widget=PasswordWidget('Старый пароль'), required=True)
-    password1 = forms.CharField(widget=PasswordWidget('Новый пароль'), required=True)
-    password2 = forms.CharField(widget=PasswordWidget('Повторите новый пароль'), required=True)
+    old_password = forms.CharField(widget=PasswordWidget('Старый пароль'), required=True)
+    new_password1 = forms.CharField(widget=PasswordWidget('Новый пароль'), required=True)
+    new_password2 = forms.CharField(widget=PasswordWidget('Повторите новый пароль'), required=True)
 
     class Meta:
-        fields = [ "new_password", "password1", "password2" ]
-        widgets = {'password1': PasswordWidget(), 'password2': PasswordWidget(),
-                   "new_password": PasswordWidget()}
+        fields = [ "old_password", "new_password1", "new_password2" ]
+        widgets = {'new_password1': PasswordWidget(), 'new_password2': PasswordWidget(),
+                   "old_password": PasswordWidget()}
 
-    def clean_password2(self):
-        data = self.cleaned_data['password2']
-        res = self.fields["password2"].widget.validate(self.cleaned_data["password1"], self.cleaned_data["password2"])
-        if res:
-            raise ValidationError(res)
-        return data
 
 
 
