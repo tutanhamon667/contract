@@ -55,10 +55,13 @@ const app = function() {
     }
 
     const radioMultiSelectChecker = (radio,value, input, pseudo_el) => {
-        $(input).each(function(item){
-            $(this).attr("disabled", "disabled")
-        })
-        $(pseudo_el).attr("disabled", "disabled")
+        if($(radio).val() === value) {
+            $(input).each(function(item){
+                $(this).attr("disabled", "disabled")
+            })
+            $(pseudo_el).attr("disabled", "disabled")
+        }
+       
         $(radio).on("change", function() {
 
             if ($(this).val() !==  value){
@@ -72,6 +75,31 @@ const app = function() {
                 })
                 $(pseudo_el).removeAttr("disabled")
             }
+
+        })
+    }
+
+    const industrySpecInit = () => {
+        if( $('#specialisation').val()){
+            const ind_id =  $('#specialisation>option[value="'+$('#specialisation').val()+'"]').attr('parent')
+           $('[name="industry"][value="'+ind_id+'"]').click()
+        }
+        $('[name="industry"]').on("change", function() {
+            const ind_id = $(this).val()
+            let first_show_item = false
+            $('#specialisation>option').each(function(index){
+                if ($(this).attr("parent") !== ind_id ){
+                    $(this).hide()
+                }else{
+                    if (first_show_item === false){
+                        first_show_item =index
+                    }
+                    
+                    $(this).show()
+                }
+            })
+            const selectElement = document.getElementById('specialisation');
+            selectElement.selectedIndex = first_show_item;
 
         })
     }
@@ -194,6 +222,7 @@ const app = function() {
         })
     }
     return {
+        industrySpecInit:industrySpecInit,
         readURL:readURL,
         initRating:initRating,
         profileResponseInvitesFilters:profileResponseInvitesFilters,

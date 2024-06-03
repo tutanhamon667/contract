@@ -126,6 +126,15 @@ class Access:
 					return 403
 			else:
 				return 403
+		if entity == "profile_resume_create":
+			if not self.user.is_authenticated:
+				return 401
+			if self.user.is_customer:
+				return 503
+			if self.user.is_worker:
+				return 200
+			else:
+				return 403
 		if entity == "resume":
 			if not self.user.is_authenticated:
 				return 401

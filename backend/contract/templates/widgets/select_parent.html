@@ -1,0 +1,13 @@
+<div class="select_parent" x-data>
+
+    <select  name="{{ widget.name }}" id="{{ widget.name }}" class="form-control" style="">
+        {% for item in widget.items %}
+            {% if item.selected %}
+        <option value="{{ item.id }}"  parent="{{item.industry_id}}"  selected>{{ item.name }}</option>
+            {% else %}
+                <option parent="{{item.industry_id}}" value="{{ item.id }}">{{ item.name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+
+</div>

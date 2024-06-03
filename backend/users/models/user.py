@@ -381,6 +381,13 @@ class Resume(models.Model):
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
 
+
+	def set_deleted(self):
+		self.deleted_at = datetime.datetime.now()
+		self.deleted = True
+		self.save()
+		return True
+
 	@classmethod
 	def is_current_user(cls, _id, user):
 		resume = cls.objects.get(_id)
@@ -402,7 +409,7 @@ class Resume(models.Model):
 
 	@classmethod
 	def get_active_resume(cls, id):
-		return cls.objects.filter(id=id, moderated=True, active_search=True)
+		return cls.objects.filter(id=id, moderated=True, active_search=True, deleted=False)
 
 	def increase_views(self):
 		self.views = self.views + 1

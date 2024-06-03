@@ -335,7 +335,7 @@ def get_user_resumes(request):
                 return JsonResponse({'success': True, "code": code, "msg": "not allowed"})
             else:
                 return JsonResponse({'success': False, "code": code})
-        resumes = list(Resume.objects.filter(user=user).values())
+        resumes = list(Resume.objects.filter(user=user, deleted=False).values())
         return JsonResponse({'success': True, "data": resumes})
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
@@ -345,7 +345,7 @@ def favorite_jobs(request):
     try:
         if request.user.is_authenticated:
 
-            jobs = Job.objects.filter(favoritejob__user_id=request.user)
+            jobs = Job.objects.filter(favoritejob__user_id=request.user, deleted=False)
             companies = Company.join_companies(jobs)
             res = list(jobs.values())
             payments = list(JobPayment.join_tier(objs=jobs).values())

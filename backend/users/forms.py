@@ -11,6 +11,7 @@ from contract.settings import CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_
     CHOICES_WORK_TYPE_FILTER, CHOICES_IS_ACTIVE
 from contract.widgets.captcha import CaptchaWidget
 from contract.widgets.multiselect import MultiselectWidget
+from contract.widgets.select_with_parent import SelectParentWidget
 from contract.widgets.password import PasswordWidget
 from users.models.common import Region
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
@@ -30,22 +31,27 @@ class ResumeForm(ModelForm):
                                     initial=True)
     work_experience = forms.ChoiceField(label="Опыт работы", widget=forms.RadioSelect, choices=CHOICES_WORK_EXPERIENCE,
                                         initial=1)
-
-    specialisation = forms.ModelMultipleChoiceField(label="Специализация", queryset=Specialisation.objects.all(),
-                                                    blank=True, required=False)
+    industry = forms.ChoiceField(label="Специализация", widget=forms.RadioSelect, choices=Industry.objects.all().values_list('id', 'name'))
+    specialisation = forms.ModelChoiceField(label="Должность", queryset=Specialisation.objects.all(), required=False)
 
     class Meta:
         model = Resume
-        fields = ['id', 'user', 'name', 'specialisation', 'salary', 'deposit', 'work_experience', 'is_offline',
+        fields = ['user', 'name','industry', 'specialisation', 'salary', 'deposit', 'work_experience', 'is_offline',
                   'region',
                   'is_fulltime', 'description']
+        exclude=['user']
+        
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
-            if field != 'is_offline' and field != 'is_fulltime' and field != 'active_search' and field != 'work_experience':
+            if field != 'is_offline' and field !='industry' and field != 'is_fulltime' and field != 'active_search' and field != 'work_experience':
                 self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
-
+            if field =='industry':
+                self.fields[field].widget.attrs.update({'class': 'medium-height', 'autocomplete': 'off'})
+            if field =='specialisation':
+                self.fields[field].widget.attrs.update({'class': 'label-up'})
+                
         self.fields['description'].widget.attrs.update({'class': 'form-control django_ckeditor_5'})
         if "region" in kwargs["initial"]:
             multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all(),
@@ -53,8 +59,17 @@ class ResumeForm(ModelForm):
         else:
             multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all())
 
+        if "specialisation" in kwargs["initial"]:
+            specialisation_widget = SelectParentWidget(label='Должность', items=Specialisation.objects.all(),
+                                                          selected=kwargs["initial"]["specialisation"])
+        else:
+            specialisation_widget = SelectParentWidget(label='Должность', items=Specialisation.objects.all())
+        
+        if "industry" in kwargs["initial"]:
+            self.fields["industry"].widget.initial = kwargs["initial"]["industry"]
 
         self.fields["region"].widget = multiselect_region_widget
+        self.fields["specialisation"].widget = specialisation_widget
 
 class JobForm(ModelForm):
     class Meta:

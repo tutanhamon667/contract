@@ -42,6 +42,66 @@ def activate_view(request):
 
 
 
+
+def profile_resume_create_view(request):
+	user = request.user
+	access = Access(user)
+	code = access.check_access("profile_resume_create")
+	if code != 200:
+		if code == 401:
+			return redirect('signin')
+		else:
+			return HttpResponse(status=code)
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
+
+	if request.method == "GET":
+
+		form = ResumeForm( initial={})
+		return render(request, './blocks/profile/profile_resume_edit.html', {
+			'form': form,
+			'categories': categories,
+			'articles': articles
+		})
+
+
+	if request.method == "POST":
+		form =ResumeForm(request.POST, initial=request.POST)
+		user_id = user.id
+		if user_id != user.id:
+			print('fuck off wrong user')
+			return HttpResponse(status=403)
+		else:
+			initial = request.POST
+			initial._mutable = True
+			initial['region'] = request.POST.getlist('region')
+			if form.is_valid():
+				edited_form = form.save(commit=False)
+				edited_form.user = request.user
+				edited_form.save()
+				form.save_m2m()
+				return redirect(to='profile_resumes')
+			return render(request, './blocks/profile/profile_resume_edit.html', {
+				'form': form,
+				'categories': categories,
+				'articles': articles
+			})
+
+
+def profile_resume_delete_view(request, resume_id):
+	user = request.user
+	access = Access(user)
+	code = access.check_access("profile_resume_edit", resume_id)
+	if code != 200:
+		if code == 401:
+			return redirect('signin')
+		else:
+			return HttpResponse(status=code)
+	resume = Resume.objects.get(user=user.id, id=resume_id)
+	resume.set_deleted()
+	messages.success(request, 'Резюме удалено')
+	return redirect(to='profile_resumes')
+
 def profile_resume_edit_view(request, resume_id):
 	user = request.user
 	access = Access(user)
@@ -60,6 +120,7 @@ def profile_resume_edit_view(request, resume_id):
 			region_ids = resume.region.values_list('id', flat=True)	
 			initial =  model_to_dict(resume)
 			initial['region'] = region_ids
+			initial['industry'] = resume.specialisation.industry_id
 			form = ResumeForm(instance=resume, initial=initial)
 			return render(request, './blocks/profile/profile_resume_edit.html', {
 				'resume': resume,
@@ -72,15 +133,22 @@ def profile_resume_edit_view(request, resume_id):
 
 	if request.method == "POST":
 		resume = Resume.objects.get(user=user.id, id=resume_id)
-		form =ResumeForm(initial= model_to_dict(resume))
-		user_id = int(request.POST.get('user'))
+		form =ResumeForm(request.POST, initial=request.POST)
+		user_id = user.id
 		if user_id != user.id:
 			print('fuck off wrong user')
 			return HttpResponse(status=403)
 		else:
+			initial = request.POST
+			initial._mutable = True
+			initial['region'] = request.POST.getlist('region')
 			if form.is_valid():
-				form.save()
-				return redirect(to='profile_resume')
+				edited_form = form.save(commit=False)
+				edited_form.user = request.user
+				edited_form.id = resume.id
+				edited_form.save()
+				form.save_m2m()
+				return redirect(to='profile_resumes')
 			return render(request, './blocks/profile/profile_resume_edit.html', {
 				'form': form,
 				'resume': resume,
@@ -120,6 +188,8 @@ def profile_resumes_view(request):
 
 	def resume_page(form, user):
 		resumes = Resume.objects.filter(user=user.id)
+		if len(resumes) == 0:
+			return redirect('profile_resume_create')
 		return render(request, './blocks/profile/profile_resumes.html',
 					  {'resumes': resumes,
 					   'form': form,
@@ -170,7 +240,7 @@ def contact_view(request, contact_id):
 		if request.method == "POST":
 			contact = Contact.objects.get(user=user.id, id=contact_id)
 			form = ContactForm(request.POST, instance=contact)
-			user_id = int(request.POST.get('user'))
+			user_id = request.user.id
 			if user_id != user.id:
 				print('fuck off wrong user')
 				return HttpResponse(status=403)

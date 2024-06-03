@@ -11,6 +11,12 @@
     color: red;
 }
 
+.medium-height{
+    max-height: 130px;
+    overflow-y: scroll;
+    
+}
+
 .form-item {
     padding-bottom: 15px;
 }

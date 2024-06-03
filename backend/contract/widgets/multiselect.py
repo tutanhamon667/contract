@@ -30,7 +30,7 @@ class MultiselectWidget(forms.Widget):
 		items = list(self.items.values())
 		if self.selected:
 			for item in items:
-				if isinstance(self.selected, str) is True:
+				if isinstance(self.selected, int) is True:
 					if int(self.selected) == item["id"]:
 						item["selected"] = True
 				else:

@@ -12,7 +12,7 @@ from users.controllers.job import profile_job_view
 from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
-    profile_main_view, change_password,profile_resume_edit_view,\
+    profile_main_view, change_password,profile_resume_edit_view, profile_resume_create_view,profile_resume_delete_view,\
     profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, logout_view, \
     login_customer_view, login_worker_view
@@ -65,6 +65,8 @@ urlpatterns = [
     path('profile/resume', profile_resumes_view, name='profile_resumes'),
     path('profile/resume/<int:resume_id>', profile_resume_view, name='profile_resume'),
     path('profile/resume/edit/<int:resume_id>', profile_resume_edit_view, name='profile_resume_edit'),
+    path('profile/resume/delete/<int:resume_id>',profile_resume_delete_view, name='profile_resume_delete'),
+    path('profile/resume/create', profile_resume_create_view, name='profile_resume_create'),
     path('profile/contact', contacts_view, name='profile_contacts'),
     path('profile/contact/<int:contact_id>', contact_view, name='profile_contacts'),
     path('profile/company', profile_company_view, name='profile_company_view'),

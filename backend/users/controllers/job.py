@@ -331,8 +331,7 @@ class JobView:
 	def delete(self, request):
 		if request.user.is_authenticated:
 			try:
-
-				messages.success(request, 'Отклик удалён')
+				
 				return redirect(request.POST["redirect"])
 			except Exception as e:
 				print(e)
