@@ -1,11 +1,169 @@
-{% extends "profile.html" %}
-{% block profile_content %}
-        {% load django_bootstrap5 %}
-        <h1 class="my_order_title">Моя компания</h1>
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+<div class="container">
+    <section>
+        <div class="page-header">
+            <h1 class="my_order_title">Мой сервис</h1>
+        </div>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         <form action="" method="post"  enctype="multipart/form-data" novalidate>
-            {% csrf_token %}
-            {{ form.media }}
-            {{ form.as_p }}
-            <input type="submit" value="Обновить" />
+        {{ form.media }}
+        <div>
+        {% csrf_token %}
+        <div class="row form-item">
+               
+            <div class="d-flex mt-3">
+
+
+                <label class="mr-5" for="id_photo">
+                    {% if company.logo  %}
+                    <div class="shop_panel_img">
+                        <img src="/media/{{ company.logo }}" loading="lazy" id="profilePhoto">
+                    </div>
+                    {% else %}
+                    <div class="shop_panel_img ">
+                        <img src="{% static 'contract/img/icons/no-photo.svg' %}" loading="lazy"
+                            id="profilePhoto">
+                    </div>
+                    {% endif %}
+
+                </label>
+                <p class="profile-user-name">
+                    {% if company %}
+                    <p class="profile-user-name" >{{ company.name }}</p>
+                    <input type="hidden" class="form-control company-name" name="name" value="{{ company.name }}" >
+                    {% else %}
+                    <input type="text" class="form-control company-name" name="name" value="" >
+                    {% endif %}
+                    
+                </p>
+                <input type="file" name="photo" accept="image/*" class="vis-none" id="id_photo"
+                onchange="readURL(this);">
+            </div>
+        </div>
+        <div class="row form-item">
+        <div class="col-xl-2 col-md-3 col-sm-4 form-item-label">
+           Ссылки сервиса
+        </div>
+     
+
+   
+    <div class="col-xl-10 col-md-9 col-sm-8">
+  
+        <div class="row mb-2">
+            <div class="company-links col-lg-6">
+               
+                {% for contact in contacts %}
+                    <div class="d-flex company-link-container  mb-2">
+                        <input type="text" name="link[]" id="" class="form-control flex-1" value="{{contact.value}}">
+                        <div class="link-del-btn">
+                            <a onlick="deleteLink()"> x </a>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="d-flex company-link-container  mb-2">
+                    <input type="text" name="link[]" id="" class="form-control flex-1">
+                    <div class="link-del-btn">
+                        <a onlick="deleteLink()"> x </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-lg-6 link-add-btn">
+                <a onclick="addLink()"> + </a>
+            </div>
+        </div>
+    </div>
+        {% for field in form.visible_fields %}
+            <div class="row form-item">
+                {% if field.name != "logo" and field.name != "name" %}
+                    <div class="col-xl-2 col-md-3 col-sm-4 form-item-label">
+                        {{ field.label_tag }}
+                    </div>
+                <div class="col-xl-10 col-md-9 col-sm-8">
+   
+                    {{ field.errors }}
+                    {{ field }}
+                    {{ field.help_text }}
+                </div>
+                {% endif%}
+            </div>
+           
+        {% endfor %}
+        {% for field in form.hidden_fields %}
+      
+                {{ field }}
+
+       
+         {% endfor %}
+   
+       
+    </div>
+      
+        <div class="row footer-btn-container">
+          
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <button class="btn btn-primary mr-5 w-100 mt-15">
+                    Сохранить 
+                </button>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <a class="btn btn-white mr-5 w-100 mt-15"
+                    href="/profile/resume">
+                    Отменить
+                </a>
+            </div>
+           
+        </div>
         </form>
-{% endblock profile_content %}
+
+    </section>
+</div>
+<script>
+
+$(document).ready(function () {
+            const application = new app()
+            application.radioMultiSelectChecker("[name='is_offline']", 'False', "button[for=\"region\"]", "#region")
+            application.industrySpecInit()
+
+            $('.link-del-btn').click(deleteLink)
+        });
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+    
+                reader.onload = function (e) {
+                    $('#profilePhoto').attr('src', e.target.result).width(90).height(90);
+                };
+    
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function deleteLink(e){
+            const el =  e.currentTarget.closest('.company-link-container')
+            el.remove()
+        }
+
+        function addLink(e){
+            $('.company-links').append('<div class="d-flex company-link-container  mb-2">'+
+                   ' <input type="text" name="link[]" id="" class="form-control flex-1">'+
+                    '<div class="link-del-btn">'+
+                    '    <a onlick="deleteLink()"> x </a>'+
+                   ' </div>'+
+               ' </div>')
+               $('.company-links').find('.link-del-btn').last().click(deleteLink)
+        }
+    
+</script>
+{% endblock content %}

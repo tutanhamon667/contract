@@ -1,9 +1,10 @@
 {% load static %}
-<div class="container">
-    <footer class="row row-py-5 my-5 border-top">
-        <div class="col-xl-2 col-lg-2  d-lg-block d-md-none d-sm-none  mb-3 text-center"><img src="{% static "contract/img/logo-mid.svg" %}" height="85" class="rounded" alt="..."></div>
+
+    <footer class=" mt-5 border-top">
+        <div class="container d-flex">
+        <div class="flex-1  d-lg-block d-md-none d-sm-none  mb-3 text-center"><img src="{% static "contract/img/logo-mid.svg" %}" height="85" class="rounded" alt="..."></div>
         {% for category in categories %}
-            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 mb-3">
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 mb-3" style="    margin-right: 30px;">
                 <h5>{{ category.title }}</h5>
                 <ul class="nav flex-column">
                     {% for cat_article in articles %}
@@ -27,6 +28,7 @@
                 </ul>
             </div>
         {% endfor %}
+    </div>
     </footer>
-</div>
+
 

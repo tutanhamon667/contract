@@ -127,6 +127,16 @@ class Contact(models.Model):
 		return f'{self.type} {self.value} {self.preferred}'
 
 	@classmethod
+	def update_company_contacts(cls, user, items):
+		cls.objects.filter(user=user).delete()
+		for item in items:
+			cls.objects.create(user=user, value=item, type='other')
+
+	@classmethod
+	def get_company_links(cls, user):
+		return cls.objects.filter(user=user, type='other')
+
+	@classmethod
 	def is_current_user(cls, _id, user):
 		resume = cls.objects.get(_id)
 		return resume.user == user.id
@@ -545,7 +555,7 @@ class Job(models.Model):
 	views = models.IntegerField(verbose_name='Просмотры', null=True, default=0)
 
 	pub_date = models.DateTimeField(
-		auto_now_add=True,
+		default=timezone.now,
 		verbose_name='Дата публикации вакансии',
 	)
 	moderated = models.BooleanField(verbose_name='Прошёл модерацию', default=False)
@@ -566,6 +576,12 @@ class Job(models.Model):
 	def regions_name(self):
 		regions = self.region.all()
 		return regions
+
+	def set_deleted(self):
+		self.deleted_at = datetime.datetime.now()
+		self.deleted = True
+		self.save()
+		return True
 
 	def increase_views(self):
 		self.views = self.views + 1
@@ -653,6 +669,10 @@ class Job(models.Model):
 	def get_new_jobs(cls, limit):
 		return cls.objects.filter( jobpayment__start_at__lte=timezone.now(), moderated=True, deleted=False, active_search=True,
 								  jobpayment__expire_at__gte=timezone.now()).order_by('-id')[:limit]
+
+	@classmethod
+	def get_active_job(cls, id):
+		return cls.objects.filter(id=id, deleted=False)
 
 	@classmethod
 	def get_paid_job(cls, id):

@@ -21,11 +21,31 @@
     <script src="{% static 'contract/ckeditor/ckeditor-init.js' %}"></script>
     <script src="{% static 'contract/js/jquery.js' %}"></script>
     <script src="{% static 'contract/js/main.js' %}"></script>
-
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet"/>
 </head>
 <body data-media-url="{% get_media_prefix %}">
 {% include "./blocks/header.html" %}
+<div class="flex-1">
+
+
 {% block content %}{% endblock content %}
+</div>
+<div class="modal" id="error-modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% include "./blocks/footer.html" %}
 {% csrf_token %}
 <script src="{% static 'contract/js/alpine.js' %}" defer></script>

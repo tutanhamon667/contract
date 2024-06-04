@@ -3,18 +3,122 @@
     src: url(../fonts/inter.ttf) format("truetype");
 }
 
+
+body {
+    min-height: 100vh;
+    margin: 0;
+  }
+  
+  header {
+    min-height: 80px;
+  }
+  
+  footer {
+    min-height: 200px;
+  }
+  
+  
+  /* The article fills all the space between header & footer */
+  
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  main {
+    flex: 1;
+  }
+
+.page-header{
+    padding-bottom: 15px;
+    padding-top: 15px;
+    padding-left: 5px;
+}
+
+.page-btn-container{
+    padding-bottom: 15px;
+    width: 100%;
+
+}
+
+.link-del-btn a{
+    padding: 8 18 12 18;
+    background-color: red;
+    border-radius: 7px;
+    color: white !important;
+    font-size: 22px;
+}
+
+.link-add-btn a{
+    padding:8 18 12 18;
+    background-color: rgb(0, 0, 0);
+    color: white !important;
+    border-radius: 7px;
+    font-size: 22px;
+}
+
+.form-item {
+    padding-bottom: 30px;
+    padding-top: 20px;
+    border-bottom: 1px solid #EDEDED;
+}
+
+.footer-btn-container button,.footer-btn-container a.btn, .page-btn-container label, .page-btn-container a.btn{
+    padding-top: 9;
+    padding-bottom: 9;
+}
+
+.link-add-btn, .link-del-btn{
+    text-align: center;
+
+    line-height: 1.9;
+}
+
+input.company-name{
+    height: 46px;
+    margin-top: 20px;
+}
+
+option::after{
+    content: "\f00c";
+}
+select {
+    font-family: 'FontAwesome', 'Second Font name'
+    }
 :root {
     --bs-border-color-translucent: #EDEDED !important;
 }
 
+.link {
+    cursor: pointer;
+    text-decoration: underline
+}
+
 .red{
     color: red;
+}
+.flex-1{
+    flex:1;
+}
+
+.big-btn{
+    padding: 3 50px;
+}
+
+.btn-counter-delimeter{
+    width: 20px;
+    display: inline-block;
 }
 
 .medium-height{
     max-height: 130px;
     overflow-y: scroll;
     
+}
+
+.medium-height input[type="radio"]:checked::before {
+    transform: scale(1);
+    margin-right: -5px;
 }
 
 .form-item {

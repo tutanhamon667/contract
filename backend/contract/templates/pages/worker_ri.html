@@ -7,16 +7,16 @@
     <div class="container" x-data>
     <h1>Приглашения от работодателей</h1>
         <section x-init="initRI()">
-            <div class="d-flex">
+            <div class="d-flex page-btn-container">
                   <div class="px-1">
                       <a class="btn" :class="application.getRIToggleBtnClass(null, 1)" @click="application.setRIFilters({status: 1, type: null})">
-                          <span class="left">Собеседования</span>
+                          Собеседования</a>
 
                     <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 1).length">
-                        <span class="right"
+                        <span class="counter-text"
                               x-text="$store.main.counters.ri.filter(i => i.status === 1).length"></span>
                     </template>
-                         </a>
+                         
                 </div>
                 <div class="px-1">
                     <a class="btn"  :class="application.getRIToggleBtnClass(1, 0)" @click="application.setRIFilters({status: 0, type: 1})">Приглашения</a>

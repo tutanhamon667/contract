@@ -182,13 +182,21 @@ class Access:
 			if not self.user.is_authenticated:
 				return 401
 			if self.user.is_customer:
-				company = Company.objects.get(user=self.user)
-				if company.is_moderated is False:
-					return 666
-				# get from db customer paid  resumes view until...
-				# if self.user.has_resume_access == False:
-				# return 403
-				return 200
+				if action == "create":
+					company = Company.objects.get(user=self.user)
+					if company.is_moderated is False:
+						return 666
+					# get from db customer paid  resumes view until...
+					# if self.user.has_resume_access == False:
+					# return 403
+					return 200
+				if action == "update":
+					company = Company.objects.get(user=self.user)
+					job = Job.objects.filter(company__user_id=self.user.id, id=entity_id)
+					if len(job):
+						return 200
+					else:
+						return 404
 			else:
 				return 404
 

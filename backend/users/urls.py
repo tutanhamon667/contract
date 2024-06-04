@@ -14,7 +14,7 @@ urlpatterns = [
     path("get_counters", get_counters, name="get_counters"),
 
     path('contacts', get_contacts, name='my_contacts'),
-
+    path("profile_jobs", get_profile_jobs, name="api_profile_jobs"),
     path("worker_reviews", worker_reviews, name="worker_reviews"),
     path("create_review", create_review, name="create_review"),
     path("create_worker_review", create_worker_review, name="create_worker_review"),

@@ -197,7 +197,7 @@ class BuyPaymentPeriod(models.Model):
     amount = models.IntegerField('Months values', default=1, null=False, blank=False)
     discount = models.IntegerField('Discount', default=0, null=False, blank=False)
     def __str__(self):
-        return u'{0}   Скидка: {1}%'.format(self.amount, self.discount)
+        return u'{0}           Скидка: {1}%'.format(self.amount, self.discount)
 
 
 class JobTier(models.Model):
@@ -206,7 +206,7 @@ class JobTier(models.Model):
     description = models.CharField(verbose_name="Description", blank=False, default="", null=False, max_length=255)
 
     def __str__(self):
-        return u'{0}        {1}$'.format(self.name, self.cost)
+        return  u' {0}            {1}$'.format(self.name, self.cost)
 
 class CustomerAccessPayment(models.Model):
     user = models.ForeignKey(Member, on_delete=models.PROTECT, null=False, blank=False, default=None)

@@ -64,15 +64,22 @@ def main_view(request):
 def jobs_view(request):
 	if request.method == 'GET':
 		search_form = JobFilterForm(initial=request.GET)
-
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
 		return render(request, './pages/jobs.html', {
 			'search_form': search_form,
+			'articles': articles,
+			'categories': categories
 			})
 
 
 def favorite_view(request):
 	if request.method == 'GET':
-		return render(request, './pages/favorite.html', {	})
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
+		return render(request, './pages/favorite.html', {	
+			'articles': articles,
+			'categories': categories})
 
 def worker_responses_invites_view(request):
 	if request.method == 'GET':
@@ -84,7 +91,11 @@ def worker_responses_invites_view(request):
 				return redirect('signin')
 			else:
 				return HttpResponse(status=code)
-		return render(request, './pages/worker_ri.html', {	})
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
+		return render(request, './pages/worker_ri.html', {
+			'articles': articles,
+			'categories': categories	})
 
 def customer_responses_invites_view(request):
 	if request.method == 'GET':
@@ -96,25 +107,35 @@ def customer_responses_invites_view(request):
 				return redirect('signin')
 			else:
 				return HttpResponse(status=code)
-		return render(request, './pages/customer_ri.html', {})
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
+		return render(request, './pages/customer_ri.html', {
+			'articles': articles,
+			'categories': categories})
 
 
 def job_view(request, job_id):
 	if request.method == 'GET':
-
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
 		job = Job.objects.get(id=job_id)
 		job.increase_views()
 		return render(request, './pages/job.html', {
-			'job': job
+			'job': job,
+			'articles': articles,
+			'categories': categories
 		})
 
 
 def company_view(request, company_id):
 	if request.method == 'GET':
 		company = Company.objects.get(id=company_id)
-
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
 		review_form = CompanyReviewForm(initial={"company_id": company_id})
-		return render(request, './pages/company.html', {'company': company,"review_form":review_form})
+		return render(request, './pages/company.html', {'company': company,"review_form":review_form,
+			'articles': articles,
+			'categories': categories})
 
 
 
@@ -148,11 +169,15 @@ def resumes_view(request):
 
 	if request.method == 'GET':
 		search_form = ResumeFilterForm(initial=request.GET)
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
 		form_response = InviteForm(
 			initial={"type": RESPONSE_INVITE_TYPE["RESPONSE"], "user": user})
 		return render(request, './pages/resumes.html', {
 			'search_form': search_form,
 			'form_response': form_response,
+			'articles': articles,
+			'categories': categories
 })
 
 
@@ -181,7 +206,11 @@ def resume_view(request, resume_id):
 		review_form = WorkerReviewForm(initial={"resume_id": resume.id})
 		form_response = InviteForm(
 			initial={"type": RESPONSE_INVITE_TYPE["INVITE"], "user": user})
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
 		return render(request, './pages/resume.html', {
 			'review_form': review_form,
 			'form_response': form_response,
+			'articles': articles,
+			'categories': categories,
 			'resume': resume})

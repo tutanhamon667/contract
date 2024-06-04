@@ -23,6 +23,11 @@ class JobPaymentTarifForm(forms.Form):
     amount = forms.ModelChoiceField(label="Количество месяцев", queryset=BuyPaymentPeriod.objects.all(), blank=True,
                                     required=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+
 
 class ResumeForm(ModelForm):
     is_offline = forms.ChoiceField(label="Тип занятости", widget=forms.RadioSelect, choices=CHOICES_WORK_TYPE,
@@ -72,20 +77,51 @@ class ResumeForm(ModelForm):
         self.fields["specialisation"].widget = specialisation_widget
 
 class JobForm(ModelForm):
+    is_offline = forms.ChoiceField(label="Тип занятости", widget=forms.RadioSelect, choices=CHOICES_WORK_TYPE,
+                                   initial=True)
+    is_fulltime = forms.ChoiceField(label="График работы", widget=forms.RadioSelect, choices=CHOICES_WORK_TIMEWORK,
+                                    initial=True)
+    work_experience = forms.ChoiceField(label="Опыт работы", widget=forms.RadioSelect, choices=CHOICES_WORK_EXPERIENCE,
+                                        initial=1)
+    industry = forms.ChoiceField(label="Специализация", widget=forms.RadioSelect, choices=Industry.objects.all().values_list('id', 'name'))
+    specialisation = forms.ModelChoiceField(label="Должность", queryset=Specialisation.objects.all(), required=False)
     class Meta:
         model = Job
-        fields = ['id', 'company', 'title', 'specialisation', 'active_search', 'description', 'salary_from',
+        fields = ['id', 'company', 'title', 'industry', 'specialisation', 'active_search', 'salary_from',
                   'salary_to',
-                  'work_experience', 'deposit', 'is_offline', 'is_fulltime', 'region']
+                  'work_experience', 'deposit', 'is_offline', 'region', 'is_fulltime', 'description']
         widgets = {'company': forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
-            if field != 'is_offline' and field != 'is_fulltime' and field != 'active_search':
+            if field != 'is_offline' and field != 'is_fulltime' and field != 'active_search' and field !='industry' and field != 'is_fulltime' and field != 'active_search' and field != 'work_experience':
                 self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+            if field =='industry':
+                self.fields[field].widget.attrs.update({'class': 'medium-height', 'autocomplete': 'off'})
+            if field =='specialisation':
+                self.fields[field].widget.attrs.update({'class': 'label-up'})
 
         self.fields['description'].widget.attrs.update({'class': 'form-control django_ckeditor_5'})
+
+
+        if "region" in kwargs["initial"]:
+            multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all(),
+                                                          selected=kwargs["initial"]["region"])
+        else:
+            multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all())
+
+        if "specialisation" in kwargs["initial"]:
+            specialisation_widget = SelectParentWidget(label='Должность', items=Specialisation.objects.all(),
+                                                          selected=kwargs["initial"]["specialisation"])
+        else:
+            specialisation_widget = SelectParentWidget(label='Должность', items=Specialisation.objects.all())
+        
+        if "industry" in kwargs["initial"]:
+            self.fields["industry"].widget.initial = kwargs["initial"]["industry"]
+
+        self.fields["region"].widget = multiselect_region_widget
+        self.fields["specialisation"].widget = specialisation_widget
 
 
 class ResponseForm(ModelForm):
@@ -319,10 +355,10 @@ class PasswordChangeForm(forms.Form):
 
 
 class CompanyForm(ModelForm):
+    user = forms.CharField(widget= forms.HiddenInput())
     class Meta:
         model = Company
-        fields = ['id', 'user', 'logo', 'email', 'name', 'about', 'web']
-        widgets = {'user': forms.HiddenInput()}
+        fields = ['id', 'user', 'logo',  'name', 'about']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

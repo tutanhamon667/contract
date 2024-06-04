@@ -110,20 +110,24 @@ const app = function() {
         const page = $(filterForm).find('[name="page"]')
 
         $("[name=\"status_radio\"]").on("change", function(el) {
-            console.log($(this).attr('id'))
             switch ($(this).attr('id')) {
                 case 'status_0':
-
                     $(status).val(0)
                     break;
                 case 'status_1':
                     $(status).val(1)
                     break;
-
             }
             $(filterForm).submit()
         })
     }
+
+    const deleteJobHandler = (id) => {
+        let text = "Вы действительно хотите удалить вакансию?";
+        if (confirm(text) == true) {
+           window.location.href = `/profile/jobs/delete/${id}`
+        } 
+}
 
     const favoriteJobCheckboxHandler = () => {
         $('.favorite_job_checkbox').on('change', function(e){
@@ -222,6 +226,7 @@ const app = function() {
         })
     }
     return {
+        deleteJobHandler:deleteJobHandler,
         industrySpecInit:industrySpecInit,
         readURL:readURL,
         initRating:initRating,

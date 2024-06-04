@@ -27,6 +27,20 @@ const alpineApp = function () {
     })
 
 
+    const alertModal = (message) => {
+        var modal = new bootstrap.Modal(document.getElementById('error-modal'), {
+            keyboard: false
+          });
+          var modalContent = document.getElementById('error-modal').querySelector('.modal-body')
+          var modalTitle = document.getElementById('error-modal').querySelector('.modal-title')
+        
+          modalContent.textContent = message
+          modalTitle.textContent = 'Ошибка'
+        
+          modal.show();
+    }
+
+
     const makeRequest = async function (url, data) {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         return new Promise((resolve, reject) => {
@@ -557,7 +571,7 @@ const alpineApp = function () {
             if (res.success) {
                 this.setJobs(res.data)
             } else {
-                alert(res.msg)
+                alertModal(res.msg)
             }
         }
     }
@@ -587,7 +601,7 @@ const alpineApp = function () {
                 job.invite = result.data
 
             } else {
-                alert(res.msg)
+                alertModal(res.msg)
             }
         }
     }
@@ -610,7 +624,7 @@ const alpineApp = function () {
                 resume.invite = result.data
 
             } else {
-                alert(res.msg)
+                alertModal(res.msg)
             }
         }
     }
@@ -672,7 +686,7 @@ const alpineApp = function () {
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
             this.setPagination(pagination)
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -703,7 +717,7 @@ const alpineApp = function () {
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').resumesCount, Alpine.store('main').filters)
             this.setPagination(pagination)
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -736,7 +750,7 @@ const alpineApp = function () {
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').resumesCount, Alpine.store('main').filters)
             this.setPagination(pagination)
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -749,11 +763,11 @@ const alpineApp = function () {
         const res = await Alpine.store('main').getFavoriteJobs(object)
         if (res.success) {
             this.setJobs(res.data)
-            this.setJobsCount(res.count)
+           /* this.setJobsCount(res.count)
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
-            this.setPagination(pagination)
+            this.setPagination(pagination)*/
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -786,7 +800,7 @@ const alpineApp = function () {
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
             this.setPagination(pagination)
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -804,12 +818,12 @@ const alpineApp = function () {
         }
     }
 
-    this.getJob = async (id) => {
-        const res = await makeRequest('job', {id: id})
+    this.getJob = async (id, data={}) => {
+        const res = await makeRequest('job', {id: id, ...data})
         if (res.success) {
             this.setJob(res.data)
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -818,7 +832,7 @@ const alpineApp = function () {
         if (res.success) {
             Alpine.store('main').resume = res.data
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
     this.getContacts = async () => {
@@ -826,7 +840,7 @@ const alpineApp = function () {
         if (res.success) {
             Alpine.store('main').contacts = res.data
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -842,7 +856,7 @@ const alpineApp = function () {
                 chats: chats && res.data.responses.length ? chats / (res.data.responses.length + res.data.invites.length) * 100 : 0
             }
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -963,7 +977,7 @@ const alpineApp = function () {
             this.setPagination(pagination)
             await this.getCounters()
         } else {
-            alert(res.msg)
+            alertModal(res.msg)
         }
     }
 
@@ -1037,6 +1051,19 @@ const alpineApp = function () {
         if (counters.success){
             Alpine.store('main').counters = counters.data
         }
+    }
+
+    
+
+    
+    this.initJobPayment = async (id) => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+           
+        }
+
+        await this.getJob(id, {'profile': true})
     }
 
     this.initResumePage = async (id) => {

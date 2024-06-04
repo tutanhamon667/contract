@@ -361,7 +361,11 @@ def favorite_jobs(request):
                 invites = list(ResponseInvite.join_invites(objs=jobs, user=request.user).values())
                 if request.user.is_worker:
                     favorites = list(FavoriteJob.join_favorites(objs=jobs, user=request.user).values())
-
+            for r in res:
+                r["company"] = {}
+                r["invite"] = {}
+                r["favorite"] = {}
+                r["payment"] = {}
             for r in res:
                 r["company"] = {}
                 for company in companies_arr:
@@ -493,7 +497,13 @@ def get_jobs(request):
 
 def get_job(request):
     try:
-        jobs = Job.get_paid_job(request.POST["id"])
+        if 'profile' in request.POST:
+            
+            jobs = Job.get_active_job(request.POST["id"])
+        else:
+            jobs = Job.get_paid_job(request.POST["id"])
+        if len(jobs) == 0:
+            return JsonResponse({'success': False, "msg": "Вакансия не активна"})
         res = list(jobs.values())
         companies = Company.join_companies(jobs)
 
@@ -603,6 +613,37 @@ def get_contacts(request):
         else:
             contacts = list(Contact.get_worker_contacts(request.user.id))
         return JsonResponse({'success': True, "data": contacts})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
+
+
+def get_profile_jobs(request):
+    try:
+        user = request.user
+        access = Access(user)
+        code = access.check_access("profile_job")
+        if code != 200:
+            if code == 666:
+                return redirect('activate_view')
+            if code == 401:
+                return redirect('signin')
+            else:
+                return HttpResponse(status=code)
+            if 'paid' in request.POST:
+                company = Company.objects.get(user_id=user.id)
+                jobs = Job.objects.filter(company=company.id)
+                now = datetime.datetime.now()
+                if request.POST["paid"] == "true":
+                    jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
+                    return JsonResponse({'success': True, "data": {'paid': list(jobs_paid.values()), 'not_paid': list(jobs_not_paid.values())}})
+                else:
+                    jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
+                    jobs_not_paid_ids = []
+                    for job_paid in jobs_paid:
+                        jobs_not_paid_ids.append(job_paid.id)
+                    jobs_not_paid = jobs.filter().exclude(id__in=jobs_not_paid_ids)
+                    return JsonResponse({'success': True, "data": {'paid': list(jobs_paid.values()), 'not_paid': list(jobs_not_paid.values())}})
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 

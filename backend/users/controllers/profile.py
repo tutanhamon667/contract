@@ -365,7 +365,7 @@ def profile_company_view(request):
 		if code == 666:
 			return redirect('activate_view')
 		if code == 401:
-			return redirect('signin')
+			return redirect('customer_signin')
 		else:
 			return HttpResponse(status=code)
 	if request.method == "GET":
@@ -376,11 +376,14 @@ def profile_company_view(request):
 			return HttpResponse(status=403)
 		form = None
 		if len(company) > 0:
-			form = CompanyForm(instance=company[0])
+			company = company[0]
+			form = CompanyForm(instance=company)
 		else:
 			form = CompanyForm(initial={'user': user.id})
+		contacts = Contact.get_company_links(user)
 		return render(request, './blocks/profile/profile_company.html', {
 			'form': form,
+			'contacts': contacts,
 			'company': company,
 			'categories': categories,
 			'articles': articles
@@ -391,14 +394,17 @@ def profile_company_view(request):
 		if member.is_worker:
 			return HttpResponse(status=403)
 		company = Company.objects.filter(user_id=user.id)
+
 		form = None
-		if len(company) > 0:
-			form = CompanyForm(request.POST, request.FILES, instance=company[0])
+		if len(request.FILES) > 0:
+			form = CompanyForm( request.POST, request.FILES, instance=company[0], initial={'user': user.id})
 		else:
-			form = CompanyForm(request.POST, request.FILES)
+			form = CompanyForm( request.POST, instance=company[0], initial={'user': user.id})
 		form.user_id = user.id
 		if form.is_valid():
 			form.save()
+			links = request.POST.getlist('link[]')
+			Contact.update_company_contacts(user, links)
 			return redirect(to='profile_company_view')
 		return render(request, './blocks/profile/profile_company.html', {
 			'form': form,
@@ -418,7 +424,7 @@ def jobs_profile_view(request):
 		if code == 666:
 			return redirect('activate_view')
 		if code == 401:
-			return redirect('signin')
+			return redirect('customer_signin')
 		else:
 			return HttpResponse(status=code)
 	articles = Article.objects.all()
@@ -432,7 +438,7 @@ def jobs_profile_view(request):
 
 	if request.method == "GET":
 		company = Company.objects.get(user_id=user.id)
-		jobs = Job.objects.filter(company=company.id)
+		jobs = Job.objects.filter(company=company.id, deleted=False)
 		now = datetime.datetime.now()
 		jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
 		jobs_not_paid_ids = []

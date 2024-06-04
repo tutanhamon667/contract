@@ -178,12 +178,12 @@
                                 <template x-for="paginationItem in $store.main.pagination">
                                     <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">
                                         <template x-if="paginationItem.active">
-                                            <button @click="application.setJobsPage(paginationItem.text)"
+                                            <button @click="application.setResumesPage(paginationItem.text)"
                                                     x-text="paginationItem.text+1"
                                                     class="mr-5 pagination-btn active-page"></button>
                                         </template>
                                         <template x-if="!paginationItem.active">
-                                            <button @click="application.setJobsPage(paginationItem.text)"
+                                            <button @click="application.setResumesPage(paginationItem.text)"
                                                     x-text="paginationItem.text+1"
                                                     class="mr-5 pagination-btn"></button>
                                         </template>

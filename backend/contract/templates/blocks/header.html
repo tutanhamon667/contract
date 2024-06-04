@@ -32,8 +32,8 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         {% if user.is_customer %}
                             <li class="nav-item">
-                                <a class="nav-link {% if url_name == 'resumes' %}active{% endif %}"
-                                   href="{% url 'resumes' %}">Поиск по базе резюме</a>
+                                <a class="nav-link {% if url_name == 'profile_jobs' %}active{% endif %}"
+                                href="{% url 'profile_jobs' %}">Мои вакансии</a>
                             </li>
                              <li class="nav-item">
                                 <a class="nav-link {% if url_name == 'candidats_page' %}active{% endif %}"
@@ -44,6 +44,10 @@
                                     </template>
 
                                 </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if url_name == 'resumes' %}active{% endif %}"
+                                   href="{% url 'resumes' %}">Поиск по базе резюме</a>
                             </li>
                         {% endif %}
                         {% if user.is_worker %}

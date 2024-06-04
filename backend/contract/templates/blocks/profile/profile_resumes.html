@@ -3,13 +3,18 @@
 {% load static %}
 {% load django_bootstrap5 %}
 {% block content %}
-    <div class="container" x-data>
+    <div class="container " x-data>
         <section x-init="initUserResumes()">
-
-                <a class="btn btn-success mr-5  mt-15"
+            <div class="page-header">
+                <h1 class="my_order_title">Мои резюме</h1>
+            </div>
+                <div class=" page-btn-container">
+                    <a class="btn btn-success mr-5  mt-15"
                     href="/profile/resume/create">
                     Создать резюме
                 </a>
+                </div>
+               
 
             <div class="row">
                 <div class="col-xl-8 col-md-8 col-sm-12 col">

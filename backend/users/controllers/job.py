@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-
+from django.forms import model_to_dict
 from btc.libs.balance import Balance
 from btc.models import JobPayment, BuyPaymentPeriod, JobTier, Address, Operation
 from common.models import Article, ArticleCategory
@@ -25,80 +25,109 @@ class JobView:
 		if user.is_authenticated:
 			try:
 				access = Access(user)
-				code = access.check_access("profile_job")
+				code = access.check_access("profile_job",None ,"create")
 				if code != 200:
 					if code == 401:
-						return redirect('signin')
+						return redirect('customer_signin')
 					else:
 						return HttpResponse(status=code)
-				articles = Article.objects.all()
-				categories = ArticleCategory.objects.all()
-				form = JobForm(request.POST, )
-				company = Company.objects.get(user_id=user.id)
-				form.company_id = company.id
-				if form.is_valid():
-					job = form.save(commit=False)
-					job.company_id = company.id
-					job.save()
-					messages.success(request, 'Вакансия создана')
-					return redirect('profile_job_view_pay_for_tier', job.id)
-				else:
+				if request.method == 'GET':
+					articles = Article.objects.all()
+					categories = ArticleCategory.objects.all()
+					form = JobForm( initial={} )
+					company = Company.objects.get(user_id=user.id)
 					return render(request, './blocks/profile/profile_job_create.html',
-								  {'form': form,
-								   'categories': categories,
-								   'articles': articles
-								   })
-
+								{'form': form,
+								'categories': categories,
+								'articles': articles
+								})
+				if request.method == 'POST':
+					articles = Article.objects.all()
+					categories = ArticleCategory.objects.all()
+					initial = request.POST
+					initial._mutable = True
+					initial['region'] = request.POST.getlist('region')
+					form = JobForm(request.POST, initial=initial )
+					company = Company.objects.get(user_id=user.id)
+					if form.is_valid():
+						edited_form = form.save(commit=False)
+						edited_form.user = request.user
+						edited_form.company = company
+						edited_form.save()
+						form.save_m2m()
+						messages.success(request, 'Вакансия создана')
+						return redirect('profile_job_view_pay_for_tier', edited_form.id)
+					else:
+						return render(request, './blocks/profile/profile_job_create.html',
+									{'form': form,
+									'categories': categories,
+									'articles': articles
+									})
 			except Exception as e:
 				print(e)
 				return HttpResponse(status=500)
 		else:
-			return redirect(to="signin")
+			return redirect(to="customer_signin")
 
 	def update(self, request, job_id):
 		user = request.user
 		if user.is_authenticated:
 			try:
 				access = Access(user)
-				code = access.check_access("profile_job")
+				code = access.check_access("profile_job", job_id, "update")
 				if code != 200:
 					if code == 401:
-						return redirect('signin')
+						return redirect('customer_signin')
 					else:
 						return HttpResponse(status=code)
-				articles = Article.objects.all()
-				categories = ArticleCategory.objects.all()
-				if request.method == "GET":
+				if request.method == 'GET':
+					articles = Article.objects.all()
+					categories = ArticleCategory.objects.all()
+					
 					company = Company.objects.get(user_id=user.id)
-					job = Job.objects.get(company=company.id, id=job_id)
-					if job:
-						form = JobForm(instance=job)
-						return render(request, './blocks/profile/profile_job_update.html', {
-							'form': form,
-							'categories': categories,
-							'articles': articles
-						})
-					else:
-						return HttpResponse(status=404)
-				else:
+					job = Job.objects.get(id=job_id)
+					region_ids = job.region.values_list('id', flat=True)	
+					initial =  model_to_dict(job)
+					initial['region'] = region_ids
+					initial['industry'] = job.specialisation.industry_id
+					form = JobForm(instance=job, initial=initial )
+					return render(request, './blocks/profile/profile_job_create.html',
+								{'form': form,
+								'categories': categories,
+								'articles': articles,
+								'job': job
+								})
+				if request.method == 'POST':
+					articles = Article.objects.all()
+					categories = ArticleCategory.objects.all()
+					job = Job.objects.get(id=job_id)
+					initial = request.POST
+					initial._mutable = True
+					initial['region'] = request.POST.getlist('region')
+					form = JobForm(request.POST,  initial=initial )
 					company = Company.objects.get(user_id=user.id)
-					job = Job.objects.get(company=company.id, id=job_id)
-					form = JobForm(request.POST, instance=job)
-					form.company_id = company.id
 					if form.is_valid():
-						form.save()
+						edited_form = form.save(commit=False)
+						edited_form.user = request.user
+						edited_form.id = job.id
+						edited_form.company = company
+						edited_form.save()
+						form.save_m2m()
 						messages.success(request, 'Вакансия обновлена')
-						return redirect(to='profile_jobs')
-					return render(request, './blocks/profile/profile_job_update.html', {
-						'form': form,
-						'categories': categories,
-						'articles': articles
-					})
+						return redirect('profile_jobs')
+					else:
+						return render(request, './blocks/profile/profile_job_create.html',
+									{'form': form,
+									'categories': categories,
+									'articles': articles,
+									'job': job
+									})
 			except Exception as e:
 				print(e)
 				return HttpResponse(status=500)
 		else:
-			return redirect(to="signin")
+			return redirect(to="customer_signin")
+
 
 
 	def pay_for_tier(self, request, job_id):
@@ -109,7 +138,7 @@ class JobView:
 				code = access.check_access("profile_job_pay_tier", job_id)
 				if code != 200:
 					if code == 401:
-						return redirect('signin')
+						return redirect('customer_signin')
 					else:
 						return HttpResponse(status=code)
 				articles = Article.objects.all()
@@ -326,18 +355,26 @@ class JobView:
 					print(e)
 					return HttpResponse(status=500)
 		else:
-			return redirect(to="signin")
+			return redirect(to="customer_signin")
 
-	def delete(self, request):
+	def delete(self, request, job_id):
 		if request.user.is_authenticated:
 			try:
-				
-				return redirect(request.POST["redirect"])
+				access = Access(request.user)
+				code = access.check_access("profile_job", job_id, "update")
+				if code != 200:
+					if code == 401:
+						return redirect('customer_signin')
+					else:
+						return HttpResponse(status=code)
+				job = Job.objects.get(id=job_id)
+				job.set_deleted()
+				return redirect('profile_jobs')
 			except Exception as e:
 				print(e)
 				return HttpResponse(status=500)
 		else:
-			return redirect(to="signin")
+			return redirect(to="customer_signin")
 
 
 profile_job_view = JobView()
