@@ -1,0 +1,82 @@
+
+<div class="select-extended d-flex"  x-init="initSelectExtended{{widget.name}}('{{ widget.name}}')">
+    <div class="w-100 form-control">
+        <template x-if=" $store.main.selectExtended['{{widget.name}}']">
+            <template x-for="item in $store.main.selectExtended['{{widget.name}}'].values">
+                <template x-if="item.selected">
+                   
+                    <div class="select-extended-item select-extended-item-selected w-100"  x-bind="selectExtendedBtn"
+                    :id="$store.main.selectExtended['{{widget.name}}'].name+ '_item_' +  item.id ">
+                        <div class="d-flex">
+                            <template x-if="item.icon">
+                                <div class="d-flex">
+                                    <img :src='"/staticfiles/contract/img/icons/"+item.icon +".svg"' height="16"
+                                            class="mt-2 mr-5">
+                                    <span  x-text="item.name"></span>
+                                </div>
+                            </template>
+                            <template x-if="!item.icon">
+                                <div  x-text="item.name"></div>
+                            </template>
+                            <div class="flex-1"></div>
+                            <div x-html="item.value"></div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+        </template>
+
+    
+  
+      
+        <div class="select-extended-expand-container hidden">
+            <template x-if=" $store.main.selectExtended['{{widget.name}}']">
+                <template x-for="item in $store.main.selectExtended['{{widget.name}}'].values">
+                    <template x-if="!item.selected">
+                        <div class="select-extended-item select-extended-item-selected"  x-bind="selectExtendedItem" 
+                         :id="$store.main.selectExtended['{{widget.name}}'].name+ '_item_' +  item.id ">
+                            <div class="d-flex">
+
+                                <template x-if="item.icon">
+                                    <div class="d-flex">
+                                        <img :src='"/staticfiles/contract/img/icons/"+item.icon +".svg"' height="16"
+                                                class="mt-2 mr-5">
+                                        <span  x-text="item.name"></span>
+                                    </div>
+                                </template>
+                                <template x-if="!item.icon">
+                                    <div  x-text="item.name"></div>
+                                </template>
+
+                                <div class="flex-1"></div>
+                                <div x-html="item.value"></div>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </template>
+        </div>
+       
+    </div>
+   
+    <div class="hidden">
+        <select name="{{ widget.name }}" id="{{ widget.name }}" style="">
+            {% for item in widget.items %}
+                {% if item.selected %}
+            <option value="{{ item.id }}" selected>{{ item.name }}</option>
+                {% else %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+</div>
+{% with script_name=widget.name|add:'_script' %}
+{{ widget.items|json_script:script_name}}
+{% endwith %}
+<script>
+    const initSelectExtended{{widget.name}} = (name) => {
+        const selected = document.getElementById('{{widget.name}}').value
+        application.initSelectExtended(name,JSON.parse(document.getElementById('{{widget.name}}_script').textContent), selected)
+    }
+</script>

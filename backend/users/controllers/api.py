@@ -4,6 +4,9 @@ from django.core import serializers
 from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
 
+import datetime
+from django.contrib.contenttypes.models import ContentType
+from dateutil.relativedelta import relativedelta
 from btc.libs.balance import Balance
 from btc.libs.btc_wallet import get_wallet, get_addresses_count, generate_address
 from btc.models import JobPayment
@@ -15,8 +18,8 @@ from users.core.access import Access
 from users.forms import CompanyReviewForm, WorkerReviewForm
 from users.models.advertise import Banners
 from users.models.user import FavoriteJob, Job, ResponseInvite, CustomerReview, Company, Resume, Contact
-
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core.cache import cache
+from btc.models import JobPayment, BuyPaymentPeriod, JobTier, Address, Operation
 
 
 def get_user(request):
@@ -491,6 +494,159 @@ def get_jobs(request):
                     favorite["checked"] = True
                     r["favorite"] = favorite
         return JsonResponse({'success': True, "data": res, "count": jobs_count})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
+def calc_tier_payment(request):
+    try:
+        user = request.user
+        access = Access(request.user)
+        code = access.check_access("profile_job_pay_tier", request.POST["job_id"])
+        if code != 200:
+            return JsonResponse({'success': False, "code": code})
+        amount = BuyPaymentPeriod.objects.get(id=request.POST["amount"])
+        tier = JobTier.objects.get(id=request.POST["tier"])
+        job = Job.objects.get(id=request.POST["job_id"])
+        active_job_payment = JobPayment.get_job_active_payment(job)
+        user_address = Address.objects.get(user=user)
+        user_operations = Operation.objects.filter(address=user_address)
+        user_balance = Balance(address=user_address, operations=user_operations)
+        if active_job_payment is False:
+            final_price_usd = round(
+                float(tier.cost) * float(amount.amount) * (
+                        (100 - amount.discount) / 100), 2)
+            btc_usd = cache.get("btc_usd")
+            if not btc_usd:
+                btc_usd = Balance.update_btc_usd()
+            final_price_btc = final_price_usd / btc_usd
+            can_spend = user_balance.check_payment(final_price_btc)
+          
+            if can_spend < 0:
+                status = 1
+                start_at = datetime.datetime.now()
+                paid_at = start_at
+                expire_at = start_at + relativedelta(months=amount.amount)
+                success_message = 'создан и ждёт оплаты'
+            else:
+                status = 0
+                start_at = datetime.datetime.now()
+                paid_at = start_at
+                expire_at = start_at + relativedelta(months=amount.amount)
+                success_message = 'оплачен'
+        elif active_job_payment.job_tier_id == tier.id:
+            if active_job_payment.expire_at:
+                final_price_usd = round(
+                    float(tier.cost) * float(amount.amount) * (
+                            (100 - amount.discount) / 100), 2)
+                btc_usd = cache.get("btc_usd")
+                if not btc_usd:
+                    btc_usd = Balance.update_btc_usd()
+                final_price_btc = final_price_usd / btc_usd
+                can_spend = user_balance.check_payment(final_price_btc)
+                if can_spend < 0:
+                    status = 1
+                    start_at = active_job_payment.expire_at
+                    paid_at = start_at
+                    expire_at = start_at + relativedelta(months=amount.amount)
+                else:
+                    status = 0
+                    start_at = active_job_payment.expire_at
+                    paid_at = start_at
+                    expire_at = start_at + relativedelta(months=amount.amount)
+            else:
+                job_payment_content_type = ContentType.objects.get_for_model(JobPayment)
+                payment_operations = Operation.objects.filter(reason_content_type=job_payment_content_type,
+                                                                reason_object_id=active_job_payment.id)
+                hold_operation = None
+                payment_operation = payment_operations[0]
+                if len(payment_operations) == 2:
+                    for operation in payment_operations:
+                        if operation.status == 2:
+                            hold_operation = operation
+                        else:
+                            payment_operation = operation
+
+                operation = payment_operation
+                final_price_usd = float(operation.cost_usd)
+                btc_usd = cache.get("btc_usd")
+                if not btc_usd:
+                    btc_usd = Balance.update_btc_usd()
+
+                final_price_btc = final_price_usd / btc_usd
+                can_spend = user_balance.check_payment(final_price_btc)
+                if can_spend > 0:
+                    now = datetime.datetime.now()
+                    operation.status = 0
+                    operation.paid_at = now
+                if hold_operation:
+                        final_price_btc = final_price_btc + float(hold_operation.cost_btc)
+                        final_price_usd = final_price_usd + float(hold_operation.cost_usd)
+                        hold_operation.delete()
+                else:
+                    final_price_btc = final_price_btc
+                    final_price_usd = final_price_usd
+                start_at = now
+                expire_at = now + relativedelta(months=amount.amount)
+        else:
+            # Переход на более дорогой тариф
+            if active_job_payment.job_tier.cost > tier.cost:
+ 
+                return JsonResponse({'success': True, "data": {}, "code": 400, "msg": "Переход на более дешёвый тариф не возможен"})
+            # Вычисляем сколько прошло времени текущего активного тарифа
+            if active_job_payment.expire_at is None:
+                return JsonResponse({'success': True, "data": {}, "code": 400, "msg": "Имеется не оплаченный счёт по данной вакансии"})
+            today = datetime.datetime.now().date()
+            end_period = datetime.datetime.date(active_job_payment.expire_at)
+            start_period = datetime.datetime.date(active_job_payment.start_at)
+            # осталось дней
+            delta_ost = end_period - today  # 45 days
+            # прошло дней
+            delta_left = today - start_period  # 15 days
+            period_days = end_period - start_period
+
+            # Получаем новую стоимость текущего тарифа
+            discount = active_job_payment.amount.discount
+            job_payment_content_type = ContentType.objects.get_for_model(JobPayment)
+            prev_period_operation = Operation.objects.get(reason_content_type=job_payment_content_type,
+                                                            reason_object_id=active_job_payment.id)
+            prev_period_cost_usd = float(prev_period_operation.cost_usd)
+            prev_period_cost_btc = float(prev_period_operation.cost_btc)
+            delta_days_pr = delta_left.days / period_days.days
+            # новая стоимость текущей операции
+            new_prev_period_cost_usd = prev_period_cost_usd * delta_days_pr
+            new_prev_period_cost_btc = prev_period_cost_btc * delta_days_pr
+            # сумма возврата на новую операции
+            new_hold_period_cost_usd = prev_period_cost_usd - new_prev_period_cost_usd
+            new_hold_period_cost_btc = prev_period_cost_btc - new_prev_period_cost_btc
+            # закрываем текущую операцию
+            prev_period_operation.cost_btc = new_prev_period_cost_btc
+            prev_period_operation.cost_usd = new_prev_period_cost_usd
+            today_datetime = datetime.datetime.now()
+ 
+            final_price_usd = round(
+                float(tier.cost) * float(amount.amount) * (
+                        (100 - amount.discount) / 100), 2) - new_hold_period_cost_usd
+            btc_usd = cache.get("btc_usd")
+            if not btc_usd:
+                btc_usd = Balance.update_btc_usd()
+            final_price_btc = final_price_usd / btc_usd
+        
+            can_spend = user_balance.check_payment(final_price_btc)
+            #if can_spend > 0:
+            start_at = today_datetime
+            paid_at = start_at
+            expire_at = start_at + relativedelta(months=amount.amount)
+            final_price_usd = final_price_usd + new_hold_period_cost_usd
+            final_price_btc = final_price_btc + new_hold_period_cost_btc
+
+        res = {
+            "final_price_usd": final_price_usd,
+            "final_price_btc": final_price_btc,
+            "can_spend": can_spend,
+            "start_at": start_at,
+            "expire_at": expire_at,
+        }
+        return JsonResponse({'success': True, "data": res})
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 

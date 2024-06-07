@@ -13,20 +13,44 @@ from contract.widgets.captcha import CaptchaWidget
 from contract.widgets.multiselect import MultiselectWidget
 from contract.widgets.select_with_parent import SelectParentWidget
 from contract.widgets.password import PasswordWidget
+from contract.widgets.selectExtended import SelectExtendedWidget
 from users.models.common import Region
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
     Company, CustomerReview, ResponseInvite, Industry
 
 
 class JobPaymentTarifForm(forms.Form):
-    tier = forms.ModelChoiceField(label="Тариф размещения", queryset=JobTier.objects.all(), blank=True, required=True)
-    amount = forms.ModelChoiceField(label="Количество месяцев", queryset=BuyPaymentPeriod.objects.all(), blank=True,
-                                    required=True)
+    tier = forms.IntegerField(label="Тариф размещения", required=True)
+    amount = forms.IntegerField(label="Количество месяцев", required=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+
+        amounts = BuyPaymentPeriod.objects.all()
+        amounts_list = []
+        for amount in amounts:
+            amounts_list.append({"id":amount.id, "name": str(amount.amount) + ' мес.', "value": 'скидка <span class="green">'+str(amount.discount) + ' %</span>'})
+        if "amount" in kwargs["initial"]:
+            amount_widget = SelectExtendedWidget(label='Количество месяцев', items=amounts_list,
+                                                          selected=kwargs["initial"]["amount"])
+        else:
+            amount_widget = SelectExtendedWidget(label='Количество месяцев', items=amounts_list, selected=1)
+
+        self.fields["amount"].widget = amount_widget
+
+        tiers = JobTier.objects.all()
+        tier_list = []
+        for tier in tiers:
+            tier_list.append({"id":tier.id, "name": tier.name, "value": str(tier.cost) + '$ / мес', "icon": "bag"})
+        if "tier" in kwargs["initial"]:
+            tier_widget = SelectExtendedWidget(label='Тариф размещения', items=tier_list,
+                                                          selected=kwargs["initial"]["tier"])
+        else:
+            tier_widget = SelectExtendedWidget(label='Тариф размещения', items=tier_list, selected=1)
+
+        self.fields["tier"].widget = tier_widget
 
 
 class ResumeForm(ModelForm):

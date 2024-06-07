@@ -78,10 +78,17 @@
             </div>
         </section>
         <section>
+            <p>Current: {{active_job_payment.job_tier.name}}</p>
+            <p>Date start: {{active_job_payment.start_at}}</p>
+            <p>Date end: {{active_job_payment.expire_at}}</p>
+        </section>
+      
+        <section>
             <div class="">
             <form action="" method="post">
                 {% csrf_token %}
                 {% for field in payment_form.visible_fields %}
+             
                 <div class="row form-item">
              
                     <div class="col-xl-3 col-md-3 col-sm-4 form-item-label">
@@ -93,10 +100,26 @@
                         {{ field }}
                         {{ field.help_text }}
                     </div>
+                    {% if field.name == 'tier' %}
+                    <div class="d-flex mt-3">
+                        <img src="/staticfiles/contract/img/icons/vector.svg" height="12"
+                             class="mt-1 mr-5">
+                             <a type="button" class="" data-bs-toggle="tooltip" data-bs-placement="top" title="Тут просто ппц инфы по тарифам">
+                                Иформация о разнице тарифов
+                            </a>
+                    </div>
+                   
+                    {% endif %}
                 </div>
+                
                
             {% endfor %}
-       
+                <template x-if="$store.main.tier_cost">
+                <div>
+                    <p x-text="'Оплата размещения до ' + $store.main.tier_cost.expire_at"></p>
+                    <p x-text="'Сумма оплаты: ' + $store.main.tier_cost.final_price_usd + ' $'"></p>
+                </div>
+            </template>
                 <input type="submit" value="Оплатить"/>
             </form>
         </div>
@@ -108,6 +131,10 @@
             application.initJobPayment({{ job.id }})
         }
         $(document).ready(() => {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
             const application = new app()
         })
     </script>

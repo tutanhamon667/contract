@@ -12,7 +12,7 @@ urlpatterns = [
     path("company_reviews", company_reviews, name="company_reviews"),
     path("respones_invites", get_responses_invites, name="responses_invites"),
     path("get_counters", get_counters, name="get_counters"),
-
+    path("calc_tier_payment", calc_tier_payment, name="calc_tier_payment"),
     path('contacts', get_contacts, name='my_contacts'),
     path("profile_jobs", get_profile_jobs, name="api_profile_jobs"),
     path("worker_reviews", worker_reviews, name="worker_reviews"),

@@ -133,7 +133,7 @@ class JobView:
 	def pay_for_tier(self, request, job_id):
 		user = request.user
 		if user.is_authenticated:
-			try:
+
 				access = Access(user)
 				code = access.check_access("profile_job_pay_tier", job_id)
 				if code != 200:
@@ -153,6 +153,7 @@ class JobView:
 				if request.method == "GET":
 					return render(request, './blocks/profile/job_tier_payment.html', {
 						'payment_form': payment_form,
+						'active_job_payment':active_job_payment,
 						'job': job,
 						'categories': categories,
 						'articles': articles
@@ -351,9 +352,7 @@ class JobView:
 								else:
 									messages.success(request, f'Заказ №{new_job_payment.id} ждёт оплаты')
 									return redirect('profile_jobs')
-			except Exception as e:
-					print(e)
-					return HttpResponse(status=500)
+
 		else:
 			return redirect(to="customer_signin")
 

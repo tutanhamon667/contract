@@ -80,6 +80,7 @@ const alpineApp = function () {
         reviews_filters: {page: 0, limit: 3},
         pagination: [],
         reviews_pagination: [],
+        selectExtended:{},
         getWorkExpString: (value, needExpWord = true) => {
             switch (value) {
                 case 'WithoutExperience':
@@ -1099,6 +1100,100 @@ const alpineApp = function () {
         }
 
     }
+
+    calcTierCost = async () => {
+        const res = await makeRequest('calc_tier_payment', {
+            job_id: Alpine.store('main').job.id,
+         tier: Alpine.store('main').selectExtended['tier'].selected,
+          amount:Alpine.store('main').selectExtended['amount'].selected
+        })
+        if (res.success) {
+            Alpine.store('main').tier_cost = res.data
+        } else {
+            alertModal(res.msg)
+        }
+    }
+    
+    this.initSelectExtended =  (name, values, selected) => {
+       Alpine.store('main').selectExtended[name] = {
+            selected: selected,
+            values: values,
+            name: name
+       }
+       if (Alpine.store('main').job){
+            calcTierCost()
+       }else{
+        const runner = () =>{
+            setTimeout(() => {
+                if (Alpine.store('main').job){
+                    calcTierCost()
+               }else{
+                    runner()
+               }
+               
+            }, 1000)
+        }
+        runner()
+       }
+       
+    }
+
+    const getOptionById = (name, value) => 
+        document.querySelector(`#${name} > option[value="${value}"]`);
+
+     
+    Alpine.bind('selectExtendedItem', {
+        type: 'button',
+        checked: false,
+        selected: [],
+        '@init'(e) {
+            console.log(e)
+        },
+        '@click'(e) {
+            const id = e.currentTarget.id.split('_item_')[1]
+            const name = e.currentTarget.id.split('_item_')[0]
+            Alpine.store('main').selectExtended[name].selected = id
+            Alpine.store('main').selectExtended[name].values.forEach(function (option) {
+                option.selected = option.id == id
+            })
+            getOptionById(name, id).selected=true;
+            toggleSelectExtended(e)
+            calcTierCost()
+        }})
+
+    const toggleSelectExtended = (e) => {
+       
+        const item = e.currentTarget.closest('.select-extended')
+        const expandContainer = item.querySelector('.select-extended-expand-container')
+        if (expandContainer.classList.contains('hidden')){
+            e.currentTarget.focus();
+        }
+        expandContainer.classList.toggle('hidden')
+    }
+
+    this.closeSelectExtended = () => {
+        
+        const expandContainers = document.querySelector('.select-extended-expand-container')
+        for (let i = 0; i < expandContainers.length; i++) {
+            if(expandContainers[i].classList.contains('hidden')) continue
+                expandContainers[i].classList.add('hidden')
+        }
+       
+    }
+
+    Alpine.bind('selectExtendedBtn', {
+        type: 'button',
+        checked: false,
+        selected: [],
+        '@blur'(e) {
+            e.addEventListener("blur", function() {
+                // Code to execute when the element loses focus
+                toggleSelectExtended(e)
+            });
+        },
+        '@click'(e) {
+            toggleSelectExtended(e)
+        }})
 
     Alpine.bind('checkboxInput', {
         type: 'button',
