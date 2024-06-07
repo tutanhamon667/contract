@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+<div class="container" x-data>
+    <section>
+        <div class="page-header">
+            <h1 class="my_order_title">{{ title }}</h1>
+        </div>
+        <div class="page-content">
+            <p class="success-msg">{{ msg }}</p>
+            <p class="">Номер операции: #{{ payment_id }}</p>
+            <p class="">Сумма: {{ cost_usd }} $</p>
+        </div>
+        <a href="/profile/jobs" class="btn btn-primary" style="    padding: 13 50px;">← К моим вакансиям</a>
+        <div class="d-flex mt-3">
+            <img src="/staticfiles/contract/img/icons/vector.svg" height="12" class="mt-1 mr-5">
+            <p>{{description}}</p>
+        </div>
+    </section>
+</div>
+{% endblock content %}

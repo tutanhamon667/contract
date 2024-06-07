@@ -519,16 +519,16 @@ def calc_tier_payment(request):
             if not btc_usd:
                 btc_usd = Balance.update_btc_usd()
             final_price_btc = final_price_usd / btc_usd
-            can_spend = user_balance.check_payment(final_price_btc)
+            can_spend_btc = user_balance.check_payment(final_price_btc)
           
-            if can_spend < 0:
-                status = 1
+            if can_spend_btc < 0:
+                status = 0
                 start_at = datetime.datetime.now()
                 paid_at = start_at
                 expire_at = start_at + relativedelta(months=amount.amount)
                 success_message = 'создан и ждёт оплаты'
             else:
-                status = 0
+                status = 1
                 start_at = datetime.datetime.now()
                 paid_at = start_at
                 expire_at = start_at + relativedelta(months=amount.amount)
@@ -542,8 +542,8 @@ def calc_tier_payment(request):
                 if not btc_usd:
                     btc_usd = Balance.update_btc_usd()
                 final_price_btc = final_price_usd / btc_usd
-                can_spend = user_balance.check_payment(final_price_btc)
-                if can_spend < 0:
+                can_spend_btc = user_balance.check_payment(final_price_btc)
+                if can_spend_btc > 0:
                     status = 1
                     start_at = active_job_payment.expire_at
                     paid_at = start_at
@@ -573,15 +573,16 @@ def calc_tier_payment(request):
                     btc_usd = Balance.update_btc_usd()
 
                 final_price_btc = final_price_usd / btc_usd
-                can_spend = user_balance.check_payment(final_price_btc)
-                if can_spend > 0:
+                can_spend_btc = user_balance.check_payment(final_price_btc)
+                if can_spend_btc > 0:
                     now = datetime.datetime.now()
-                    operation.status = 0
+                    status = 1
                     operation.paid_at = now
+                else:
+                    status = 0
                 if hold_operation:
                         final_price_btc = final_price_btc + float(hold_operation.cost_btc)
                         final_price_usd = final_price_usd + float(hold_operation.cost_usd)
-                        hold_operation.delete()
                 else:
                     final_price_btc = final_price_btc
                     final_price_usd = final_price_usd
@@ -631,7 +632,11 @@ def calc_tier_payment(request):
                 btc_usd = Balance.update_btc_usd()
             final_price_btc = final_price_usd / btc_usd
         
-            can_spend = user_balance.check_payment(final_price_btc)
+            can_spend_btc = user_balance.check_payment(final_price_btc)
+            if can_spend_btc > 0:
+                status = 1
+            else:
+                status = 0
             #if can_spend > 0:
             start_at = today_datetime
             paid_at = start_at
@@ -640,13 +645,15 @@ def calc_tier_payment(request):
             final_price_btc = final_price_btc + new_hold_period_cost_btc
 
         res = {
-            "final_price_usd": final_price_usd,
-            "final_price_btc": final_price_btc,
-            "can_spend": can_spend,
+            "final_price_usd": round(final_price_usd, 2),
+            "final_price_btc": round(final_price_btc, 8),
+            "can_spend_btc": round(can_spend_btc, 8),
+            "can_spend_usd": round(can_spend_btc*btc_usd, 2),
             "start_at": start_at,
+            "can_spend": status,
             "expire_at": expire_at,
         }
-        return JsonResponse({'success': True, "data": res})
+        return JsonResponse({'success': True, "code": 200,"data": res})
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
@@ -877,6 +884,27 @@ def get_menu(request):
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+def convert_to_string(number):
+    """
+    Converts a number to a readable string representation.
+
+    Parameters:
+    number (float or int): The number to be converted.
+
+    Returns:
+    str: The readable string representation of the number.
+    """
+    if isinstance(number, int):
+        return str(number)
+    elif isinstance(number, float):
+        # Check if the number is a small decimal
+        if abs(number) < 1e-3:
+            return f"{number:.7f}"
+        else:
+            return str(number)
+    else:
+        raise ValueError("Invalid input type. Please provide a float or int.")
+
 def get_balance(request):
     try:
         if request.user.is_authenticated:
@@ -894,7 +922,7 @@ def get_balance(request):
                 operations = Operation.objects.filter(address=profile_address)
                 balance = Balance(profile_address, operations)
                 return JsonResponse({'success': True, "data": {"usd": balance.get_final_balance_usd,
-                                                               "btc": round(balance.get_final_balance_btc, 8)}})
+                                                               "btc": convert_to_string(balance.get_final_balance_btc)}})
             else:
                 return JsonResponse({'success': False, "code": 403})
         else:

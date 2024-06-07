@@ -1,36 +1,38 @@
 {% load static %}
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load django_bootstrap5 %}
-    {% bootstrap_messages %}
-    <script src="{% static '/contract/js/bootstrap.min.js' %}"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% load django_bootstrap5 %}
+  {% bootstrap_messages %}
+  <script src="{% static '/contract/js/bootstrap.min.js' %}"></script>
 
-    <link href="{% static 'contract/css/bootstrap.min.css' %}" rel="stylesheet"/>
-    <link href="{% static 'contract/css/base.css' %}" rel="stylesheet"/>
-    {% with request.resolver_match.url_name as url_name %}
- 
-    {% if url_name == 'chat' or url_name == 'chat_main' %}
-    <link href="{% static 'contract/css/chat.css' %}" rel="stylesheet"/>
-    {% endif %}
-    {% endwith %}
-    <title>Поиск сотрудников, работы</title>
+  <link href="{% static 'contract/css/bootstrap.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'contract/css/base.css' %}" rel="stylesheet" />
+  {% with request.resolver_match.url_name as url_name %}
 
-    <script src="{% static 'contract/ckeditor/ckeditor-init.js' %}"></script>
-    <script src="{% static 'contract/js/jquery.js' %}"></script>
-    <script src="{% static 'contract/js/main.js' %}"></script>
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet"/>
+  {% if url_name == 'chat' or url_name == 'chat_main' %}
+  <link href="{% static 'contract/css/chat.css' %}" rel="stylesheet" />
+  {% endif %}
+  {% endwith %}
+  <title>Поиск сотрудников, работы</title>
+
+  <script src="{% static 'contract/ckeditor/ckeditor-init.js' %}"></script>
+  <script src="{% static 'contract/js/jquery.js' %}"></script>
+  <script src="{% static 'contract/js/main.js' %}"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
 </head>
+
 <body data-media-url="{% get_media_prefix %}">
-{% include "./blocks/header.html" %}
-<div class="flex-1 ">
+  {% include "./blocks/header.html" %}
+  <div class="flex-1 ">
 
 
-{% block content %}{% endblock content %}
-</div>
-<div class="modal" id="error-modal" tabindex="-1">
+    {% block content %}{% endblock content %}
+  </div>
+  <div class="modal" id="error-modal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -46,16 +48,40 @@
       </div>
     </div>
   </div>
-{% include "./blocks/footer.html" %}
-{% csrf_token %}
-<script src="{% static 'contract/js/alpine.js' %}" defer></script>
-<script src="{% static 'contract/js/app.js' %}"></script>
-<script>
+
+  <div class="modal fade" id="сonfiremationModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Modal Title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Modal content
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+          <button type="button" class="btn btn-primary" id="confOkButton">Подтвердить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="loader-container">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  {% include "./blocks/footer.html" %}
+  {% csrf_token %}
+  <script src="{% static 'contract/js/alpine.js' %}" defer></script>
+  <script src="{% static 'contract/js/app.js' %}"></script>
+  <script>
     document.addEventListener('alpine:init', async () => {
-        application = new alpineApp()
-        application.getCounters()
+      application = new alpineApp()
+      application.getCounters()
     })
-</script>
+  </script>
 </body>
 
 </html>

@@ -1,4 +1,9 @@
-const alpineApp = function () {
+const alpineApp = function() {
+
+    const showLoader = (show) => {
+        const loader = document.querySelector('.loader-container')
+        show ? loader.classList.remove('hidden') : loader.classList.add('hidden')
+    }
 
     Alpine.bind('PasswordToggleBtn', {
         type: 'button',
@@ -27,34 +32,57 @@ const alpineApp = function () {
     })
 
 
+
+    const confirmationModal = (message, title, callback) => {
+        var modal = new bootstrap.Modal(document.getElementById('сonfiremationModal'), {
+            keyboard: true
+        });
+        var modalContent = document.getElementById('сonfiremationModal').querySelector('.modal-body')
+        var modalTitle = document.getElementById('сonfiremationModal').querySelector('.modal-title')
+        var okBtn = document.getElementById('сonfiremationModal').querySelector('#confOkButton')
+
+        okBtn.onclick = () => {
+            callback()
+            modal.hide();
+        }
+
+        modalContent.textContent = message
+        modalTitle.textContent = title
+
+        modal.show();
+    }
+
     const alertModal = (message) => {
         var modal = new bootstrap.Modal(document.getElementById('error-modal'), {
             keyboard: false
-          });
-          var modalContent = document.getElementById('error-modal').querySelector('.modal-body')
-          var modalTitle = document.getElementById('error-modal').querySelector('.modal-title')
-        
-          modalContent.textContent = message
-          modalTitle.textContent = 'Ошибка'
-        
-          modal.show();
+        });
+        var modalContent = document.getElementById('error-modal').querySelector('.modal-body')
+        var modalTitle = document.getElementById('error-modal').querySelector('.modal-title')
+
+        modalContent.textContent = message
+        modalTitle.textContent = 'Ошибка'
+
+        modal.show();
     }
 
 
-    const makeRequest = async function (url, data) {
+    const makeRequest = async function(url, data) {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         return new Promise((resolve, reject) => {
+            showLoader(true)
             $.ajax({
                 url: `/api/${url}`,
                 data: data,
-                beforeSend: function (request) {
+                beforeSend: function(request) {
                     request.setRequestHeader("X-CSRFToken", csrftoken);
                 },
                 method: "POST",
                 success: (data) => {
+                    showLoader(false)
                     resolve(data)
                 },
                 error: (error) => {
+                    showLoader(false)
                     reject(error)
                 }
             })
@@ -76,11 +104,17 @@ const alpineApp = function () {
         balance: "",
         responsesInvites: [],
         resumes: [],
-        filters: {page: 0, limit: 3},
-        reviews_filters: {page: 0, limit: 3},
+        filters: {
+            page: 0,
+            limit: 3
+        },
+        reviews_filters: {
+            page: 0,
+            limit: 3
+        },
         pagination: [],
         reviews_pagination: [],
-        selectExtended:{},
+        selectExtended: {},
         getWorkExpString: (value, needExpWord = true) => {
             switch (value) {
                 case 'WithoutExperience':
@@ -113,14 +147,17 @@ const alpineApp = function () {
             const iterator = pagination.keys();
 
             for (const key of iterator) {
-                pagination[key] = {text: key, active: filters.page === key}
+                pagination[key] = {
+                    text: key,
+                    active: filters.page === key
+                }
             }
             return pagination
         },
         getRegionsStr: (job, hide_many = true) => {
             if (!job.is_offline) {
                 if (hide_many) {
-                    if(!job.regions) {
+                    if (!job.regions) {
                         return 'Онлайн занятость'
                     }
                     if (job.regions && job.regions.length > 3) {
@@ -197,7 +234,10 @@ const alpineApp = function () {
             Alpine.store('main').job = data
         },
         sendResponse: async (action, id) => {
-            return makeRequest('response_invite', {action: action, id: id})
+            return makeRequest('response_invite', {
+                action: action,
+                id: id
+            })
         },
         getUser: async () => {
             return makeRequest('user', {})
@@ -209,10 +249,20 @@ const alpineApp = function () {
             Alpine.store('main').user = data
         },
         sendResponseInvite: async (action, id, job_id, resume_id) => {
-            return makeRequest('response_invite', {action: action, id: id, job_id: job_id, resume_id: resume_id})
+            return makeRequest('response_invite', {
+                action: action,
+                id: id,
+                job_id: job_id,
+                resume_id: resume_id
+            })
         },
         sendInvite: async (action, id, resume_id, job_id) => {
-            return makeRequest('response_invite', {action: action, id: id, job_id: job_id, resume_id: resume_id})
+            return makeRequest('response_invite', {
+                action: action,
+                id: id,
+                job_id: job_id,
+                resume_id: resume_id
+            })
         },
         getResumes: async () => {
             return makeRequest('user_resumes', {})
@@ -221,27 +271,42 @@ const alpineApp = function () {
             Alpine.store('main').resumes = data
         },
         setFavorite: async (job_id) => {
-            return makeRequest('favorite', {job_id: job_id})
+            return makeRequest('favorite', {
+                job_id: job_id
+            })
         },
         getResponseInviteElement: (invite) => {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
 
                 if (invite.status === 1) {
-                    return {element: 'link', link: '/chat/' + invite.chat.uuid, text: 'Перейти в чат'}
+                    return {
+                        element: 'link',
+                        link: '/chat/' + invite.chat.uuid,
+                        text: 'Перейти в чат'
+                    }
                 }
                 if (invite.status === 2) {
-                    return {element: 'status', text: 'Отклик отклонён'}
+                    return {
+                        element: 'status',
+                        text: 'Отклик отклонён'
+                    }
                 }
                 if (invite.status === 3) {
-                    return {element: 'status', text: 'Отклик удалён'}
+                    return {
+                        element: 'status',
+                        text: 'Отклик удалён'
+                    }
                 }
                 if (invite.status === 0) {
                     if (invite.type === 1) {
                         return {
                             element: 'form',
                             text: 'Работодатель вас пригласил на собеседование',
-                            actions: [{action: "accept", text: 'Принять приглашение'}, {
+                            actions: [{
+                                action: "accept",
+                                text: 'Принять приглашение'
+                            }, {
                                 action: "decline",
                                 text: 'Отклонить приглашение'
                             }],
@@ -249,7 +314,10 @@ const alpineApp = function () {
                         }
                     }
                     if (invite.type === 0) {
-                        return {element: 'status', text: 'Ждёт подтверждение от работодателя'}
+                        return {
+                            element: 'status',
+                            text: 'Ждёт подтверждение от работодателя'
+                        }
                     }
                 }
                 if (typeof invite.id === 'undefined') {
@@ -257,11 +325,18 @@ const alpineApp = function () {
                         return {
                             element: 'form',
                             text: '',
-                            actions: [{action: "create", text: 'Откликнуться'}],
+                            actions: [{
+                                action: "create",
+                                text: 'Откликнуться'
+                            }],
                             id: null
                         }
                     } else {
-                        return {element: 'link', link: '/profile/resume', text: 'Создать резюме для отклика'}
+                        return {
+                            element: 'link',
+                            link: '/profile/resume',
+                            text: 'Создать резюме для отклика'
+                        }
                     }
 
                 }
@@ -269,63 +344,87 @@ const alpineApp = function () {
             return ''
         },
 
-         getResponseInviteExtraElement: (invite) => {
+        getResponseInviteExtraElement: (invite) => {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
 
                 if (invite.status === 1) {
-                    return [
-                    { element: 'form',
-                            text: '',
+                    return [{
+                        element: 'form',
+                        text: '',
 
-                            actions: [ {
-                                class:'danger',
-                                action: "decline",
-                                text: 'Покинуть чат'
-                            }],
-                            id: invite.id},{element: 'link', link: '/chat/' + invite.chat.uuid, text: 'Перейти в чат'},]
+                        actions: [{
+                            class: 'danger',
+                            action: "decline",
+                            text: 'Покинуть чат'
+                        }],
+                        id: invite.id
+                    }, {
+                        element: 'link',
+                        link: '/chat/' + invite.chat.uuid,
+                        text: 'Перейти в чат'
+                    }, ]
                 }
                 if (invite.status === 2) {
-                    return [{element: 'status', text: 'Отклик отклонён'}]
+                    return [{
+                        element: 'status',
+                        text: 'Отклик отклонён'
+                    }]
                 }
                 if (invite.status === 3) {
-                    return [{element: 'status', text: 'Отклик удалён'}]
+                    return [{
+                        element: 'status',
+                        text: 'Отклик удалён'
+                    }]
                 }
                 if (invite.status === 0) {
-                    if ( user.is_customer) {
-                        if (invite.type === 0 ) {
+                    if (user.is_customer) {
+                        if (invite.type === 0) {
                             return [{
                                 element: 'form',
 
                                 text: '',
-                                actions: [{action: "accept", text: 'Принять приглашение'}, {
+                                actions: [{
+                                    action: "accept",
+                                    text: 'Принять приглашение'
+                                }, {
                                     action: "decline",
-                                    class:'danger',
+                                    class: 'danger',
                                     text: 'Отказаться'
                                 }],
                                 id: invite.id
                             }]
                         }
-                        if (invite.type === 1 ) {
-                            return [{element: 'status', text: 'Ждёт подтверждение'}]
+                        if (invite.type === 1) {
+                            return [{
+                                element: 'status',
+                                text: 'Ждёт подтверждение'
+                            }]
                         }
-                    }else{
-                          if (invite.type === 0 ) {
+                    } else {
+                        if (invite.type === 0) {
                             return [{
                                 element: 'form',
 
                                 text: '',
-                                actions: [{action: "accept", text: 'Принять приглашение'}, {
+                                actions: [{
+                                    action: "accept",
+                                    text: 'Принять приглашение'
+                                }, {
                                     action: "decline",
-                                    class:'danger',
+                                    class: 'danger',
                                     text: 'Отказаться'
                                 }],
                                 id: invite.id
                             }]
                         }
-                        if (invite.type === 1 ) {
-                          return [{element: 'status', text: 'Ждёт подтверждение'}]
-                        }1
+                        if (invite.type === 1) {
+                            return [{
+                                element: 'status',
+                                text: 'Ждёт подтверждение'
+                            }]
+                        }
+                        1
                     }
 
                 }
@@ -334,11 +433,18 @@ const alpineApp = function () {
                         return {
                             element: 'form',
                             text: '',
-                            actions: [{action: "create", text: 'Откликнуться'}],
+                            actions: [{
+                                action: "create",
+                                text: 'Откликнуться'
+                            }],
                             id: null
                         }
                     } else {
-                        return {element: 'link', link: '/profile/resume', text: 'Создать резюме для отклика'}
+                        return {
+                            element: 'link',
+                            link: '/profile/resume',
+                            text: 'Создать резюме для отклика'
+                        }
                     }
 
                 }
@@ -367,20 +473,33 @@ const alpineApp = function () {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
                 if (invite.status === 1) {
-                    return {element: 'link', link: '/chat/' + invite.chat.uuid, text: 'Перейти в чат'}
+                    return {
+                        element: 'link',
+                        link: '/chat/' + invite.chat.uuid,
+                        text: 'Перейти в чат'
+                    }
                 }
                 if (invite.status === 2) {
-                    return {element: 'status', text: 'Отклик отклонён'}
+                    return {
+                        element: 'status',
+                        text: 'Отклик отклонён'
+                    }
                 }
                 if (invite.status === 3) {
-                    return {element: 'status', text: 'Отклик удалён'}
+                    return {
+                        element: 'status',
+                        text: 'Отклик удалён'
+                    }
                 }
                 if (invite.status === 0) {
                     if (invite.type === 0) {
                         return {
                             element: 'form',
                             text: '',
-                            actions: [{action: "accept", text: 'Начать чат с кандидатом'}, {
+                            actions: [{
+                                action: "accept",
+                                text: 'Начать чат с кандидатом'
+                            }, {
                                 action: "decline",
                                 text: 'Отказаться'
                             }],
@@ -388,7 +507,10 @@ const alpineApp = function () {
                         }
                     }
                     if (invite.type === 1) {
-                        return {element: 'status', text: 'Ждёт подтверждение от соискателя'}
+                        return {
+                            element: 'status',
+                            text: 'Ждёт подтверждение от соискателя'
+                        }
                     }
                 }
                 if (typeof invite.id === 'undefined') {
@@ -396,11 +518,18 @@ const alpineApp = function () {
                         return {
                             element: 'form',
                             text: 'Выберете вакансию для приглашения',
-                            actions: [{action: "create", text: 'Пригласить'}],
+                            actions: [{
+                                action: "create",
+                                text: 'Пригласить'
+                            }],
                             id: null
                         }
                     } else {
-                        return {element: 'link', link: '/profile/jobs', text: 'Создать вакансию для приглашения'}
+                        return {
+                            element: 'link',
+                            link: '/profile/jobs',
+                            text: 'Создать вакансию для приглашения'
+                        }
                     }
 
                 }
@@ -508,11 +637,15 @@ const alpineApp = function () {
     }
 
     this.getJob = async (id) => {
-        return makeRequest('job', {id: id})
+        return makeRequest('job', {
+            id: id
+        })
     }
 
     this.getCompany = async (id) => {
-        return makeRequest('company', {id: id})
+        return makeRequest('company', {
+            id: id
+        })
     }
     this.getCompanyReviews = async (filters = {}) => {
         Object.assign(filters, Alpine.store('main').reviews_filters)
@@ -641,9 +774,13 @@ const alpineApp = function () {
             limit: Alpine.store('main').reviews_filters.limit,
         };
         if (!isWorkerReviews) {
-            object = Object.assign(object, {company_id: Alpine.store('main').company.id})
+            object = Object.assign(object, {
+                company_id: Alpine.store('main').company.id
+            })
         } else {
-            object = Object.assign(object, {resume_id: Alpine.store('main').resume.id})
+            object = Object.assign(object, {
+                resume_id: Alpine.store('main').resume.id
+            })
         }
         Alpine.store('main').reviews_filters = object
         let reviews = null
@@ -661,7 +798,10 @@ const alpineApp = function () {
     }
 
     this.setJobsPage = async (page) => {
-        const object = {"page": page, limit: Alpine.store('main').filters.limit};
+        const object = {
+            "page": page,
+            limit: Alpine.store('main').filters.limit
+        };
         const form = document.querySelector('#filter_form')
         if (form) {
             const params = new FormData(form);
@@ -692,7 +832,10 @@ const alpineApp = function () {
     }
 
     this.setResumesPage = async (page) => {
-        const object = {"page": page, limit: Alpine.store('main').filters.limit};
+        const object = {
+            "page": page,
+            limit: Alpine.store('main').filters.limit
+        };
         const form = document.querySelector('#filter_form')
         if (form) {
             const params = new FormData(form);
@@ -724,7 +867,10 @@ const alpineApp = function () {
 
     this.filterResumes = async (filters = {}) => {
         Alpine.store('main').filters.page = 0
-        let object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
+        let object = {
+            "page": Alpine.store('main').filters.page,
+            limit: Alpine.store('main').filters.limit
+        };
         object = Object.assign(object, filters)
         const form = document.querySelector('#filter_form')
         if (form) {
@@ -758,15 +904,18 @@ const alpineApp = function () {
 
     this.getFavoriteJobs = async (filters = {}) => {
         Alpine.store('main').filters.page = 0
-        let object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
+        let object = {
+            "page": Alpine.store('main').filters.page,
+            limit: Alpine.store('main').filters.limit
+        };
         object = Object.assign(object, filters)
 
         const res = await Alpine.store('main').getFavoriteJobs(object)
         if (res.success) {
             this.setJobs(res.data)
-           /* this.setJobsCount(res.count)
-            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
-            this.setPagination(pagination)*/
+            /* this.setJobsCount(res.count)
+             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').jobCount, Alpine.store('main').filters)
+             this.setPagination(pagination)*/
         } else {
             alertModal(res.msg)
         }
@@ -774,7 +923,10 @@ const alpineApp = function () {
 
     this.filterJobs = async (filters = {}) => {
         Alpine.store('main').filters.page = 0
-        let object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
+        let object = {
+            "page": Alpine.store('main').filters.page,
+            limit: Alpine.store('main').filters.limit
+        };
         object = Object.assign(object, filters)
         const form = document.querySelector('#filter_form')
         if (form) {
@@ -819,8 +971,11 @@ const alpineApp = function () {
         }
     }
 
-    this.getJob = async (id, data={}) => {
-        const res = await makeRequest('job', {id: id, ...data})
+    this.getJob = async (id, data = {}) => {
+        const res = await makeRequest('job', {
+            id: id,
+            ...data
+        })
         if (res.success) {
             this.setJob(res.data)
         } else {
@@ -829,7 +984,9 @@ const alpineApp = function () {
     }
 
     this.getResume = async (id) => {
-        const res = await makeRequest('resume', {id: id})
+        const res = await makeRequest('resume', {
+            id: id
+        })
         if (res.success) {
             Alpine.store('main').resume = res.data
         } else {
@@ -846,7 +1003,9 @@ const alpineApp = function () {
     }
 
     this.getResumeStatistics = async (id) => {
-        const res = await makeRequest('resume_statistics', {id: id})
+        const res = await makeRequest('resume_statistics', {
+            id: id
+        })
         if (res.success) {
             const ri_arr = res.data.invites.concat(res.data.responses)
             const chats = ri_arr.filter(i => i.type === 1 || i.type === 2).length
@@ -893,7 +1052,9 @@ const alpineApp = function () {
         if (company.success) {
             Alpine.store('main').company = company.data
         }
-        const reviews = await this.getCompanyReviews({company_id: id})
+        const reviews = await this.getCompanyReviews({
+            company_id: id
+        })
         if (reviews.success) {
             Alpine.store('main').reviews = reviews.data
             Alpine.store('main').reviewsCount = reviews.count
@@ -957,17 +1118,20 @@ const alpineApp = function () {
     }
 
     this.getTableDateOrderEl = (filters) => {
-        if (filters.order === "desc"){
+        if (filters.order === "desc") {
             return "<button @click='application.setRIFilters({order: \"asc\"})'>Дата ↑</button>"
-        }else{
-             return "<button @click='application.setRIFilters({order: \"desc\"})'>Дата ↓</button>"
+        } else {
+            return "<button @click='application.setRIFilters({order: \"desc\"})'>Дата ↓</button>"
         }
     }
 
 
     this.getWorkerResponsesInvites = async (filters = {}) => {
 
-        let object = {"page": Alpine.store('main').filters.page, limit: Alpine.store('main').filters.limit};
+        let object = {
+            "page": Alpine.store('main').filters.page,
+            limit: Alpine.store('main').filters.limit
+        };
         object = Object.assign(object, filters)
         Alpine.store('main').filters = object
         const res = await makeRequest("respones_invites", object)
@@ -984,7 +1148,7 @@ const alpineApp = function () {
 
     this.setRIFilters = async (filters) => {
         Alpine.store('main').responsesInvites = []
-         Alpine.store('main').responsesInvitesCount = 0
+        Alpine.store('main').responsesInvitesCount = 0
         let object = Object.assign(Alpine.store('main').filters, filters)
         await this.getWorkerResponsesInvites(object)
     }
@@ -994,7 +1158,12 @@ const alpineApp = function () {
         if (user.success) {
             this.setUser(user.data)
         }
-        const initFilters = {page: 0, limit: 3, status:1, order: "desc"}
+        const initFilters = {
+            page: 0,
+            limit: 3,
+            status: 1,
+            order: "desc"
+        }
         await this.getWorkerResponsesInvites(initFilters)
     }
 
@@ -1003,7 +1172,12 @@ const alpineApp = function () {
         if (user.success) {
             this.setUser(user.data)
         }
-        const initFilters = {page: 0, limit: 3, status:1, order: "desc"}
+        const initFilters = {
+            page: 0,
+            limit: 3,
+            status: 1,
+            order: "desc"
+        }
         await this.getWorkerResponsesInvites(initFilters)
     }
 
@@ -1012,7 +1186,11 @@ const alpineApp = function () {
         if (user.success) {
             this.setUser(user.data)
             if (user.data.is_customer) {
-                const customerJobs = await this.getJobs({user_id: user.data.id, page: 0, limit: 1000000})
+                const customerJobs = await this.getJobs({
+                    user_id: user.data.id,
+                    page: 0,
+                    limit: 1000000
+                })
                 if (customerJobs.success) {
                     Alpine.store('main').customerJobs = customerJobs.data
                 }
@@ -1036,9 +1214,9 @@ const alpineApp = function () {
 
     this.getRIToggleBtnClass = (type, status) => {
         const filters = Alpine.store('main').filters
-        if (filters.type == type && filters.status === status){
+        if (filters.type == type && filters.status === status) {
             return 'btn-primary'
-        }else{
+        } else {
             return 'btn-white'
         }
     }
@@ -1047,24 +1225,26 @@ const alpineApp = function () {
 
     }
 
-    this.getCounters = async() => {
+    this.getCounters = async () => {
         const counters = await makeRequest('get_counters')
-        if (counters.success){
+        if (counters.success) {
             Alpine.store('main').counters = counters.data
         }
     }
 
-    
 
-    
+
+
     this.initJobPayment = async (id) => {
         const user = await this.getUser()
         if (user.success) {
             this.setUser(user.data)
-           
+
         }
 
-        await this.getJob(id, {'profile': true})
+        await this.getJob(id, {
+            'profile': true
+        })
     }
 
     this.initResumePage = async (id) => {
@@ -1072,7 +1252,11 @@ const alpineApp = function () {
         if (user.success) {
             this.setUser(user.data)
             if (user.data.is_customer) {
-                const customerJobs = await this.getJobs({user_id: user.data.id, page: 0, limit: 1000000})
+                const customerJobs = await this.getJobs({
+                    user_id: user.data.id,
+                    page: 0,
+                    limit: 1000000
+                })
                 if (customerJobs.success) {
                     Alpine.store('main').customerJobs = customerJobs.data
                 }
@@ -1082,7 +1266,9 @@ const alpineApp = function () {
         await this.getResume(id)
         await this.getResumeStatistics(id)
 
-        const reviews = await this.getReviewsAboutWorker({resume_id: id})
+        const reviews = await this.getReviewsAboutWorker({
+            resume_id: id
+        })
         if (reviews.success) {
             Alpine.store('main').reviews = reviews.data
             Alpine.store('main').reviewsCount = reviews.count
@@ -1104,44 +1290,66 @@ const alpineApp = function () {
     calcTierCost = async () => {
         const res = await makeRequest('calc_tier_payment', {
             job_id: Alpine.store('main').job.id,
-         tier: Alpine.store('main').selectExtended['tier'].selected,
-          amount:Alpine.store('main').selectExtended['amount'].selected
+            tier: Alpine.store('main').selectExtended['tier'].selected,
+            amount: Alpine.store('main').selectExtended['amount'].selected
         })
-        if (res.success) {
+        if (res.success && res.code === 200) {
             Alpine.store('main').tier_cost = res.data
         } else {
             alertModal(res.msg)
         }
     }
-    
-    this.initSelectExtended =  (name, values, selected) => {
-       Alpine.store('main').selectExtended[name] = {
+
+    this.initSelectExtended = (name, values, selected) => {
+        Alpine.store('main').selectExtended[name] = {
             selected: selected,
             values: values,
             name: name
-       }
-       if (Alpine.store('main').job){
-            calcTierCost()
-       }else{
-        const runner = () =>{
-            setTimeout(() => {
-                if (Alpine.store('main').job){
-                    calcTierCost()
-               }else{
-                    runner()
-               }
-               
-            }, 1000)
         }
-        runner()
-       }
-       
+        if (Alpine.store('main').job) {
+            calcTierCost()
+        } else {
+            const runner = () => {
+                setTimeout(() => {
+                    if (Alpine.store('main').job) {
+                        calcTierCost()
+                    } else {
+                        runner()
+                    }
+
+                }, 1000)
+            }
+            runner()
+        }
+
     }
 
-    const getOptionById = (name, value) => 
+    const getOptionById = (name, value) =>
         document.querySelector(`#${name} > option[value="${value}"]`);
 
-     
+
+
+    Alpine.bind('payTierBtn', {
+        type: 'button',
+        checked: false,
+        selected: [],
+        '@init'(e) {
+            console.log(e)
+        },
+        '@click'(e) {
+            e.preventDefault()
+            if (Alpine.store('main').tier_cost.can_spend == 1) {
+                confirmationModal('Подтвердите действие', 'Оплата тарифа', () => {
+                    const form = document.getElementById('paymentForm')
+                    form.submit()
+                })
+            }
+        }
+    })
+
+
+
+
     Alpine.bind('selectExtendedItem', {
         type: 'button',
         checked: false,
@@ -1153,32 +1361,33 @@ const alpineApp = function () {
             const id = e.currentTarget.id.split('_item_')[1]
             const name = e.currentTarget.id.split('_item_')[0]
             Alpine.store('main').selectExtended[name].selected = id
-            Alpine.store('main').selectExtended[name].values.forEach(function (option) {
+            Alpine.store('main').selectExtended[name].values.forEach(function(option) {
                 option.selected = option.id == id
             })
-            getOptionById(name, id).selected=true;
+            getOptionById(name, id).selected = true;
             toggleSelectExtended(e)
             calcTierCost()
-        }})
+        }
+    })
 
     const toggleSelectExtended = (e) => {
-       
+
         const item = e.currentTarget.closest('.select-extended')
         const expandContainer = item.querySelector('.select-extended-expand-container')
-        if (expandContainer.classList.contains('hidden')){
+        if (expandContainer.classList.contains('hidden')) {
             e.currentTarget.focus();
         }
         expandContainer.classList.toggle('hidden')
     }
 
     this.closeSelectExtended = () => {
-        
+
         const expandContainers = document.querySelector('.select-extended-expand-container')
         for (let i = 0; i < expandContainers.length; i++) {
-            if(expandContainers[i].classList.contains('hidden')) continue
-                expandContainers[i].classList.add('hidden')
+            if (expandContainers[i].classList.contains('hidden')) continue
+            expandContainers[i].classList.add('hidden')
         }
-       
+
     }
 
     Alpine.bind('selectExtendedBtn', {
@@ -1193,7 +1402,8 @@ const alpineApp = function () {
         },
         '@click'(e) {
             toggleSelectExtended(e)
-        }})
+        }
+    })
 
     Alpine.bind('checkboxInput', {
         type: 'button',
@@ -1211,14 +1421,14 @@ const alpineApp = function () {
             const select = e.currentTarget.closest('.multiselect').querySelector('select')
             let selected = Array.from(select.options);
             if (checked) {
-                selected.forEach(function (option) {
+                selected.forEach(function(option) {
                     if (option.value === id) {
                         option.selected = true;
                     }
 
                 });
             } else {
-                selected.forEach(function (option) {
+                selected.forEach(function(option) {
                     if (option.value === id) {
                         option.selected = false;
                     }

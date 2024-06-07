@@ -131,6 +131,19 @@ class JobView:
 
 
 	def pay_for_tier(self, request, job_id):
+		def render_payment_result_page(payment, operation, title, msg, success=True):
+			if success == 1:
+				description = 'Ваша вакансия уже отображается в списке “Активные вакансии”.'
+			else:
+				description = 'Вакансия не оплачена, пополните счёт'
+			return render(request, './blocks/profile/payment_result.html', {
+			"title": title,
+			"payment_id": payment.id,
+			"cost_usd": operation.cost_usd,
+			"success": success,
+			"description": description,
+			"msg": msg
+			})
 		user = request.user
 		if user.is_authenticated:
 
@@ -149,21 +162,22 @@ class JobView:
 					payment_form = JobPaymentTarifForm(
 						initial={"tier": active_job_payment.job_tier.id, "amount": active_job_payment.amount.id})
 				else:
-					payment_form = JobPaymentTarifForm()
+					payment_form = JobPaymentTarifForm(initial={"tier": 1, "amount":1})
 				if request.method == "GET":
 					return render(request, './blocks/profile/job_tier_payment.html', {
 						'payment_form': payment_form,
 						'active_job_payment':active_job_payment,
 						'job': job,
+      					'serialized_job': model_to_dict(job, ["id"]),
 						'categories': categories,
 						'articles': articles
 					})
 				else:
-					form = JobPaymentTarifForm(request.POST)
+					form = JobPaymentTarifForm(request.POST, initial={})
 					if form.is_valid():
 
-						amount = BuyPaymentPeriod.objects.get(id=form.cleaned_data["amount"].id)
-						tier = JobTier.objects.get(id=form.cleaned_data["tier"].id)
+						amount = BuyPaymentPeriod.objects.get(id=form.cleaned_data["amount"])
+						tier = JobTier.objects.get(id=form.cleaned_data["tier"])
 
 						active_job_payment = JobPayment.get_job_active_payment(job)
 						user_address = Address.objects.get(user=user)
@@ -198,7 +212,12 @@ class JobView:
 																			   new_job_payment.id, final_price_btc,
 																			   final_price_usd, paid_at, status)
 									messages.success(request, f'Заказ №{new_job_payment.id} {success_message}')
-									return redirect('profile_jobs')
+									return render_payment_result_page(
+             								new_job_payment,
+                                           	new_operation, 
+                                           	'Оплата тарифа',
+                                           	"Успешная оплата!"
+                                           	)
 								except Exception as e:
 									messages.error(request, e)
 						elif active_job_payment.job_tier_id == tier.id:
@@ -229,7 +248,12 @@ class JobView:
 																				   new_job_payment.id, final_price_btc,
 																				   final_price_usd, paid_at, status)
 										messages.success(request, 'Заказ оплачен')
-										return redirect('profile_jobs')
+										return render_payment_result_page(
+             								new_job_payment,
+                                           	new_operation, 
+                                           	'Продление тарифа',
+                                           	"Успешная оплата!"
+                                           	)
 									except Exception as e:
 										messages.error(request, e)
 							else:
@@ -270,7 +294,12 @@ class JobView:
 										operation.save()
 										active_job_payment.save()
 										messages.success(request, 'Заказ оплачен')
-										return redirect('profile_jobs')
+										return render_payment_result_page(
+             								active_job_payment,
+                                           	operation, 
+                                           	'Оплата тарифа',
+                                           	"Успешная оплата!"
+                                           	)
 								else:
 									messages.error(request, 'Недостаточно средств на оплату')
 									return redirect('profile_jobs')
@@ -348,10 +377,19 @@ class JobView:
 									hold_operation.delete()
 									new_job_payment.save()
 									messages.success(request, f'Заказ №{new_job_payment.id} оплачен')
-									return redirect('profile_jobs')
+									return render_payment_result_page(
+             								new_job_payment,
+                                           	new_operation, 
+                                           	'Оплата тарифа',
+                                           	"Успешная оплата!"
+                                           	)
 								else:
-									messages.success(request, f'Заказ №{new_job_payment.id} ждёт оплаты')
-									return redirect('profile_jobs')
+									return render_payment_result_page(
+             								new_job_payment,
+                                           	new_operation, 
+                                           	'Оплата тарифа',
+                                           	 f'Заказ №{new_job_payment.id} ждёт оплаты'
+                                           	)
 
 		else:
 			return redirect(to="customer_signin")
