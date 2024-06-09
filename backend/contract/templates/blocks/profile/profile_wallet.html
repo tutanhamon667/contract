@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <section>
-                            <table class="table">
+                            <table class="table" id="transactions">
                                 <thead>
                                     <tr>
                                         <th scope="col">Дата</th>
@@ -89,12 +89,131 @@
                                                 <button @click="application.setTransactionPage(paginationItem.text)" x-text="paginationItem.text+1" class="mr-5 pagination-btn"></button>
                                             </template>
                                         </div>
-
-
                                     </template>
-
                                 </div>
                             </template>
+                        </section>
+
+                        <section class="products">
+                            <div class="row mb-3 mt-5">
+                                <div class="col-md-2  form-item  p-0 ">
+                                    <p class="  form-item-label">Актуальный прайс</p>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <h5 class="card-header">Вакансия - Стандарт</h5>
+                                                <div class="card-body">
+                                                    <div class="card-p-margin-5 card-body-content">
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Размещение
+                                                            вакансии
+                                                            на 30 дней</p>
+                                                    </div>
+                                                    <h5 class="card-title ">Стоимость: 0 $</h5>
+                                                    <a href="/profile/jobs" class="btn btn-primary  w-100">Разместить</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <h5 class="card-header">Вакансия - Плюс</h5>
+                                                <div class="card-body">
+                                                    <div class="card-p-margin-5 card-body-content">
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Размещение
+                                                            вакансии
+                                                            на 30 дней</p>
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Поднятие в
+                                                            топ
+                                                            выдачи по должности раз в 3 дня</p>
+                                                    </div>
+                                                    <h5 class="card-title">Стоимость: 170 $</h5>
+                                                    <a href="/profile/jobs" class="btn btn-primary  w-100">Разместить</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <h5 class="card-header">Вакансия - Премиум</h5>
+                                                <div class="card-body">
+                                                    <div style="" class="card-p-margin-5 card-body-content">
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Размещение
+                                                            вакансии
+                                                            на 30 дней</p>
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Закрепление в
+                                                            топе
+                                                            выдачи по должности</p>
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Особый цвет
+                                                            значка
+                                                        </p>
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Отображение
+                                                            на
+                                                            главной</p>
+                                                    </div>
+                                                    <h5 class="card-title">Стоимость: 450 $</h5>
+                                                    <a href="/profile/jobs " class="btn btn-primary w-100">Разместить</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-2  form-item  p-0 ">
+                                    <p class="  form-item-label"></p>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <h5 class="card-header">Доступ к базе резюме</h5>
+                                                <div class="card-body">
+                                                    <div style="" class="card-p-margin-5 card-body-content">
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Доступ к базе
+                                                            и
+                                                            поиску по резюме на 30 дней</p>
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Возможность
+                                                            приглашать кандидатов на вакансию</p>
+                                                    </div>
+                                                    <h5 class="card-title">Стоимость: 0 $</h5>
+                                                    <a href="/profile/jobs" class="btn btn-primary w-100">Разместить</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <h5 class="card-header">Баннер на главной странице</h5>
+                                                <div class="card-body">
+                                                    <div style="" class="card-p-margin-5 card-body-content">
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Размещение
+                                                            вашего
+                                                            баннера на главной странице “Соискателям” на 30 дней</p>
+                                                    </div>
+                                                    <h5 class="card-title">Стоимость: индивидуальная</h5>
+                                                    <a href="#" class="btn btn-primary  w-100">Уточнить стоимость</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <h5 class="card-header">Лучший работодатель</h5>
+                                                <div class="card-body">
+                                                    <div style="" class="card-p-margin-5 card-body-content">
+                                                        <p class="card-text"> {% bs_icon 'check-circle' %} Размещение
+                                                            вашего
+                                                            сервиса на главной странице в разделе “Лучшие работодатели”
+                                                            на
+                                                            30
+                                                            дней</p>
+                                                    </div>
+                                                    <h5 class="card-title">Стоимость: индивидуальная</h5>
+                                                    <a href="#" class="btn btn-primary  w-100">Уточнить стоимость</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </section>
                     </div>
                 </div>

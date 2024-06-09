@@ -177,6 +177,20 @@ select {
     margin-right: -5px;
 }
 
+.btn.btn-primary .log {
+    font-size: 14px;
+}
+
+
+.products .card-body>div {
+    min-height: 170px;
+}
+
+.products .card-body a {
+    font-size: 14px;
+    ;
+}
+
 .form-item {
     padding-bottom: 15px;
 }

@@ -32,6 +32,12 @@
 
     {% block content %}{% endblock content %}
   </div>
+  {% with request.resolver_match.url_name as url_name %}
+
+  {% if url_name == 'chat' or url_name == 'chat_main' %}
+  <link href="{% static 'contract/css/chat.css' %}" rel="stylesheet" />
+  {% endif %}
+  {% endwith %}
   <div class="modal" id="error-modal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">

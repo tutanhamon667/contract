@@ -962,7 +962,7 @@ def get_user_transactions(request):
                 profile_address = None
                 address = WalletAddress.objects.filter(user=user.id)
                 profile_address = address[0]
-                raw_op = Operation.objects.filter(address=profile_address).order_by('-paid_at')
+                raw_op = Operation.objects.filter(address=profile_address).order_by('paid_at')
                 count = len(raw_op)
                 incoming_transactions = profile_address.get_address_incoming_transactions()
                 formatted_incoming_transactions = []
@@ -986,7 +986,7 @@ def get_user_transactions(request):
                     formatted_operations.append(item)
                 
                 combined_array = formatted_operations + formatted_incoming_transactions
-                sorted_array = sorted(combined_array, key=lambda x: x['paid_at'])
+                sorted_array = sorted(combined_array, key=lambda x: x['paid_at'], reverse=True)
                 sorted_array = sorted_array[(page * limit):(page * limit + limit)]
                 final_array = []
                 for item in sorted_array:

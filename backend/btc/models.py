@@ -143,7 +143,7 @@ class Address(models.Model):
             cursor.execute("SELECT t0.transaction_id, t0.key_id, t0.value, t1.txid, t1.date " +
                             "FROM transaction_outputs as t0 " +
                             "inner join transactions as t1 on t1.id = t0.transaction_id " +
-                            "WHERE key_id=%s", [self.key_id])
+                            "WHERE key_id=%s order by t1.date asc", [self.key_id])
             rows = cursor.fetchall()
             result = []
             for row in rows:
