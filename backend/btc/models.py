@@ -147,7 +147,7 @@ class Address(models.Model):
             rows = cursor.fetchall()
             result = []
             for row in rows:
-                result.append({"transaction_id": row[0],"key_id": row[1],"value": row[2], "txid": binascii.hexlify(row[3]), "date": row[4]})
+                result.append({"transaction_id": row[0],"key_id": row[1],"value": row[2], "txid": binascii.hexlify(row[3]), "date": row[4], "paid_at":row[4]})
         return result
 
 

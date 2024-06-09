@@ -2,12 +2,13 @@ import json
 from rest_framework import generics
 from django.core import serializers
 from django.forms import model_to_dict
+import binascii
 from django.http import HttpResponse, JsonResponse
-
+from decimal import Decimal
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from users.models.user import Member
-import datetime
+from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
 from dateutil.relativedelta import relativedelta
 from btc.libs.balance import Balance
@@ -937,10 +938,17 @@ def convert_to_string(number):
             return str(number)
     else:
         raise ValueError("Invalid input type. Please provide a float or int.")
-    
+
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.timestamp()
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return super().default(obj)
     
 def get_user_transactions(request):
-    try:
+    #try:
         user = request.user
         if request.user.is_authenticated:
             if request.user.is_customer:
@@ -956,17 +964,45 @@ def get_user_transactions(request):
                 profile_address = address[0]
                 raw_op = Operation.objects.filter(address=profile_address)
                 count = len(raw_op)
+                incoming_transactions = profile_address.get_address_incoming_transactions()
+                formatted_incoming_transactions = []
+                for transaction in incoming_transactions:
+                    new_item = {}
+                    new_item["type"] = "INCOMING"
+                    new_item["paid_at"] = timezone.make_aware(transaction["paid_at"])
+                    new_item["txid"] = transaction["txid"].decode()
+                    new_item["transaction_id"] =  transaction["transaction_id"] 
+                    new_item["key_id"] =  transaction["key_id"] 
+                    new_item["value"] =  transaction["value"] 
+                    new_item["date"] =  transaction["date"] 
+                    new_item["transaction_id"] =  transaction["transaction_id"] 
+                    formatted_incoming_transactions.append(new_item)
+
                 operations = raw_op[(page * limit):(page * limit + limit)]
+                formatted_operations = []
+                for operation in operations:
+                    item = model_to_dict(operation)
+                    item["type"] = "OUTGOING"
+                    formatted_operations.append(item)
+                
+                combined_array = formatted_operations + formatted_incoming_transactions
+                sorted_array = sorted(combined_array, key=lambda x: x['paid_at'])
+                final_array = []
+                for item in sorted_array:
+                    for key, obj in item.items():
+                        if not isinstance(obj, str) and not isinstance(obj, int):
+                            item[key] = json.dumps(item[key], cls=CustomEncoder, ensure_ascii=False)
+               
                 return JsonResponse({'success': True, "data": {
-                    "transactions": serializers.serialize('json', operations),
+                    "transactions": sorted_array ,
                     "count": count
                 }})
             else:
                 return JsonResponse({'success': False, "code": 403})
         else:
             return JsonResponse({'success': False, "code": 401})
-    except Exception as e:
-        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+    #except Exception as e:
+    #    return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 def get_balance(request):
     try:

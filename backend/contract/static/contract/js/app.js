@@ -878,6 +878,25 @@ const alpineApp = function() {
         }
     }
 
+    this.getOperationDescription = (transaction) => {
+        let action = ''
+        let target = ''
+        if (transaction.type === "OUTGOING") {
+            action = 'Оплата '
+            if (transaction.reason_content_type === 30) {
+                target = 'размещения вакансии. '
+            } else {
+                target = 'доступа к базе резюме. '
+            }
+            description = `Номер операции: ${transaction.id}`
+        } else {
+            action = 'Пополнение баланса.<br> '
+            description = `Hash транзакции: ${transaction.txid}`
+        }
+        return `${action} ${target} ${description}`
+
+    }
+
     this.filterResumes = async (filters = {}) => {
         Alpine.store('main').filters.page = 0
         let object = {
@@ -915,6 +934,28 @@ const alpineApp = function() {
     }
 
 
+
+    this.setTransactionPage = async (page) => {
+        const object = {
+            "page": page,
+            limit: Alpine.store('main').filters.limit
+        };
+
+
+        Alpine.store('main').filters = object
+        const res = await makeRequest('get_user_transactions', object)
+        if (res.success) {
+            Alpine.store('main').transactions = res.data.transactions
+            Alpine.store('main').transactionsCount = res.data.count
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').transactionsCount, Alpine.store('main').filters)
+            this.setPagination(pagination)
+        } else {
+            alertModal(res.msg)
+        }
+    }
+
+
+
     this.getUserTransactions = async (filters = {}) => {
         Alpine.store('main').filters.page = 0
         let object = {
@@ -925,7 +966,7 @@ const alpineApp = function() {
 
         const res = await makeRequest('get_user_transactions', object)
         if (res.success) {
-            Alpine.store('main').transactions = JSON.parse(res.data.transactions)
+            Alpine.store('main').transactions = res.data.transactions
             Alpine.store('main').transactionsCount = res.data.count
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').transactionsCount, Alpine.store('main').filters)
             this.setPagination(pagination)
@@ -994,7 +1035,7 @@ const alpineApp = function() {
         if (data.success) {
             Alpine.store('main').balance.usd = data.data.usd
             Alpine.store('main').balance.btc = data.data.btc
-
+            Alpine.store('main').balance.address = data.data.address
 
         }
     }
@@ -1106,6 +1147,16 @@ const alpineApp = function() {
             const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').reviewsCount, Alpine.store('main').reviews_filters)
             Alpine.store('main').reviews_pagination = pagination
         }
+    }
+    this.formatTransactionDate = (timestamp) => {
+        const d = new Date(parseInt(timestamp) * 1000)
+        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear() + ' в ' + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2)
+    }
+    this.formatIncomeValue = (value) => {
+        return parseFloat(value / 10000000).toFixed(8)
+    }
+    this.formatOutgoingValue = (value) => {
+        return parseFloat(value).toFixed(8)
     }
 
     this.formatShortDate = (date) => {
@@ -1393,15 +1444,23 @@ const alpineApp = function() {
     })
 
     this.copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text)
-            .then(() => {
-                // Copy successful
-                console.log('Text copied to clipboard');
-            })
-            .catch((error) => {
-                // Copy failed
-                console.error('Failed to copy text:', error);
-            });
+        function copyTextToClipboard(text) {
+
+        }
+        var copyText = document.getElementById("btc_address");
+
+        var range = document.createRange();
+        range.selectNode(copyText);
+        window.getSelection().addRange(range);
+        try {
+            // Now that we've selected the anchor text, execute the copy command
+            var successful = document.execCommand('copy');
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Copy email command was ' + msg);
+        } catch (err) {
+            console.log('Oops, unable to copy');
+        }
+        window.getSelection().removeAllRanges();
     }
 
     customerAccessPay = async () => {

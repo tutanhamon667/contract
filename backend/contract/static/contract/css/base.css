@@ -195,6 +195,39 @@ select {
     font-weight: 600;
 }
 
+.pseodo-input {
+    width: 450px;
+    padding-left: 10px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 400;
+    display: inline-block;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+}
+
+.qrcode {
+    width: 150px;
+    height: 150px;
+    border: 1px solid black;
+}
+
+.pseodo-input input {
+    line-height: 2.6;
+    border: none;
+    margin-bottom: 0;
+}
+
+.pseodo-input button {
+    margin-left: 10px;
+    width: 45px;
+    height: 45px;
+}
+
+
+
 .form-sm {
     max-width: 250px;
 }
