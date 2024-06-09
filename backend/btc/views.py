@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
+from users.models.user import Member
 from btc.libs.balance import Balance
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count, get_wallet_balance, \
 	create_transaction, get_qrcode
@@ -14,7 +15,7 @@ from common.models import Article, ArticleCategory
 from django.http import JsonResponse, HttpResponse
 
 from contract.settings import OPERATION_STATUS
-from users.models.user import Member
+
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
 

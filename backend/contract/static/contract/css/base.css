@@ -49,6 +49,23 @@ main {
     font-size: 22px;
 }
 
+.font-p {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.tooltip-container {
+    opacity: 0.5;
+}
+
+.black {
+    color: black;
+}
+
+.link {
+    text-decoration: underline;
+}
+
 .loader-container {
     position: absolute;
     top: 40%;

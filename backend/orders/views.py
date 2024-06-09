@@ -160,7 +160,7 @@ def resumes_view(request):
 		if code == 503:
 			articles = Article.objects.all()
 			categories = ArticleCategory.objects.all()
-			return render(request, './pages/customer_access_denied.html', {
+			return render(request, './pages/customer_access_resumes.html', {
 				'articles': articles,
 				'categories': categories,
 				})

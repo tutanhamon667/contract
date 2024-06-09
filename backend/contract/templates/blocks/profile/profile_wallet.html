@@ -1,73 +1,124 @@
-{% extends "profile.html" %}
-{% block profile_content %}
-    {% load django_bootstrap5 %}
-    <h1 class="my_order_title">BTC</h1>
-    <p>btc wallet: {{ balance.address.address }}</p>
-    <p>balance btc: {{ balance.get_final_balance_btc }}</p>
-    <p>balance usd: {{ balance.get_final_balance_usd }}$</p>
-    <h3>Для пополнения кошелька</h3>
-    <img src="/media/qrcode_addresses/{{ balance.address.address }}.png"/>
-    <section>
-        <h2>Пополнения:</h2>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Дата</th>
-                <th scope="col">ID транзакции</th>
-                <th scope="col">Сумма пополнения</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for transaction in balance.output_transactions %}
-                <tr>
-                 <td>{{ transaction.date }} </td>
-                <td> {{ transaction.txid }} </td>
-                <td> {{ transaction.value }}</td>
-                </tr>
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+<div class="container" x-data>
+    <div class="shop_main user-profile profile-header" x-init="initWallet()">
+        <div class="shop_panel">
+            <h1 class="settings-title">Мой счёт</h1>
+            <div class="settings-main">
+                <div class="settings-main__content">
+                    <div class="settings-main__info">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Текущий баланс:</p>
+                            </div>
+                            <div class="col-md-9">
+                                <p x-text="$store.main.balance_usd + ' $ / '+ $store.main.balance_btc"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p>Ваш кошелёк</p>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="d-flex">
+                                    <div x-text="$store.main.btc_address"></div>
+                                    <button class="btn btn-primary ml-15" @click="application.copyToClipboard($store.main.btc_address)"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
 
-            {% endfor %}
-            </tbody>
-        </table>
-    </section>
-
-
-    <section>
-        <h2>Покупки:</h2>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">ID заказа</th>
-                <th scope="col">Дата создания</th>
-                <th scope="col">Статус</th>
-                <th scope="col">Сумма оплаты BTC</th>
-                <th scope="col">Сумма оплаты USD</th>
-                <th scope="col">Описание</th>
-                <th scope="col">Покупка</th>
-                <th scope="col">Дата оплаты</th>
-                <th scope="col">Дата начала периода</th>
-                <th scope="col">Дата окончания периода</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for operation in balance.operations %}
-
-                <tr>
-                <td>{{ operation.id }} </td>
-                <td>{{ operation.created }} </td>
-                <td>{{ operation.status_str }}</td>
-                <td>{{ operation.cost_btc }}</td>
-                <td>{{ operation.cost_usd }}</td>
-                <td>{{ operation.description_str }}</td>
-                <td>{{ operation.reason_content_type.app_labeled_name }}</td>
-                <td>{{ operation.paid_at }}</td>
-                <td>{{ operation.reason.start_at }}</td>
-                <td>{{ operation.reason.expire_at }}</td>
-
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </section>
+                            </div>
+                            <div class="col-md-9">
+                                <img src="/media/qrcode_addresses/{{ balance.address.address }}.png" />
+                                <div class="d-flex mt-3 tooltip-container">
+                                    <img src="/staticfiles/contract/img/icons/vector.svg" height="12" class="mt-1 mr-5">
+                                    <p>Для пополнения баланса на сайте неободимо пополнить ваш персональный биткоин
+                                        кошелек.Скопируйте адрес или отсканируйте qr-код.Отправляйте только BTC на
+                                        этот депозитный адрес (сеть BTC).Минимальная сумма пополнения 0.001 btc</p>
+                                </div>
+                            </div>
+                        </div>
 
 
-{% endblock profile_content %}
+
+                        <section>
+                            <h2>Пополнения:</h2>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Дата</th>
+                                        <th scope="col">ID транзакции</th>
+                                        <th scope="col">Сумма пополнения</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transaction in balance.output_transactions %}
+                                    <tr>
+                                        <td>{{ transaction.date }} </td>
+                                        <td> {{ transaction.txid }} </td>
+                                        <td> {{ transaction.value }}</td>
+                                    </tr>
+
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </section>
+
+
+                        <section>
+                            <h2>Покупки:</h2>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID заказа</th>
+                                        <th scope="col">Дата создания</th>
+                                        <th scope="col">Статус</th>
+                                        <th scope="col">Сумма оплаты BTC</th>
+                                        <th scope="col">Сумма оплаты USD</th>
+                                        <th scope="col">Описание</th>
+                                        <th scope="col">Покупка</th>
+                                        <th scope="col">Дата оплаты</th>
+                                        <th scope="col">Дата начала периода</th>
+                                        <th scope="col">Дата окончания периода</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for operation in balance.operations %}
+
+                                    <tr>
+                                        <td>{{ operation.id }} </td>
+                                        <td>{{ operation.created }} </td>
+                                        <td>{{ operation.status_str }}</td>
+                                        <td>{{ operation.cost_btc }}</td>
+                                        <td>{{ operation.cost_usd }}</td>
+                                        <td>{{ operation.description_str }}</td>
+                                        <td>{{ operation.reason_content_type.app_labeled_name }}</td>
+                                        <td>{{ operation.paid_at }}</td>
+                                        <td>{{ operation.reason.start_at }}</td>
+                                        <td>{{ operation.reason.expire_at }}</td>
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </section>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const initWallet = () => {
+            application.walletPageInit()
+        }
+    </script>
+</div>
+
+
+{% endblock content %}

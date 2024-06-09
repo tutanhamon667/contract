@@ -4,6 +4,9 @@ from django.core import serializers
 from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
 
+from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
+from users.models.user import Member
 import datetime
 from django.contrib.contenttypes.models import ContentType
 from dateutil.relativedelta import relativedelta
@@ -656,7 +659,37 @@ def calc_tier_payment(request):
         return JsonResponse({'success': True, "code": 200,"data": res})
     except Exception as e:
         return JsonResponse({'success': False, "code": 500, "msg": str(e)})
-
+    
+def access_payment(request):
+    try:
+        user = request.user
+        access = Access(request.user)
+        code = access.check_access("profile_resume_access_pay")
+        if code != 200:
+            return JsonResponse({'success': False, "code": code})
+        today = datetime.datetime.now()
+        customer_access = CustomerAccessPayment.objects.filter(start_at__lte=timezone.now(),
+															   expire_at__gte=timezone.now(), user=user)
+        if len(customer_access) == 0:
+            member = Member.objects.get(id=user.id)
+            if member.is_worker:
+                return HttpResponse(status=403)
+            d1 = timezone.now()
+            expire_date = d1 + relativedelta(months=1)
+            ca = CustomerAccessPayment(user=user, start_at=d1, expire_at=expire_date, amount_id=1)
+            ca.save()
+            address = Address.objects.get(user=user)
+            customer_access_content_type = ContentType.objects.get_for_model(CustomerAccessPayment)
+            new_operation = Operation(address=address, cost_btc=0, cost_usd=0,  status=0, paid_at=d1,
+            reason_content_type=customer_access_content_type, reason_object_id=ca.id)
+           # new_operation.save()
+            return JsonResponse({'success': True, "code": 200,"data": {
+                "expire_at": expire_date
+            }})
+        else:
+            return JsonResponse({'success': True, "code": 400,"data": {}, "msg": "Already paid"})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 def get_job(request):
     try:
@@ -904,6 +937,36 @@ def convert_to_string(number):
             return str(number)
     else:
         raise ValueError("Invalid input type. Please provide a float or int.")
+    
+    
+def get_user_transactions(request):
+    try:
+        user = request.user
+        if request.user.is_authenticated:
+            if request.user.is_customer:
+                limit = 1
+                page = 0
+                _post = request.POST
+                if "page" in _post:
+                    page = int(_post["page"])
+                if "limit" in _post:
+                    limit = int(_post["limit"])
+                profile_address = None
+                address = WalletAddress.objects.filter(user=user.id)
+                profile_address = address[0]
+                raw_op = Operation.objects.filter(address=profile_address)
+                count = len(raw_op)
+                operations = raw_op[(page * limit):(page * limit + limit)]
+                return JsonResponse({'success': True, "data": {
+                    "transactions": serializers.serialize('json', operations),
+                    "count": count
+                }})
+            else:
+                return JsonResponse({'success': False, "code": 403})
+        else:
+            return JsonResponse({'success': False, "code": 401})
+    except Exception as e:
+        return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 def get_balance(request):
     try:
@@ -921,8 +984,10 @@ def get_balance(request):
                     profile_address.save()
                 operations = Operation.objects.filter(address=profile_address)
                 balance = Balance(profile_address, operations)
-                return JsonResponse({'success': True, "data": {"usd": balance.get_final_balance_usd,
-                                                               "btc": convert_to_string(balance.get_final_balance_btc)}})
+                return JsonResponse({'success': True, "data": {
+                                    "address": profile_address.address,
+                                    "usd": balance.get_final_balance_usd,
+                                    "btc": convert_to_string(balance.get_final_balance_btc)}})
             else:
                 return JsonResponse({'success': False, "code": 403})
         else:

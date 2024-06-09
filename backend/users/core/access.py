@@ -16,6 +16,17 @@ class Access:
 				return 200
 			else:
 				return 403
+      
+		if entity == "profile_resume_access_pay":
+			if not self.user.is_authenticated:
+				return 401
+			if self.user.is_customer:
+				return 200
+			else:
+				return 403
+
+
+
 		if entity == "worker_responses_invites_view":
 			if not self.user.is_authenticated:
 				return 401

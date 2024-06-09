@@ -52,12 +52,21 @@ const alpineApp = function() {
         modal.show();
     }
 
-    const alertModal = (message) => {
+    const alertModal = (message, callback) => {
         var modal = new bootstrap.Modal(document.getElementById('error-modal'), {
             keyboard: false
         });
         var modalContent = document.getElementById('error-modal').querySelector('.modal-body')
         var modalTitle = document.getElementById('error-modal').querySelector('.modal-title')
+        if (callback) {
+            var okBtn = document.getElementById('error-modal').querySelector('#notofyModalOkButton')
+
+            okBtn.onclick = () => {
+                callback()
+                modal.hide();
+            }
+
+        }
 
         modalContent.textContent = message
         modalTitle.textContent = 'Ошибка'
@@ -101,7 +110,11 @@ const alpineApp = function() {
         jobCount: 0,
         selectedResume: null,
         selectedJob: null,
-        balance: "",
+        balance: {
+            formatString: () => {
+                return Alpine.store('main').balance.usd + ' $ / ' + Alpine.store('main').balance.btc + ' BTC'
+            }
+        },
         responsesInvites: [],
         resumes: [],
         filters: {
@@ -902,6 +915,25 @@ const alpineApp = function() {
     }
 
 
+    this.getUserTransactions = async (filters = {}) => {
+        Alpine.store('main').filters.page = 0
+        let object = {
+            "page": Alpine.store('main').filters.page,
+            limit: Alpine.store('main').filters.limit
+        };
+        object = Object.assign(object, filters)
+
+        const res = await makeRequest('get_user_transactions', object)
+        if (res.success) {
+            Alpine.store('main').transactions = JSON.parse(res.data.transactions)
+            Alpine.store('main').transactionsCount = res.data.count
+            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').transactionsCount, Alpine.store('main').filters)
+            this.setPagination(pagination)
+        } else {
+            alertModal(res.msg)
+        }
+    }
+
     this.getFavoriteJobs = async (filters = {}) => {
         Alpine.store('main').filters.page = 0
         let object = {
@@ -960,7 +992,10 @@ const alpineApp = function() {
     this.getBalance = async () => {
         const data = await Alpine.store('main').getBalance()
         if (data.success) {
-            Alpine.store('main').balance = data.data.usd + ' $/' + data.data.btc + ' btc'
+            Alpine.store('main').balance.usd = data.data.usd
+            Alpine.store('main').balance.btc = data.data.btc
+
+
         }
     }
 
@@ -970,6 +1005,16 @@ const alpineApp = function() {
             this.setJobs(jobs.data)
         }
     }
+
+
+    this.walletPageInit = async () => {
+        const user = await this.getUser()
+        if (user.success) {
+            this.setUser(user.data)
+            const jobs = await this.getUserTransactions()
+        }
+    }
+
 
     this.getJob = async (id, data = {}) => {
         const res = await makeRequest('job', {
@@ -1347,8 +1392,42 @@ const alpineApp = function() {
         }
     })
 
+    this.copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                // Copy successful
+                console.log('Text copied to clipboard');
+            })
+            .catch((error) => {
+                // Copy failed
+                console.error('Failed to copy text:', error);
+            });
+    }
 
-
+    customerAccessPay = async () => {
+        const res = await makeRequest('access_payment', {})
+        if (res.success && res.code === 200) {
+            alertModal('Подписка оплачена до: ' + this.formatShortDate(res.data.expire_at), () => {
+                window.location.reload()
+            })
+        } else {
+            alertModal(res.msg)
+        }
+    }
+    Alpine.bind('customerAccessBtn', {
+        type: 'button',
+        checked: false,
+        selected: [],
+        '@init'(e) {
+            console.log(e)
+        },
+        '@click'(e) {
+            e.preventDefault()
+            confirmationModal('Подтвердите действие', 'Оплата доступа', () => {
+                customerAccessPay()
+            })
+        }
+    })
 
     Alpine.bind('selectExtendedItem', {
         type: 'button',
@@ -1440,6 +1519,4 @@ const alpineApp = function() {
 
 
     })
-
-
 }
