@@ -464,9 +464,9 @@ class RegisterCustomerForm(UserCreationForm):
 
     class Meta:
         model = Member
-        fields = ['company_name', 'login', 'display_name', "captcha", "password1", "password2", "is_customer",
+        fields = ['company_name', 'login', 'display_name', "captcha", "password1", "password2", "is_customer", "is_worker",
                   ]
-        widgets = {"is_customer": forms.HiddenInput(), 'password1': PasswordWidget(), 'password2': PasswordWidget(),
+        widgets = {"is_customer": forms.HiddenInput(),"is_worker": forms.HiddenInput(), 'password1': PasswordWidget(), 'password2': PasswordWidget(),
                    "captcha": CaptchaWidget(), 'hashkey': forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):

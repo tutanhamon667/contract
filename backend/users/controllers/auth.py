@@ -81,12 +81,17 @@ def signup_user(request, is_customer, template, redirect_to):
 												 })
 	if request.method == "POST":
 		if is_customer:
-			form = RegisterCustomerForm(request.POST)
+			form = RegisterCustomerForm(request.POST, initial={"is_customer": True})
 		else:
-			form = RegisterWorkerForm(request.POST)
+			form = RegisterWorkerForm(request.POST, initial={"is_worker": True})
 		with (transaction.atomic()):
 			if form.is_valid():
 				user = form.save()
+				if is_customer:
+					user.is_customer = True
+				else:
+					user.is_worker = True
+				user.save()
 				login(request, user)
 				if is_customer:
 					company_name = request.POST.get('company_name')

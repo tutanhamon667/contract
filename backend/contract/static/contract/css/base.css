@@ -112,13 +112,7 @@ main {
     border-bottom: 1px solid #EDEDED;
 }
 
-.footer-btn-container button,
-.footer-btn-container a.btn,
-.page-btn-container label,
-.page-btn-container a.btn {
-    padding-top: 9;
-    padding-bottom: 9;
-}
+
 
 .link-add-btn,
 .link-del-btn {
@@ -175,6 +169,15 @@ select {
 .medium-height input[type="radio"]:checked::before {
     transform: scale(1);
     margin-right: -5px;
+}
+
+.flex-d-row {
+    flex-direction: row;
+    gap: 20px;
+}
+
+.navbar-nav .dropdown-menu {
+    position: absolute;
 }
 
 .btn.btn-primary .log {
@@ -671,7 +674,7 @@ h2 {
 h3 {
     font-family: "Inter";
     font-weight: bold;
-    font-size: 21px;
+    font-size: 22px;
 }
 
 h3.f-20 {
@@ -981,6 +984,7 @@ input[type="text"]:active {
     font-size: 18px !important;
 }
 
+
 .hide-btn:hover {
     cursor: pointer;
 }
@@ -989,11 +993,23 @@ input[type="text"]:active {
     display: none;
 }
 
-.btn-large {
-    min-height: 50px;
+.search-form-main {
+    gap: 10px;
+}
+
+.flex-none {
+    flex: none
+}
+
+.btn {
+    min-height: 46px;
     line-height: 2.2;
     font-size: large;
 
+}
+
+.flex-content {
+    flex: content;
 }
 
 .card.no-hover:hover {
@@ -1214,4 +1230,24 @@ h1 {
     font-weight: 400;
     text-decoration: underline;
     word-wrap: break-word;
+}
+
+
+.btn {
+    width: 100%;
+}
+
+
+@media (max-width: 1400px) {
+
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-size: 1rem !important;
+    }
+
+    .products-category-container .card-title {
+        font-size: 1rem !important;
+    }
 }

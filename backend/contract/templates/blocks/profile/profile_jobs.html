@@ -1,138 +1,133 @@
 {% extends "base.html" %}
 {% block content %}
-    {% load django_bootstrap5 %}
-    
-    <div class="container">
-        <section >
-            <div class="page-header">
-                <h1 class="my_order_title">Мои Вакансии</h1>
-            </div>
-            
-            <div class="list-group">
-                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    <form class="profile_jobs_filter_form" action="" method="get">
-                        <input type="hidden" name="status" value="{{ request.GET.status }}"/>
-                        <input type="hidden" name="page" value="{{ request.GET.page }}"/>
-                    </form>
-                    <div class="page-btn-container">
-                        <div class="d-flex w-100">
-                            <div class="px-1">
-                                <input type="radio" class="btn-check" name="status_radio" id="status_0" autocomplete="off"
-                                        {% if request.GET.status == "0" %}
-                                    checked
-                                        {% endif %}
-                                >
-                                <label class="btn {% if request.GET.status == "0" %}btn-primary{% else %}btn-white{% endif %}" for="status_0">Активные <span  class="btn-counter-delimeter"></span> {{ jobs_paid|length}}</label>
-                            </div>
-                            <div class="px-1 flex-1">
-                                <input type="radio" class="btn-check" name="status_radio" id="status_1" autocomplete="off"
-                                        {% if request.GET.status == "1" %}
-                                    checked
-                                        {% endif %}
-                                >
-                                <label class="btn {% if request.GET.status == "1" %}btn-primary{% else %}btn-white{% endif %}" for="status_1">Ожидают оплаты <span class="btn-counter-delimeter"></span> {{ jobs_not_paid|length}}</label>
-                            </div>
-                            <div>
-                                <a href="/profile/jobs/create" class="btn btn-success big-btn">Создать новую вакансию</a>
-                            </div>
+{% load django_bootstrap5 %}
+
+<div class="container">
+    <section>
+        <div class="page-header">
+            <h1 class="my_order_title">Мои Вакансии</h1>
+        </div>
+
+        <div class="list-group">
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <form class="profile_jobs_filter_form" action="" method="get">
+                    <input type="hidden" name="status" value="{{ request.GET.status }}" />
+                    <input type="hidden" name="page" value="{{ request.GET.page }}" />
+                </form>
+                <div class="page-btn-container">
+                    <div class="d-flex w-100">
+                        <div class="px-1">
+                            <input type="radio" class="btn-check" name="status_radio" id="status_0" autocomplete="off" {% if request.GET.status == "0" %} checked {% endif %}>
+                            <label class="btn {% if request.GET.status == "0" %}btn-primary{% else %}btn-white{% endif %}" for="status_0">Активные <span class="btn-counter-delimeter"></span> {{ jobs_paid|length}}</label>
+                        </div>
+                        <div class="px-1 ">
+                            <input type="radio" class="btn-check" name="status_radio" id="status_1" autocomplete="off" {% if request.GET.status == "1" %} checked {% endif %}>
+                            <label class="btn {% if request.GET.status == "1" %}btn-primary{% else %}btn-white{% endif %}" for="status_1">Ожидают оплаты <span class="btn-counter-delimeter"></span> {{ jobs_not_paid|length}}</label>
+                        </div>
+                        <div class="flex-1">
+
+                        </div>
+                        <div>
+                            <a href="/profile/jobs/create" class="btn btn-success big-btn">Создать новую вакансию</a>
                         </div>
                     </div>
                 </div>
-                {% if request.GET.status == "0" %}
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">Название вакансия</th>
-                            <th scope="col">Тип занятости</th>
-                            <th scope="col">Просмотры</th>
-                            <th scope="col">Отклики</th>
-                            <th scope="col">Истекает</th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for job in jobs_paid %}
-                            <tr>
-                                <td>
-                                    <p>{{ job.title }}</p>
-                                    <p class="text-shadow">{{ job.tier_name }}</p>
-                                </td>
-                                <td>
-                                    {% if job.is_offline %}
-                                        <p>Оффлайн</p>
-                                    {% else %}
-                                        <p>Онлайн</p>
-                                    {% endif %}
-                                </td>
-                                <td>{{ job.views }}</td>
-                                <td>{{ job.responses_count }}</td>
-                                <td>{{ job.payment_expire|date:"j.m.Y" }}</td>
-                                <td><a href="{% url 'profile_job_view_pay_for_tier' job.id %}" class="btn-success">Сменить тариф </a></td>
-                                <td><a href="/profile/jobs/update/{{ job.id }}" class="btn-success">Редактировать</a></td>
-                                <td>
-                                    <a onclick="deleteJobHandler({{job.id}})" class="link danger">Удалить</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
-                {% if request.GET.status == "1" %}
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">Название вакансия</th>
-                            <th scope="col">Тип занятости</th>
-                            <th scope="col">Просмотры</th>
-                            <th scope="col">Отклики</th>
-                            <th scope="col">Истекает</th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for job in jobs_not_paid %}
-                            <tr>
-                                <td>
-                                    <p>{{ job.title }}</p>
-                                    <p class="text-shadow">{{ job.tier_name }}</p>
-                                </td>
-                                <td>
-                                    {% if job.is_offline %}
-                                        <p>Оффлайн</p>
-                                    {% else %}
-                                        <p>Онлайн</p>
-                                    {% endif %}
-                                </td>
-                                <td>{{ job.views }}</td>
-                                <td>{{ job.responses_count }}</td>
-                                <td>{{  job.payment_expire|date:"j.m.Y"}}</td>
-                                <td><a href="{% url 'profile_job_view_pay_for_tier' job.id %}" class="btn-success">Выбрать тариф и оплатить</a></td>
-                                <td><a href="/profile/jobs/update/{{ job.id }}" class="btn-success">Редактировать</a></td>
-                                <td>
-                                    <a onclick="deleteJobHandler({{job.id}})" class="link danger">Удалить</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
-                <script>
-                    const deleteJobHandler = (id) => {
-                        let text = "Вы действительно хотите удалить вакансию?";
-                        if (confirm(text) == true) {
+            </div>
+            {% if request.GET.status == "0" %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Название вакансия</th>
+                        <th scope="col">Тип занятости</th>
+                        <th scope="col">Просмотры</th>
+                        <th scope="col">Отклики</th>
+                        <th scope="col">Истекает</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs_paid %}
+                    <tr>
+                        <td>
+                            <p>{{ job.title }}</p>
+                            <p class="text-shadow">{{ job.tier_name }}</p>
+                        </td>
+                        <td>
+                            {% if job.is_offline %}
+                            <p>Оффлайн</p>
+                            {% else %}
+                            <p>Онлайн</p>
+                            {% endif %}
+                        </td>
+                        <td>{{ job.views }}</td>
+                        <td>{{ job.responses_count }}</td>
+                        <td>{{ job.payment_expire|date:"j.m.Y" }}</td>
+                        <td><a href="{% url 'profile_job_view_pay_for_tier' job.id %}" class="btn-success">Сменить тариф </a></td>
+                        <td><a href="/profile/jobs/update/{{ job.id }}" class="btn-success">Редактировать</a></td>
+                        <td>
+                            <a onclick="deleteJobHandler({{job.id}})" class="link danger">Удалить</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            {% if request.GET.status == "1" %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Название вакансия</th>
+                        <th scope="col">Тип занятости</th>
+                        <th scope="col">Просмотры</th>
+                        <th scope="col">Отклики</th>
+                        <th scope="col">Истекает</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs_not_paid %}
+                    <tr>
+                        <td>
+                            <p>{{ job.title }}</p>
+                            <p class="text-shadow">{{ job.tier_name }}</p>
+                        </td>
+                        <td>
+                            {% if job.is_offline %}
+                            <p>Оффлайн</p>
+                            {% else %}
+                            <p>Онлайн</p>
+                            {% endif %}
+                        </td>
+                        <td>{{ job.views }}</td>
+                        <td>{{ job.responses_count }}</td>
+                        <td>{{ job.payment_expire|date:"j.m.Y"}}</td>
+                        <td><a href="{% url 'profile_job_view_pay_for_tier' job.id %}" class="btn-success">Выбрать тариф и оплатить</a></td>
+                        <td><a href="/profile/jobs/update/{{ job.id }}" class="btn-success">Редактировать</a></td>
+                        <td>
+                            <a onclick="deleteJobHandler({{job.id}})" class="link danger">Удалить</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            <script>
+                const deleteJobHandler = (id) => {
+                    let text = "Вы действительно хотите удалить вакансию?";
+                    if (confirm(text) == true) {
                         window.location.href = `/profile/jobs/delete/${id}`
-                        } 
+                    }
                 }
-                $(document).ready(function () {
+                $(document).ready(function() {
                     const application = new app()
                     application.profileJobsFilters()
                 });
             </script>
-            </div>
+        </div>
     </section>
 </div>
 

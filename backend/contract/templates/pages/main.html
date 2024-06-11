@@ -22,18 +22,18 @@
 
         <section>
             <h3 class="f-20">Анонимный поиск работы без границ</h3>
-            <form class="form row" action="/jobs" method="get">
-                <div class="col-md-11">
+            <form class="form search-form-main d-flex" action="/jobs" method="get">
+                <div class="flex-1">
                     <input type="text" name="title" class="form-control"
                            placeholder="Введите должность, сферу или профессию"
                            name="search" value="" autocomplete="off">
                 </div>
-                <div class="col-md-1">
+                <div class="flex-none">
                     <button class="btn btn-primary">Найти</button>
                 </div>
-                <a href="{% url 'resumes' %}" class="link-dark">Ищу сотрудников</a>
+                
             </form>
-
+            <a href="{% url 'resumes' %}" class="link-dark">Ищу сотрудников</a>
         </section>
         <section>
             <div class="d-flex">
@@ -55,7 +55,7 @@
                     {% if forloop.counter|divisibleby:4 or forloop.first %}<!--ROW-->
                         <div class="row">
                     {% endif %}
-                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
                                 <a href="/jobs?specialisation={{ category.industry_id }}">
                                     <div class="card">
                                         <div class="card-header d-flex">

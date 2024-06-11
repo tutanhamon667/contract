@@ -285,6 +285,7 @@ class CustomerReview(models.Model):
 		on_delete=models.CASCADE,
 		related_name='review_worker',
 		default=None,
+  		blank=True,
 		null=True,
 		unique=False
 	)
@@ -294,6 +295,7 @@ class CustomerReview(models.Model):
 		related_name='review_company',
 		default=None,
 		null=True,
+  		blank=True,
 		unique=False
 	)
 	reviewer = models.ForeignKey(

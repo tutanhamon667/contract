@@ -33,12 +33,14 @@ def download(request, file_id):
 def index(request):
     if not request.user.is_authenticated:
         return redirect('signin')
-    return render(request, "pages/chat.html", {"chat_id": 'null'})
+    serialized_chat = {"user_id": request.user.id, "chat_id": 'null'}
+    return render(request, "pages/chat.html", {"chat_id": 'null', "serialized_chat": serialized_chat})
 
 def index_chat(request, chat_id):
     if not request.user.is_authenticated:
         return redirect('signin')
-    return render(request, "pages/chat.html", {"chat_id": chat_id})
+    serialized_chat = {"user_id": request.user.id, "chat_id": chat_id}
+    return render(request, "pages/chat.html", {"chat_id": chat_id, "serialized_chat": serialized_chat})
 
 
 def upload(request, chat_id):

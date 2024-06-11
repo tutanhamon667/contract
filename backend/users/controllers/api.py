@@ -527,13 +527,13 @@ def calc_tier_payment(request):
           
             if can_spend_btc < 0:
                 status = 0
-                start_at = datetime.datetime.now()
+                start_at = datetime.now()
                 paid_at = start_at
                 expire_at = start_at + relativedelta(months=amount.amount)
                 success_message = 'создан и ждёт оплаты'
             else:
                 status = 1
-                start_at = datetime.datetime.now()
+                start_at = datetime.now()
                 paid_at = start_at
                 expire_at = start_at + relativedelta(months=amount.amount)
                 success_message = 'оплачен'

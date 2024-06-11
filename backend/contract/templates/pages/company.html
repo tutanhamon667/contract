@@ -3,279 +3,269 @@
 {% load static %}
 {% load django_bootstrap5 %}
 {% block content %}
-    <div class="container" x-data>
-        <section x-init="initCompany()">
-            <template x-if="$store.main.company">
+<div class="container" x-data>
+    <section x-init="initCompany()">
+        <template x-if="$store.main.company">
+            <div>
                 <div>
-                    <div >
-                        <div>
-                            <div class="d-flex">
-                                <template x-if="$store.main.company.logo">
-                                    <img :src="'/media/'+$store.main.company.logo" height="130" width="130"
-                                         class="company-logo-mini mr-5"
-                                         :alt="$store.main.company.name"/>
-                                </template>
-                                <div class="ml-5">
-                                    <div class="d-flex ">
-                                        <h3 x-text="$store.main.company.name" class=" shop-name"></h3> <img
-                                            src="/staticfiles/contract/img/icons/approved.svg" height="16"
-                                            class="ml-5" style="margin-top: 3px">
-                                    </div>
-                                    <div class="d-flex ">
-                                        <p class="text-big bold" x-text="$store.main.company.rating"></p>
-                                        <template
-                                                x-for="item in application.getJobRatingArray($store.main.company.rating)">
-                                            <label :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
-                                        </template>
-                                        <span class="nowrap"
-                                              x-text="application.getCommentsCountStr($store.main.company.reviews)"
-                                              style="line-height: 2;
-font-size: 14px;"></span>
-                                    </div>
-                                    <template x-for="contact in $store.main.company.contacts"
-                                              :key="'contact_'+ contact.id">
-                                        <div><a :href="contact.value" x-text="contact.value"></a></div>
-                                    </template>
+                    <div>
+                        <div class="d-flex">
+                            <template x-if="$store.main.company.logo">
+                                <img :src="'/media/'+$store.main.company.logo" height="130" width="130"
+                                    class="company-logo-mini mr-5" :alt="$store.main.company.name" />
+                            </template>
+                            <div class="ml-5">
+                                <div class="d-flex ">
+                                    <h3 x-text="$store.main.company.name" class=" shop-name"></h3> <img
+                                        src="/staticfiles/contract/img/icons/approved.svg" height="16" class="ml-5"
+                                        style="margin-top: 3px">
                                 </div>
+                                <div class="d-flex ">
+                                    <p class="text-big bold" x-text="$store.main.company.rating"></p>
+                                    <template x-for="item in application.getJobRatingArray($store.main.company.rating)">
+                                        <label
+                                            :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
+                                    </template>
+                                    <span class="nowrap"
+                                        x-text="application.getCommentsCountStr($store.main.company.reviews)" style="line-height: 2;
+font-size: 14px;"></span>
+                                </div>
+                                <template x-for="contact in $store.main.company.contacts" :key="'contact_'+ contact.id">
+                                    <div><a :href="contact.value" x-text="contact.value"></a></div>
+                                </template>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <h4>О нас</h4>
+                    <div x-html="$store.main.company.about"></div>
+                </div>
+            </div>
+        </template>
+
+        <div class="row mt-5">
+            <h4>Наши вакансии</h4>
+            <template x-for="job in $store.main.jobs" :key="job.id + '_' + job.invite.id">
+
+                <div :class="['card', job.payment.job_tier_id == 3? 'hot-job-card ':'' ]">
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="d-flex">
+                                    <a :href="'/jobs/' +job.id" class="title">
+                                        <h4 class="title" x-text="job.title"></h4>
+                                    </a>
+                                    <template x-if="job.payment.job_tier_id == 3">
+                                        <img src="{% static 'contract/img/icons/hot.svg' %}" height="22"
+                                            class="ml-5 company-logo-mini">
+                                    </template>
+
+                                </div>
+
+                                <h3 class="card-subtitle salary" x-text="$store.main.getSalaryStr(job)"></h3>
+
+
+                                <div class="d-flex ">
+                                    <a :href="'/company/'+ job.company_id " x-text="job.company.name"
+                                        class=" shop-name"></a> <img src="/staticfiles/contract/img/icons/approved.svg"
+                                        height="16" class="ml-5 mt-15">
+                                </div>
+                                <div class="work-description-container">
+                                    <div>
+                                        <span class="job-card-item-customer  work-type"
+                                            x-html="$store.main.getRegionsStr(job)"></span>
+                                    </div>
+                                    <div class="d-flex vacancy-description">
+
+                                        <div class="d-flex mr-15">
+                                            <img src="/staticfiles/contract/img/icons/bag.svg" height="16"
+                                                class="mt-1 mr-5">
+                                            <span class="work-experience"
+                                                x-text="$store.main.getWorkExpString(job.work_experience)"></span>
+                                        </div>
+
+                                        <div class="d-flex">
+                                            <img src="/staticfiles/contract/img/icons/zalog.svg" height="16"
+                                                class="mt-1 mr-5">
+                                            <span class="work-deposit" x-text="$store.main.getDepositStr(job)"></span>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-2 text-center">
+                                <template x-if="job.company.logo">
+                                    <img :src="'/media/'+job.company.logo" height="50" class="company-logo-mini"
+                                        :alt="job.company.name" />
+                                </template>
+                                <template x-if="!job.company.logo">
+                                    <div class="">
+                                        <span x-text="job.company.name"></span>
+                                    </div>
+                                </template>
+                                <template x-if="$store.main.user.id>=0 && $store.main.user.is_worker ">
+                                    <div class="mt-2">
+
+
+                                        <input type="checkbox" :id="'favorite_job_'+job.id"
+                                            class="favorite_job_checkbox" @click="application.setFavorite(job.id)"
+                                            x-model="job.favorite.checked" />
+                                        <label class="favorite-label" :for="'favorite_job_'+job.id"></label>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="row mt-15">
+                            <div class="col-10">
+
+                                <template x-if="$store.main.user.id<0">
+                                    <a href='worker/signin' class="btn btn-success">Войти для отклика</a>
+                                </template>
+                                <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
+                                    <div x-data="{res: $store.main.getResponseInviteElement(job.id)}">
+
+                                        <template x-if="res.element === 'link'">
+                                            <a :href="res.link" x-text="res.text"></a>
+                                        </template>
+                                        <template x-if="res.element === 'status'">
+                                            <div>
+                                                <p class="response-invite-result" x-text="job.invite.msg"></p>
+                                                <p x-text="res.text"></p>
+                                            </div>
+
+                                        </template>
+                                        <template x-if="res.element === 'form'">
+
+                                            <template x-for="action in res.actions" :key="action.action">
+                                                <div>
+                                                    <template x-if="action.action !== 'create'">
+                                                        <button
+                                                            x-on:click="application.sendResponse(action.action, res.id)"
+                                                            x-text="action.text"></button>
+                                                    </template>
+                                                    <template x-if="action.action === 'create'">
+                                                        <div>
+                                                            <div class="flex">
+                                                                <button class="btn btn-success mr-5"
+                                                                    x-on:click="application.sendResponse(action.action, res.id, job.id)"
+                                                                    x-text="action.text"></button>
+                                                                <select name="resume"
+                                                                    x-model="$store.main.selectedResume"
+                                                                    class="form-control">
+                                                                    <template x-for="resume in $store.main.resumes"
+                                                                        :key="resume.id">
+                                                                        <option :value="resume.id" x-text="resume.name">
+                                                                        </option>
+                                                                    </template>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </template>
+                                                </div>
+
+                                            </template>
+
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="col-2">
 
                             </div>
 
-
                         </div>
-                    </div>
-                    <div class="mt-5">
-                        <h4>О нас</h4>
-                        <div x-html="$store.main.company.about"></div>
                     </div>
                 </div>
             </template>
 
-            <div class="row mt-5">
-                <h4>Наши вакансии</h4>
-                <template x-for="job in $store.main.jobs" :key="job.id + '_' + job.invite.id">
+            <template x-if="$store.main.jobs.length <= $store.main.jobCount">
+                <div class="pagination-container flex">
+                    <template x-for="paginationItem in $store.main.pagination">
+                        <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">
+                            <template x-if="paginationItem.active">
+                                <button @click="application.setJobsPage(paginationItem.text)"
+                                    x-text="paginationItem.text+1" class="mr-5 pagination-btn active-page"></button>
+                            </template>
+                            <template x-if="!paginationItem.active">
+                                <button @click="application.setJobsPage(paginationItem.text)"
+                                    x-text="paginationItem.text+1" class="mr-5 pagination-btn"></button>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
 
-                    <div :class="['card', job.payment.job_tier_id == 3? 'hot-job-card ':'' ]">
-
+        </div>
+        <div class="row mt-5">
+            <h4>Отзывы о работодателе</h4>
+            <template x-if="$store.main.reviews">
+                <template x-for="review in $store.main.reviews" :key="'review_'+ review.id">
+                    <div class="card">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="d-flex">
-                                        <a :href="'/jobs/' +job.id" class="title">
-                                            <h4 class="title" x-text="job.title"></h4>
-                                        </a>
-                                        <template x-if="job.payment.job_tier_id == 3">
-                                            <img src="{% static 'contract/img/icons/hot.svg' %}" height="22"
-                                                 class="ml-5 company-logo-mini">
-                                        </template>
-
-                                    </div>
-
-                                    <h3 class="card-subtitle salary"
-                                        x-text="$store.main.getSalaryStr(job)"></h3>
-
-
-                                    <div class="d-flex ">
-                                        <a :href="'/company/'+ job.company_id "
-                                           x-text="job.company.name" class=" shop-name"></a> <img
-                                            src="/staticfiles/contract/img/icons/approved.svg" height="16"
-                                            class="ml-5 mt-15">
-                                    </div>
-                                    <div class="work-description-container">
-                                        <div>
-                                                  <span class="job-card-item-customer  work-type"
-                                                        x-html="$store.main.getRegionsStr(job)"></span>
-                                        </div>
-                                        <div class="d-flex vacancy-description">
-
-                                            <div class="d-flex mr-15">
-                                                <img src="/staticfiles/contract/img/icons/bag.svg" height="16"
-                                                     class="mt-1 mr-5">
-                                                <span class="work-experience"
-                                                      x-text="$store.main.getWorkExpString(job.work_experience)"></span>
-                                            </div>
-
-                                            <div class="d-flex">
-                                                <img src="/staticfiles/contract/img/icons/zalog.svg" height="16"
-                                                     class="mt-1 mr-5">
-                                                <span class="work-deposit"
-                                                      x-text="$store.main.getDepositStr(job)"></span>
-                                            </div>
-
-                                        </div>
-
-
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center">
-                                    <template x-if="job.company.logo">
-                                        <img :src="'/media/'+job.company.logo" height="50" class="company-logo-mini"
-                                             :alt="job.company.name"/>
-                                    </template>
-                                    <template x-if="!job.company.logo">
-                                        <div class="">
-                                            <span x-text="job.company.name"></span>
-                                        </div>
-                                    </template>
-                                    <template x-if="$store.main.user.id>=0 && $store.main.user.is_worker ">
-                                        <div class="mt-2">
-
-
-                                            <input type="checkbox" :id="'favorite_job_'+job.id"
-                                                   class="favorite_job_checkbox"
-                                                   @click="application.setFavorite(job.id)"
-                                                   x-model="job.favorite.checked"/>
-                                            <label class="favorite-label" :for="'favorite_job_'+job.id"></label>
-                                        </div>
-                                    </template>
-                                </div>
+                            <h4 class="title" x-text="review.reviewer"></h4>
+                            <div class="d-flex ">
+                                <template x-for="item in application.getJobRatingArray(review.rating)">
+                                    <label
+                                        :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
+                                </template>
                             </div>
-                            <div class="row mt-15">
-                                <div class="col-10">
-
-                                    <template x-if="$store.main.user.id<0">
-                                        <a href='worker/signin' class="btn btn-success">Войти для отклика</a>
-                                    </template>
-                                    <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
-                                        <div x-data="{res: $store.main.getResponseInviteElement(job.id)}">
-
-                                            <template x-if="res.element === 'link'">
-                                                <a :href="res.link" x-text="res.text"></a>
-                                            </template>
-                                            <template x-if="res.element === 'status'">
-                                                <div>
-                                                    <p class="response-invite-result"
-                                                       x-text="job.invite.msg"></p>
-                                                    <p x-text="res.text"></p>
-                                                </div>
-
-                                            </template>
-                                            <template x-if="res.element === 'form'">
-
-                                                <template x-for="action in res.actions" :key="action.action">
-                                                    <div>
-                                                        <template x-if="action.action !== 'create'">
-                                                            <button x-on:click="application.sendResponse(action.action, res.id)"
-                                                                    x-text="action.text"></button>
-                                                        </template>
-                                                        <template x-if="action.action === 'create'">
-                                                            <div>
-                                                                <div class="flex">
-                                                                    <button class="btn btn-success mr-5"
-                                                                            x-on:click="application.sendResponse(action.action, res.id, job.id)"
-                                                                            x-text="action.text"></button>
-                                                                    <select name="resume"
-                                                                            x-model="$store.main.selectedResume"
-                                                                            class="form-control">
-                                                                        <template
-                                                                                x-for="resume in $store.main.resumes"
-                                                                                :key="resume.id">
-                                                                            <option :value="resume.id"
-                                                                                    x-text="resume.name"></option>
-                                                                        </template>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-
-                                                        </template>
-                                                    </div>
-
-                                                </template>
-
-                                            </template>
-                                        </div>
-                                    </template>
-                                </div>
-                                <div class="col-2">
-
-                                </div>
-
-                            </div>
+                            <p x-text="review.comment"></p>
                         </div>
                     </div>
                 </template>
-
-                <template x-if="$store.main.jobs.length <= $store.main.jobCount">
+            </template>
+            <template x-if="$store.main.reviews">
+                <template x-if="$store.main.reviews.length <= $store.main.reviewsCount">
                     <div class="pagination-container flex">
-                        <template x-for="paginationItem in $store.main.pagination">
-                            <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">
+                        <template x-for="paginationItem in $store.main.reviews_pagination">
+                            <div :key="'pagination_' + index + '_page_' + $store.main.reviews_filters.page">
                                 <template x-if="paginationItem.active">
-                                    <button @click="application.setJobsPage(paginationItem.text)"
-                                            x-text="paginationItem.text+1"
-                                            class="mr-5 pagination-btn active-page"></button>
+                                    <button @click="application.setReviewsPage(paginationItem.text)"
+                                        x-text="paginationItem.text+1" class="mr-5 pagination-btn active-page"></button>
                                 </template>
                                 <template x-if="!paginationItem.active">
-                                    <button @click="application.setJobsPage(paginationItem.text)"
-                                            x-text="paginationItem.text+1"
-                                            class="mr-5 pagination-btn"></button>
+                                    <button @click="application.setReviewsPage(paginationItem.text)"
+                                        x-text="paginationItem.text+1" class="mr-5 pagination-btn"></button>
                                 </template>
                             </div>
                         </template>
                     </div>
                 </template>
-
+            </template>
+        </div>
+        <div class="row mt-5">
+            <h4>Оставьте отзыв о работодателе</h4>
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <form method="post" action="/api/create_review" @submit.prevent="application.createReview"
+                    id="reviewForm">
+                    <p id="review-form-error-msg" class="form-error-msg"></p>
+                    <p id="review-form-success-msg" class="form-success-msg"></p>
+                    {% bootstrap_form review_form %}
+                    <button class="btn btn-primary">Отправить</button>
+                </form>
             </div>
-            <div class="row mt-5">
-                <h4>Отзывы о работодателе</h4>
-                <template x-if="$store.main.reviews">
-                    <template x-for="review in $store.main.reviews" :key="'review_'+ review.id">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="title" x-text="review.reviewer"></h4>
-                                <div class="d-flex ">
-                                    <template
-                                            x-for="item in application.getJobRatingArray(review.rating)">
-                                        <label :class="['rating-star', item === 0? 'star-empty': item === 1? 'star-half': 'star-fill']"></label>
-                                    </template>
-                                </div>
-                                <p x-text="review.comment"></p>
-                            </div>
-                        </div>
-                    </template>
-                </template>
-                <template x-if="$store.main.reviews">
-                    <template x-if="$store.main.reviews.length <= $store.main.reviewsCount">
-                        <div class="pagination-container flex">
-                            <template x-for="paginationItem in $store.main.reviews_pagination">
-                                <div :key="'pagination_' + index + '_page_' + $store.main.reviews_filters.page">
-                                    <template x-if="paginationItem.active">
-                                        <button @click="application.setReviewsPage(paginationItem.text)"
-                                                x-text="paginationItem.text+1"
-                                                class="mr-5 pagination-btn active-page"></button>
-                                    </template>
-                                    <template x-if="!paginationItem.active">
-                                        <button @click="application.setReviewsPage(paginationItem.text)"
-                                                x-text="paginationItem.text+1"
-                                                class="mr-5 pagination-btn"></button>
-                                    </template>
-                                </div>
-                            </template>
-                        </div>
-                    </template>
-                </template>
-            </div>
-            <div class="row mt-5">
-                <h4>Оставьте отзыв о работодателе</h4>
-                <div class="col-lg-4 col-md-6 col-sm-12">
-                    <form method="post" action="/api/create_review" @submit.prevent="application.createReview"
-                          id="reviewForm">
-                        <p id="review-form-error-msg" class="form-error-msg"></p>
-                        <p id="review-form-success-msg" class="form-success-msg"></p>
-                        {% bootstrap_form review_form %}
-                        <button class="btn btn-default">Отправить</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </div>
-    <script>
-        const initCompany = () => {
-            application.initCompany({{ company.id }})
-            application.initJobs({company_id: {{ company.id }}})
-        }
-        $(document).ready(() => {
-            const application = new app()
-            application.initRating($('.star-rating .fa'), 'input.rating-value', false)
+        </div>
+    </section>
+</div>
+<script>
+    const initCompany = () => {
+        application.initCompany({{ company.id }})
+        application.initJobs({
+            company_id: {{company.id }}
         })
-    </script>
+    }
+    $(document).ready(() => {
+        const application = new app()
+        application.initRating($('.star-rating .fa'), 'input.rating-value', false)
+    })
+</script>
 {% endblock content %}

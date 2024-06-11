@@ -1,5 +1,7 @@
 from django.contrib import messages
 
+
+from django.forms import model_to_dict
 from django.contrib.auth import get_user_model
 from captcha.image import ImageCaptcha
 from django.http import HttpResponse
@@ -209,6 +211,7 @@ def resume_view(request, resume_id):
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		return render(request, './pages/resume.html', {
+      		'resume_serialized': model_to_dict(resume),
 			'review_form': review_form,
 			'form_response': form_response,
 			'articles': articles,

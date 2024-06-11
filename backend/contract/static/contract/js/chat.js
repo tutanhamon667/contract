@@ -1,6 +1,6 @@
-function Chat(user_id, chat_id ) {
+function Chat(user_id, chat_id) {
 
-    const makeRequest = function(url, data, callback){
+    const makeRequest = function(url, data, callback) {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $.ajax({
             url: `/api/${url}`,
@@ -18,7 +18,8 @@ function Chat(user_id, chat_id ) {
         })
     }
 
-    document.addEventListener('alpine:init', () => {
+    document.addEventListener('alpine:init', async () => {
+
         class FileUpload {
 
             constructor(input) {
@@ -79,9 +80,9 @@ function Chat(user_id, chat_id ) {
                 });
                 const chat = Alpine.store('chatsData').getActiveChat()
                 $.ajax({
-                    xhr: function () {
+                    xhr: function() {
                         var xhr = new XMLHttpRequest();
-                        xhr.upload.addEventListener('progress', function (e) {
+                        xhr.upload.addEventListener('progress', function(e) {
                             if (e.lengthComputable) {
                                 if (self.file.size < self.max_length) {
                                     var percent = Math.round((e.loaded / e.total) * 100);
@@ -102,10 +103,10 @@ function Chat(user_id, chat_id ) {
                     processData: false,
                     contentType: false,
                     data: formData,
-                    error: function (xhr) {
+                    error: function(xhr) {
                         alert(xhr.statusText);
                     },
-                    success: function (res) {
+                    success: function(res) {
                         if (nextChunk < self.file.size) {
                             // upload file in chunks
                             existingPath = res.existingPath
@@ -128,13 +129,13 @@ function Chat(user_id, chat_id ) {
 
             connect() {
                 this.chatSocket = new WebSocket(
-                    'ws://'
-                    + window.location.host
-                    + '/ws/chat/main/')
+                    'ws://' +
+                    window.location.host +
+                    '/ws/chat/main/')
             }
 
             init() {
-                this.chatSocket.onerror = (err)  => {
+                this.chatSocket.onerror = (err) => {
                     console.error('Socket encountered error: ', err.message, 'Closing socket');
                     this.chatSocket.close();
                 };
@@ -143,17 +144,21 @@ function Chat(user_id, chat_id ) {
 
                     if (data.type === "CHAT_LIST") {
                         data.chats = data.chats.sort((a, b) => {
-                            const _a = a.messages.length ? a.messages[a.messages.length - 1] : {created: null}
-                            const _b = b.messages.length ? b.messages[b.messages.length - 1] : {created: null}
+                            const _a = a.messages.length ? a.messages[a.messages.length - 1] : {
+                                created: null
+                            }
+                            const _b = b.messages.length ? b.messages[b.messages.length - 1] : {
+                                created: null
+                            }
                             const aDate = new Date(_a.created);
                             const bDate = new Date(_b.created);
                             return aDate < bDate
                         })
                         Alpine.store('chatsData').chats = data.chats
-                        if(chat_id !== 'null'){
-                             selectChat(chat_id)
-                        }else{
-                             selectChat()
+                        if (chat_id !== 'null') {
+                            selectChat(chat_id)
+                        } else {
+                            selectChat()
                         }
 
                     }
@@ -177,7 +182,7 @@ function Chat(user_id, chat_id ) {
                         }
 
                         setTimeout(() => {
-                            document.querySelector('.MessageList').scroll(0, 10000000000000)
+                            document.querySelector('.chat-body').scroll(0, 10000000000000)
                             const chat = Alpine.store('chatsData').getActiveChat()
                             if (chat && chat.messages.length) {
                                 const data = {
@@ -194,7 +199,7 @@ function Chat(user_id, chat_id ) {
                         const chat = Alpine.store('chatsData').chats.find(item => item.chat_uuid === data.chat_uuid)
                         chat.messages = data.messages
                         setTimeout(() => {
-                            document.querySelector('.MessageList').scroll(0, 10000000000000)
+                            document.querySelector('.chat-body').scroll(0, 10000000000000)
                             const chat = Alpine.store('chatsData').getActiveChat()
                             if (chat && chat.messages.length) {
                                 const data = {
@@ -236,6 +241,12 @@ function Chat(user_id, chat_id ) {
         const socket = new Socket()
         socket.connect()
         socket.init()
+        makeRequest('user', {}, (success, data) => {
+            if (data.success) {
+                Alpine.store('chatsData').user = data.data
+            }
+        })
+
 
 
         Alpine.store('chatsData', {
@@ -244,11 +255,16 @@ function Chat(user_id, chat_id ) {
             message: "",
             file_id: null,
             getOtherUser: () => {
-                let res = Alpine.store('chatsData').chats.find(function (item) {
+                let res = Alpine.store('chatsData').chats.find(function(item) {
                     return item.chat_uuid === Alpine.store('chatsData').getActiveChat().chat_uuid
                 })
                 if (!res) {
-                    res = {other_user: {photo: '', display_name: ''}}
+                    res = {
+                        other_user: {
+                            photo: '',
+                            display_name: ''
+                        }
+                    }
                 }
                 return res
             },
@@ -300,7 +316,7 @@ function Chat(user_id, chat_id ) {
                 return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear()
             },
             sendMessage: () => {
-                 if (Alpine.store('chatsData').message || Alpine.store('chatsData').file_id) {
+                if (Alpine.store('chatsData').message || Alpine.store('chatsData').file_id) {
                     let chat = Alpine.store('chatsData').getActiveChat()
                     socket.chatSocket.send(JSON.stringify({
                         type: 'SEND_MESSAGE',
@@ -328,16 +344,48 @@ function Chat(user_id, chat_id ) {
 
             }
         })
+
+        const toggleSelectExtended = () => {
+            const chats = document.querySelector('.chats-container')
+            const messages = document.querySelector('.chat-container')
+            if (chats.classList.contains('expanded')) {
+                chats.classList.remove('expanded')
+                messages.classList.remove('hidden')
+            } else {
+                chats.classList.add('expanded')
+                messages.classList.add('hidden')
+            }
+        }
+
+        Alpine.bind('expand_btn', {
+            type: 'button',
+            '@click'(e) {
+                toggleSelectExtended()
+            },
+
+        })
         Alpine.bind('chat_submit_btn', {
             type: 'button',
             '@click'(e) {
-                 Alpine.store('chatsData').sendMessage()
+                Alpine.store('chatsData').sendMessage()
             },
 
         })
         Alpine.bind('chat_item', {
             '@click'(event) {
-                selectChat(event.srcElement.closest('.ListItem').id)
+                selectChat(event.srcElement.closest('.chats-message-preview').id)
+                const chats = document.querySelector('.chats-container')
+                if (chats.classList.contains('expanded')) {
+                    if (window.innerWidth < 768) {
+                        toggleSelectExtended()
+                    } else {
+                        chats.classList.remove('expanded')
+                        const messages = document.querySelector('.chat-container')
+                        messages.classList.remove('hidden')
+                    }
+
+                }
+
 
             },
         })
@@ -356,15 +404,18 @@ function Chat(user_id, chat_id ) {
                 if (Alpine.store('chatsData').chats.length) {
                     id = Alpine.store('chatsData').chats[0].chat_uuid
                     Alpine.store('chatsData').setActiveChat(id)
-                }else {
+                } else {
                     return
                 }
             }
             Alpine.store('chatsData').setActiveChat(id)
-            socket.chatSocket.send(JSON.stringify({type: 'JOIN_CHAT', chat_uuid: id}))
+            socket.chatSocket.send(JSON.stringify({
+                type: 'JOIN_CHAT',
+                chat_uuid: id
+            }))
             const test = Alpine.store('chatsData').chats
             setTimeout(() => {
-                document.querySelector('.MessageList').scroll(0, 10000000000000)
+                document.querySelector('.chat-body').scroll(0, 10000000000000)
                 const chat = Alpine.store('chatsData').getActiveChat()
                 if (chat && chat.messages.length) {
                     const data = {
