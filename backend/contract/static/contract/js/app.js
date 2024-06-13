@@ -291,7 +291,7 @@ const alpineApp = function() {
         getResponseInviteElement: (invite) => {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
-
+                // 1 - принято с двух сторон
                 if (invite.status === 1) {
                     return {
                         element: 'link',
@@ -311,7 +311,9 @@ const alpineApp = function() {
                         text: 'Отклик удалён'
                     }
                 }
+                // 0 - нет отклика
                 if (invite.status === 0) {
+                    // 0 - приглашение от работодателя
                     if (invite.type === 1) {
                         return {
                             element: 'form',
@@ -359,91 +361,12 @@ const alpineApp = function() {
 
         getResponseInviteExtraElement: (invite) => {
             const user = Alpine.store('main').user
-            if (user.id >= 0) {
 
-                if (invite.status === 1) {
-                    return [{
-                        element: 'form',
-                        text: '',
-
-                        actions: [{
-                            class: 'danger',
-                            action: "decline",
-                            text: 'Покинуть чат'
-                        }],
-                        id: invite.id
-                    }, {
-                        element: 'link',
-                        link: '/chat/' + invite.chat.uuid,
-                        text: 'Перейти в чат'
-                    }, ]
-                }
-                if (invite.status === 2) {
-                    return [{
-                        element: 'status',
-                        text: 'Отклик отклонён'
-                    }]
-                }
-                if (invite.status === 3) {
-                    return [{
-                        element: 'status',
-                        text: 'Отклик удалён'
-                    }]
-                }
-                if (invite.status === 0) {
-                    if (user.is_customer) {
-                        if (invite.type === 0) {
-                            return [{
-                                element: 'form',
-
-                                text: '',
-                                actions: [{
-                                    action: "accept",
-                                    text: 'Принять приглашение'
-                                }, {
-                                    action: "decline",
-                                    class: 'danger',
-                                    text: 'Отказаться'
-                                }],
-                                id: invite.id
-                            }]
-                        }
-                        if (invite.type === 1) {
-                            return [{
-                                element: 'status',
-                                text: 'Ждёт подтверждение'
-                            }]
-                        }
-                    } else {
-                        if (invite.type === 0) {
-                            return [{
-                                element: 'form',
-
-                                text: '',
-                                actions: [{
-                                    action: "accept",
-                                    text: 'Принять приглашение'
-                                }, {
-                                    action: "decline",
-                                    class: 'danger',
-                                    text: 'Отказаться'
-                                }],
-                                id: invite.id
-                            }]
-                        }
-                        if (invite.type === 1) {
-                            return [{
-                                element: 'status',
-                                text: 'Ждёт подтверждение'
-                            }]
-                        }
-                        1
-                    }
-
-                }
+            const getAction = function(invite, user) {
+                const actions = []
                 if (typeof invite.id === 'undefined') {
                     if (Alpine.store('main').resumes.length) {
-                        return {
+                        actions.push({
                             element: 'form',
                             text: '',
                             actions: [{
@@ -451,16 +374,185 @@ const alpineApp = function() {
                                 text: 'Откликнуться'
                             }],
                             id: null
-                        }
+                        })
                     } else {
-                        return {
+                        actions.push({
                             element: 'link',
                             link: '/profile/resume',
                             text: 'Создать резюме для отклика'
+                        })
+                    }
+                    return actions
+                }
+                if (invite.status === 1) {
+                    return [{
+                            element: 'form',
+                            text: '',
+                            actions: [{
+                                action: "decline",
+                                text: 'Отказатсья',
+                                class: 'red'
+                            }],
+                            id: invite.id
+                        },
+                        {
+
+                            element: 'link',
+                            link: '/chat/' + invite.chat.uuid,
+                            text: 'Перейти в чат'
+
                         }
+                    ]
+                }
+
+                if (user.is_customer) {
+                    if (invite.type === 0) {
+                        if (invite.status === 0) {
+                            actions.push({
+                                element: 'form',
+                                text: '',
+                                actions: [{
+                                    action: "accept",
+                                    text: 'Принять '
+                                }, {
+                                    action: "decline",
+                                    text: 'Отклонить '
+                                }],
+                                id: invite.id
+                            })
+                        }
+                        if (invite.status === 2) {
+
+                            actions.push({
+                                element: 'status',
+                                text: 'Отклик отклонён'
+                            })
+                        }
+                        if (invite.status === 1) {
+                            // перейти в чат
+                            actions.push({
+                                element: 'link',
+                                link: '/chat/' + invite.chat.uuid,
+                                text: 'Перейти в чат'
+                            })
+                        }
+
+                        //                        можем удалить, перейти в чат
+                    } else if (invite.type === 1) {
+                        if (invite.status === 0) {
+                            actions.push({
+                                element: 'form',
+                                text: '',
+                                actions: [{
+                                    action: "decline",
+                                    text: 'Отменить '
+                                }],
+                                id: invite.id
+                            })
+                            actions.push({
+                                element: 'status',
+                                text: 'Ждёт отклика'
+                            })
+                        }
+
+                        if (invite.status === 2) {
+                            actions.push({
+                                element: 'status',
+                                text: 'Отклик отклонён'
+                            })
+                            //                        можем удалить
+                        }
+                        if (invite.status === 1) {
+                            actions.push({
+                                element: 'link',
+                                link: '/profile/resume',
+                                text: 'Создать резюме для отклика'
+                            })
+                        }
+                        // могу отказаться
+
                     }
 
                 }
+                if (user.is_worker) {
+                    if (invite.type === 1) {
+                        if (invite.status === 0) {
+                            actions.push({
+                                element: 'form',
+                                text: '',
+                                actions: [{
+                                    action: "accept",
+                                    text: 'Принять '
+                                }, {
+                                    action: "decline",
+                                    text: 'Отклонить '
+                                }],
+                                id: invite.id
+                            })
+                        }
+                        if (invite.status === 2) {
+
+                            actions.push({
+                                element: 'status',
+                                text: 'Отклик отклонён'
+                            })
+                        }
+                        if (invite.status === 1) {
+                            // перейти в чат
+                            actions.push({
+                                element: 'link',
+                                link: '/chat/' + invite.chat.uuid,
+                                text: 'Перейти в чат'
+                            })
+                        }
+
+                        //                        можем удалить, перейти в чат
+                    } else if (invite.type === 0) {
+                        if (invite.status === 0) {
+                            actions.push({
+                                element: 'form',
+                                text: '',
+                                actions: [{
+                                    action: "decline",
+                                    text: 'Отменить '
+                                }],
+                                id: invite.id
+                            })
+                            actions.push({
+                                element: 'status',
+                                text: 'Ждёт отклика'
+                            })
+                        }
+
+                        if (invite.status === 2) {
+                            actions.push({
+                                element: 'status',
+                                text: 'Отклик отклонён'
+                            })
+                            //                        можем удалить
+                        }
+                        if (invite.status === 1) {
+                            actions.push({
+                                element: 'link',
+                                link: '/profile/resume',
+                                text: 'Создать резюме для отклика'
+                            })
+                        }
+                        // могу отказаться
+
+                    }
+
+                }
+
+                return actions
+
+            }
+            return getAction(invite, user)
+            if (user.id >= 0) {
+
+
+
+
             }
             return ''
         },

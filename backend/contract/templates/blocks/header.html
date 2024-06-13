@@ -109,7 +109,7 @@
                 </ul>
             </div>
             <div class=" align-items-center">
-                <ul class="d-flex flex-d-row navbar-nav me-auto mb-2 mb-lg-0 ">
+                <ul class="d-flex flex-d-row navbar-nav align-items-end mb-2 mb-lg-0 ">
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="{% url 'chat_main' %}">
