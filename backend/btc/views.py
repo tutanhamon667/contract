@@ -58,6 +58,8 @@ def customer_access(request):
 def profile_wallet_view(request):
 	if request.user.is_authenticated:
 		user = request.user
+		if user.is_worker:
+			return redirect('index')
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		if request.method == "GET":

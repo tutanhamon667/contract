@@ -1,8 +1,18 @@
 @font-face {
     font-family: "Inter";
-    src: url(../fonts/inter.ttf) format("truetype");
+    src: url('../fonts/inter.ttf') format("truetype");
 }
 
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    margin-bottom: 0 !important;
+}
 
 body {
     min-height: 100vh;
@@ -70,6 +80,11 @@ main {
     position: absolute;
     top: 40%;
     left: calc(50% - 20px);
+}
+
+
+.padding-05 {
+    padding: 0.5rem !important;
 }
 
 .page-content {
@@ -746,6 +761,7 @@ header a {
 
 .h-icon {
     margin-right: 5px;
+    margin-top: -5px;
 }
 
 a {
@@ -1251,4 +1267,29 @@ h1 {
     .products-category-container .card-title {
         font-size: 1rem !important;
     }
+}
+
+@media (min-width: 1400px) {
+    body * {
+        font-size: 1.1rem !important;
+    }
+}
+
+.mobile-menu .navbar-collapse.show {
+
+    left: 60px;
+    width: calc(100% - 60px);
+    z-index: 1000;
+    background: white;
+    position: absolute;
+
+    padding: 0 10;
+    border: 1px solid #c8c8c8;
+    /* padding: 10px; */
+    border-top: none;
+}
+
+
+.mobile-menu .navbar-collapse.show .navbar-nav {
+    padding: 10px;
 }

@@ -21,8 +21,7 @@ from . import settings
 from users.views import captcha_view
 from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
     favorite_view, worker_responses_invites_view, customer_responses_invites_view
-
-
+from django.views.generic.base import RedirectView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -38,6 +37,7 @@ schema_view = get_schema_view(
 )
 CKEDITOR_5_FILE_STORAGE = "/media"  # optional
 urlpatterns = [
+
     path('ckeditor5/', include('django_ckeditor_5.urls')),
     path('', main_view, name='index'),
     path('for_customers', for_customers_view, name='for_customers'),

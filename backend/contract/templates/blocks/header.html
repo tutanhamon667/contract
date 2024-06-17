@@ -1,127 +1,139 @@
 {% load static %}
-
+{% with request.resolver_match.url_name as url_name %}
 <div class="container" x-data>
     <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary" style="min-width: 370px">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Toggle button -->
-            <button class="navbar-toggler" type="button" data-bs-target="#navbarSupportedContent"
-                data-bs-toggle="collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-            </button>
+            <div class="d-flex mobile-menu">
 
-            <!-- Collapsible wrapper -->
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Navbar brand -->
-                <a class="navbar-brand p-t-0 mt-lg-0" href="/">
-                    <img src="{% static "contract/img/logo-big.svg" %}" height="50" alt="Contract Logo"
-                        loading="lazy" />
-                </a>
-                {% if user.is_authenticated %}
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% if user.is_customer %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'profile_jobs' %}active{% endif %}"
-                            href="{% url 'profile_jobs' %}">Мои вакансии</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'candidats_page' %}active{% endif %}"
-                            href="{% url 'candidats_page' %}">
-                            Кандидаты
-                            <template x-if="$store.main.counters && $store.main.counters.ri.length">
-                                <span class="counter-text" x-text="$store.main.counters.ri.length"></span>
-                            </template>
+                <div>
+                    <button class="navbar-toggler" type="button" data-bs-target="#navbarSupportedContent"
+                        data-bs-toggle="collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
 
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'resumes' %}active{% endif %}"
-                            href="{% url 'resumes' %}">Поиск по базе резюме</a>
-                    </li>
-                    {% endif %}
-                    {% if user.is_worker %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'profile_resume' %}active{% endif %}"
-                            href="{% url 'profile_resumes' %}">
-                            Моё резюме
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'responses_invites_page' %}active{% endif %}"
-                            href="{% url 'responses_invites_page' %}">
-                            Приглашения
-                            <template x-if="$store.main.counters && $store.main.counters.ri.length">
-                                <span class="counter-text" x-text="$store.main.counters.ri.length"></span>
-                            </template>
-                        </a>
-                    </li>
-                    {% endif %}
 
-                </ul>
-                {% else %}
-                {% with request.resolver_match.url_name as url_name %}
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'index' %}active{% endif %}"
-                            href="{% url 'index' %}">Соискателям</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'for_customers' %}active{% endif %}"
-                            href="{% url 'for_customers' %}">Работодателям</a>
-                    </li>
-
-                </ul>
-                {% endwith %}
-                {% endif %}
-
-            </div>
-            <div class="collapse navbar-collapse align-items-center">
-                <ul class="d-flex navbar-nav me-auto mb-2 mb-lg-0 ">
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar brand -->
+                    <a class="navbar-brand p-t-0 mt-lg-0" href="/">
+                        <img src="{% static 'contract/img/logo-big.svg' %}" height="50" alt="Contract Logo"
+                            loading="lazy" />
+                    </a>
                     {% if user.is_authenticated %}
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        {% if user.is_customer %}
+          
+        
+                            <li class="nav-item">
+                                <a class="nav-link {% if url_name == 'profile_jobs' %}active{% endif %}"
+                                    href="{% url 'profile_jobs' %}">Мои вакансии</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if url_name == 'candidats_page' %}active{% endif %}"
+                                    href="{% url 'candidats_page' %}">
+                                    Кандидаты
+                                    <template x-if="$store.main.counters && $store.main.counters.ri.length">
+                                        <span class="counter-text" x-text="$store.main.counters.ri.length"></span>
+                                    </template>
 
-                    {% if user.is_worker %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if url_name == 'favorite_jobs_main' %}active{% endif %}"
-                            href="{% url 'favorite_jobs_main' %}">
-                            <img src="{% static 'contract/img/icons/heart-empty.svg' %}" height="20">
-                        </a>
-                    </li>
-                    {% endif %}
+                                </a>
+                            </li>
+                       
+                    
+                        {% endif %}
+                        {% if user.is_worker %}
+                        <li class="nav-item"><a class="nav-link " href="{% url 'profile_main' %}">Профиль</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if url_name == 'profile_resume' %}active{% endif %}"
+                                href="{% url 'profile_resumes' %}">
+                                Моё резюме
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if url_name == 'responses_invites_page' %}active{% endif %}"
+                                href="{% url 'responses_invites_page' %}">
+                                Приглашения
+                                <template x-if="$store.main.counters && $store.main.counters.ri.length">
+                                    <span class="counter-text" x-text="$store.main.counters.ri.length"></span>
+                                </template>
+                            </a>
+                        </li>
 
+                        {% endif %}
 
-
+                    </ul>
                     {% else %}
-                    {% with request.resolver_match.url_name as url_name %}
 
-                    <li class="nav-item">
-                        <a class="btn btn-white  nowrap" href="{% url 'worker_signup' %}">Создать резюме</a>
-                    </li>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link {% if url_name == 'index' %}active{% endif %}"
+                                href="{% url 'index' %}">Соискателям</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if url_name == 'for_customers' %}active{% endif %}"
+                                href="{% url 'for_customers' %}">Работодателям</a>
+                        </li>
 
-                    {% if url_name == 'for_customer' %}
-                    <li class="nav-item">
-                        <a class="btn btn-white nowrap" href="{% url 'customer_signup' %}">Создать вакансию</a>
-                    </li>
+                    </ul>
+
                     {% endif %}
-                    {% endwith %}
 
-                    {% endif %}
-                </ul>
+                </div>
+    
             </div>
+            {% if   user.is_customer %}
             <div class=" align-items-center">
                 <ul class="d-flex flex-d-row navbar-nav align-items-end mb-2 mb-lg-0 ">
+
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="{% url 'chat_main' %}">
                             <img src="{% static 'contract/img/icons/vector.svg' %}" height="20">
                         </a>
                     </li>
-                    {% if user.is_customer %}
                     <li class="nav-item">
                         <a class="nav-link balance" x-init="application.getBalance()"
                             x-text="$store.main.balance.formatString()" href="/profile/wallet"></a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ user.login }}
+                        </a>
+                        <ul class="dropdown-menu  dropdown-menu-end dropdown-menu-lg-start"
+                            aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile_main' %}">Профиль</a></li>
+                            <li><a class="dropdown-item" href="{% url 'profile_company_view' %}">Моя компания</a></li>
+                            <li><a class="dropdown-item" href="{% url 'profile_jobs' %}">Мои вакансии</a></li>
+                            <li><a class="dropdown-item" href="{% url 'candidats_page' %}">Кандидаты</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти </a></li>
+                        </ul>
+                    </li>
+                   
                     {% endif %}
+
+                </ul>
+            </div>
+            {% elif user.is_worker %}
+            <div class=" align-items-center">
+                <ul class="d-flex flex-d-row navbar-nav align-items-end mb-2 mb-lg-0 ">
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'favorite_jobs_main' %}active{% endif %}"
+                            href="{% url 'favorite_jobs_main' %}">
+                            <img src="{% static 'contract/img/icons/heart-empty.svg' %}" height="20">
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="{% url 'chat_main' %}">
+                            <img src="{% static 'contract/img/icons/vector.svg' %}" height="20">
+                        </a>
+                    </li>
 
 
                     <li class="nav-item dropdown">
@@ -132,38 +144,34 @@
                         <ul class="dropdown-menu  dropdown-menu-end dropdown-menu-lg-start"
                             aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{% url 'profile_main' %}">Профиль</a></li>
-                            {% if user.is_worker %}
                             <li><a class="dropdown-item" href="{% url 'profile_resumes' %}">Моё резюме</a></li>
                             <li><a class="dropdown-item" href="{% url 'responses_invites_page' %}">Приглашения</a></li>
-                            {% else %}
-                            <li><a class="dropdown-item" href="{% url 'profile_company_view' %}">Моя компания</a></li>
-                            <li><a class="dropdown-item" href="{% url 'profile_jobs' %}">Мои вакансии</a></li>
-                            <li><a class="dropdown-item" href="{% url 'candidats_page' %}">Кандидаты</a></li>
-                            {% endif %}
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти </a></li>
                         </ul>
                     </li>
-                    {% else %}
-                    {% with request.resolver_match.url_name as url_name %}
+                
 
+                      
+                    {% endif %}
+
+                </ul>
+            </div>
+            {% endif %}
+            {% if not user.is_authenticated %}
+             
+                <ul class="d-flex flex-d-row navbar-nav align-items-end mb-2 mb-lg-0 ">
                     <li class="nav-item">
                         <a class="btn btn-white  nowrap" href="{% url 'worker_signup' %}">Создать резюме</a>
                     </li>
-
-                    {% if url_name == 'for_customer' %}
-                    <li class="nav-item">
-                        <a class="btn btn-white nowrap" href="{% url 'customer_signup' %}">Создать вакансию</a>
-                    </li>
-                    {% endif %}
-                    {% endwith %}
                     <li class="nav-item">
                         <a class="btn btn-primary p-l-r-40" href="{% url 'worker_signin' %}">Войти</a>
                     </li>
-                    {% endif %}
                 </ul>
-            </div>
+        
+            {% endif %}
             <!-- Right elements -->
         </div>
     </nav>
 
 </div>
+{% endwith %}

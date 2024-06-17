@@ -3,145 +3,139 @@
 {% load django_bootstrap5 %}
 
 {% if col %}
-    <div class="{{ col }}">
-{% endif %}
+<div class="{{ col }}">
+    {% endif %}
 
-<div class="card {{ addition_card_class }}">
-    <div class="card-body">
-        <div class="row">
-            <div class="col-9">
-                <div class="d-flex">
-                    <a href="/jobs/{{ job.id }}" class="link-dark">
-                        <h4>{{ job.title }}</h4>
-                    </a>
-                    {% if job.is_hot %}
+    <div class="card {{ addition_card_class }}">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-9">
+                    <div class="card-title d-flex">
+                        <a href="/jobs/{{ job.id }}" class="link-dark">
+                            <h4>{{ job.title }}</h4>
+                        </a>
+                        {% if job.is_hot %}
                         <img src="{% static 'contract/img/icons/hot.svg' %}" height="22" class="ml-5 company-logo-mini">
-                    {% endif %}
-                </div>
-                <h3 class="card-subtitle salary">{{ job.final_salary }} ₽</h3>
-                <div class="d-flex ">
-                    <a class="text-shadow"
-                       href="/company/{{ job.company.id }}">{{ job.company.name }}</a> <img
-                        src="{% static 'contract/img/icons/approved.svg' %}" height="12" class="ml-5 mt-15"/>
-                </div>
-                {% if short is False %}
-                    {% with region=job.regions_name %}
-                        {% include "../busy_type.html" %}
-                    {% endwith %}
-                {% endif %}
-                <div class="vacancy-description">
-                    {% if job.work_experience is not "NoMatter" %}
-                        {% if short is False %}
-                            <span class="job-card-item-customer text-muted job-type">Опыт: {{ job.work_experience }} месяцев</span>
                         {% endif %}
+                    </div>
+                    <h3 class="card-subtitle salary">{{ job.final_salary }} ₽</h3>
+                    <div class="d-flex ">
+                        <a class="text-shadow" href="/company/{{ job.company.id }}">{{ job.company.name }}</a> <img src="{% static 'contract/img/icons/approved.svg' %}" height="12" class="ml-5 mt-15" />
+                    </div>
+                    {% if short is False %}
+                    {% with region=job.regions_name %}
+                    {% include "../busy_type.html" %}
+                    {% endwith %}
                     {% endif %}
-                </div>
-                {% if short is False and  job.deposit is not 0 %}
+                    <div class="vacancy-description">
+                        {% if job.work_experience is not "NoMatter" %}
+                        {% if short is False %}
+                        <span class="job-card-item-customer text-muted job-type">Опыт: {{ job.work_experience }} месяцев</span>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    {% if short is False and  job.deposit is not 0 %}
                     <span class="job-card-item-customer text-muted job-type">Залог: {{ job.deposit }} ₽</span>
-                {% endif %}
-                <div class="d-flex vacancy-description">
+                    {% endif %}
+                    <div class="d-flex vacancy-description">
 
-                    {% if job.work_experience == "NoMatter" %}
+                        {% if job.work_experience == "NoMatter" %}
                         <div class="d-flex mr-5">
 
                             <img src="{% static 'contract/img/icons/bag.svg' %}" height="10" class="mt-1 mr-5">
                             <span>Без опыта</span>
 
                         </div>
-                    {% endif %}
-                    {% if job.deposit is 0 or None %}
+                        {% endif %}
+                        {% if job.deposit is 0 or None %}
                         <div class="d-flex">
                             <img src="{% static 'contract/img/icons/zalog.svg' %}" height="10" class="mt-1 mr-5">
                             <span>Без залога</span>
                         </div>
 
-                    {% endif %}
+                        {% endif %}
+                    </div>
+
                 </div>
 
-            </div>
 
-
-            {% if show_company_logo is True %}
+                {% if show_company_logo is True %}
                 <div class="col-3 text-center">
-                {% if job.company.logo %}
-                    <img src="/media/{{ job.company.logo }}" height="50" alt="{{ job.company.name }}"
-                         class="company-logo-mini"/>
+                    {% if job.company.logo %}
+                    <img src="/media/{{ job.company.logo }}" height="50" alt="{{ job.company.name }}" class="company-logo-mini" />
                     {% else %}
-                       <div class="no-photo">
-                            <span>{{ job.company.name|make_list|first }}</span>
-                        </div>
+                    <div class="no-photo">
+                        <span>{{ job.company.name|make_list|first }}</span>
+                    </div>
                     {% endif %}
                 </div>
 
 
 
-            {% endif %}
-        </div>
-        {% if short is False and not user %}
+                {% endif %}
+            </div>
+            {% if short is False and not user %}
             <div class="clear">
                 <a href='/signin' class="btn btn-success">Войти для отклика</a>
             </div>
-        {% endif %}
-        {% if short is False %}
+            {% endif %}
+            {% if short is False %}
             <div class="clear">
                 {% if user.is_worker and job.type == 0 and job.status == 0 %}
-                    <button class="btn-primary btn">Ждёт подтверждения от работодателя</button>
+                <button class="btn-primary btn">Ждёт подтверждения от работодателя</button>
                 {% elif user.is_worker and job.type == 0 and job.status == 1 %}
-                    <button class="btn-success btn">Работодатель подтвердил собеседование</button>
-                    <a href="#">Перейти в чат с работодателем</a>
+                <button class="btn-success btn">Работодатель подтвердил собеседование</button>
+                <a href="#">Перейти в чат с работодателем</a>
                 {% elif user.is_worker and job.type == 0 and job.status == 2 %}
-                    <button class="btn-primary btn">Отклик откланён работодателем</button>
+                <button class="btn-primary btn">Отклик откланён работодателем</button>
                 {% elif user.is_worker and job.type == 0 and job.status == 3 %}
-                    <button class="btn-danger btn">Отклик удалён работодателем</button>
+                <button class="btn-danger btn">Отклик удалён работодателем</button>
                 {% elif user.is_worker and job.type == 1 and job.status == 0 %}
-                    <button class="btn-primary btn">Работодатель пригласил на собеседование</button>
-                    <form action="{% url 'response_invite_update' %}" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="request_invite_id" value="{{ job.request_invite_id }}"/>
-                        <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
-                        <input type="hidden" name="status" value="1"/>
-                        <input type="submit" class="btn btn-success" value="Принять отклик"/>
-                    </form>
+                <button class="btn-primary btn">Работодатель пригласил на собеседование</button>
+                <form action="{% url 'response_invite_update' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="request_invite_id" value="{{ job.request_invite_id }}" />
+                    <input type="hidden" name="redirect" value="{{ request.get_full_path }}" />
+                    <input type="hidden" name="status" value="1" />
+                    <input type="submit" class="btn btn-success" value="Принять отклик" />
+                </form>
                 {% elif user.is_worker and job.type == 1 and job.status == 1 %}
-                    <button class="btn-primary btn">Вы подтвердили приглашение на собеседование</button>
-                    <a href="#">Перейти в чат с работодателем</a>
+                <button class="btn-primary btn">Вы подтвердили приглашение на собеседование</button>
+                <a href="#">Перейти в чат с работодателем</a>
                 {% elif user.is_worker and job.type == 1 and job.status == 2 %}
-                    <button class="btn-primary btn">Вы отклонили приглашение</button>
+                <button class="btn-primary btn">Вы отклонили приглашение</button>
                 {% elif job.status is None %}
-                    {% if resumes|length > 0 %}
-                        <button class="btn btn-success" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#responseInvite_{{ job.id }}" aria-expanded="false"
-                                aria-controls="responseInvite_{{ job.id }}">
-                            Откликнуться
-                        </button>
-                        <div class="collapse" id="responseInvite_{{ job.id }}">
-                            <div class="card card-body">
-                                <form action="{% url 'response_invite_create' %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="job" value="{{ job.id }}"/>
-                                    <label for="id_resume">Резюме</label>
-                                    <input type="hidden" name="redirect" value="{{ request.get_full_path }}"/>
-                                    {{ form_response.resume }}
-                                    <br/>
-                                    <input type="submit" class="btn btn-success" value="Отправить отклик"/>
-                                </form>
-                            </div>
-                        </div>
-                    {% elif user.is_worker %}
-                        <a href="/profile/resume" class="btn-primary btn">Создать резюме</a>
-                    {% endif %}
+                {% if resumes|length > 0 %}
+                <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#responseInvite_{{ job.id }}" aria-expanded="false" aria-controls="responseInvite_{{ job.id }}">
+                    Откликнуться
+                </button>
+                <div class="collapse" id="responseInvite_{{ job.id }}">
+                    <div class="card card-body">
+                        <form action="{% url 'response_invite_create' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="job" value="{{ job.id }}" />
+                            <label for="id_resume">Резюме</label>
+                            <input type="hidden" name="redirect" value="{{ request.get_full_path }}" />
+                            {{ form_response.resume }}
+                            <br />
+                            <input type="submit" class="btn btn-success" value="Отправить отклик" />
+                        </form>
+                    </div>
+                </div>
+                {% elif user.is_worker %}
+                <a href="/profile/resume" class="btn-primary btn">Создать резюме</a>
+                {% endif %}
                 {% endif %}
                 {% if user.is_worker %}
-                    <label for="favorite_job_{{ job.id }}">favorite</label>
-                    <input type="checkbox" id="favorite_job_{{ job.id }}" class="favorite_job_checkbox"
-                           value="{{ job.id }}"/>
+                <label for="favorite_job_{{ job.id }}">favorite</label>
+                <input type="checkbox" id="favorite_job_{{ job.id }}" class="favorite_job_checkbox" value="{{ job.id }}" />
                 {% endif %}
             </div>
-        {% endif %}
+            {% endif %}
 
 
+        </div>
     </div>
+    {% if col %}
 </div>
-{% if col %}
-    </div>
 {% endif %}
