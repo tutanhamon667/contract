@@ -14,7 +14,22 @@ from users.forms import JobForm, JobPaymentTarifForm
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.db import transaction
+from django.forms import modelform_factory
+from django.apps import apps
+from users.models.common import  ModerateRequest
+from chat.models import Chat
 
+def get_changed_data(new_instance, instance, fields=[]):
+	changed_data = {}
+	model = apps.get_model('users', 'job')
+	for field in instance._meta.fields:
+		if field.name in fields:
+			original_value = getattr(instance, field.name)
+			form_value = getattr(new_instance, field.name)
+		# check if the field has type ImageFieldFile   
+			if original_value != form_value:
+				changed_data[field.name] =  {"value":form_value, "type":"text", 'title': field.verbose_name} 
+	return changed_data
 
 class JobView:
 	def __init__(self):
@@ -55,6 +70,9 @@ class JobView:
 						edited_form.company = company
 						edited_form.save()
 						form.save_m2m()
+						review_request = ModerateRequest.create_request(Job, edited_form.id, changes=None, comment='Создание вакансии')
+						chat = Chat.get_user_system_chat(request.user)
+						chat.create_system_message(f' Создана заявка на модерацию вакансии: #{review_request.id}. Ждите проверки модератора')
 						messages.success(request, 'Вакансия создана')
 						return redirect('profile_job_view_pay_for_tier', edited_form.id)
 					else:
@@ -68,6 +86,8 @@ class JobView:
 				return HttpResponse(status=500)
 		else:
 			return redirect(to="customer_signin")
+
+	
 
 	def update(self, request, job_id):
 		user = request.user
@@ -107,11 +127,18 @@ class JobView:
 					form = JobForm(request.POST,  initial=initial )
 					company = Company.objects.get(user_id=user.id)
 					if form.is_valid():
-						edited_form = form.save(commit=False)
-						edited_form.user = request.user
-						edited_form.id = job.id
-						edited_form.company = company
-						edited_form.save()
+						original_job = Job.objects.get(id=job_id)
+						updated_job = form.save(commit=False)
+						changes = get_changed_data(updated_job, original_job,['title', 'description'])
+						if 'title' in changes or 'description' in changes:
+							review_request = ModerateRequest.create_request(Job, original_job.id, changes=changes, comment='Редактирование вакансии')
+							chat = Chat.get_user_system_chat(request.user)
+							chat.create_system_message(f' Создана заявка на редактирование вакансии: #{review_request.id}. Ждите проверки модератора')
+							messages.success(request, 'Информация о вакансии будет обновлена после проверки модератором')
+						updated_job.company = company
+						updated_job.title = original_job.title
+						updated_job.description = original_job.description
+						updated_job.save()
 						form.save_m2m()
 						messages.success(request, 'Вакансия обновлена')
 						return redirect('profile_jobs')
@@ -168,7 +195,7 @@ class JobView:
 						'payment_form': payment_form,
 						'active_job_payment':active_job_payment,
 						'job': job,
-      					'serialized_job': model_to_dict(job, ["id"]),
+	  					'serialized_job': model_to_dict(job, ["id"]),
 						'categories': categories,
 						'articles': articles
 					})
@@ -213,11 +240,11 @@ class JobView:
 																			   final_price_usd, paid_at, status)
 									messages.success(request, f'Заказ №{new_job_payment.id} {success_message}')
 									return render_payment_result_page(
-             								new_job_payment,
-                                           	new_operation, 
-                                           	'Оплата тарифа',
-                                           	"Успешная оплата!"
-                                           	)
+			 								new_job_payment,
+										   	new_operation, 
+										   	'Оплата тарифа',
+										   	"Успешная оплата!"
+										   	)
 								except Exception as e:
 									messages.error(request, e)
 						elif active_job_payment.job_tier_id == tier.id:
@@ -249,11 +276,11 @@ class JobView:
 																				   final_price_usd, paid_at, status)
 										messages.success(request, 'Заказ оплачен')
 										return render_payment_result_page(
-             								new_job_payment,
-                                           	new_operation, 
-                                           	'Продление тарифа',
-                                           	"Успешная оплата!"
-                                           	)
+			 								new_job_payment,
+										   	new_operation, 
+										   	'Продление тарифа',
+										   	"Успешная оплата!"
+										   	)
 									except Exception as e:
 										messages.error(request, e)
 							else:
@@ -295,11 +322,11 @@ class JobView:
 										active_job_payment.save()
 										messages.success(request, 'Заказ оплачен')
 										return render_payment_result_page(
-             								active_job_payment,
-                                           	operation, 
-                                           	'Оплата тарифа',
-                                           	"Успешная оплата!"
-                                           	)
+			 								active_job_payment,
+										   	operation, 
+										   	'Оплата тарифа',
+										   	"Успешная оплата!"
+										   	)
 								else:
 									messages.error(request, 'Недостаточно средств на оплату')
 									return redirect('profile_jobs')
@@ -378,18 +405,18 @@ class JobView:
 									new_job_payment.save()
 									messages.success(request, f'Заказ №{new_job_payment.id} оплачен')
 									return render_payment_result_page(
-             								new_job_payment,
-                                           	new_operation, 
-                                           	'Оплата тарифа',
-                                           	"Успешная оплата!"
-                                           	)
+			 								new_job_payment,
+										   	new_operation, 
+										   	'Оплата тарифа',
+										   	"Успешная оплата!"
+										   	)
 								else:
 									return render_payment_result_page(
-             								new_job_payment,
-                                           	new_operation, 
-                                           	'Оплата тарифа',
-                                           	 f'Заказ №{new_job_payment.id} ждёт оплаты'
-                                           	)
+			 								new_job_payment,
+										   	new_operation, 
+										   	'Оплата тарифа',
+										   	 f'Заказ №{new_job_payment.id} ждёт оплаты'
+										   	)
 
 		else:
 			return redirect(to="customer_signin")

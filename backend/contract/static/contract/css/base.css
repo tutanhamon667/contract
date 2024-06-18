@@ -3,6 +3,14 @@
     src: url('../fonts/inter.ttf') format("truetype");
 }
 
+.mobile-menu button.navbar-toggler {
+    width: 50px;
+    height: 50px;
+}
+
+.mt-25 {
+    margin-top: 0.25rem;
+}
 
 h1,
 h2,
@@ -421,6 +429,10 @@ select {
     font-size: 16px;
 }
 
+.card .shop-name:hover {
+    text-decoration: underline;
+}
+
 .card .work-type {
     color: grey;
     text-decoration: none;
@@ -761,7 +773,7 @@ header a {
 
 .h-icon {
     margin-right: 5px;
-    margin-top: -5px;
+
 }
 
 a {
@@ -1254,6 +1266,10 @@ h1 {
     width: 100%;
 }
 
+section .section-header {
+    padding: 15px 0;
+}
+
 
 @media (max-width: 1400px) {
 
@@ -1261,7 +1277,12 @@ h1 {
     h4,
     h5,
     h6 {
-        font-size: 1rem !important;
+        font-size: 1.1rem !important;
+    }
+
+    .h-icon {
+        height: 100%;
+
     }
 
     .products-category-container .card-title {
@@ -1272,6 +1293,11 @@ h1 {
 @media (min-width: 1400px) {
     body * {
         font-size: 1.1rem !important;
+    }
+
+    .h-icon {
+        height: 100%;
+
     }
 }
 

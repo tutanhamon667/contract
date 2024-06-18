@@ -11,7 +11,11 @@
                     <button class="navbar-toggler" type="button" data-bs-target="#navbarSupportedContent"
                         data-bs-toggle="collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
                         aria-label="Toggle navigation">
-                        <i class="fas fa-bars"></i>
+                        <i class="fas fa-bars"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                <path
+                                    d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
+                                </svg></i>
                     </button>
                 </div>
 
@@ -156,7 +160,41 @@
 
                 </ul>
             </div>
-            {% endif %}
+  
+             {% elif user.is_moderator %}
+             <div class=" align-items-center">
+                 <ul class="d-flex flex-d-row navbar-nav align-items-end mb-2 mb-lg-0 ">
+
+                     <li class="nav-item">
+                         <a class="nav-link {% if url_name == 'chat' %}active{% endif %}" href="{% url 'chat_main' %}">
+                             <img src="{% static 'contract/img/icons/vector.svg' %}" height="20">
+                         </a>
+                     </li>
+
+
+                     <li class="nav-item dropdown">
+                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                             data-bs-toggle="dropdown" aria-expanded="false">
+                             {{ user.login }}
+                         </a>
+                         <ul class="dropdown-menu  dropdown-menu-end dropdown-menu-lg-start"
+                             aria-labelledby="navbarDropdown">
+                             <li><a class="dropdown-item" href="{% url 'profile_main' %}">Профиль</a></li>
+                             <li><a class="dropdown-item" href="{% url 'moderate_reviews' %}">Отзывы на модерировании</a></li>
+                             <li><a class="dropdown-item" href="{% url 'moderate_companies' %}">Компании на
+                                     модерировании</a></li>
+                            <li><a class="dropdown-item" href="{% url 'moderate_jobs' %}">Вакансии на
+                                    модерировании</a></li>
+                                     
+                             <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти </a></li>
+                         </ul>
+                     </li>
+
+
+
+                 </ul>
+             </div>
+             {% endif %}
             {% if not user.is_authenticated %}
              
                 <ul class="d-flex flex-d-row navbar-nav align-items-end mb-2 mb-lg-0 ">

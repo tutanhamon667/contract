@@ -88,7 +88,8 @@ INSTALLED_APPS = [
 	'django_bootstrap_icons',
 	'common',
 	'channels',
-	'django_celery_beat'
+	'django_celery_beat',
+ 	'django_tables2'
 ]
 
 MIDDLEWARE = [
@@ -137,10 +138,10 @@ DATABASES = {
 }
 
 # DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
+#	'default': {
+#		'ENGINE': 'django.db.backends.sqlite3',
+#		'NAME': BASE_DIR / 'db.sqlite3',
+#	}
 # }
 
 
@@ -430,7 +431,8 @@ RESPONSE_INVITE_STATUS = {
 CHAT_TYPE = {
 	"TICKET": 0,
 	"RESPONSE_INVITE": 1,
-	"VERIFICATION": 2
+	"VERIFICATION": 2,
+	"SYSTEM": 3
 }
 
 PAGE_SETTINGS = {

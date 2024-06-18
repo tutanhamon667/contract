@@ -25,6 +25,8 @@ from users.models.user import FavoriteJob, Job, ResponseInvite, CustomerReview, 
 from django.core.cache import cache
 from btc.models import JobPayment, BuyPaymentPeriod, JobTier, Address, Operation
 
+from users.models.common import ModerateRequest
+
 
 def get_user(request):
     try:
@@ -168,6 +170,8 @@ def create_review(request):
                                     , rating=review_form.cleaned_data.get("rating")
                                     , comment=review_form.cleaned_data.get("comment"))
             review.save()
+            review_request = ModerateRequest.create_request(CustomerReview, review.id)
+            
             return JsonResponse({'success': True, "data": {} })
         else:
             return JsonResponse({'success': False, "data": review_form.errors, "code": 400})
@@ -186,6 +190,7 @@ def create_worker_review(request):
                                     , rating=review_form.cleaned_data.get("rating")
                                     , comment=review_form.cleaned_data.get("comment"))
             review.save()
+            review_request = ModerateRequest.create_request(CustomerReview, review.id)
             return JsonResponse({'success': True, "data": {} })
         else:
             return JsonResponse({'success': False, "data": review_form.errors, "code": 400})
@@ -465,7 +470,7 @@ def get_jobs(request):
             logo = None
             if company["logo"]:
                 logo = company["logo"]
-            companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"]})
+            companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"], "moderated": company["moderated"]})
         invites = []
         favorites = []
         if request.user.is_authenticated:
@@ -716,7 +721,7 @@ def get_job(request):
             logo = None
             if company["logo"]:
                 logo = company["logo"]
-            companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"]})
+            companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"], "moderated": company["moderated"]})
         invites = []
         favorites = []
         if request.user.is_authenticated:

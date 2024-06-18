@@ -85,7 +85,7 @@ class Access:
 				return 401
 			if self.user.is_customer:
 				company = Company.objects.get(user=self.user)
-				if company.is_moderated is True:
+				if company.moderated is True:
 					return 403
 				else:
 					return 200
@@ -96,7 +96,7 @@ class Access:
 				return 401
 			if self.user.is_customer:
 				company = Company.objects.get(user=self.user)
-				if company.is_moderated is False:
+				if company.moderated is False:
 					return 666
 			if self.user.is_customer:
 				try:
@@ -114,7 +114,7 @@ class Access:
 			if self.user.is_customer:
 				try:
 					company = Company.objects.get(user=self.user)
-					if company.is_moderated is False:
+					if company.moderated is False:
 						return 666
 					today = datetime.datetime.now()
 					customer_access = CustomerAccessPayment.objects.get(start_at__lte=timezone.now(),
@@ -152,7 +152,7 @@ class Access:
 			if self.user.is_customer:
 				try:
 					company = Company.objects.get(user=self.user)
-					if company.is_moderated is False:
+					if company.moderated is False:
 						return 666
 					today = datetime.datetime.now()
 					customer_access = CustomerAccessPayment.objects.get(start_at__lte=timezone.now(),
@@ -195,7 +195,7 @@ class Access:
 			if self.user.is_customer:
 				if action == "create":
 					company = Company.objects.get(user=self.user)
-					if company.is_moderated is False:
+					if company.moderated is False:
 						return 666
 					# get from db customer paid  resumes view until...
 					# if self.user.has_resume_access == False:

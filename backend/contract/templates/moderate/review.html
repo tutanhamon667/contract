@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+{% load render_table from django_tables2 %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+<div class="container">
+    <div class="shop_main user-profile profile-header">
+        <div class="shop_panel">
+            <h1 class="settings-title">Настройки профиля</h1>
+            <div class="settings-main">
+                <div class="settings-main__content">
+                    <div class="settings-main__info">
+
+
+                        <div class="row">
+                           <h3>{{instance.comment}}</h3>
+                            {% bootstrap_form  customer_review %}
+                             <h3>Изменения</h3>
+                            {% for key, value in instance.changes.items %}
+                            <div>
+                                <strong>{{ value.title }}</strong>:
+                                {% if value.type == 'image' %}
+                                <img src="/media/{{ value.value }}" alt="{{ value.title }}">
+                                {% else %}
+                                {{ value.value }}
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                          
+                           
+                             <form action="" method="post">
+                                {% bootstrap_form  form %}
+                                {% csrf_token %}
+                                <button class="btn btn-primary">Обновить</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

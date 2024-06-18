@@ -68,3 +68,4 @@ django_cryptography
 bitcoinlib
 django_redis
 jsonpickle
+django_tables2

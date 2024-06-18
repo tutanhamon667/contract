@@ -1635,6 +1635,15 @@ const alpineApp = function() {
         }
     })
 
+    Alpine.bind('cardLink', {
+        type: 'button',
+
+        '@click'(e) {
+            let link = e.currentTarget.getAttribute('href')
+            if (link)
+                window.location.href = link
+        }
+    })
     Alpine.bind('checkboxInput', {
         type: 'button',
         checked: false,

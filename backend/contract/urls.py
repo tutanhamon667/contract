@@ -12,92 +12,99 @@ from users.controllers.job import profile_job_view
 from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
-    profile_main_view, change_password,profile_resume_edit_view, profile_resume_create_view,profile_resume_delete_view,\
-    profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view
+	profile_main_view, change_password,profile_resume_edit_view, profile_resume_create_view,profile_resume_delete_view,\
+	profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view
 from users.controllers.auth import registration_worker_view, registration_customer_view, logout_view, \
-    login_customer_view, login_worker_view
+	login_customer_view, login_worker_view
 from users.controllers.test_view import test
 from . import settings
 from users.views import captcha_view
 from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
-    favorite_view, worker_responses_invites_view, customer_responses_invites_view
+	favorite_view, worker_responses_invites_view, customer_responses_invites_view
 from django.views.generic.base import RedirectView
 
+
+from users.controllers.moderator import moderate
+
 schema_view = get_schema_view(
-    openapi.Info(
-        title="Freelance platform API",
-        default_version='v1',
-        description="Freelance platform API",
-        # terms_of_service="https://www.yourapp.com/terms/",
-        # contact=openapi.Contact(email="contact@yourapp.com"),
-        # license=openapi.License(name="Your License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
+	openapi.Info(
+		title="Freelance platform API",
+		default_version='v1',
+		description="Freelance platform API",
+		# terms_of_service="https://www.yourapp.com/terms/",
+		# contact=openapi.Contact(email="contact@yourapp.com"),
+		# license=openapi.License(name="Your License"),
+	),
+	public=True,
+	permission_classes=(permissions.AllowAny,),
 )
 CKEDITOR_5_FILE_STORAGE = "/media"  # optional
 urlpatterns = [
 
-    path('ckeditor5/', include('django_ckeditor_5.urls')),
-    path('', main_view, name='index'),
-    path('for_customers', for_customers_view, name='for_customers'),
-    path('captcha', captcha_view, name='captcha'),
-    path('worker/signin', login_worker_view, name='worker_signin'),
-    path('customer/signin', login_customer_view, name='customer_signin'),
+	path('ckeditor5/', include('django_ckeditor_5.urls')),
+	path('', main_view, name='index'),
+	path('for_customers', for_customers_view, name='for_customers'),
+	path('captcha', captcha_view, name='captcha'),
+	path('worker/signin', login_worker_view, name='worker_signin'),
+	path('customer/signin', login_customer_view, name='customer_signin'),
    
-    path('worker/signup', registration_worker_view, name='worker_signup'),
-    path('customer/signup', registration_customer_view, name='customer_signup'),
-    path('logout', logout_view, name='logout'),
-    path('jobs', jobs_view, name='jobs'),
-    path('resumes', resumes_view, name='resumes'),
-    path('test_view', test, name='test_view'),
-    path('comment/create', comment_view.create, name='comment_create'),
-    path('response_invite/update', response_invite_view.update, name='response_invite_update'),
-    path('response_invite/delete', response_invite_view.delete, name='response_invite_delete'),
-    path('response_invite/cancel', response_invite_view.cancel, name='response_invite_cancel'),
-    path('response_invite/create', response_invite_view.create, name='response_invite_create'),
-    path('profile/change_password', change_password, name='change_password'),
-    path('resumes/<int:resume_id>', resume_view, name='resume_view'),
-    path('jobs/<int:job_id>', job_view, name='job'),
-    path('company/<int:company_id>', company_view, name='company'),
-    path('profile/main', profile_main_view, name='profile_main'),
-    path('favorite', favorite_view, name='favorite_jobs_main'),
-    path('profile/resume', profile_resumes_view, name='profile_resumes'),
-    path('profile/resume/<int:resume_id>', profile_resume_view, name='profile_resume'),
-    path('profile/resume/edit/<int:resume_id>', profile_resume_edit_view, name='profile_resume_edit'),
-    path('profile/resume/delete/<int:resume_id>',profile_resume_delete_view, name='profile_resume_delete'),
-    path('profile/resume/create', profile_resume_create_view, name='profile_resume_create'),
-    path('profile/contact', contacts_view, name='profile_contacts'),
-    path('profile/contact/<int:contact_id>', contact_view, name='profile_contacts'),
-    path('profile/company', profile_company_view, name='profile_company_view'),
-    path('profile/jobs', jobs_profile_view, name='profile_jobs'),
-    path('profile/jobs/create', profile_job_view.create, name='profile_job_view_create'),
-    path('profile/jobs/delete/<int:job_id>', profile_job_view.delete, name='profile_job_view_delete'),
-    path('profile/jobs/pay_for_tier/<int:job_id>', profile_job_view.pay_for_tier, name='profile_job_view_pay_for_tier'),
-    path('profile/jobs/update/<int:job_id>', profile_job_view.update, name='profile_job_view_update'),
-    path('profile/wallet', profile_wallet_view, name='profile_wallet'),
-    #path('update_addresses', update_addresses, name='update_addresses'),
-    #path('get_btc_usd', get_btc_usd, name='get_btc_usd'),
-    path('profile/customer_access', customer_access, name='customer_access'),
-    path('responses_invites', worker_responses_invites_view, name='responses_invites_page'),
-    path('candidats', customer_responses_invites_view, name='candidats_page'),
-    path('article/<int:article_id>', article_view, name='article'),
-    path('chat/', include("chat.urls")),
-    path('api/', include("users.urls")),
-    path('activate', activate_view, name='activate_view'),
+	path('worker/signup', registration_worker_view, name='worker_signup'),
+	path('customer/signup', registration_customer_view, name='customer_signup'),
+	path('logout', logout_view, name='logout'),
+	path('jobs', jobs_view, name='jobs'),
+	path('resumes', resumes_view, name='resumes'),
+	path('test_view', test, name='test_view'),
+	path('comment/create', comment_view.create, name='comment_create'),
+	path('response_invite/update', response_invite_view.update, name='response_invite_update'),
+	path('response_invite/delete', response_invite_view.delete, name='response_invite_delete'),
+	path('response_invite/cancel', response_invite_view.cancel, name='response_invite_cancel'),
+	path('response_invite/create', response_invite_view.create, name='response_invite_create'),
+	path('profile/change_password', change_password, name='change_password'),
+	path('resumes/<int:resume_id>', resume_view, name='resume_view'),
+	path('jobs/<int:job_id>', job_view, name='job'),
+	path('company/<int:company_id>', company_view, name='company'),
+	path('profile/main', profile_main_view, name='profile_main'),
+	path('favorite', favorite_view, name='favorite_jobs_main'),
+	path('profile/resume', profile_resumes_view, name='profile_resumes'),
+	path('profile/resume/<int:resume_id>', profile_resume_view, name='profile_resume'),
+	path('profile/resume/edit/<int:resume_id>', profile_resume_edit_view, name='profile_resume_edit'),
+	path('profile/resume/delete/<int:resume_id>',profile_resume_delete_view, name='profile_resume_delete'),
+	path('profile/resume/create', profile_resume_create_view, name='profile_resume_create'),
+	path('profile/contact', contacts_view, name='profile_contacts'),
+	path('profile/contact/<int:contact_id>', contact_view, name='profile_contacts'),
+	path('profile/company', profile_company_view, name='profile_company_view'),
+	path('profile/jobs', jobs_profile_view, name='profile_jobs'),
+	path('profile/jobs/create', profile_job_view.create, name='profile_job_view_create'),
+	path('profile/jobs/delete/<int:job_id>', profile_job_view.delete, name='profile_job_view_delete'),
+	path('profile/jobs/pay_for_tier/<int:job_id>', profile_job_view.pay_for_tier, name='profile_job_view_pay_for_tier'),
+	path('profile/jobs/update/<int:job_id>', profile_job_view.update, name='profile_job_view_update'),
+	path('profile/wallet', profile_wallet_view, name='profile_wallet'),
+	path('moderate/customerreview', moderate.reviews, name='moderate_reviews'),
+	path('moderate/review/<int:pk>', moderate.review, name='moderate_review'),
+	path('moderate/companies', moderate.companies, name='moderate_companies'),
+	path('moderate/jobs', moderate.jobs, name='moderate_jobs'),
+	#path('update_addresses', update_addresses, name='update_addresses'),
+	#path('get_btc_usd', get_btc_usd, name='get_btc_usd'),
+	path('profile/customer_access', customer_access, name='customer_access'),
+	path('responses_invites', worker_responses_invites_view, name='responses_invites_page'),
+	path('candidats', customer_responses_invites_view, name='candidats_page'),
+	path('article/<int:article_id>', article_view, name='article'),
+	path('chat/', include("chat.urls")),
+	path('api/', include("users.urls")),
+	path('activate', activate_view, name='activate_view'),
 
-    path('admin', admin.site.urls),
-    path('swagger/',
-         schema_view.with_ui('swagger', cache_timeout=0),
-         name='schema-swagger-ui'),
-    path('redoc/',
-         schema_view.with_ui('redoc', cache_timeout=0),
-         name='schema-redoc'),
+	path('admin', admin.site.urls),
+	path('swagger/',
+		 schema_view.with_ui('swagger', cache_timeout=0),
+		 name='schema-swagger-ui'),
+	path('redoc/',
+		 schema_view.with_ui('redoc', cache_timeout=0),
+		 name='schema-redoc'),
 ]
 
 handler404 = "contract.views.not_found_handler"
 
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+	urlpatterns += static(settings.MEDIA_URL,
+						  document_root=settings.MEDIA_ROOT)

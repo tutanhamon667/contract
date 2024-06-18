@@ -74,6 +74,14 @@ class Member(PermissionsMixin, AbstractBaseUser):
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
 	objects = UserManager()
+	groups = models.ManyToManyField(
+		to='auth.Group',
+		blank=True,
+		related_name='user_set',
+		related_query_name='user',
+		verbose_name='groups',
+		help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+	)
 
 	USERNAME_FIELD = 'login'
 	REQUIRED_FIELDS = ['display_name', 'password']
@@ -130,7 +138,8 @@ class Contact(models.Model):
 	def update_company_contacts(cls, user, items):
 		cls.objects.filter(user=user).delete()
 		for item in items:
-			cls.objects.create(user=user, value=item, type='other')
+			if item != '':
+				cls.objects.create(user=user, value=item, type='other')
 
 	@classmethod
 	def get_company_links(cls, user):
@@ -214,6 +223,7 @@ class Specialisation(models.Model):
 	def __str__(self):
 		return self.name
 
+from django.core.files import File
 
 class Company(models.Model):
 	user = models.OneToOneField(
@@ -249,7 +259,7 @@ class Company(models.Model):
 		verbose_name='Личный сайт'
 	)
 
-	is_moderated = models.BooleanField(verbose_name="Прошёл модерацию", default=False, blank=True)
+	moderated = models.BooleanField(verbose_name="Прошёл модерацию", default=False, blank=True)
 
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
@@ -262,6 +272,18 @@ class Company(models.Model):
 	def __str__(self):
 		return self.name
 
+	def get_different_fields_as_str(self,moderated_obj):
+		return  str({"name": self.name, "web": self.web, "logo": self.logo} ^ moderated_obj.__dict__.items())
+
+	def updateModeratedFields(self, moderated_obj):
+		if 'name' in moderated_obj :
+			self.name = moderated_obj['name']['value']
+		if 'logo' in moderated_obj:
+			self.logo.save(moderated_obj['logo']['value'].split('/')[-1], File(open('./media/'+moderated_obj['logo']['value'], 'rb')))
+		self.save()
+  
+	def get_owner(self):
+		return self.user
 
 	@classmethod
 	def join_companies(cls, objs):
@@ -276,7 +298,49 @@ class Company(models.Model):
 
 	@classmethod
 	def get_active_company(cls, id):
-		return cls.objects.filter(id=id, is_moderated=True, deleted=False)
+		return cls.objects.filter(id=id, moderated=True, deleted=False)
+
+
+class CompanyHistory(models.Model):
+
+	logo = models.ImageField(
+		upload_to='company/images/',
+		null=True,
+		default=None,
+		blank=True,
+		verbose_name='Фото или логотип'
+	)
+
+	name = models.CharField(
+		max_length=150,
+		verbose_name='Название компании или ваше имя'
+	)
+
+	web = models.URLField(
+		blank=True,
+		verbose_name='Личный сайт'
+	)
+	
+	original_object = models.ForeignKey(
+		to=Company,
+		on_delete=models.CASCADE,
+		verbose_name='Компания',
+		related_name='original_company',
+		default=None,
+		null=True,
+		blank=True
+	)
+
+
+	def __str__(self):
+		if self.original_object:
+			return self.original_object.name
+		return self.name
+
+	class Meta:
+		ordering = ('-name',)
+		verbose_name = 'CompanyHistory'
+		verbose_name_plural = 'CompaniesHistories'
 
 
 class CustomerReview(models.Model):
@@ -287,6 +351,7 @@ class CustomerReview(models.Model):
 		default=None,
   		blank=True,
 		null=True,
+		verbose_name='Работник',
 		unique=False
 	)
 	company = models.ForeignKey(
@@ -296,6 +361,7 @@ class CustomerReview(models.Model):
 		default=None,
 		null=True,
   		blank=True,
+		verbose_name='Компания',
 		unique=False
 	)
 	reviewer = models.ForeignKey(
@@ -304,6 +370,7 @@ class CustomerReview(models.Model):
 		on_delete=models.CASCADE,
 		default=None,
 		null=True,
+  		verbose_name='Ревьюер',
 		unique=False
 
 	)
@@ -320,6 +387,12 @@ class CustomerReview(models.Model):
 
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
+ 
+	def __str__(self):
+		return 'review: ' + str(self.id)
+
+	def get_owner(self):
+		return self.reviewer
 
 	@classmethod
 	def get_top_companies(cls, limit):
@@ -573,6 +646,13 @@ class Job(models.Model):
 
 	def __str__(self):
 		return self.title
+
+	def updateModeratedFields(self, moderated_obj):
+		if 'title' in moderated_obj :
+			self.title = moderated_obj['title']['value']
+		if 'description' in moderated_obj :
+			self.description = moderated_obj['description']['value']
+		self.save()
 
 	@property
 	def regions_name(self):
@@ -861,6 +941,10 @@ class Job(models.Model):
 					job.type = job_response["type"]
 					job.request_invite_id = job_response["id"]
 		return objs
+
+
+	def get_owner(self):
+		return self.company.user
 
 
 

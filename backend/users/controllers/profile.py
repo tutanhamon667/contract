@@ -11,10 +11,14 @@ from common.models import Article, ArticleCategory
 from contract.settings import CHAT_TYPE
 from users.core.access import Access
 from users.core.page_builder import PageBuilder
-from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite
+from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite,CompanyHistory
 from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm as PasswordChange
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from users.models.common import  ModerateRequest
+from django.forms import modelform_factory
+from django.apps import apps
+from django.db.models.fields.files import ImageFieldFile
 
 def activate_view(request):
 	user = request.user
@@ -355,6 +359,29 @@ def profile_main_view(request):
 		return redirect(to="worker_signin")
 
 
+def get_changed_data(new_instance, instance):
+	changed_data = {}
+	model = apps.get_model('users', 'company')
+	for field in model._meta.fields:
+		original_value = getattr(instance, field.name)
+		form_value = getattr(new_instance, field.name)
+	 # check if the field has type ImageFieldFile
+		if type(getattr(instance, field.name)) is ImageFieldFile:
+			original_value = getattr(instance, field.name)
+			form_value = getattr(new_instance, field.name)
+			original_value_url=None
+			form_value_url=None
+			if original_value._file is not None:
+				original_value_url =form_value.field.upload_to +  form_value.name
+			if form_value._file is not None:
+				form_value_url = form_value.field.upload_to +  form_value.name
+			if original_value_url != form_value_url:
+				changed_data[field.name] = {"value":form_value_url, "type":"image", 'title': field.verbose_name}
+		else:	   
+			if original_value != form_value:
+				changed_data[field.name] =  {"value":form_value, "type":"text", 'title': field.verbose_name} 
+	return changed_data
+
 def profile_company_view(request):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
@@ -377,9 +404,9 @@ def profile_company_view(request):
 		form = None
 		if len(company) > 0:
 			company = company[0]
-			form = CompanyForm(instance=company)
 		else:
-			form = CompanyForm(initial={'user': user.id})
+			company = Company(user=user)
+		form = CompanyForm(instance=company)
 		contacts = Contact.get_company_links(user)
 		return render(request, './blocks/profile/profile_company.html', {
 			'form': form,
@@ -394,17 +421,28 @@ def profile_company_view(request):
 		if member.is_worker:
 			return HttpResponse(status=403)
 		company = Company.objects.filter(user_id=user.id)
-
+		company = company[0]
 		form = None
 		if len(request.FILES) > 0:
-			form = CompanyForm( request.POST, request.FILES, instance=company[0], initial={'user': user.id})
+			form = CompanyForm( request.POST, request.FILES, instance=company)
 		else:
-			form = CompanyForm( request.POST, instance=company[0], initial={'user': user.id})
-		form.user_id = user.id
+			form = CompanyForm( request.POST, instance=company)
 		if form.is_valid():
-			form.save()
+			original_company = Company.objects.get(user_id=user.id)
+			comp = form.save(commit=False)
+			changes = get_changed_data(comp, original_company)
+			if 'name' in changes or  len(request.FILES):
+				review_request = ModerateRequest.create_request(Company,original_company.id, changes=changes, comment='Редактирование компании')
+				chat = Chat.get_user_system_chat(request.user)
+				chat.create_system_message(f' Создана заявка на редактирование компании: #{review_request.id}. Ждите проверки модератора')
+				messages.success(request, 'Информация о компании будет обновлена после проверки модератором')
+			
+			comp.name = original_company.name
+			comp.logo = original_company.logo
+			comp.save()
 			links = request.POST.getlist('link[]')
 			Contact.update_company_contacts(user, links)
+			messages.success(request, 'Информация о компании была успешно обновлена')
 			return redirect(to='profile_company_view')
 		return render(request, './blocks/profile/profile_company.html', {
 			'form': form,
@@ -487,9 +525,9 @@ def profile_response_invite_view(request):
 					  })
 
 def copy_errors(source_form, target_form):
-    for field, errors in source_form.errors.items():
-        for error in errors:
-            target_form.add_error(field, error)
+	for field, errors in source_form.errors.items():
+		for error in errors:
+			target_form.add_error(field, error)
 
 def change_password(request):
 	if request.user.is_authenticated:
