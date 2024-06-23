@@ -128,13 +128,16 @@ function Chat(user_id, chat_id) {
         }
 
         connect() {
+
             this.chatSocket = new WebSocket(
                 'ws://' +
                 window.location.host +
                 '/ws/chat/main/')
+
         }
 
         init() {
+
             this.chatSocket.onerror = (err) => {
                 console.error('Socket encountered error: ', err.message, 'Closing socket');
                 this.chatSocket.close();
@@ -244,18 +247,21 @@ function Chat(user_id, chat_id) {
 
             };
 
-            this.chatSocket.onclose = (e) => {
-                console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-                setTimeout(() => {
-                    this.connect()
-                }, 1000);
-            };
         }
     }
 
     const socket = new Socket()
     socket.connect()
     socket.init()
+    socket.chatSocket.onclose = (e) => {
+        socket.chatSocket.close()
+        socket.chatSocket = null
+        console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+        setInterval(() => {
+            socket.connect()
+            socket.init()
+        }, 5000);
+    };
     makeRequest('user', {}, (success, data) => {
         if (data.success) {
             Alpine.store('chatsData').user = data.data
