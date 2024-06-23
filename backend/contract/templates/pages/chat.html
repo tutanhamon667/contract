@@ -85,7 +85,8 @@
                     </button>
                 </div>
 
-                <div class="shop-name" x-text="$store.chatsData.getOtherUser().other_user.display_name">Shop name</div>
+                <a class="shop-name" x-text="$store.chatsData.getOtherUser().other_user.display_name"
+                    :href='$store.chatsData.getOtherLink()'>Shop name</a>
 
                 <button class="leave-icon-container" x-bind="leaveBtn">
           

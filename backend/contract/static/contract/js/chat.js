@@ -325,6 +325,17 @@ function Chat(user_id, chat_id) {
             }
             return false
         },
+        getOtherLink: () => {
+            const chat = Alpine.store('chatsData').getActiveChat()
+            if (chat && chat.ri) {
+                if (chat.other_user.is_worker) {
+                    return '/resumes/' + chat.ri.resume
+                } else if (!chat.other_user.is_worker && !chat.other_user.is_moderator) {
+                    return '/jobs/' + chat.ri.job
+                }
+            }
+            return '#'
+        },
         get getActiveChatMessages() {
             const chat = Alpine.store('chatsData').getActiveChat()
             return chat ? chat.messages : []

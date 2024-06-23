@@ -8,6 +8,7 @@ from asgiref.sync import async_to_sync
 from chat.models import Chat, Message, FileMessage
 from users.models.user import ResponseInvite
 from django.db.models import Q
+from django.forms.models import model_to_dict
 
 class UUIDEncoder(json.JSONEncoder):
 	def default(self, obj):
@@ -94,6 +95,7 @@ class ChatConsumer(WebsocketConsumer):
 			if other_user.is_moderator:
 				leaved = chat.deleted_by_moderator
 			item["other_user"] = {
+				'is_worker': other_user.is_worker,
 				'photo': other_user_photo,
 				'display_name': other_user.display_name,
 				'is_moderator': other_user.is_moderator,
@@ -106,6 +108,10 @@ class ChatConsumer(WebsocketConsumer):
 			not_read_messages = Message.objects.filter(chat=chat, sender=other_user, read=False)
 			item["not_read_count"] = len(not_read_messages)
 			item["ri_id"] = ri_id
+			if chat.response_invite:
+				item["ri"] = model_to_dict(chat.response_invite)
+			else:
+				item["ri"] = None
 			response.append(item)
 
 		return response
