@@ -990,6 +990,15 @@ class ResponseInvite(models.Model):
 
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
+ 
+ 
+	def delete_by_user(self, user):
+		if user.is_customer:
+			self.deleted_by_customer = True
+		else:
+			self.deleted_by_worker = True
+		self.status = 3
+		self.save()
 
 	def set_deleted(self):
 		self.deleted_at = datetime.datetime.now()

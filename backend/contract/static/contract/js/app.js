@@ -52,6 +52,8 @@ const alpineApp = function() {
         modal.show();
     }
 
+    this.confirmationModal = confirmationModal
+
     const alertModal = (message, callback) => {
         var modal = new bootstrap.Modal(document.getElementById('error-modal'), {
             keyboard: false
@@ -73,7 +75,7 @@ const alpineApp = function() {
 
         modal.show();
     }
-
+    this.alertModal = alertModal
 
     const makeRequest = async function(url, data) {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -578,9 +580,10 @@ const alpineApp = function() {
             const user = Alpine.store('main').user
             if (user.id >= 0) {
                 if (invite.status === 1) {
+                    const chat_uuid = invite.chat ? invite.chat.uuid : ''
                     return {
                         element: 'link',
-                        link: '/chat/' + invite.chat.uuid,
+                        link: '/chat/' + chat_uuid,
                         text: 'Перейти в чат'
                     }
                 }
@@ -603,10 +606,12 @@ const alpineApp = function() {
                             text: '',
                             actions: [{
                                 action: "accept",
-                                text: 'Начать чат с кандидатом'
+                                text: 'Начать чат с кандидатом',
+                                class: 'btn btn-primary'
                             }, {
                                 action: "decline",
-                                text: 'Отказаться'
+                                text: 'Отказаться',
+                                class: 'btn btn-danger'
                             }],
                             id: invite.id
                         }

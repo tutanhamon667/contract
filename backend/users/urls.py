@@ -20,7 +20,7 @@ urlpatterns = [
     path("create_review", create_review, name="create_review"),
     path("create_worker_review", create_worker_review, name="create_worker_review"),
     path("get_user_transactions", get_user_transactions, name="get_user_transactions"),
-    
+    path("leave_chat", leave_chat, name="leave_chat"),
     path("resume_statistics", get_resume_statistics, name="resume_statistics"),
     path("filter_resumes", filter_resumes, name="filter_resumes"),
     path("response_invite", response_invite, name="response_invite"),

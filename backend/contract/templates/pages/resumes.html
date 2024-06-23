@@ -33,7 +33,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-10">
-                                    <div class="d-flex">
+                                    <div class="card-title d-flex">
                                         <a :href="'/resumes/' +resume.id" class="title">
                                             <h4 class="title" x-text="resume.name"></h4>
                                         </a>
@@ -95,13 +95,14 @@
                                                 </div>
 
                                             </template>
+                                              <div class="row">
                                             <template x-if="res.element === 'form'">
 
                                                 <template x-for="action in res.actions" :key="action.action">
-                                                    <div>
+                                                    <div class="col">
                                                         <template x-if="action.action !== 'create'">
-                                                            <button
-                                                                x-on:click="application.sendInvite(action.action, res.id)"
+                                                            <button class="btn btn-primary" :class="action.class"
+                                                                x-on:click="application.sendInvite(action.action, res.id, resume.id)"
                                                                 x-text="action.text"></button>
                                                         </template>
                                                         <template x-if="action.action === 'create'">
@@ -129,7 +130,7 @@
                                                                             <div class="row">
                                                                                 <div class="col">
                                                                                     <button
-                                                                                        class="btn btn-success mr-5 w-100 mt-15"
+                                                                                        class="btn btn-success mr-5 w-100 mt-15" :class="action.class"
                                                                                         x-on:click="application.sendInvite(action.action, res.id, resume.id)"
                                                                                         x-text="action.text"></button>
                                                                                 </div>
@@ -162,7 +163,7 @@
                                                     </div>
 
                                                 </template>
-
+                                            </div>
                                             </template>
                                         </div>
                                     </template>

@@ -44,10 +44,13 @@ class ModerateView:
 		if request.user.is_moderator is False:
 			return redirect('home')
 		"""Demonstrate the use of the bootstrap template"""
-		table = ReviewsOnModerationTable(ModerateRequest.objects.filter(reason_content_type=ContentType.objects.get_for_model(CustomerReview)).order_by('-id'))
-		RequestConfig(request, paginate={"per_page": 10}).configure(table)
 
-		return render(request, "moderate/reviews.html", {"table": table})
+		config = RequestConfig(request, paginate={"per_page": 5})
+		table = CompanyOnModerationTable(ModerateRequest.objects.filter(reason_content_type=ContentType.objects.get_for_model(CustomerReview), status=0).order_by('-id'), prefix="new")
+		table_all = CompanyOnModerationTable(ModerateRequest.objects.filter(reason_content_type=ContentType.objects.get_for_model(CustomerReview), status__gt=0).order_by('-id'), prefix="all")
+		config.configure(table)
+		config.configure(table_all)
+		return render(request, "moderate/reviews.html", {"table": table, "table_all": table_all})
 
 	def review(self, request, pk):
 		if request.user.is_moderator is False:
@@ -60,9 +63,9 @@ class ModerateView:
 					final_comment = form.cleaned_data.get("final_comment")
 					status = form.cleaned_data.get("status")
 					reason_obj = None
-					if  instance.changes :
-						reason_model = ContentType.objects.get_for_model(instance.reason)
-						reason_obj = reason_model.model_class().objects.get(id=instance.reason.id)
+					
+					reason_model = ContentType.objects.get_for_model(instance.reason)
+					reason_obj = reason_model.model_class().objects.get(id=instance.reason.id)
 					
 					if status == 1:
 						instance.accept(final_comment)
@@ -70,17 +73,16 @@ class ModerateView:
 						instance.save()
 						if instance.changes:
 							reason_obj.updateModeratedFields(instance.changes)
-							owner = reason_obj.get_owner()
-							chat = Chat.get_user_system_chat(owner)
-							chat.create_system_message(f"Заявка на {instance.comment} №{instance.id} одобрена модератором.")
+						owner = reason_obj.get_owner()
+						chat = Chat.get_user_system_chat(owner)
+						chat.create_system_message(f"Заявка на {instance.comment} №{instance.id} одобрена модератором.")
 					elif status == 2:
 						instance.decline(final_comment)
 						instance.reason.moderated = False
 						instance.save()
-						if instance.changes:
-							owner = reason_obj.get_owner()
-							chat = Chat.get_user_system_chat(owner)
-							chat.create_system_message(f"Заявка на {instance.comment} №{instance.id} не была одобрена модератором. Причина: {final_comment}")
+						owner = reason_obj.get_owner()
+						chat = Chat.get_user_system_chat(owner)
+						chat.create_system_message(f"Заявка на {instance.comment} №{instance.id} не была одобрена модератором. Причина: {final_comment}")
 					
 			customer_review_form =  modelform_factory(instance.reason_content_type.model_class(), fields='__all__')
 			for field_name, field in customer_review_form.base_fields.items():

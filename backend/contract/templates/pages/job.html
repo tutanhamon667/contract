@@ -15,7 +15,7 @@
                                 <div :class="['card', 'no-hover', $store.main.job.payment.job_tier_id == 3? 'hot-job-card ':'' ]">
                                     <div class="card-body">
 
-                                        <div class="d-flex">
+                                        <div class="card-title d-flex">
                                             <a :href="'/jobs/' +$store.main.job.id" class="title">
                                                 <h4 class="title" x-text="$store.main.job.title"></h4>
                                             </a>
@@ -28,8 +28,6 @@
 
                                         <h3 class="card-subtitle salary"
                                             x-text="$store.main.getSalaryStr($store.main.job)"></h3>
-
-
                                         <div class="d-flex ">
                                             <a :href="'/company/'+ $store.main.job.company_id "
                                                x-text="$store.main.job.company.name" class=" shop-name"></a> <img

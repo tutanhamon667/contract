@@ -18,6 +18,7 @@ from users.controllers.auth import registration_worker_view, registration_custom
 	login_customer_view, login_worker_view
 from users.controllers.test_view import test
 from . import settings
+
 from users.views import captcha_view
 from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
 	favorite_view, worker_responses_invites_view, customer_responses_invites_view

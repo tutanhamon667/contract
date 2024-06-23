@@ -3,13 +3,15 @@
 
 {% block content %}
 
-<div class="container">
-    <div class="chat" x-data>
-        <div class="chats-container" id="chats-container">
+<div class="container"  x-data>
+    <div x-init="initChat()">
+        <template x-if="$store.chatsData.chats">
+       <div class="chat">
+        <div class="chats-container" id="chats-container" >
 
             <div class="search-bar">
                 <div class="search-icon"></div>
-                <input type="text" class="search-placeholder" placeholder="Поиск по чатам..." />
+                <input type="text" class="search-placeholder" x-bind="searchChat" placeholder="Поиск по чатам..." />
             </div>
 
             <template x-for="chat in $store.chatsData.chats">
@@ -85,38 +87,33 @@
 
                 <div class="shop-name" x-text="$store.chatsData.getOtherUser().other_user.display_name">Shop name</div>
 
-                <div class="leave-icon-container">
+                <button class="leave-icon-container" x-bind="leaveBtn">
+          
                     <div class="leave-chat ">Покинуть чат</div>
                     <div class="chat-exit-icon"></div>
-                </div>
+              
+                </button>
             </div>
             <div class="chat-body">
                 <div class="chat-space">
+                     <template x-if="$store.chatsData.getActiveChatMessages.length">
                     <template x-for="message in $store.chatsData.getActiveChatMessages">
-                        <div class="message-container">
+                        <div class="message-container" :key="'message_'+message.id" :id="'message_'+message.id"
+                            :class="$store.chatsData.markFiltered(message.id)">
                             <template x-if="message.sender_id == $store.chatsData.user_id">
                                 <div>
-                                    <template x-if="$store.chatsData.getActiveChat().self_user.photo">
-                                        <img :src="$store.chatsData.getActiveChat().self_user.photo" alt="avatar"
+                                   
+                                        <img :src="$store.chatsData.getSelfPhoto()" alt="avatar"
                                             class="Avatar__media avatar-media opacity-transition slow open shown ">
-                                    </template>
-
-                                    <template x-if="!$store.chatsData.getActiveChat().self_user.photo">
-                                        <img src="https://via.placeholder.com/40x40" />
-                                    </template>
+                           
                                 </div>
 
                             </template>
-                            <template x-if="message.sender_id !== $store.chatsData.user_id">
+                            <template
+                                x-if="message.sender_id !== $store.chatsData.user_id">
                                 <div>
-                                    <template x-if="$store.chatsData.getActiveChat().other_user.photo">
-                                        <img :src="$store.chatsData.getActiveChat().other_user.photo" alt="avatar"
-                                            class="Avatar__media avatar-media opacity-transition slow open shown ">
-                                    </template>
-
-                                    <template x-if="!$store.chatsData.getActiveChat().other_user.photo">
-                                        <img src="https://via.placeholder.com/40x40" />
-                                    </template>
+                                      <img :src="$store.chatsData.getOtherPhoto()" alt="avatar"
+                                          class="Avatar__media avatar-media opacity-transition slow open shown ">
                                 </div>
 
                             </template>
@@ -136,10 +133,12 @@
                             </div>
                         </div>
                     </template>
-
+</template>
                 </div>
             </div>
         </div>
+        </template>
+</div>
     </div>
 </div>
 
@@ -147,9 +146,14 @@
 {{ serialized_chat|json_script:script_name}}
 {% endwith %}
 
-<script src="{% static 'contract/js/chat.js' %}"></script>
+
 <script>
-    const data = JSON.parse(document.getElementById('chat_script').textContent)
-    const chat = new Chat(data.user_id, data.chat_id)
+       
+      const initChat = () => {
+       const data = JSON.parse(document.getElementById('chat_script').textContent)
+       chat = new Chat(data.user_id, data.chat_id)
+      }
+   
+   
 </script>
 {% endblock content %}

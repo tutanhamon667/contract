@@ -53,6 +53,10 @@ class ResponseInviteView:
 															request.POST["status"])
 				if not res:
 					return HttpResponse(status=500)
+				response_invite = ResponseInvite.objects.get(id=request.POST["request_invite_id"])
+				if response_invite.chat:
+					chat = Chat.objects.get(id=response_invite.chat.id)
+					chat.delete()
 				messages.success(request, 'Отклик отменён')
 				return redirect(request.POST["redirect"])
 			except Exception as e:
@@ -89,6 +93,9 @@ class ResponseInviteView:
 															RESPONSE_INVITE_STATUS["DELETED"])
 				response_invite = ResponseInvite.objects.get(id=request.POST["request_invite_id"])
 				response_invite.set_deleted()
+				if response_invite.chat:
+					chat = Chat.objects.get(id=response_invite.chat.id)
+					chat.delete()
 				if not res:
 					return HttpResponse(status=500)
 				messages.success(request, 'Отклик удалён')

@@ -86,14 +86,39 @@ class Chat(models.Model):
 	@classmethod
 	def get_user_chats(cls, user):
 		if user.is_customer:
-			return cls.objects.filter(customer=user)
+			return cls.objects.filter(customer=user, deleted_by_customer=False)
 		if user.is_worker:
-			return cls.objects.filter(worker=user)
+			return cls.objects.filter(worker=user, deleted_by_worker=False)
 		if user.is_moderator:
-			return cls.objects.filter(moderator=user)
+			return cls.objects.filter(moderator=user, deleted_by_moderator=False)
 
 	def create_system_message(self, content):
 		return Message.objects.create(chat=self, sender=Member.objects.get(login='System'), type=1, content=content)
+
+	def leave(self, user):
+		if self.moderator:
+			if self.moderator == user:
+				self.deleted_by_moderator = True
+				if self.deleted_by_worker is False and self.deleted_by_customer is False:
+					self.create_system_message(f"Пользователь {user.display_name} покинул чат")
+			if self.worker == user:
+				self.deleted_by_worker = True
+				if self.deleted_by_worker and self.deleted_by_moderator:
+					self.delete()
+			if self.customer == user:
+				self.deleted_by_customer = True
+				if self.deleted_by_customer and self.deleted_by_moderator:
+					self.delete()
+		else:
+			if self.customer == user:
+				self.deleted_by_customer = True
+				self.create_system_message(f"Пользователь {user.display_name} покинул чат")
+			if self.worker == user:
+				self.deleted_by_worker = True
+			if self.deleted_by_customer and self.deleted_by_worker:
+				self.delete()
+
+		self.save()
 
 
 

@@ -380,6 +380,10 @@
     word-wrap: break-word;
 }
 
+.leave-icon-container {
+    background: none;
+}
+
 .chats-message-time {
     color: #9d9d9d;
     font-size: 14px;
@@ -387,8 +391,21 @@
     word-wrap: break-word;
 }
 
+.mark-filtered-msg {
+    background: #cdcdcd;
+}
+
+.chats-container .chats-message-info {
+    width: 100%;
+}
+
+.chats-container.expanded .chats-message-info {
+    width: calc(100% - 60px);
+}
+
 .chats-message-body {
     display: flex;
+    width: calc(100% - 30px);
 }
 
 .chats-message-text {

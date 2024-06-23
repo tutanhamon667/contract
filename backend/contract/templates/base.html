@@ -82,6 +82,7 @@
   {% csrf_token %}
   <script src="{% static 'contract/js/alpine.js' %}" defer></script>
   <script src="{% static 'contract/js/app.js' %}"></script>
+  <script src="{% static 'contract/js/chat.js' %}"></script>
   <script>
     document.addEventListener('alpine:init', async () => {
       application = new alpineApp()
