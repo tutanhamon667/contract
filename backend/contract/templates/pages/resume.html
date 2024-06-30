@@ -18,20 +18,34 @@
                             </template>
                             <div class="col-xl-5 col-md-4 col-sm-8  col-8">
                                 <h4 x-text="$store.main.resume.display_name" class=" shop-name"></h4>
-                                <template x-for="contact in $store.main.resume.contacts" :key="'contact_'+ contact.id">
-                                    <div>
-                                        <template x-if="contact.type === 'email'">
-                                            <div><a :href="'mailto:' + contact.value" x-text="contact.value"></a></div>
-                                        </template>
-                                        <template x-if="contact.type === 'phone'">
-                                            <div><a :href="'tel:' + contact.value" x-text="contact.value"></a></div>
-                                        </template>
-                                        <template x-if="contact.type === 'telegram'">
-                                            <div><a :href="'https://t.me/' + contact.value" x-text="contact.value"></a>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </template>
+                               <div>
+
+                                   <template x-for="contact in $store.main.company.contacts">
+                                       <div>
+                                           <template x-if="contact.type == 'email'">
+                                               <div :key="'contact_'+ contact.id"><a :href="'mailto:' + contact.value"
+                                                       x-text="contact.value"></a></div>
+                                           </template>
+                                           <template x-if="contact.type == 'phone'">
+                                               <div :key="'contact_'+ contact.id"><a :href="'tel:' + contact.value"
+                                                       x-text="contact.value"></a></div>
+                                           </template>
+                                           <template x-if="contact.type == 'telegram'">
+                                               <div :key="'contact_'+ contact.id"><a
+                                                       :href="'https://t.me/' + contact.value"
+                                                       x-text="contact.value"></a>
+                                               </div>
+                                           </template>
+                                           <template x-if="contact.type == 'other'">
+                                               <div :key="'contact_'+ contact.id"><a :href="contact.value"
+                                                       x-text="contact.value"></a>
+                                               </div>
+                                           </template>
+                                       </div>
+
+                                   </template>
+                               </div>
+
                                 <template x-if="$store.main.user.id>=0  && $store.main.user.is_customer"
                                     x-data="{invite: $store.main.resume.invite}">
                                     <div x-data="{res: $store.main.getResponseInviteResumeElement(invite)}"

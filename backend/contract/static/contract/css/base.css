@@ -422,14 +422,13 @@ select {
     font-size: 22px;
 }
 
-.card .shop-name {
+.card .item-name {
     color: black;
     text-decoration: none;
     font-weight: normal;
-    font-size: 16px;
 }
 
-.card .shop-name:hover {
+.card .item-name:hover {
     text-decoration: underline;
 }
 
@@ -1093,6 +1092,14 @@ section>.row>div {
     padding-top: 10px;
 }
 
+.card {
+    padding: 3 15 5 15;
+}
+
+.bs .card .card-header {
+    padding: 0;
+}
+
 .nav-item a.nav-link.active {
     text-decoration: underline;
     font-weight: bold;
@@ -1290,15 +1297,25 @@ section .section-header {
     }
 }
 
-@media (min-width: 1400px) {
-    body * {
-        font-size: 1.1rem !important;
-    }
+.flex-1 {
+    flex: 1;
+}
 
-    .h-icon {
-        height: 100%;
+.flex-02 {
+    flex: 0.5;
+}
 
-    }
+.flex-04 {
+    flex: 0.25;
+}
+
+.flex-03 {
+    flex: 0.33;
+}
+
+.h-icon {
+    height: 100%;
+
 }
 
 .mobile-menu .navbar-collapse.show {
@@ -1318,4 +1335,217 @@ section .section-header {
 
 .mobile-menu .navbar-collapse.show .navbar-nav {
     padding: 10px;
+}
+
+.flex-align-baseline {
+    display: flex !important;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: baseline;
+}
+
+.card {
+    padding: 0px;
+}
+
+body {
+    font-size: 18px;
+    /* Set the initial font size */
+}
+
+.work-deposit {
+    padding: 0%;
+}
+
+.card-section {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.flex-align-baseline {
+    align-items: baseline;
+}
+
+.flex-align-baseline img {
+    padding: 0px;
+}
+
+@media (min-width: 1400px) {
+    body {
+        font-size: 20px;
+        /* Adjust the font size for smaller screens */
+
+    }
+
+    .flex-align-baseline img {
+        margin-top: -10px;
+        max-height: 15;
+    }
+
+    .item-name {
+        font-size: 18px;
+    }
+
+    .card-title {
+        font-size: 22px;
+    }
+
+    .page-title {
+        font-size: 26px;
+    }
+
+    .card-body {
+        font-size: 18px;
+    }
+
+    .sub-text {
+        font-size: 16px;
+    }
+
+    .btn {
+        font-size: 18px;
+    }
+
+    .h-icon {
+        height: 100%;
+    }
+
+    .price {
+        font-size: 20px;
+    }
+}
+
+
+@media (max-width: 1400px) {
+    body {
+        font-size: 18px;
+        /* Adjust the font size for smaller screens */
+
+    }
+
+    .flex-align-baseline img {
+        margin-top: 3px;
+        max-height: 14;
+    }
+
+    .item-name {
+        font-size: 16px;
+    }
+
+    .card-title {
+        font-size: 20px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .card-body {
+        font-size: 16px;
+    }
+
+    .sub-text {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 16px;
+    }
+
+    .h-icon {
+        height: 100%;
+    }
+
+    .price {
+        font-size: 18px;
+    }
+}
+
+/* Add media queries to adjust the font size for different screen sizes */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+        /* Adjust the font size for smaller screens */
+    }
+
+    .flex-align-baseline img {
+        margin-top: 2px;
+        max-height: 13;
+    }
+
+    .item-name {
+        font-size: 14px;
+    }
+
+    .card-title {
+        font-size: 18px;
+    }
+
+    .page-title {
+        font-size: 22px;
+    }
+
+    .card-body {
+        font-size: 14px;
+    }
+
+    .sub-text {
+        font-size: 12px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+
+    .h-icon {
+        height: 100%;
+    }
+
+    .price {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 12px;
+        /* Adjust the font size for even smaller screens */
+    }
+
+    .flex-align-baseline img {
+        margin-top: 1px;
+        max-height: 11;
+    }
+
+    .item-name {
+        font-size: 12px;
+    }
+
+    .card-title {
+        font-size: 18px;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .card-body {
+        font-size: 14px;
+    }
+
+    .sub-text {
+        font-size: 12px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+
+    .h-icon {
+        height: 100%;
+    }
+
+    .price {
+        font-size: 16px;
+    }
 }

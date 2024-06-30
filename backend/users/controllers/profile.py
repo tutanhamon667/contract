@@ -19,6 +19,7 @@ from users.models.common import  ModerateRequest
 from django.forms import modelform_factory
 from django.apps import apps
 from django.db.models.fields.files import ImageFieldFile
+from bitcoinlib.wallets import *
 
 def activate_view(request):
 	user = request.user
@@ -334,12 +335,17 @@ def profile_main_view(request):
 		error = None
 		if request.method == "GET":
 			member = Member.objects.get(id=user.id)
+			if member.recovery_code is None:
+				recovery_code  = Mnemonic().generate(64)
+				member.recovery_code = recovery_code
+				member.save()
 			profile_form = ProfileForm(instance=member)
 			change_pass_form = PasswordChange()
 			return render(request, './blocks/profile/profile_main.html', {
 				'profile_form': profile_form,
 				'change_pass_form': change_pass_form,
 				'categories': categories,
+				'recovery_code': member.recovery_code,
 				'articles': articles
 			})
 
@@ -477,7 +483,7 @@ def jobs_profile_view(request):
 	if request.method == "GET":
 		company = Company.objects.get(user_id=user.id)
 		jobs = Job.objects.filter(company=company.id, deleted=False)
-		now = datetime.datetime.now()
+		now = datetime.now()
 		jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
 		jobs_not_paid_ids = []
 		for job_paid in jobs_paid:

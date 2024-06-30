@@ -4,7 +4,7 @@
 {% load django_bootstrap5 %}
 {% block content %}
 
-    <div class="container">
+    <div class="container" x-init>
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-6 col-xl-4 auth-form">
                 <div class="card bg-white text-black" style="border-radius: 1rem;">
@@ -15,6 +15,7 @@
                             <form method="POST">
                                   <p class="form-error-msg">{{ form.error }}</p>
                                 {% csrf_token %}
+                                <input type="hidden" name="form_name" value="sign_in">
                                 {% bootstrap_form form %}
 
                                 <button class="btn btn-primary btn-lg px-5 w-100 form-control" type="submit">Войти
@@ -36,6 +37,38 @@
                         </div>
                     </div>
                 </div>
+                           <div>
+                               <div x-data="{showRecovery:false}">
+                                   <div x-show="showRecovery === true">
+                                       <p></p>
+
+                                       <div class="row">
+                                           <div class="col">
+                                               <form action="" method="POST">
+                                                 {% csrf_token %}
+                                                   {% bootstrap_form recovery_form %}
+                                                   <input type="hidden" name="form_name" value="recovery_password">
+                                                   <button class="btn btn-primary">Восстановить</button>
+                                               </form>
+
+                                               <button class="btn btn-white mr-5 w-100 mt-15"
+                                                   x-on:click="showRecovery = !showRecovery">
+                                                   Отменить
+                                               </button>
+                                           </div>
+                                       </div>
+
+                                   </div>
+                                   <div class="row" x-show="showRecovery === false">
+                                       <div class="">
+                                           <button class="btn btn-success mr-5 w-100 mt-15"
+                                               x-on:click="showRecovery = !showRecovery">
+                                               Восстановить пароль
+                                           </button>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
             </div>
         </div>
     </div>

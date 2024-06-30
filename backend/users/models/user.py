@@ -1,6 +1,9 @@
 import datetime
 
 
+from django.contrib.auth.hashers import make_password
+import random
+import string
 from django.forms import ModelForm
 from django.utils import timezone
 from django.http import HttpResponse
@@ -40,7 +43,6 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		default='',
 		blank=True,
 		null=True
-
 	))
 
 	last_name = encrypt(models.CharField(
@@ -57,7 +59,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		blank=True,
 		verbose_name='Фото'
 	)
-
+	recovery_code = models.CharField(max_length=255, blank=True, null=True, unique=True)
 	is_customer = models.BooleanField(default=False)
 	is_worker = models.BooleanField(default=False)
 	is_moderator = models.BooleanField(default=False)
@@ -111,6 +113,15 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		if member[0].is_worker:
 			return HttpResponse(status=403)
 		return member
+	
+
+	def make_random_password(self):
+		characters = string.ascii_letters + string.digits + string.punctuation
+		password = ''.join(random.choice(characters) for i in range(12))
+		self.password =  make_password(password)
+		self.save()
+		return password
+
 
 
 User = get_user_model()
@@ -945,8 +956,6 @@ class Job(models.Model):
 
 	def get_owner(self):
 		return self.company.user
-
-
 
 
 

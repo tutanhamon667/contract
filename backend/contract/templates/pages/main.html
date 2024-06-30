@@ -55,7 +55,7 @@
                     {% if forloop.counter|divisibleby:4 or forloop.first %}<!--ROW-->
                         <div class="row">
                     {% endif %}
-                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+                            <div class="col">
                                 <a href="/jobs?specialisation={{ category.industry_id }}">
                                     <div class="card">
                                         <div class="card-header d-flex">
@@ -94,7 +94,7 @@
             </div>
             <div class="row">
                 {% for best_customer in best_customers %}
-                    <div class=" col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                    <div class=" col col-md-6">
                         <a href="/company/{{ best_customer.company.id }}">
                             <div class="best-customers-card text-center">
                                 <div>

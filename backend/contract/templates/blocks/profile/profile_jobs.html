@@ -2,7 +2,7 @@
 {% block content %}
 {% load django_bootstrap5 %}
 
-<div class="container">
+<div class="container" x-data>
     <section>
         <div class="page-header">
             <h1 class="my_order_title">Мои Вакансии</h1>
@@ -117,10 +117,10 @@
             {% endif %}
             <script>
                 const deleteJobHandler = (id) => {
-                    let text = "Вы действительно хотите удалить вакансию?";
-                    if (confirm(text) == true) {
+                    application.confirmationModal('Подтвердите действие', 'Оплата тарифа', () => {
                         window.location.href = `/profile/jobs/delete/${id}`
-                    }
+                    })
+
                 }
                 $(document).ready(function() {
                     const application = new app()

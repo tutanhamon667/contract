@@ -458,6 +458,33 @@ class LoginForm(forms.Form):
 		return data
 
 
+
+class RestorePasswordForm(forms.Form):
+	login = forms.CharField(label="Логин", required=True)
+	recovery_code = forms.CharField(label="Код восстановления", required=True)
+	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
+
+	class Meta:
+		fields = ['login', "captcha", "recovery_code", "hashkey"]
+		widgets = {"captcha": CaptchaWidget(), 'hashkey': forms.HiddenInput()}
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		if len(args):
+			catcha_widget = CaptchaWidget(args[0]["hashkey"])
+		else:
+			catcha_widget = CaptchaWidget()
+
+		self.fields["captcha"].widget = catcha_widget
+
+	def clean_captcha(self):
+		data = self.cleaned_data['captcha']
+		res = self.fields["captcha"].widget.check_capctha(self.cleaned_data["captcha"], self.data["hashkey"])
+		if res:
+			raise ValidationError(res)
+		return data
+
+
 class RegisterCustomerForm(UserCreationForm):
 	company_name = forms.CharField(max_length=255, label="Название компании")
 	password1 = forms.CharField(widget=PasswordWidget(), required=True)

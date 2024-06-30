@@ -19,7 +19,7 @@
                         {% endif %}
                     </div>
                     <h3 class="card-subtitle salary">{{ job.final_salary }} ₽</h3>
-                    <div class="d-flex ">
+                    <div class="d-flex card-content">
                         <a class="text-shadow" href="/company/{{ job.company.id }}">{{ job.company.name }}</a> <img src="{% static 'contract/img/icons/approved.svg' %}" height="12" class="ml-5 mt-15" />
                     </div>
                     {% if short is False %}
@@ -37,7 +37,7 @@
                     {% if short is False and  job.deposit is not 0 %}
                     <span class="job-card-item-customer text-muted job-type">Залог: {{ job.deposit }} ₽</span>
                     {% endif %}
-                    <div class="d-flex vacancy-description">
+                    <div class="d-flex vacancy-description card-content">
 
                         {% if job.work_experience == "NoMatter" %}
                         <div class="d-flex mr-5">

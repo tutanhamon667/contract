@@ -7,7 +7,7 @@ from common.models import Article, ArticleCategory
 from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
 from contract.settings import CHAT_TYPE
 from users.core.user import UserCore
-from users.forms import RegisterWorkerForm, RegisterCustomerForm, LoginForm
+from users.forms import RegisterWorkerForm, RegisterCustomerForm, LoginForm, RestorePasswordForm
 from users.models.common import Captcha
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -17,7 +17,7 @@ from users.models.user import Member, Company, User
 from django.contrib.auth.forms import AuthenticationForm
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count
 from btc.models import Address as WalletAddress
-
+from bitcoinlib.wallets import *
 
 def logout_view(request):
 	if request.user.is_authenticated:
@@ -30,31 +30,63 @@ def authenticate_view(request, template, redirect_to):
 	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
 		form = LoginForm()
+		recovery_form = RestorePasswordForm()
 		return render(request, f'pages/{template}.html',
-					  {'form': form, 'articles': articles,
+					  {'form': form, 'recovery_form': recovery_form, 'articles': articles,
 					   'categories': categories})
 	if request.method == "POST":
-		form = LoginForm(data=request.POST)
-		if form.is_valid():
-			login = form.cleaned_data.get('login')
-			password = form.cleaned_data.get('password')
-			user_core = UserCore(User)
-			res = user_core.login(username=login, password=password, request=request)
-			if res:
-				return redirect(redirect_to)
+		if request.POST.get('form_name') == 'recovery_password':
+			recovery_form = RestorePasswordForm(data=request.POST)
+			if recovery_form.is_valid():
+				try:
+					userr = Member.objects.get(login=recovery_form.cleaned_data.get('login') , recovery_code=recovery_form.cleaned_data.get('recovery_code'))\
+					#generate new password
+					password = userr.make_random_password()
+					messages.success(request, 'Ваш пароль был изменён на:' + password)
+					form = LoginForm()
+					recovery_form = RestorePasswordForm()
+					return render(request, f'pages/{template}.html',
+								{'form': form, 'recovery_form': recovery_form, 'articles': articles,
+								'categories': categories})
+				except Member.DoesNotExist:
+					form = LoginForm()
+					recovery_form = RestorePasswordForm()
+					messages.error(request,"Пользователь не найден")
+					return render(request, f'pages/{template}.html',
+								{'form': form, 'recovery_form': recovery_form, 'articles': articles,
+								'categories': categories})
 			else:
-				form.error = "Пользователь не найден"
+				form = LoginForm()
 				return render(request, f'pages/{template}.html',
-							  {'form': form,
-							   'articles': articles,
-							   'categories': categories,
-							   })
+							{'form': form, 'recovery_form': recovery_form, 'articles': articles,
+							})
 		else:
-			return render(request, f'pages/{template}.html',
-						  {'form': form,
-						   'articles': articles,
-						   'categories': categories
-						   })
+			form = LoginForm(data=request.POST)
+			recovery_form = RestorePasswordForm()
+			if form.is_valid():
+				login = form.cleaned_data.get('login')
+				password = form.cleaned_data.get('password')
+				user_core = UserCore(User)
+				res = user_core.login(username=login, password=password, request=request)
+
+				if res:
+					return redirect(redirect_to)
+				else:
+					recovery_form = RestorePasswordForm(data=request.POST)
+					form.error = "Пользователь не найден"
+					return render(request, f'pages/{template}.html',
+								{'form': form,
+								'articles': articles,
+								'recovery_form': recovery_form,
+								'categories': categories,
+								})
+			else:
+				return render(request, f'pages/{template}.html',
+							{'form': form,
+							'articles': articles,
+							'recovery_form': recovery_form,
+							'categories': categories
+							})
 
 
 def login_worker_view(request):
@@ -91,8 +123,12 @@ def signup_user(request, is_customer, template, redirect_to):
 					user.is_customer = True
 				else:
 					user.is_worker = True
+				recovery_code  = Mnemonic(language='russian').generate(64)
+				user.recovery_code = recovery_code
 				user.save()
 				login(request, user)
+			
+				
 				if is_customer:
 					company_name = request.POST.get('company_name')
 					customer_company = Company(user=user, name=company_name)

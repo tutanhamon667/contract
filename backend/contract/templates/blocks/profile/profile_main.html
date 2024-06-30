@@ -77,9 +77,9 @@
                                         {% if messages %}
                                         <ul class="messages">
                                             {% for message in messages %}
-                                            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                                            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
                                                 {{ message }}</li>
-                                                {% endfor %}
+                                            {% endfor %}
                                         </ul>
                                         {% endif %}
                                     </div>
@@ -88,6 +88,8 @@
                                     <input type="submit" class="btn btn-primary w-100" value="Обновить" />
                                 </div>
                             </form>
+                            <h3>Код восстановления, сохраните его для восстановления пароля</h3>
+                            <textarea class="form-control" disabled>{{recovery_code}}</textarea>
                         </div>
                     </div>
 
