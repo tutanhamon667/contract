@@ -16,7 +16,7 @@ class Access:
 				return 200
 			else:
 				return 403
-		if entity == "create_tiket":
+		if entity == "create_ticket":
 			if not self.user.is_authenticated:
 				return 401
 			if self.user.is_customer or self.user.is_worker:
@@ -200,9 +200,7 @@ class Access:
 				return 401
 			if self.user.is_customer:
 				if action == "create":
-					company = Company.objects.get(user=self.user)
-					if company.moderated is False:
-						return 666
+	
 					# get from db customer paid  resumes view until...
 					# if self.user.has_resume_access == False:
 					# return 403

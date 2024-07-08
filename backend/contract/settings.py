@@ -434,7 +434,11 @@ CHAT_TYPE = {
 	"VERIFICATION": 2,
 	"SYSTEM": 3
 }
-
+CHOICES_TICKET_STATUS = (
+	(0, 'Открыт'),
+	(1, 'В работе'),
+	(2, 'Закрыт'),
+)
 PAGE_SETTINGS = {
 	"PROFILE_RESPONSE_INVITE": {
 		"GET_PARAMS": {

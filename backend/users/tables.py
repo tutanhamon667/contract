@@ -1,7 +1,14 @@
 import django_tables2 as tables
 
 from users.models.common import ModerateRequest
-from users.models.user import Region
+from users.models.user import Region, Ticket
+
+
+
+class TicketTable(tables.Table):
+	class Meta:
+		model = Ticket
+		template_name = "table.html"
 
 class ReviewsOnModerationTable(tables.Table):
 	reason_object_id =   tables.Column(linkify=True)

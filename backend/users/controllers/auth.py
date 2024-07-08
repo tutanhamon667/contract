@@ -123,7 +123,7 @@ def signup_user(request, is_customer, template, redirect_to):
 					user.is_customer = True
 				else:
 					user.is_worker = True
-				recovery_code  = Mnemonic(language='russian').generate(64)
+				recovery_code  = Mnemonic().generate(64)
 				user.recovery_code = recovery_code
 				user.save()
 				login(request, user)

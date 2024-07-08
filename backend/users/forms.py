@@ -461,8 +461,8 @@ class LoginForm(forms.Form):
 
 
 
-class TicketForm(forms.Form):
-	user = forms.CharField(label="Логин", required=True)
+class TicketForm(ModelForm):
+
 	question = forms.CharField(label="Вопрос", required=True)
 	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
 
@@ -477,8 +477,7 @@ class TicketForm(forms.Form):
 
 	class Meta:
 		model = Ticket
-		fields = ['id', 'user', 'question', 'status']
-		widgets = {'user': forms.HiddenInput()}
+		fields = ['id', 'question']
 
 
 class RestorePasswordForm(forms.Form):

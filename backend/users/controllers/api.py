@@ -605,7 +605,7 @@ def calc_tier_payment(request):
 				final_price_btc = final_price_usd / btc_usd
 				can_spend_btc = user_balance.check_payment(final_price_btc)
 				if can_spend_btc > 0:
-					now = datetime.datetime.now()
+					now = datetime.now()
 					status = 1
 					operation.paid_at = now
 				else:
@@ -626,9 +626,9 @@ def calc_tier_payment(request):
 			# Вычисляем сколько прошло времени текущего активного тарифа
 			if active_job_payment.expire_at is None:
 				return JsonResponse({'success': True, "data": {}, "code": 400, "msg": "Имеется не оплаченный счёт по данной вакансии"})
-			today = datetime.datetime.now().date()
-			end_period = datetime.datetime.date(active_job_payment.expire_at)
-			start_period = datetime.datetime.date(active_job_payment.start_at)
+			today = datetime.now().date()
+			end_period = datetime.date(active_job_payment.expire_at)
+			start_period = datetime.date(active_job_payment.start_at)
 			# осталось дней
 			delta_ost = end_period - today  # 45 days
 			# прошло дней
@@ -652,7 +652,7 @@ def calc_tier_payment(request):
 			# закрываем текущую операцию
 			prev_period_operation.cost_btc = new_prev_period_cost_btc
 			prev_period_operation.cost_usd = new_prev_period_cost_usd
-			today_datetime = datetime.datetime.now()
+			today_datetime = datetime.now()
  
 			final_price_usd = round(
 				float(tier.cost) * float(amount.amount) * (
@@ -696,7 +696,7 @@ def access_payment(request):
 		code = access.check_access("profile_resume_access_pay")
 		if code != 200:
 			return JsonResponse({'success': False, "code": code})
-		today = datetime.datetime.now()
+		today = datetime.now()
 		customer_access = CustomerAccessPayment.objects.filter(start_at__lte=timezone.now(),
 															   expire_at__gte=timezone.now(), user=user)
 		if len(customer_access) == 0:

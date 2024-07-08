@@ -15,7 +15,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import Q
 import random
 from contract.settings import CONTACT_TYPE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS, CHOICES_WORK_EXPERIENCE, \
-	CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK
+	CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_TICKET_STATUS
 from .common import Region
 from users.usermanager import UserManager
 from django_cryptography.fields import encrypt
@@ -125,6 +125,8 @@ class Member(PermissionsMixin, AbstractBaseUser):
 
 
 User = get_user_model()
+#define new method get_member from user model
+User.get_member = lambda self: Member.objects.get(id=self.id)
 
 
 class Contact(models.Model):
@@ -287,11 +289,14 @@ class Company(models.Model):
 		return  str({"name": self.name, "web": self.web, "logo": self.logo} ^ moderated_obj.__dict__.items())
 
 	def updateModeratedFields(self, moderated_obj):
-		if 'name' in moderated_obj :
-			self.name = moderated_obj['name']['value']
-		if 'logo' in moderated_obj:
-			self.logo.save(moderated_obj['logo']['value'].split('/')[-1], File(open('./media/'+moderated_obj['logo']['value'], 'rb')))
-		self.save()
+		try:
+			if 'name' in moderated_obj :
+				self.name = moderated_obj['name']['value']
+			if 'logo' in moderated_obj:
+				self.logo.save(moderated_obj['logo']['value'].split('/')[-1], File(open('./media/'+moderated_obj['logo']['value'], 'rb')))
+			self.save()
+		except Exception as e:
+			print(e)
   
 	def get_owner(self):
 		return self.user
@@ -315,10 +320,10 @@ class Company(models.Model):
 
 class Ticket( models.Model):
 	question = models.CharField(null=False, max_length=255)
-	owner = models.ForeignKey(to=Member, on_delete=models.CASCADE, null=True)
+	owner = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True)
 	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	status = models.IntegerField(null=False, default=0,  choices=CHOICES_TICKET_STATUS)
 	class Meta:
 		verbose_name = 'Тикет'
 		verbose_name_plural = 'Тикеты'

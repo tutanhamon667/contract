@@ -2,11 +2,12 @@
 <html lang="en">
 
 <head>
+	<
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {% load django_bootstrap5 %}
-  {% bootstrap_messages %}
+
   <script src="{% static '/contract/js/bootstrap.min.js' %}"></script>
 
   <link href="{% static 'contract/css/bootstrap.min.css' %}" rel="stylesheet" />
@@ -24,7 +25,8 @@
   <script src="{% static 'contract/js/main.js' %}"></script>
 </head>
 
-<body data-media-url="{% get_media_prefix %}">
+<body>
+	  {% bootstrap_messages %}
   {% include "./blocks/header.html" %}
   <div class="flex-1 ">
 

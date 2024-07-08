@@ -1,7 +1,8 @@
 from django.urls import path
 
-from  users.models.common import Region
-from  users.controllers.api import *
+from .controllers.api import *
+from .controllers.profile import *
+
 urlpatterns = [
 	path("favorite", favorite_job, name="favorite"),
 	path("jobs", get_jobs, name="jobs"),
@@ -35,6 +36,5 @@ urlpatterns = [
 	path("new_jobs", get_new_jobs, name="new_jobs"),
 	path("user", get_user, name="user"),
 	path("balance", get_balance, name="balance"),
-    path("tiket", create_tiket, name="tiket"),
 ]
  

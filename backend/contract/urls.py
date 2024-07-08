@@ -13,7 +13,7 @@ from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
 	profile_main_view, change_password,profile_resume_edit_view, profile_resume_create_view,profile_resume_delete_view,\
-	profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view
+	profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view, create_ticket
 from users.controllers.auth import registration_worker_view, registration_customer_view, logout_view, \
 	login_customer_view, login_worker_view
 from users.controllers.test_view import test
@@ -94,6 +94,7 @@ urlpatterns = [
 	path('api/', include("users.urls")),
 	path('activate', activate_view, name='activate_view'),
 
+    path("ticket", create_ticket, name="ticket"),
 	path('admin', admin.site.urls),
 	path('swagger/',
 		 schema_view.with_ui('swagger', cache_timeout=0),

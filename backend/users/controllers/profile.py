@@ -11,16 +11,19 @@ from common.models import Article, ArticleCategory
 from contract.settings import CHAT_TYPE
 from users.core.access import Access
 from users.core.page_builder import PageBuilder
-from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite,CompanyHistory
-from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm as PasswordChange
+from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite,CompanyHistory, Ticket
+from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm as PasswordChange, TicketForm
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from users.models.common import  ModerateRequest
 from django.forms import modelform_factory
+
 from django.apps import apps
 from django.db.models.fields.files import ImageFieldFile
 from bitcoinlib.wallets import *
-
+from users.tables import ReviewsOnModerationTable, CompanyOnModerationTable
+from django_tables2 import MultiTableMixin, RequestConfig, SingleTableMixin, SingleTableView
+from  users.tables import  TicketTable
 def activate_view(request):
 	user = request.user
 	access = Access(user)
@@ -44,21 +47,27 @@ def activate_view(request):
 				'articles': articles
 			})
 
-def create_tiket(request):
+def create_ticket(request):
 	user = request.user
 	access = Access(user)
-	code = access.check_access("create_tiket")
+	code = access.check_access("create_ticket")
 	if code != 200:
 		if code == 401:
 			return redirect('signin')
 		else:
 			return HttpResponse(status=code)
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
+	
+	config = RequestConfig(request, paginate={"per_page": 5})
+	if request.user.is_moderator:
+		table = TicketTable(Ticket.objects.filter(status=0).order_by('-id'), prefix="new")
+	else:
+		table = TicketTable(Ticket.objects.filter(owner=user).order_by('-id'), prefix="new")
 	if request.method == "GET":
-		articles = Article.objects.all()
-		categories = ArticleCategory.objects.all()
-		form = TicketForm( initial={})
-		return render(request, './pages/create_tiket.html', {
-		
+		form = TicketForm( initial={'owner': request.user.get_member()})
+		return render(request, './moderate/ticket.html', {
+			'table': table,
 			'form': form,
 			'categories': categories,
 			'articles': articles
@@ -66,11 +75,18 @@ def create_tiket(request):
 	else:
 		form = TicketForm(request.POST)
 		if form.is_valid():
-			form.save()
+			new_ticket = form.save(commit=False)
+			new_ticket.owner = request.user.get_member()
+			new_ticket.status = 0
+			new_ticket.save()
+			messages.success(request, 'Запрос был успешно создан')
 			return redirect(to='profile_main')
 		else:
-			return render(request, './pages/create_tiket.html', {
-				'form': form
+			return render(request, './moderate/ticket.html', {
+				'table': table,
+				'form': form,
+				'categories': categories,
+				'articles': articles
 			})
 
 def profile_resume_create_view(request):
