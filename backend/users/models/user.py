@@ -312,6 +312,21 @@ class Company(models.Model):
 		return cls.objects.filter(id=id, moderated=True, deleted=False)
 
 
+
+class Ticket( models.Model):
+	question = models.CharField(null=False, max_length=255)
+	owner = models.ForeignKey(to=Member, on_delete=models.CASCADE, null=True)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	class Meta:
+		verbose_name = 'Тикет'
+		verbose_name_plural = 'Тикеты'
+
+	def __str__(self):
+		return self.question
+
+
 class CompanyHistory(models.Model):
 
 	logo = models.ImageField(

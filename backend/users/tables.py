@@ -1,7 +1,7 @@
 import django_tables2 as tables
 
 from users.models.common import ModerateRequest
-
+from users.models.user import Region
 
 class ReviewsOnModerationTable(tables.Table):
 	reason_object_id =   tables.Column(linkify=True)

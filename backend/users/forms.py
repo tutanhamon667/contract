@@ -15,6 +15,8 @@ from contract.widgets.select_with_parent import SelectParentWidget
 from contract.widgets.password import PasswordWidget
 from contract.widgets.selectExtended import SelectExtendedWidget
 from users.models.common import Region
+
+from users.models.user import Ticket
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
 	Company, CustomerReview, ResponseInvite, Industry
 
@@ -457,6 +459,26 @@ class LoginForm(forms.Form):
 			raise ValidationError(res)
 		return data
 
+
+
+class TicketForm(forms.Form):
+	user = forms.CharField(label="Логин", required=True)
+	question = forms.CharField(label="Вопрос", required=True)
+	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		if len(args):
+			catcha_widget = CaptchaWidget(args[0]["hashkey"])
+		else:
+			catcha_widget = CaptchaWidget()
+
+		self.fields["captcha"].widget = catcha_widget
+
+	class Meta:
+		model = Ticket
+		fields = ['id', 'user', 'question', 'status']
+		widgets = {'user': forms.HiddenInput()}
 
 
 class RestorePasswordForm(forms.Form):

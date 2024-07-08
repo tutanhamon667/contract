@@ -44,9 +44,34 @@ def activate_view(request):
 				'articles': articles
 			})
 
-
-
-
+def create_tiket(request):
+	user = request.user
+	access = Access(user)
+	code = access.check_access("create_tiket")
+	if code != 200:
+		if code == 401:
+			return redirect('signin')
+		else:
+			return HttpResponse(status=code)
+	if request.method == "GET":
+		articles = Article.objects.all()
+		categories = ArticleCategory.objects.all()
+		form = TicketForm( initial={})
+		return render(request, './pages/create_tiket.html', {
+		
+			'form': form,
+			'categories': categories,
+			'articles': articles
+		})
+	else:
+		form = TicketForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return redirect(to='profile_main')
+		else:
+			return render(request, './pages/create_tiket.html', {
+				'form': form
+			})
 
 def profile_resume_create_view(request):
 	user = request.user

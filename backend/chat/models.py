@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from contract.settings import CHAT_TYPE, CHAT_MESSAGE_TYPE
 from users.models.user import Member, Job, ResponseInvite
+from users.models.user import Ticket
 import uuid
 
 class Chat(models.Model):
@@ -44,6 +45,16 @@ class Chat(models.Model):
 	response_invite = models.ForeignKey(
 		ResponseInvite,
 		related_name='chat_response_invite',
+		default=None,
+		null=True,
+		blank=True,
+		on_delete=models.PROTECT,
+		verbose_name="отклик"
+	)
+ 
+	tiket = models.ForeignKey(
+		Ticket,
+		related_name='chat_ticket',
 		default=None,
 		null=True,
 		blank=True,

@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .controllers.api import *
-
+from  users.models.common import Region
+from  users.controllers.api import *
 urlpatterns = [
 	path("favorite", favorite_job, name="favorite"),
 	path("jobs", get_jobs, name="jobs"),
@@ -12,7 +12,7 @@ urlpatterns = [
 	path("company_reviews", company_reviews, name="company_reviews"),
 	path("respones_invites", get_responses_invites, name="responses_invites"),
 	path("get_counters", get_counters, name="get_counters"),
-	path("calc_tier_payment", calc_tier_payment, name="calc_tier_payment"),
+	path("calc_tier_payment", calc_tier_payment, name="calc_ter_payment"),
 	path("access_payment", access_payment, name="access_payment"),
 	path('contacts', get_contacts, name='my_contacts'),
 	path("profile_jobs", get_profile_jobs, name="api_profile_jobs"),
@@ -35,4 +35,6 @@ urlpatterns = [
 	path("new_jobs", get_new_jobs, name="new_jobs"),
 	path("user", get_user, name="user"),
 	path("balance", get_balance, name="balance"),
+    path("tiket", create_tiket, name="tiket"),
 ]
+ 

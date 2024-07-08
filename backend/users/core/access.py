@@ -16,7 +16,13 @@ class Access:
 				return 200
 			else:
 				return 403
-      
+		if entity == "create_tiket":
+			if not self.user.is_authenticated:
+				return 401
+			if self.user.is_customer or self.user.is_worker:
+				return 200
+			else:
+				return 403
 		if entity == "profile_resume_access_pay":
 			if not self.user.is_authenticated:
 				return 401
