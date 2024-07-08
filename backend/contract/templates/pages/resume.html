@@ -20,7 +20,7 @@
                                 <h4 x-text="$store.main.resume.display_name" class=" shop-name"></h4>
                                <div>
 
-                                   <template x-for="contact in $store.main.company.contacts">
+                                   <template x-for="contact in $store.main.resume.contacts">
                                        <div>
                                            <template x-if="contact.type == 'email'">
                                                <div :key="'contact_'+ contact.id"><a :href="'mailto:' + contact.value"

@@ -80,11 +80,11 @@ class ChatConsumer(WebsocketConsumer):
 			self_user, other_user = self.get_users_from_chat(chat, user)
 
 			if other_user.photo:
-				other_user_photo = other_user.photo.url
+				other_user_photo = '/media/' + other_user.photo.photo
 			else:
 				other_user_photo = None
 			if self_user.photo:
-				self_user_photo = self_user.photo.url
+				self_user_photo =  '/media/' + self_user.photo.photo
 			else:
 				self_user_photo = None
 			leaved = False

@@ -393,10 +393,19 @@ def profile_main_view(request):
 
 		if request.method == "POST":
 			member = Member.objects.get(id=user.id)
-			form = ProfileForm(request.POST, request.FILES, instance=member)
+			form = ProfileForm(request.POST, instance=member)
 			form.id = user.id
 			if form.is_valid():
-				form.save()
+				file_model = None
+				if len(request.FILES) > 0:
+					file_to_upload = request.FILES.get('photo')
+					new_file = FileSaver(file_to_upload, MEDIA_ROOT + '/profile/')
+					new_file.save_file()
+					file_model = UserFile(name=new_file.file.name, folder='profile', file_type=0)
+					file_model.save()
+				user_model = form.save(commit=False)
+				user_model.photo = file_model
+				user_model.save()
 				return redirect(to='profile_main')
 			return render(request, './blocks/profile/profile_main.html', {
 				'form': form,

@@ -253,14 +253,18 @@ function Chat(user_id, chat_id) {
     const socket = new Socket()
     socket.connect()
     socket.init()
+    let reconnectInterval = null
     socket.chatSocket.onclose = (e) => {
         socket.chatSocket.close()
         socket.chatSocket = null
         console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-        setInterval(() => {
+        reconnectInterval = setInterval(() => {
             socket.connect()
             socket.init()
         }, 5000);
+    };
+    socket.chatSocket.onopen = (e) => {
+        reconnectInterval = null
     };
     makeRequest('user', {}, (success, data) => {
         if (data.success) {

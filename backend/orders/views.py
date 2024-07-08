@@ -192,7 +192,7 @@ def resume_view(request, resume_id):
 		if code == 503:
 			articles = Article.objects.all()
 			categories = ArticleCategory.objects.all()
-			return render(request, './pages/customer_access_denied.html', {
+			return render(request, './pages/customer_access_resumes.html', {
 				'articles': articles,
 				'categories': categories,
 				})
@@ -207,11 +207,12 @@ def resume_view(request, resume_id):
 		resume.increase_views()
 		review_form = WorkerReviewForm(initial={"resume_id": resume.id})
 		form_response = InviteForm(
+      
 			initial={"type": RESPONSE_INVITE_TYPE["INVITE"], "user": user})
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		return render(request, './pages/resume.html', {
-      		'resume_serialized': model_to_dict(resume),
+      		'resume_serialized': {'id':resume.id},
 			'review_form': review_form,
 			'form_response': form_response,
 			'articles': articles,

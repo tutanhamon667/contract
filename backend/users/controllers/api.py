@@ -34,7 +34,7 @@ def get_user(request):
 		photo = None
 		if user.is_authenticated:
 			if user.photo:
-				photo = user.photo.url
+				photo = user.photo.photo
 			user = {"id": user.id,
 					"display_name": user.display_name,
 					"is_worker": user.is_worker,
@@ -445,7 +445,7 @@ def filter_resumes(request):
 					resume["display_name"] = resume_db.user.display_name
 					item_regions = resume_db.region
 					if resume_db.user.photo:
-						resume["photo"] = resume_db.user.photo.url
+						resume["photo"] = resume_db.user.photo.photo
 					else:
 						resume["photo"] = None
 			if item_regions:
@@ -889,7 +889,10 @@ def get_resume(request):
 		reviews = list(CustomerReview.objects.filter(worker_id=resume[0].user.id))
 		contacts = list(Contact.get_worker_contacts(resume[0].user.id))
 		resume_obj["contacts"] = contacts
-		resume_obj["photo"] = resume[0].user.photo.url
+		if resume[0].user.photo:
+			resume_obj["photo"] = '/media/' + resume[0].user.photo.photo
+		else:
+			resume_obj["photo"] = None
 		resume_obj["display_name"] = resume[0].user.display_name
 		resume_obj["reviews"] = len(reviews)
 		invites = list(ResponseInvite.join_responses(objs=resume, user=request.user).values())

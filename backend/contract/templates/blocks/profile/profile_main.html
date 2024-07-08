@@ -20,7 +20,7 @@
                                     <label class="mr-5" for="id_photo">
                                         {% if user.photo %}
                                         <div class="shop_panel_img">
-                                            <img src="/media/{{ user.photo }}" loading="lazy" id="profilePhoto">
+                                            <img src="/media/{{ user.photo.photo }}" loading="lazy" id="profilePhoto">
                                         </div>
                                         {% else %}
                                         <div class="shop_panel_img ">

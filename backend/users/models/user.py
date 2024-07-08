@@ -39,6 +39,10 @@ class UserFile(models.Model):
 	@property
 	def logo(self):
 		return path.join( self.folder , self.name)
+	
+	@property
+	def photo(self):
+		return path.join( self.folder , self.name)
 
 
 class Member(PermissionsMixin, AbstractBaseUser):
@@ -71,20 +75,14 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		blank=True,
 		null=True
 	))
-	photo_new = models.OneToOneField(
+	photo = models.OneToOneField(
 		to=UserFile,
 		default='',
 		blank=True,
 		null=True,
 		on_delete=models.PROTECT
 	)
-	photo = models.ImageField(
-		upload_to='profile/images/',
-		null=True,
-		default=None,
-		blank=True,
-		verbose_name='Фото'
-	)
+
 	recovery_code = models.CharField(max_length=255, blank=True, null=True, unique=True)
 	is_customer = models.BooleanField(default=False)
 	is_worker = models.BooleanField(default=False)
