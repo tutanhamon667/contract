@@ -19,6 +19,26 @@ from contract.settings import CONTACT_TYPE, RESPONSE_INVITE_TYPE, RESPONSE_INVIT
 from .common import Region
 from users.usermanager import UserManager
 from django_cryptography.fields import encrypt
+from contract.settings import USER_FILE_TYPE
+from os import path
+
+class UserFile(models.Model):
+	folder = models.CharField(max_length=255, null=True, blank=True)
+	name = models.CharField(max_length=255, null=True, blank=True)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+	file_type = models.IntegerField(null=False, default=0,  choices=USER_FILE_TYPE)
+ 
+	class Meta:
+		verbose_name = 'Файл'
+		verbose_name_plural = 'Файлы'
+
+
+	def __str__(self):
+		return str(self.name)
+
+	@property
+	def logo(self):
+		return path.join( self.folder , self.name)
 
 
 class Member(PermissionsMixin, AbstractBaseUser):
@@ -51,7 +71,13 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		blank=True,
 		null=True
 	))
-
+	photo_new = models.OneToOneField(
+		to=UserFile,
+		default='',
+		blank=True,
+		null=True,
+		on_delete=models.PROTECT
+	)
 	photo = models.ImageField(
 		upload_to='profile/images/',
 		null=True,
@@ -238,18 +264,21 @@ class Specialisation(models.Model):
 
 from django.core.files import File
 
+
+
 class Company(models.Model):
 	user = models.OneToOneField(
 		Member,
 		on_delete=models.PROTECT
 	)
-	logo = models.ImageField(
-		upload_to='company/images/',
-		null=True,
-		default=None,
+	logo = models.OneToOneField(
+		UserFile,
+  		default='',
 		blank=True,
-		verbose_name='Фото или логотип'
+		null=True,
+		on_delete=models.PROTECT
 	)
+
 	email = encrypt(models.EmailField(
 		verbose_name='публичный email для связи',
 		max_length=254,

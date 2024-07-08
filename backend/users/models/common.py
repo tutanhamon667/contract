@@ -26,6 +26,9 @@ CHOICES_MODERATE_STATUS = (
 )
 
 
+
+
+
 class ModerateRequest(models.Model):
 	status = models.IntegerField(null=False, default=0,  choices=CHOICES_MODERATE_STATUS)
 	comment = models.CharField(max_length=255, null=True, blank=True, default='')

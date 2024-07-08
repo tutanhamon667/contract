@@ -7,7 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from decimal import Decimal
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
-from users.models.user import Member
+from users.models.user import Member, UserFile
 from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
 from dateutil.relativedelta import relativedelta
@@ -385,8 +385,8 @@ def favorite_jobs(request):
 			companies_arr = []
 			for company in companies:
 				logo = None
-				if company["logo"]:
-					logo = company["logo"]
+				if company["logo_id"]:
+					logo = UserFile.objects.get(id=company["logo_id"]).logo
 				companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"]})
 			invites = []
 			favorites = []
@@ -489,8 +489,8 @@ def get_jobs(request):
 		companies_arr = []
 		for company in companies:
 			logo = None
-			if company["logo"]:
-				logo = company["logo"]
+			if company["logo_id"]:
+				logo = UserFile.objects.get(id=company["logo_id"]).logo
 			companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"], "moderated": company["moderated"]})
 		invites = []
 		favorites = []
@@ -742,8 +742,8 @@ def get_job(request):
 		companies_arr = []
 		for company in companies:
 			logo = None
-			if company["logo"]:
-				logo = company["logo"]
+			if company["logo_id"]:
+				logo = UserFile.objects.get(id=company["logo_id"]).logo
 			companies_arr.append({"id": company["id"], "logo": logo, "name": company["name"], "moderated": company["moderated"]})
 		invites = []
 		favorites = []
@@ -795,6 +795,9 @@ def get_company(request):
 		rating = CustomerReview.get_company_rating(company["id"])
 		reviews = list(CustomerReview.objects.filter(company_id=company["id"]))
 		contacts = list(Contact.get_company_contacts(company["id"]))
+		if company["logo_id"]:
+			logo = UserFile.objects.get(id=company["logo_id"]).logo
+		company["logo"] = logo
 		company["contacts"] = contacts
 		company["rating"] = rating
 		company["reviews"] = len(reviews)

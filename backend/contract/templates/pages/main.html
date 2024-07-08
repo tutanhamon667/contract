@@ -99,7 +99,7 @@
                             <div class="best-customers-card text-center">
                                 <div>
                                     {% if best_customer.company.logo %}
-                                    <img src="{% get_media_prefix %}{{ best_customer.company.logo }}"
+                                    <img src="{% get_media_prefix %}{{ best_customer.company.logo.logo }}"
                                          alt="{{ best_customer.company.name }}" width="80" class="company-logo-mini"
                                          height="80">
                                     {% else %}

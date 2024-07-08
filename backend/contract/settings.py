@@ -681,6 +681,12 @@ CHAT_MESSAGE_TYPE = (
 	('FILE_MESSAGE', 2),
 )
 
+
+USER_FILE_TYPE = (
+	('company_logo', 0),
+	('profile_photo', 1),
+)
+
 OPERATION_STATUS = (
 	('PAID', 0),
 	('UNPAID', 1),

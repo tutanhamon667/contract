@@ -381,10 +381,10 @@ class PasswordChangeForm(forms.Form):
 
 
 class CompanyForm(ModelForm):
-
+	logo = forms.ImageField(label="Логотип", required=False)
 	class Meta:
 		model = Company
-		fields = ['id', 'user', 'logo',  'name', 'about']
+		fields = ['id', 'user', 'logo', 'name', 'about']
 		widgets = {'user': forms.HiddenInput()}
 
 	def __init__(self, *args, **kwargs):

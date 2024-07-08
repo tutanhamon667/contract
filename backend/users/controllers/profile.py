@@ -8,15 +8,16 @@ from django.contrib import messages
 
 from chat.models import Chat
 from common.models import Article, ArticleCategory
-from contract.settings import CHAT_TYPE
+from contract.settings import CHAT_TYPE, MEDIA_ROOT
 from users.core.access import Access
 from users.core.page_builder import PageBuilder
-from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite,CompanyHistory, Ticket
+from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite,CompanyHistory, Ticket, UserFile
 from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm as PasswordChange, TicketForm
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from users.models.common import  ModerateRequest
 from django.forms import modelform_factory
+from users.core.file_saver import FileSaver
 
 from django.apps import apps
 from django.db.models.fields.files import ImageFieldFile
@@ -412,21 +413,8 @@ def get_changed_data(new_instance, instance):
 	for field in model._meta.fields:
 		original_value = getattr(instance, field.name)
 		form_value = getattr(new_instance, field.name)
-	 # check if the field has type ImageFieldFile
-		if type(getattr(instance, field.name)) is ImageFieldFile:
-			original_value = getattr(instance, field.name)
-			form_value = getattr(new_instance, field.name)
-			original_value_url=None
-			form_value_url=None
-			if original_value._file is not None:
-				original_value_url =form_value.field.upload_to +  form_value.name
-			if form_value._file is not None:
-				form_value_url = form_value.field.upload_to +  form_value.name
-			if original_value_url != form_value_url:
-				changed_data[field.name] = {"value":form_value_url, "type":"image", 'title': field.verbose_name}
-		else:	   
-			if original_value != form_value:
-				changed_data[field.name] =  {"value":form_value, "type":"text", 'title': field.verbose_name} 
+		if original_value != form_value:
+			changed_data[field.name] =  {"value":form_value, "type":"text", 'title': field.verbose_name} 
 	return changed_data
 
 def profile_company_view(request):
@@ -467,25 +455,31 @@ def profile_company_view(request):
 		member = Member.objects.get(id=user.id)
 		if member.is_worker:
 			return HttpResponse(status=403)
+		
+		form = None
+		file_model = None
+		if len(request.FILES) > 0:
+			file_to_upload = request.FILES.get('logo')
+			new_file = FileSaver(file_to_upload, MEDIA_ROOT + '/company/')
+			new_file.save_file()
+			file_model = UserFile(name=new_file.file.name, folder='company', file_type=0)
+			file_model.save()
 		company = Company.objects.filter(user_id=user.id)
 		company = company[0]
-		form = None
-		if len(request.FILES) > 0:
-			form = CompanyForm( request.POST, request.FILES, instance=company)
-		else:
-			form = CompanyForm( request.POST, instance=company)
+		form = CompanyForm( request.POST, instance=company)
 		if form.is_valid():
 			original_company = Company.objects.get(user_id=user.id)
 			comp = form.save(commit=False)
 			changes = get_changed_data(comp, original_company)
-			if 'name' in changes or  len(request.FILES):
+			if 'name' in changes:
 				review_request = ModerateRequest.create_request(Company,original_company.id, changes=changes, comment='Редактирование компании')
 				chat = Chat.get_user_system_chat(request.user)
 				chat.create_system_message(f' Создана заявка на редактирование компании: #{review_request.id}. Ждите проверки модератора')
 				messages.success(request, 'Информация о компании будет обновлена после проверки модератором')
 			
 			comp.name = original_company.name
-			comp.logo = original_company.logo
+			if file_model is not None:
+				comp.logo = file_model
 			comp.save()
 			links = request.POST.getlist('link[]')
 			Contact.update_company_contacts(user, links)
