@@ -21,6 +21,7 @@ from users.usermanager import UserManager
 from django_cryptography.fields import encrypt
 from contract.settings import USER_FILE_TYPE
 from os import path
+from django.db.models import Manager
 
 class UserFile(models.Model):
 	folder = models.CharField(max_length=255, null=True, blank=True)
@@ -552,7 +553,7 @@ class Resume(models.Model):
 
 	@classmethod
 	def get_active_resume(cls, id):
-		return cls.objects.filter(id=id, moderated=True, active_search=True, deleted=False)
+		return cls.objects.filter(id=int(id), moderated=True, active_search=True, deleted=False)
 
 	def increase_views(self):
 		self.views = self.views + 1
@@ -592,7 +593,8 @@ class Resume(models.Model):
 				objs = objs.filter(is_offline=True)
 			if "region" in _get and _get["region"] != '':
 				filters_exists = True
-				objs = objs.filter(region__in=_get["region"])
+				print([int(x) for x in _get.getlist("region")])
+				objs = objs.filter(region__in=[int(x) for x in _get.getlist("region")]).order_by('id')
 			if "region[]" in _get and _get["region[]"] != '':
 				filters_exists = True
 				objs = objs.filter(region__in=_get.getlist("region[]")).order_by('id')
@@ -634,6 +636,8 @@ class Resume(models.Model):
 
 
 class Job(models.Model):
+	related_objects = models.Manager()
+	objects = related_objects
 	"""
 	Размещение заказов заказчиком.
 	"""
@@ -912,6 +916,12 @@ class Job(models.Model):
 		now = datetime.datetime.now()
 		limit = 1
 		page = 0
+		if "own" in _get:
+			count = len(Job.objects.filter(company__user=request.user))
+			res = Job.objects.filter(company__user=request.user)
+
+			return count, res
+
 		if "page" in _get:
 			page = int(_get["page"])
 		if "limit" in _get:
@@ -960,10 +970,10 @@ class Job(models.Model):
 			objs = objs.filter(work_experience=_get["work_experience"])
 		if "specialisation[]" in _get and _get["specialisation[]"] != '':
 			filters_exists = True
-			objs = objs.filter(specialisation__industry_id__in=_get.getlist("specialisation[]"))
+			objs = objs.filter(specialisation_id__in=_get.getlist("specialisation[]"))
 		if "specialisation" in _get and _get["specialisation"] != '':
 			filters_exists = True
-			objs = objs.filter(specialisation__industry_id=_get["specialisation"])
+			objs = objs.filter(specialisation_id=int(_get["specialisation"]))
 
 
 		if not filters_exists:

@@ -502,7 +502,13 @@ def profile_company_view(request):
 		})
 
 
-
+def customer_access_pay(request):
+	articles = Article.objects.all()
+	categories = ArticleCategory.objects.all()
+	return render(request, './pages/customer_access_resumes.html', {
+		'articles': articles,
+		'categories': categories,
+		})
 
 def jobs_profile_view(request):
 	user = request.user

@@ -5,8 +5,8 @@
 
     <div class="container">
         <section>
-            <div class="d-flex border-grey">
-                <div class="collapse show" id="collapseTitle">
+            <div style="display:flex" class=" border-grey collapse show " id="collapseTitle">
+                <div class="">
 
                     <p>Как уже неоднократно упомянуто, сторонники тоталитаризма в науке, вне зависимости от их уровня,
                         должны быть объективно рассмотрены соответствующими инстанциями. Лишь сделанные на базе
@@ -56,7 +56,7 @@
                         <div class="row">
                     {% endif %}
                             <div class="col">
-                                <a href="/jobs?specialisation={{ category.industry_id }}">
+                                <a href="/jobs?specialisation={{ category.id }}">
                                     <div class="card">
                                         <div class="card-header d-flex">
                                             <img src="{% get_static_prefix %}contract/img/icons/{{ category.icon }}.svg"
@@ -127,8 +127,8 @@
                 <img src="{% static 'contract/img/icons/hot.svg' %}" class="h-icon">
                 <h4>Горячие вакансии</h4>
             </div>
-            <div class="row">
-                {% with addition_card_class=' hot-job-card horizontal-height' short=True show_company_logo=True jobs=hot_jobs col=" col-xl-4 col-lg-4 col-md-6 col-sm-12" %}
+            <div class="d-flex">
+                {% with addition_card_class=' hot-job-card horizontal-height' short=True show_company_logo=True jobs=hot_jobs col="mr-10" %}
                     {% include "../blocks/components/job/job_component.html" %}
                 {% endwith %}
             </div>

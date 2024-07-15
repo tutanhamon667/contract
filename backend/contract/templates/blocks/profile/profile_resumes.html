@@ -5,13 +5,16 @@
 {% block content %}
 <div class="container " x-data>
     <section x-init="initUserResumes()">
-        <div class="page-header">
-            <h1 class="my_order_title">Мои резюме</h1>
-        </div>
-        <div class=" page-btn-container">
-            <a class="btn btn-success mr-5  mt-15" href="/profile/resume/create">
-                Создать резюме
-            </a>
+        <div class="d-flex">
+            <div class="page-header d-flex" style="width: 200px;">
+                <h1 class="my_order_title">Мои резюме</h1>
+            </div>
+            <div class=" page-btn-container  d-flex navbar-nav align-items-end mb-2 mb-lg-0 ">
+                <a class="btn btn-success mr-5  mt-15" style="width: 200px;" href="/profile/resume/create">
+                    Создать резюме
+                </a>
+            </div>
+
         </div>
 
 
@@ -82,7 +85,6 @@
     $(document).ready(function() {
         const application = new app()
         application.radioInputChecker("[name='work_deposit']", 1, "#id_deposit")
-        application.radioMultiSelectChecker("[name='work_type']", 1, "button[for=\"region\"]", "#region")
     });
 </script>
 {% endblock content %}

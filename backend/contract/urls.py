@@ -13,7 +13,7 @@ from users.controllers.response_invite import response_invite_view
 
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
 	profile_main_view, change_password,profile_resume_edit_view, profile_resume_create_view,profile_resume_delete_view,\
-	profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view, create_ticket
+	profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view, create_ticket,customer_access_pay
 from users.controllers.auth import registration_worker_view, registration_customer_view, logout_view, \
 	login_customer_view, login_worker_view
 from users.controllers.test_view import test
@@ -80,6 +80,7 @@ urlpatterns = [
 	path('profile/jobs/pay_for_tier/<int:job_id>', profile_job_view.pay_for_tier, name='profile_job_view_pay_for_tier'),
 	path('profile/jobs/update/<int:job_id>', profile_job_view.update, name='profile_job_view_update'),
 	path('profile/wallet', profile_wallet_view, name='profile_wallet'),
+	path('profile/access_pay', customer_access_pay, name='customer_access_pay'),
 	path('moderate/customerreview', moderate.reviews, name='moderate_reviews'),
 	path('moderate/review/<int:pk>', moderate.review, name='moderate_review'),
 	path('moderate/companies', moderate.companies, name='moderate_companies'),

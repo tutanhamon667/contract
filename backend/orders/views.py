@@ -65,7 +65,10 @@ def main_view(request):
 
 def jobs_view(request):
 	if request.method == 'GET':
-		search_form = JobFilterForm(initial=request.GET)
+		initial = {}
+		if 'specialisation' in request.GET:
+			initial['specialisation'] = request.GET['specialisation']
+		search_form = JobFilterForm(initial=initial)
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		return render(request, './pages/jobs.html', {

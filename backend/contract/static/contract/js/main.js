@@ -1,7 +1,6 @@
-
 const app = function() {
 
-    const makeRequest = function(url, data, callback){
+    const makeRequest = function(url, data, callback) {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $.ajax({
             url: `/api/${url}`,
@@ -19,58 +18,59 @@ const app = function() {
         })
     }
 
-    const initRating = function(el, inputSelector, editable=true){
+    const initRating = function(el, inputSelector, editable = true) {
 
         const $star_rating = el //$('.star-rating .fa');
 
         const SetRatingStar = function() {
-          return $star_rating.each(function() {
-            if (parseInt($star_rating.siblings(inputSelector).val()) >= parseInt($(this).data('rating'))) {
-              return $(this).removeClass('fa-star-o').addClass('fa-star');
-            } else {
-              return $(this).removeClass('fa-star').addClass('fa-star-o');
-            }
-          });
+            return $star_rating.each(function() {
+                if (parseInt($star_rating.siblings(inputSelector).val()) >= parseInt($(this).data('rating'))) {
+                    return $(this).removeClass('fa-star-o').addClass('fa-star');
+                } else {
+                    return $(this).removeClass('fa-star').addClass('fa-star-o');
+                }
+            });
         };
-        if(editable)
+        if (editable)
             $star_rating.on('click', function() {
-                 $star_rating.siblings(inputSelector).val($(this).data('rating'));
-              //$star_rating.siblings('input.rating-value').val($(this).data('rating'));
-              return SetRatingStar();
+                $star_rating.siblings(inputSelector).val($(this).data('rating'));
+                //$star_rating.siblings('input.rating-value').val($(this).data('rating'));
+                return SetRatingStar();
             });
         SetRatingStar();
     }
 
-    const radioInputChecker = (radio,value, input) => {
+    const radioInputChecker = (radio, value, input) => {
         $(input).attr("disabled", "disabled")
 
         $(radio).on("change", function() {
-            if (parseInt($(this).val()) !== parseInt(value)){
+            if (parseInt($(this).val()) !== parseInt(value)) {
                 $(input).attr("disabled", "disabled")
-            }else{
+            } else {
                 $(input).removeAttr("disabled")
             }
 
         })
     }
 
-    const radioMultiSelectChecker = (radio,value, input, pseudo_el) => {
-        if($(radio).val() === value) {
-            $(input).each(function(item){
+    const radioMultiSelectChecker = (radio, value, input, pseudo_el) => {
+        console.log($(radio).val())
+        if (document.querySelector(radio + ':checked').value !== value) {
+            $(input).each(function(item) {
                 $(this).attr("disabled", "disabled")
             })
             $(pseudo_el).attr("disabled", "disabled")
         }
-       
-        $(radio).on("change", function() {
 
-            if ($(this).val() !==  value){
-               $(input).each(function(item){
+        $(radio).on("change", function() {
+            console.log(document.querySelector(radio + ':checked').value)
+            if (document.querySelector(radio + ':checked').value !== value) {
+                $(input).each(function(item) {
                     $(this).attr("disabled", "disabled")
                 })
                 $(pseudo_el).attr("disabled", "disabled")
-            }else{
-                $(input).each(function(item){
+            } else {
+                $(input).each(function(item) {
                     $(this).removeAttr("disabled")
                 })
                 $(pseudo_el).removeAttr("disabled")
@@ -80,21 +80,21 @@ const app = function() {
     }
 
     const industrySpecInit = () => {
-        if( $('#specialisation').val()){
-            const ind_id =  $('#specialisation>option[value="'+$('#specialisation').val()+'"]').attr('parent')
-           $('[name="industry"][value="'+ind_id+'"]').click()
+        if ($('#specialisation').val()) {
+            const ind_id = $('#specialisation>option[value="' + $('#specialisation').val() + '"]').attr('parent')
+            $('[name="industry"][value="' + ind_id + '"]').click()
         }
         $('[name="industry"]').on("change", function() {
             const ind_id = $(this).val()
             let first_show_item = false
-            $('#specialisation>option').each(function(index){
-                if ($(this).attr("parent") !== ind_id ){
+            $('#specialisation>option').each(function(index) {
+                if ($(this).attr("parent") !== ind_id) {
                     $(this).hide()
-                }else{
-                    if (first_show_item === false){
-                        first_show_item =index
+                } else {
+                    if (first_show_item === false) {
+                        first_show_item = index
                     }
-                    
+
                     $(this).show()
                 }
             })
@@ -103,7 +103,7 @@ const app = function() {
 
         })
     }
-     const profileJobsFilters = () => {
+    const profileJobsFilters = () => {
         const searchParams = new URLSearchParams(window.location.search);
         const filterForm = $('.profile_jobs_filter_form')
         const status = $(filterForm).find('[name="status"]')
@@ -125,17 +125,20 @@ const app = function() {
     const deleteJobHandler = (id) => {
         let text = "Вы действительно хотите удалить вакансию?";
         if (confirm(text) == true) {
-           window.location.href = `/profile/jobs/delete/${id}`
-        } 
-}
+            window.location.href = `/profile/jobs/delete/${id}`
+        }
+    }
 
     const favoriteJobCheckboxHandler = () => {
-        $('.favorite_job_checkbox').on('change', function(e){
+        $('.favorite_job_checkbox').on('change', function(e) {
             const callback = (res, data) => {
                 console.log(res)
                 console.log(data)
             }
-            makeRequest('favorite', {job_id: $(this).attr('value'), value: $(this).is(':checked')}, callback)
+            makeRequest('favorite', {
+                job_id: $(this).attr('value'),
+                value: $(this).is(':checked')
+            }, callback)
         })
     }
 
@@ -149,18 +152,18 @@ const app = function() {
     }
 
     const jobFilterSubmit = () => {
-        $('#filter_form').on('submit', function(e){
+        $('#filter_form').on('submit', function(e) {
             e.preventDefault()
             const params = new FormData(this);
             const object = {};
             params.forEach((value, key) => {
-                if(typeof object[key] == 'undefined'){
+                if (typeof object[key] == 'undefined') {
                     object[key] = value
-                }else{
-                    if(Array.isArray(object[key])) {
+                } else {
+                    if (Array.isArray(object[key])) {
                         object[key].push(value)
-                    }else{
-                        object[key] = [object[key],value]
+                    } else {
+                        object[key] = [object[key], value]
 
                     }
                 }
@@ -180,15 +183,15 @@ const app = function() {
     }
 
     function readURL(input) {
-      if (input.files && input.files[0]) {
-        var reader = new FileReader();
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-        reader.onload = function (e) {
-          $('#profilePhoto').attr('src', e.target.result).width(90).height(90);
-        };
+            reader.onload = function(e) {
+                $('#profilePhoto').attr('src', e.target.result).width(90).height(90);
+            };
 
-        reader.readAsDataURL(input.files[0]);
-      }
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 
     const profileResponseInvitesFilters = () => {
@@ -200,8 +203,8 @@ const app = function() {
         const type = $(filterForm).find('[name="type"]')
         const order_date = $(filterForm).find('[name="order"]')
         const page = $(filterForm).find('[name="page"]')
-        $(orderBtn).click(function () {
-            order_val = order_val === "desc" ?  "asc": "desc"
+        $(orderBtn).click(function() {
+            order_val = order_val === "desc" ? "asc" : "desc"
             $(order_date).val(order_val)
             $(filterForm).submit()
         })
@@ -226,17 +229,16 @@ const app = function() {
         })
     }
     return {
-        deleteJobHandler:deleteJobHandler,
-        industrySpecInit:industrySpecInit,
-        readURL:readURL,
-        initRating:initRating,
-        profileResponseInvitesFilters:profileResponseInvitesFilters,
-        radioInputChecker:radioInputChecker,
-        profileJobsFilters:profileJobsFilters,
+        deleteJobHandler: deleteJobHandler,
+        industrySpecInit: industrySpecInit,
+        readURL: readURL,
+        initRating: initRating,
+        profileResponseInvitesFilters: profileResponseInvitesFilters,
+        radioInputChecker: radioInputChecker,
+        profileJobsFilters: profileJobsFilters,
         favoriteJobCheckboxHandler: favoriteJobCheckboxHandler,
-        getJobs:getJobs,
-        jobFilterSubmit:jobFilterSubmit,
-        radioMultiSelectChecker:radioMultiSelectChecker
+        getJobs: getJobs,
+        jobFilterSubmit: jobFilterSubmit,
+        radioMultiSelectChecker: radioMultiSelectChecker
     }
 }
-

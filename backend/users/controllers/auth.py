@@ -133,6 +133,12 @@ def signup_user(request, is_customer, template, redirect_to):
 					company_name = request.POST.get('company_name')
 					customer_company = Company(user=user, name=company_name)
 					customer_company.save()
+					changes = get_changed_data(customer_company, {'title':'', 'description':''},['title', 'description'])
+					if 'title' in changes or 'description' in changes:
+						review_request = ModerateRequest.create_request(Company, customer_company.id, changes=changes, comment='Создание компании')
+						chat = Chat.get_user_system_chat(request.user)
+						chat.create_system_message(f' Создана заявка на создание компании: #{review_request.id}. Ждите проверки модератора')
+						messages.success(request, 'Информация о компании будет отправлена на проверку модератором')
 				wallet = get_wallet()
 				addresses_count = get_addresses_count(wallet)
 				address = generate_address(addresses_count + 1, wallet.mnemonic)

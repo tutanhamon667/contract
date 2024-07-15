@@ -70,10 +70,10 @@ def get_counters(request):
 	try:
 		if request.user.is_authenticated:
 			if request.user.is_worker:
-				not_viewed_response_invites = list(ResponseInvite.objects.filter(resume__user=request.user, viewed_by_worker=False).values())
+				not_viewed_response_invites = list(ResponseInvite.objects.filter(resume__user=request.user, viewed_by_worker=False, status=0).values())
 			else:
 				not_viewed_response_invites = list(
-					ResponseInvite.objects.filter(job__company__user=request.user, viewed_by_customer=False).values())
+					ResponseInvite.objects.filter(job__company__user=request.user, viewed_by_customer=False, status=0).values())
 			data = {}
 			data["ri"] = not_viewed_response_invites
 			return JsonResponse({'success': True, 'data': data})
@@ -331,12 +331,16 @@ def response_invite(request):
 				chat = Chat(customer=user, worker=response.resume.user, response_invite=response)
 				chat.save()
 		if action == 'decline':
-			chat = Chat.objects.get(response_invite=response)
-			if user.is_worker:
-				chat.deleted_by_worker = True
-			else:
-				chat.deleted_by_customer = True
-			chat.save()
+			try:
+				chat = Chat.objects.get(response_invite=response)
+				if user.is_worker:
+					chat.deleted_by_worker = True
+				else:
+					chat.deleted_by_customer = True
+				chat.save()
+			except Exception as e:
+				print('Error:', e)
+			
 		if action == 'delete':
 			ri = ResponseInvite.objects.get(id=ri_id)
 			if user.is_worker:
@@ -368,7 +372,17 @@ def get_user_resumes(request):
 				return JsonResponse({'success': True, "code": code, "msg": "not allowed"})
 			else:
 				return JsonResponse({'success': False, "code": code})
-		resumes = list(Resume.objects.filter(user=user, deleted=False).values())
+		resumes_db = Resume.objects.filter(user=user, deleted=False)
+		resumes = list(resumes_db.values())
+		for resume in resumes:
+			item_regions = None
+			for resume_db in resumes_db:
+				if resume_db.id == resume["id"]:
+					item_regions = resume_db.region
+			if item_regions:
+				resume["regions"] = list(item_regions.values())
+			else:
+				resume["regions"] = []
 		return JsonResponse({'success': True, "data": resumes})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
@@ -445,7 +459,7 @@ def filter_resumes(request):
 					resume["display_name"] = resume_db.user.display_name
 					item_regions = resume_db.region
 					if resume_db.user.photo:
-						resume["photo"] = resume_db.user.photo.photo
+						resume["photo"] = '/media/' + resume_db.user.photo.photo
 					else:
 						resume["photo"] = None
 			if item_regions:
@@ -573,7 +587,7 @@ def calc_tier_payment(request):
 					btc_usd = Balance.update_btc_usd()
 				final_price_btc = final_price_usd / btc_usd
 				can_spend_btc = user_balance.check_payment(final_price_btc)
-				if can_spend_btc > 0:
+				if can_spend_btc >= 0:
 					status = 1
 					start_at = active_job_payment.expire_at
 					paid_at = start_at
@@ -604,7 +618,7 @@ def calc_tier_payment(request):
 
 				final_price_btc = final_price_usd / btc_usd
 				can_spend_btc = user_balance.check_payment(final_price_btc)
-				if can_spend_btc > 0:
+				if can_spend_btc >= 0:
 					now = datetime.now()
 					status = 1
 					operation.paid_at = now
@@ -663,7 +677,7 @@ def calc_tier_payment(request):
 			final_price_btc = final_price_usd / btc_usd
 		
 			can_spend_btc = user_balance.check_payment(final_price_btc)
-			if can_spend_btc > 0:
+			if can_spend_btc >= 0:
 				status = 1
 			else:
 				status = 0
@@ -716,7 +730,7 @@ def access_payment(request):
 				"expire_at": expire_date
 			}})
 		else:
-			return JsonResponse({'success': True, "code": 400,"data": {}, "msg": "Already paid"})
+			return JsonResponse({'success': True, "code": 400,"data": {}, "msg": "Уже есть активная бесплатная подписка"})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
@@ -885,6 +899,8 @@ def get_resume(request):
 			return JsonResponse({'success': False, "code": code})
 	   
 		resume = Resume.get_active_resume(id)
+		if len(resume) == 0:
+			return JsonResponse({'success': False, "code": 404, "msg": "Резюме удалено или не активно"})
 		resume_obj = list(resume.values())[0]
 		reviews = list(CustomerReview.objects.filter(worker_id=resume[0].user.id))
 		contacts = list(Contact.get_worker_contacts(resume[0].user.id))

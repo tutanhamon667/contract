@@ -49,7 +49,7 @@ class JobView:
 				if request.method == 'GET':
 					articles = Article.objects.all()
 					categories = ArticleCategory.objects.all()
-					form = JobForm( initial={} )
+					form = JobForm(  )
 					company = Company.objects.get(user_id=user.id)
 					return render(request, './blocks/profile/profile_job_create.html',
 								{'form': form,
@@ -105,12 +105,13 @@ class JobView:
 					categories = ArticleCategory.objects.all()
 					
 					company = Company.objects.get(user_id=user.id)
-					job = Job.objects.get(id=job_id)
+					job = Job.related_objects.get(id=job_id)
 					region_ids = job.region.values_list('id', flat=True)	
 					initial =  model_to_dict(job)
 					initial['region'] = region_ids
 					initial['industry'] = job.specialisation.industry_id
-					form = JobForm(instance=job, initial=initial )
+					
+					form = JobForm(instance=job )
 					return render(request, './blocks/profile/profile_job_create.html',
 								{'form': form,
 								'categories': categories,
@@ -120,15 +121,17 @@ class JobView:
 				if request.method == 'POST':
 					articles = Article.objects.all()
 					categories = ArticleCategory.objects.all()
-					job = Job.objects.get(id=job_id)
+					job = Job.related_objects.get(id=job_id)
+
 					initial = request.POST
 					initial._mutable = True
 					initial['region'] = request.POST.getlist('region')
-					form = JobForm(request.POST,  initial=initial )
+					form = JobForm(request.POST, instance=job)
 					company = Company.objects.get(user_id=user.id)
 					if form.is_valid():
 						original_job = Job.objects.get(id=job_id)
-						updated_job = form.save(commit=False)
+						form.save()
+						updated_job = Job.objects.get(id=job_id)
 						changes = get_changed_data(updated_job, original_job,['title', 'description'])
 						if 'title' in changes or 'description' in changes:
 							review_request = ModerateRequest.create_request(Job, original_job.id, changes=changes, comment='Редактирование вакансии')
@@ -139,7 +142,7 @@ class JobView:
 						updated_job.title = original_job.title
 						updated_job.description = original_job.description
 						updated_job.save()
-						form.save_m2m()
+				
 						messages.success(request, 'Вакансия обновлена')
 						return redirect('profile_jobs')
 					else:

@@ -170,7 +170,7 @@ const alpineApp = function() {
             return pagination
         },
         getRegionsStr: (job, hide_many = true) => {
-            if (!job.is_offline) {
+            if (job.is_offline) {
                 if (hide_many) {
                     if (!job.regions) {
                         return 'Онлайн занятость'
@@ -1382,7 +1382,8 @@ const alpineApp = function() {
                 const customerJobs = await this.getJobs({
                     user_id: user.data.id,
                     page: 0,
-                    limit: 1000000
+                    limit: 1000000,
+                    own: true
                 })
                 if (customerJobs.success) {
                     Alpine.store('main').customerJobs = customerJobs.data
@@ -1563,7 +1564,7 @@ const alpineApp = function() {
     customerAccessPay = async () => {
         const res = await makeRequest('access_payment', {})
         if (res.success && res.code === 200) {
-            alertModal('Подписка оплачена до: ' + this.formatShortDate(res.data.expire_at), () => {
+            confirmationModal('Подписка оплачена до: ' + this.formatShortDate(res.data.expire_at), 'Внимание', () => {
                 window.location.reload()
             })
         } else {

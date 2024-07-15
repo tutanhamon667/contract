@@ -69,7 +69,7 @@ class ModerateView:
 					
 					if status == 1:
 						instance.accept(final_comment)
-						instance.reason.moderated = True
+						reason_obj.moderated = True
 						instance.save()
 						if instance.changes:
 							reason_obj.updateModeratedFields(instance.changes)
@@ -78,7 +78,7 @@ class ModerateView:
 						chat.create_system_message(f"Заявка на {instance.comment} №{instance.id} одобрена модератором.")
 					elif status == 2:
 						instance.decline(final_comment)
-						instance.reason.moderated = False
+						reason_obj.moderated = False
 						instance.save()
 						owner = reason_obj.get_owner()
 						chat = Chat.get_user_system_chat(owner)

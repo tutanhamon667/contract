@@ -10,13 +10,13 @@
         {% else %}
         <h1 class="my_order_title">Создание резюме</h1>
         {% endif %}
-        <form action="" method="post"  enctype="multipart/form-data" novalidate>
-        {{ form.media }}
-        <div>
-        {% csrf_token %}
-        {% for field in form.visible_fields %}
-            <div class="row form-item">
-                {% if field.name != "specialisation" %}
+        <form action="" method="post" enctype="multipart/form-data" novalidate>
+            {{ form.media }}
+            <div>
+                {% csrf_token %}
+                {% for field in form.visible_fields %}
+                <div class="row form-item">
+                    {% if field.name != "specialisation" %}
                     <div class="col-xl-3 col-md-3 col-sm-4 form-item-label">
                         {{ field.label_tag }}
                     </div>
@@ -26,62 +26,60 @@
                     {% endif%}
 
 
-                {% if field.name == "description" %}
-                <div class="col-xl-9 col-md-9 col-sm-8">
-                {% else %}
-                <div class="col-xl-4 col-md-5 col-sm-6">
-                {% endif%}
-                {% if field.name == "specialisation" %}
-                <div class="form-item-label">
-                    {{ field.label_tag }}
+                    {% if field.name == "description" %}
+                    <div class="col-xl-9 col-md-9 col-sm-8">
+                        {% else %}
+                        <div class="col-xl-4 col-md-5 col-sm-6">
+                            {% endif%}
+                            {% if field.name == "specialisation" %}
+                            <div class="form-item-label">
+                                {{ field.label_tag }}
+                            </div>
+                            {% endif %}
+                            {{ field.errors }}
+                            {{ field }}
+                            {{ field.help_text }}
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
                 </div>
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                        {% endfor %}
+                </ul>
                 {% endif %}
-                    {{ field.errors }}
-                    {{ field }}
-                    {{ field.help_text }}
+                <div class="row footer-btn-container">
+
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <button class="btn btn-primary mr-5 w-100 mt-15">
+                            {% if resume %}
+                            Сохранить резюме
+                            {% else %}
+                            Создать резюме
+                            {% endif %}
+
+                        </button>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <a class="btn btn-white mr-5 w-100 mt-15" href="/profile/resume">
+                            Отменить
+                        </a>
+                    </div>
+
                 </div>
-            </div>
-           
-        {% endfor %}
-       
-    </div>
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        <div class="row footer-btn-container">
-          
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <button class="btn btn-primary mr-5 w-100 mt-15">
-                    {% if resume %}
-                    Сохранить резюме
-                    {% else %}
-                    Создать резюме
-                    {% endif %}
-                    
-                </button>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a class="btn btn-white mr-5 w-100 mt-15"
-                    href="/profile/resume">
-                    Отменить
-                </a>
-            </div>
-           
-        </div>
         </form>
 
     </section>
 </div>
 <script>
-
-$(document).ready(function () {
-            const application = new app()
-            application.radioMultiSelectChecker("[name='is_offline']", 'False', "button[for=\"region\"]", "#region")
-            application.industrySpecInit()
-        });
+    $(document).ready(function() {
+        const application = new app()
+        application.radioMultiSelectChecker("[name='is_offline']", 'True', "button[for=\"region\"]", "#region")
+        application.industrySpecInit()
+    });
 </script>
 {% endblock content %}

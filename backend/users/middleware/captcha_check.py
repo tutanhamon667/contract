@@ -21,7 +21,8 @@ def captcha_check(get_response):
                 response = redirect(to="captcha")
             # Code to be executed for each request/response after
             # the view is called.
-
+        if request.path == '/favicon.ico':
+            response = redirect(to="index")
         return response
 
     return middleware

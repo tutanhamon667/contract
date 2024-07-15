@@ -46,7 +46,8 @@ class Access:
 			if self.user.is_customer:
 				if action == "create":
 					try:
-						job = Job.objects.get(company__user=self.user, id=entity_id)
+						company = Company.objects.get(user=self.user)
+						job = Job.objects.get(company=company, id=int(entity_id))
 						return 200
 					except Exception as e:
 						return 403
@@ -101,16 +102,7 @@ class Access:
 			if not self.user.is_authenticated:
 				return 401
 			if self.user.is_customer:
-				company = Company.objects.get(user=self.user)
-				if company.moderated is False:
-					return 666
-			if self.user.is_customer:
-				try:
-					job = Job.objects.get(company__user_id=self.user.id, id=entity_id)
-					return 200
-				except Exception as e:
-					print(e)
-					return 503
+				return 200
 			else:
 				return 404
 
@@ -158,8 +150,6 @@ class Access:
 			if self.user.is_customer:
 				try:
 					company = Company.objects.get(user=self.user)
-					if company.moderated is False:
-						return 666
 					today = datetime.datetime.now()
 					customer_access = CustomerAccessPayment.objects.get(start_at__lte=timezone.now(),
 																		expire_at__gte=timezone.now(), user=self.user)
