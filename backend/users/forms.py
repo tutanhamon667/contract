@@ -15,7 +15,7 @@ from contract.widgets.select_with_parent import SelectParentWidget
 from contract.widgets.password import PasswordWidget
 from contract.widgets.selectExtended import SelectExtendedWidget
 from users.models.common import Region
-
+import re
 from users.models.user import Ticket
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
 	Company, CustomerReview, ResponseInvite, Industry
@@ -406,10 +406,11 @@ class CompanyForm(ModelForm):
 
 
 class CustomerReviewForm(ModelForm):
+	rating = forms.ChoiceField(label="Рейтинг", initial=5, required=False, widget=forms.RadioSelect,  choices=CHOICES_RATING)
 	class Meta:
 		model = CustomerReview
 		fields = ['id', 'company', 'reviewer', 'comment', 'rating']
-		widgets = {'reviewer': forms.HiddenInput(), 'company': forms.HiddenInput(), 'id': forms.HiddenInput()}
+		widgets = {'reviewer': forms.HiddenInput(), 'company': forms.HiddenInput(), 'id': forms.HiddenInput(), 'rating': forms.HiddenInput()}
 
 
 class ContactForm(ModelForm):
@@ -468,6 +469,16 @@ class LoginForm(forms.Form):
 			raise ValidationError(res)
 		return data
 
+	def clean_login(self):
+		data = self.cleaned_data['login']
+		user = Member.objects.filter(login=self.cleaned_data["login"])
+		if len(user) == 0:
+			raise ValidationError(
+				'Пользователь не найден' 
+			)
+
+		return data
+
 
 
 class TicketForm(ModelForm):
@@ -516,10 +527,12 @@ class RestorePasswordForm(forms.Form):
 
 
 class RegisterCustomerForm(UserCreationForm):
+	login = forms.CharField(max_length=255, required=True, label="Логин")
 	company_name = forms.CharField(max_length=255, label="Название компании")
 	password1 = forms.CharField(widget=PasswordWidget(), required=True)
 	password2 = forms.CharField(widget=PasswordWidget('Повторите пароль'), required=True)
 	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
+ 	
 
 	class Meta:
 		model = Member
@@ -559,6 +572,9 @@ class RegisterCustomerForm(UserCreationForm):
 				'Логин %(value)s занят',
 				params={'value': self.cleaned_data["login"]}
 			)
+		if not re.match(r'^[a-zA-Z]+$', data):
+			res = "Логин должен содержать только английские буквы"
+			raise ValidationError(res)
 		return data
 
 	def clean_display_name(self):
@@ -589,6 +605,7 @@ class RegisterCustomerForm(UserCreationForm):
 
 
 class RegisterWorkerForm(UserCreationForm):
+	login = forms.CharField(max_length=255, required=True, label="Логин")
 	password1 = forms.CharField(widget=PasswordWidget(), required=True)
 	password2 = forms.CharField(widget=PasswordWidget('Повторите пароль'), required=True)
 	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
@@ -607,6 +624,13 @@ class RegisterWorkerForm(UserCreationForm):
 			catcha_widget = CaptchaWidget()
 
 		self.fields["captcha"].widget = catcha_widget
+  
+	def clean_login(self):
+		data = self.cleaned_data['captcha']
+		if not re.match(r'^[a-zA-Z]+$', data):
+			res = "Логин должен содержать только английские буквы"
+			raise ValidationError(res)
+		return data
 
 	def clean_captcha(self):
 		data = self.cleaned_data['captcha']

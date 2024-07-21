@@ -8,14 +8,14 @@ class UppercaseValidator(object):
     def validate(self, password, user=None):
         if not re.findall('[A-Z]', password):
             raise ValidationError(
-                ('The password must contain at least 1 uppercase letter, '
+                ('Пароль должен содержать хотя бы 1 заглавную букву, '
                   + 'A-Z.'),
                 code='password_no_upper',
             )
 
     def get_help_text(self):
         return (
-            "Your password must contain at least 1 uppercase letter, A-Z."
+            "Пароль должен содержать хотя бы 1 заглавную букву, A-Z."
         )
 
 
@@ -24,14 +24,14 @@ class SpecialCharValidator(object):
     def validate(self, password, user=None):
         if not re.findall('[@#$%!^&*]', password):
             raise ValidationError(
-                ('The password must contain at least 1 special character: '
+                ('Пароль должен содержать хотя бы 1 специальный символ: '
                   + '@#$%!^&*'),
                 code='password_no_symbol',
             )
 
     def get_help_text(self):
         return (
-            'Your password must contain at least 1 special character: '
+            'Пароль должен содержать хотя бы 1 специальный символ: '
             + '@#$%!^&*'
         )
 
@@ -41,12 +41,12 @@ class DigitValidator(object):
     def validate(self, password, user=None):
         if not re.findall('[0-9]', password):
             raise ValidationError(
-                ('The password must contain at least 1 digit, '
+                ('Пароль должен содержать хотя бы 1 цифру, '
                   + '0-9.'),
                 code='password_no_digit',
             )
 
     def get_help_text(self):
         return (
-            "Your password must contain at least 1 digit, 0-9."
+            "Пароль должен содержать хотя бы 1 цифру, 0-9."
         )

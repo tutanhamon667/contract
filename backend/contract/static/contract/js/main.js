@@ -151,6 +151,23 @@ const app = function() {
 
     }
 
+    const validateInput = (inputData) => {
+        // Regular expression patterns
+        const linkPattern = /^(?:http|https?):\/\/[\w.-]+\.[a-z]{2,}/i;
+        const phonePattern = /^\+?1?\d{9,15}$/;
+        const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+        if (linkPattern.test(inputData)) {
+            return "Link";
+        } else if (phonePattern.test(inputData)) {
+            return "Phone Number";
+        } else if (emailPattern.test(inputData)) {
+            return "Email";
+        } else {
+            return false;
+        }
+    }
+
     const jobFilterSubmit = () => {
         $('#filter_form').on('submit', function(e) {
             e.preventDefault()
@@ -232,6 +249,7 @@ const app = function() {
         deleteJobHandler: deleteJobHandler,
         industrySpecInit: industrySpecInit,
         readURL: readURL,
+        validateInput: validateInput,
         initRating: initRating,
         profileResponseInvitesFilters: profileResponseInvitesFilters,
         radioInputChecker: radioInputChecker,

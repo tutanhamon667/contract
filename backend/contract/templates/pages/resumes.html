@@ -177,7 +177,7 @@
                     </div>
                 </template>
                 <template x-if="$store.main.filtered_resumes">
-                    <template x-if="$store.main.filtered_resumes.length <= $store.main.resumesCount">
+                    <template x-if="$store.main.filtered_resumes.length < $store.main.resumesCount">
                         <div class="pagination-container flex">
                             <template x-for="paginationItem in $store.main.pagination">
                                 <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">

@@ -219,7 +219,11 @@
                             <p id="review-form-error-msg" class="form-error-msg"></p>
                             <p id="review-form-success-msg" class="form-success-msg"></p>
                             {% bootstrap_form review_form %}
-                            <button class="btn btn-default">Отправить</button>
+                            {% if  user.is_authenticated  %}
+                            <button class="btn btn-primary">Отправить</button>
+                            {% else %}
+                            <a class="btn btn-primary" href="/worker/signin?redirect=/resumes/{{resume.id}}">Войти</a>
+                            {% endif %}
                         </form>
 
                     </div>
@@ -250,7 +254,7 @@
                 </template>
             </template>
             <template x-if="$store.main.reviews">
-                <template x-if="$store.main.reviews.length <= $store.main.reviewsCount">
+                <template x-if="$store.main.reviews.length < $store.main.reviewsCount">
                     <div class="pagination-container flex">
                         <template x-for="paginationItem in $store.main.reviews_pagination">
                             <div :key="'pagination_' + index + '_page_' + $store.main.reviews_filters.page">

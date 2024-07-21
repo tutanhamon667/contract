@@ -207,7 +207,7 @@ select {
     font-size: 14px;
 }
 
-.collapse:not(.show) {
+.collapse.full-hide:not(.show) {
     display: none !important;
 }
 

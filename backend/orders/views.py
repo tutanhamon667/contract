@@ -93,7 +93,7 @@ def worker_responses_invites_view(request):
 		code = access.check_access("worker_responses_invites_view")
 		if code != 200:
 			if code == 401:
-				return redirect('signin')
+				return redirect('worker_signin')
 			else:
 				return HttpResponse(status=code)
 		articles = Article.objects.all()
@@ -109,7 +109,7 @@ def customer_responses_invites_view(request):
 		code = access.check_access("customer_responses_invites_view")
 		if code != 200:
 			if code == 401:
-				return redirect('signin')
+				return redirect('customer_signin')
 			else:
 				return HttpResponse(status=code)
 		articles = Article.objects.all()
@@ -161,7 +161,7 @@ def resumes_view(request):
 	code = access.check_access("resume")
 	if code != 200:
 		if code == 401:
-			return redirect('signin')
+			return redirect('customer_signin')
 		if code == 503:
 			articles = Article.objects.all()
 			categories = ArticleCategory.objects.all()
@@ -200,7 +200,7 @@ def resume_view(request, resume_id):
 				'categories': categories,
 				})
 		if code == 401:
-			return redirect('signin')
+			return redirect('customer_signin')
 		else:
 			return HttpResponse(status=code)
 

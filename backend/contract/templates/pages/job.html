@@ -65,7 +65,7 @@
                                             <div class="col-5">
 
                                                 <template x-if="$store.main.user.id<0">
-                                                    <a href='worker/signin' class="btn btn-success">Войти для
+                                                    <a href='/worker/signin?redirect=/jobs/{{job.id}}' class="btn btn-success">Войти для
                                                         отклика</a>
                                                 </template>
                                                 <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">

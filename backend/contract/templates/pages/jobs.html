@@ -6,6 +6,11 @@
 <div class="container" x-data>
     <section x-init="initJobs()">
         <div class="row">
+            <div class="col-lg-12">
+                <template x-if={$store.main.filters.title}>
+                    
+                </template>
+            </div>
             <div class="col-lg-3 col-md-4">
                 <h4>Фильтры поиска</h4>
                 <form action="" method="get" id="filter_form" @submit.prevent="application.filterJobs()" novalidate>
@@ -105,7 +110,7 @@
                                 <div class="col-10">
 
                                     <template x-if="$store.main.user.id<0">
-                                        <a href='worker/signin' class="btn btn-success">Войти для отклика</a>
+                                        <a href='/worker/signin' class="btn btn-success">Войти для отклика</a>
                                     </template>
                                     <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
                                         <div x-data="{res: $store.main.getResponseInviteElement(job.invite)}">
@@ -197,7 +202,7 @@
                     </div>
                 </template>
 
-                <template x-if="$store.main.jobs.length <= $store.main.jobCount">
+                <template x-if="$store.main.jobs.length < $store.main.jobCount">
                     <div class="pagination-container flex">
                         <template x-for="paginationItem in $store.main.pagination">
                             <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">

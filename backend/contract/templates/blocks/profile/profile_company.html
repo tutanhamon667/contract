@@ -41,7 +41,7 @@
                             {% endif %}
 
                         </p>
-                        <input type="file" name="logo" accept="image/*" class="vis-none" id="id_photo" onchange="readURL(this);">
+                        <input type="file" name="logo" accept=".png,.jpg,.jpeg" class="vis-none" id="id_photo" onchange="readURL(this);">
                     </div>
                 </div>
                 <div class="row form-item">
@@ -125,7 +125,7 @@
 <script>
     $(document).ready(function() {
         const application = new app()
-        application.radioMultiSelectChecker("[name='is_offline']", 'False', "button[for=\"region\"]", "#region")
+      
         application.industrySpecInit()
 
         $('.link-del-btn').click(deleteLink)

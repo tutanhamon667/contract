@@ -805,7 +805,11 @@ def get_job(request):
 def get_company(request):
 	try:
 		id = request.POST["id"]
-		company = list(Company.get_active_company(id).values())[0]
+		company = list(Company.get_active_company(id).values())
+		if len(company) == 0:
+			return JsonResponse({'success': False, "msg": "Компания не активна"})
+		company = company[0]
+		logo = None
 		rating = CustomerReview.get_company_rating(company["id"])
 		reviews = list(CustomerReview.objects.filter(company_id=company["id"]))
 		contacts = list(Contact.get_company_contacts(company["id"]))

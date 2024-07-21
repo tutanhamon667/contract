@@ -121,11 +121,11 @@ const alpineApp = function() {
         resumes: [],
         filters: {
             page: 0,
-            limit: 3
+            limit: 10
         },
         reviews_filters: {
             page: 0,
-            limit: 3
+            limit: 10
         },
         pagination: [],
         reviews_pagination: [],
@@ -550,13 +550,7 @@ const alpineApp = function() {
 
             }
             return getAction(invite, user)
-            if (user.id >= 0) {
 
-
-
-
-            }
-            return ''
         },
 
         getResponseInviteStatus: (id) => {
@@ -687,6 +681,7 @@ const alpineApp = function() {
         if (result.success) {
             const successMsg = document.querySelector("#review-form-success-msg")
             successMsg.innerText = "Спасибо за отзыв, он будет отображаться, после модерации"
+            document.querySelector('#reviewForm button').disabled = true
         } else {
             const errorMsg = document.querySelector("#review-form-error-msg")
             for (let error in result.data) {
@@ -721,6 +716,7 @@ const alpineApp = function() {
         if (result.success) {
             const successMsg = document.querySelector("#review-form-success-msg")
             successMsg.innerText = "Спасибо за отзыв, он будет отображаться, после модерации"
+            document.querySelector('#review_form button').disabled = true
         } else {
             const errorMsg = document.querySelector("#review-form-error-msg")
             for (let error in result.data) {
@@ -1223,27 +1219,35 @@ const alpineApp = function() {
         const user = await this.getUser()
         if (user.success) {
             this.setUser(user.data)
-            if (user.data.is_worker) {
-                const resumes = await this.getResumes()
-                if (resumes.success) {
-                    this.setResumes(resumes.data)
+            if (user.data) {
+                const company = await this.getCompany(id)
+                if (company.success) {
+                    Alpine.store('main').company = company.data
+                    const resumes = await this.getResumes()
+                    if (resumes.success) {
+                        this.setResumes(resumes.data)
+                    }
+                    const reviews = await this.getCompanyReviews({
+                        company_id: id
+                    })
+                    if (reviews.success) {
+                        Alpine.store('main').reviews = reviews.data
+                        Alpine.store('main').reviewsCount = reviews.count
+                        const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').reviewsCount, Alpine.store('main').reviews_filters)
+                        Alpine.store('main').reviews_pagination = pagination
+                    }
+                } else {
+                    alertModal(company.msg, () => {
+                        window.location.href = '/'
+                    })
                 }
+
             }
         }
 
-        const company = await this.getCompany(id)
-        if (company.success) {
-            Alpine.store('main').company = company.data
-        }
-        const reviews = await this.getCompanyReviews({
-            company_id: id
-        })
-        if (reviews.success) {
-            Alpine.store('main').reviews = reviews.data
-            Alpine.store('main').reviewsCount = reviews.count
-            const pagination = Alpine.store('main').createPaginationArray(Alpine.store('main').reviewsCount, Alpine.store('main').reviews_filters)
-            Alpine.store('main').reviews_pagination = pagination
-        }
+
+
+
     }
     this.formatTransactionDate = (timestamp) => {
         const d = new Date(parseInt(timestamp) * 1000)

@@ -491,8 +491,10 @@ def profile_company_view(request):
 				comp.logo = file_model
 			comp.save()
 			links = request.POST.getlist('link[]')
-			Contact.update_company_contacts(user, links)
+			errs = Contact.update_company_contacts(user, links)
 			messages.success(request, 'Информация о компании была успешно обновлена')
+			if len(errs) > 0:
+				messages.error(request, 'При обновлении информации произошли следующие ошибки: ' + ', '.join(errs))
 			return redirect(to='profile_company_view')
 		return render(request, './blocks/profile/profile_company.html', {
 			'form': form,

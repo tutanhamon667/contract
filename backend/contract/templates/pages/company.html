@@ -147,7 +147,7 @@ font-size: 14px;"></span>
                             <div class="col-10">
 
                                 <template x-if="$store.main.user.id<0">
-                                    <a href='worker/signin' class="btn btn-success">Войти для отклика</a>
+                                    <a href='/worker/signin?redirect=/company/{{company.id}}' class="btn btn-success">Войти для отклика</a>
                                 </template>
                                 <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
                                     <div x-data="{res: $store.main.getResponseInviteElement(job.id)}">
@@ -208,7 +208,7 @@ font-size: 14px;"></span>
                 </div>
             </template>
 
-            <template x-if="$store.main.jobs.length <= $store.main.jobCount">
+            <template x-if="$store.main.jobs.length < $store.main.jobCount">
                 <div class="pagination-container flex">
                     <template x-for="paginationItem in $store.main.pagination">
                         <div :key="'pagination_' + index + '_page_' + $store.main.filters.page">
@@ -252,7 +252,7 @@ font-size: 14px;"></span>
                 </template>
             </template>
             <template x-if="$store.main.reviews">
-                <template x-if="$store.main.reviews.length <= $store.main.reviewsCount">
+                <template x-if="$store.main.reviews.length < $store.main.reviewsCount">
                     <div class="pagination-container flex">
                         <template x-for="paginationItem in $store.main.reviews_pagination">
                             <div :key="'pagination_' + index + '_page_' + $store.main.reviews_filters.page">
@@ -273,12 +273,23 @@ font-size: 14px;"></span>
         <div class="row mt-5">
             <h4>Оставьте отзыв о работодателе</h4>
             <div class="col-lg-4 col-md-6 col-sm-12">
-                <form method="post" action="/api/create_review" @submit.prevent="application.createReview"
+                <form method="post" action="/api/create_review" id="review_form" @submit.prevent="application.createReview"
                     id="reviewForm">
                     <p id="review-form-error-msg" class="form-error-msg"></p>
                     <p id="review-form-success-msg" class="form-success-msg"></p>
                     {% bootstrap_form review_form %}
+                    <div class="d-flex ">
+                        <template x-for="item in [0, 1, 2, 3, 4]">
+                            <label :class="'rating-star, star-fill" :key=''></label>
+                        </template>
+                    
+                    </div>
+                    {% if  user.is_authenticated  %}
                     <button class="btn btn-primary">Отправить</button>
+                    {% else %}
+                    <a class="btn btn-primary" href="/worker/signin?redirect=/company/{{company.id}}">Войти</a>
+                    {% endif %}
+                    
                 </form>
             </div>
         </div>

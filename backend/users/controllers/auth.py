@@ -18,6 +18,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count
 from btc.models import Address as WalletAddress
 from bitcoinlib.wallets import *
+from django.apps import apps
+from users.models.common import ModerateRequest
 
 def logout_view(request):
 	if request.user.is_authenticated:
@@ -30,6 +32,8 @@ def authenticate_view(request, template, redirect_to):
 	categories = ArticleCategory.objects.all()
 	if request.method == "GET":
 		form = LoginForm()
+		if 'redirect' in request.GET and  request.GET['redirect']:
+			request.session['redirect'] = request.GET['redirect']
 		recovery_form = RestorePasswordForm()
 		return render(request, f'pages/{template}.html',
 					  {'form': form, 'recovery_form': recovery_form, 'articles': articles,
@@ -70,6 +74,9 @@ def authenticate_view(request, template, redirect_to):
 				res = user_core.login(username=login, password=password, request=request)
 
 				if res:
+					if 'redirect' in request.session and request.session.get('redirect'):
+						redirect_to = request.session.get('redirect')
+						del request.session['redirect']
 					return redirect(redirect_to)
 				else:
 					recovery_form = RestorePasswordForm(data=request.POST)
@@ -96,7 +103,18 @@ def login_worker_view(request):
 def login_customer_view(request):
 	return authenticate_view(request, "login_customer", "for_customers")
 
+def get_changed_data(new_instance, instance):
+	changed_data = {}
+	model = apps.get_model('users', 'company')
+	for field in model._meta.fields:
+		if field.name in instance:
+			original_value = getattr(instance, field.name)
+			form_value = getattr(new_instance, field.name)
+			if original_value != form_value:
+				changed_data[field.name] =  {"value":form_value, "type":"text", 'title': field.verbose_name} 
+	return changed_data
 
+@transaction.atomic
 def signup_user(request, is_customer, template, redirect_to):
 
 
@@ -133,12 +151,11 @@ def signup_user(request, is_customer, template, redirect_to):
 					company_name = request.POST.get('company_name')
 					customer_company = Company(user=user, name=company_name)
 					customer_company.save()
-					changes = get_changed_data(customer_company, {'title':'', 'description':''},['title', 'description'])
-					if 'title' in changes or 'description' in changes:
-						review_request = ModerateRequest.create_request(Company, customer_company.id, changes=changes, comment='Создание компании')
-						chat = Chat.get_user_system_chat(request.user)
-						chat.create_system_message(f' Создана заявка на создание компании: #{review_request.id}. Ждите проверки модератора')
-						messages.success(request, 'Информация о компании будет отправлена на проверку модератором')
+					changes = get_changed_data(customer_company, {'title':'', 'description':''})
+					review_request = ModerateRequest.create_request(Company, customer_company.id, changes=changes, comment='Создание компании')
+					chat = Chat.get_user_system_chat(request.user)
+					chat.create_system_message(f' Создана заявка на создание компании: #{review_request.id}. Ждите проверки модератора')
+					messages.success(request, 'Информация о компании будет отправлена на проверку модератором')
 				wallet = get_wallet()
 				addresses_count = get_addresses_count(wallet)
 				address = generate_address(addresses_count + 1, wallet.mnemonic)

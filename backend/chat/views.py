@@ -31,7 +31,7 @@ def download(request, file_id):
 
 def index(request):
 	if not request.user.is_authenticated:
-		return redirect('signin')
+		return redirect('worker_signin')
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
 	serialized_chat = {"user_id": request.user.id, "chat_id": 'null'}
@@ -40,7 +40,7 @@ def index(request):
 
 def index_chat(request, chat_id):
 	if not request.user.is_authenticated:
-		return redirect('signin')
+		return redirect('worker_signin')
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
 	serialized_chat = {"user_id": request.user.id, "chat_id": chat_id}

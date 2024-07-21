@@ -39,7 +39,7 @@ schema_view = get_schema_view(
 	public=True,
 	permission_classes=(permissions.AllowAny,),
 )
-CKEDITOR_5_FILE_STORAGE = "/media"  # optional
+
 urlpatterns = [
 
 	path('ckeditor5/', include('django_ckeditor_5.urls')),

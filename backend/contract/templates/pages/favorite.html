@@ -88,7 +88,7 @@
                                     <div class="col-10">
 
                                         <template x-if="$store.main.user.id<0">
-                                            <a href='worker/signin' class="btn btn-success">Войти для отклика</a>
+                                            <a href='/worker/signin' class="btn btn-success">Войти для отклика</a>
                                         </template>
                                         <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
                                             <div x-data="{res: $store.main.getResponseInviteElement(job.invite)}">

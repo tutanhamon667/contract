@@ -70,6 +70,7 @@ class ModerateView:
 					if status == 1:
 						instance.accept(final_comment)
 						reason_obj.moderated = True
+						reason_obj.save()
 						instance.save()
 						if instance.changes:
 							reason_obj.updateModeratedFields(instance.changes)
@@ -79,6 +80,7 @@ class ModerateView:
 					elif status == 2:
 						instance.decline(final_comment)
 						reason_obj.moderated = False
+						reason_obj.save()
 						instance.save()
 						owner = reason_obj.get_owner()
 						chat = Chat.get_user_system_chat(owner)

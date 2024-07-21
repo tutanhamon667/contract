@@ -1,6 +1,6 @@
 import datetime
 
-
+import re
 from django.contrib.auth.hashers import make_password
 import random
 import string
@@ -153,6 +153,27 @@ User = get_user_model()
 #define new method get_member from user model
 User.get_member = lambda self: Member.objects.get(id=self.id)
 
+def validate_input(input_data):
+	link_pattern = re.compile(
+		r'^(?:http|ftp)s?://'  # http:// or https://
+		r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+		r'localhost|'  # localhost...
+		r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+		r'(?::\d+)?'  # optional port
+		r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+	
+	phone_pattern = re.compile(r'^\+?1?\d{9,15}$')
+	
+	email_pattern = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+	
+	if re.match(link_pattern, input_data):
+		return "Link"
+	elif re.match(phone_pattern, input_data):
+		return "Phone Number"
+	elif re.match(email_pattern, input_data):
+		return "Email"
+	else:
+		return False
 
 class Contact(models.Model):
 	user = models.ForeignKey(to=Member, on_delete=models.CASCADE)
@@ -172,12 +193,18 @@ class Contact(models.Model):
 	def __str__(self):
 		return f'{self.type} {self.value} {self.preferred}'
 
+
 	@classmethod
 	def update_company_contacts(cls, user, items):
+		errs = []
 		cls.objects.filter(user=user).delete()
 		for item in items:
-			if item != '':
+			res = validate_input(item)
+			if res is False:
+				errs.append(item + ' не является ссылкой или номером телефона')
+			if item != '' and res:
 				cls.objects.create(user=user, value=item, type='other')
+		return errs
 
 	@classmethod
 	def get_company_links(cls, user):
@@ -937,7 +964,7 @@ class Job(models.Model):
 				specialisation__industry__name__icontains=_get["title"]))
 		if "salary_from" in _get and _get["salary_from"] != '':
 			filters_exists = True
-			objs = objs.filter(Q(salary_from__lte=_get["salary_from"]) | Q(salary_to__gte=_get["salary_from"]))
+			objs = objs.filter(salary_from__lte=_get["salary_from"],salary_to__gte=_get["salary_from"])
 		if "work_type" in _get and _get["work_type"] != '3':
 			filters_exists = True
 			if _get["work_type"] == '2':

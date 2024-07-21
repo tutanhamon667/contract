@@ -53,7 +53,7 @@ def customer_access(request):
 		else:
 			return redirect('index')
 	else:
-		return redirect('signin')
+		return redirect('customer_signin')
 
 def profile_wallet_view(request):
 	if request.user.is_authenticated:
@@ -82,4 +82,4 @@ def profile_wallet_view(request):
 				'articles': articles
 			})
 	else:
-		return redirect('signin')
+		return redirect('customer_signin')
