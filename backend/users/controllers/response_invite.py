@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+from btc.models import JobPayment
 from chat.models import Chat
 from common.models import Article, ArticleCategory
 from contract.settings import RESPONSE_INVITE_STATUS, CHAT_TYPE
@@ -37,7 +38,6 @@ class ResponseInviteView:
 				res = ResponseInvite.create_response(user, job_id, resume_id)
 				if not res:
 					return HttpResponse(status=500)
-				messages.success(request, 'Отклик отправлен')
 				return redirect(request.POST["redirect"])
 			except Exception as e:
 				print(e)
@@ -57,7 +57,6 @@ class ResponseInviteView:
 				if response_invite.chat:
 					chat = Chat.objects.get(id=response_invite.chat.id)
 					chat.delete()
-				messages.success(request, 'Отклик отменён')
 				return redirect(request.POST["redirect"])
 			except Exception as e:
 				print(e)
@@ -77,7 +76,6 @@ class ResponseInviteView:
 				if status == RESPONSE_INVITE_STATUS["ACCEPTED"]:
 					chat = Chat(customer=res.job.company.user, worker=res.resume.user, type=CHAT_TYPE["RESPONSE_INVITE"], response_invite=res)
 					chat.save()
-				messages.success(request, 'Отклик отправлен')
 				return redirect(request.POST["redirect"])
 			except Exception as e:
 				print(e)
@@ -98,7 +96,6 @@ class ResponseInviteView:
 					chat.delete()
 				if not res:
 					return HttpResponse(status=500)
-				messages.success(request, 'Отклик удалён')
 				return redirect(request.POST["redirect"])
 			except Exception as e:
 				print(e)

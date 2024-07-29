@@ -73,7 +73,6 @@ class JobView:
 						review_request = ModerateRequest.create_request(Job, edited_form.id, changes=None, comment='Создание вакансии')
 						chat = Chat.get_user_system_chat(request.user)
 						chat.create_system_message(f' Создана заявка на модерацию вакансии: #{review_request.id}. Ждите проверки модератора')
-						messages.success(request, 'Вакансия создана')
 						return redirect('profile_job_view_pay_for_tier', edited_form.id)
 					else:
 						return render(request, './blocks/profile/profile_job_create.html',
@@ -137,13 +136,10 @@ class JobView:
 							review_request = ModerateRequest.create_request(Job, original_job.id, changes=changes, comment='Редактирование вакансии')
 							chat = Chat.get_user_system_chat(request.user)
 							chat.create_system_message(f' Создана заявка на редактирование вакансии: #{review_request.id}. Ждите проверки модератора')
-							messages.success(request, 'Информация о вакансии будет обновлена после проверки модератором')
 						updated_job.company = company
 						updated_job.title = original_job.title
 						updated_job.description = original_job.description
 						updated_job.save()
-				
-						messages.success(request, 'Вакансия обновлена')
 						return redirect('profile_jobs')
 					else:
 						return render(request, './blocks/profile/profile_job_create.html',
@@ -172,7 +168,7 @@ class JobView:
 			"cost_usd": operation.cost_usd,
 			"success": success,
 			"description": description,
-			"msg": msg
+			"messages_success": msg
 			})
 		user = request.user
 		if user.is_authenticated:
@@ -241,12 +237,12 @@ class JobView:
 									new_operation = Operation.create_operation(user_address, new_job_payment,
 																			   new_job_payment.id, final_price_btc,
 																			   final_price_usd, paid_at, status)
-									messages.success(request, f'Заказ №{new_job_payment.id} {success_message}')
+									messages_success = f'Заказ №{new_job_payment.id} {success_message}'
 									return render_payment_result_page(
 			 								new_job_payment,
 										   	new_operation, 
 										   	'Оплата тарифа',
-										   	"Успешная оплата!"
+											   messages_success
 										   	)
 								except Exception as e:
 									messages.error(request, e)
@@ -277,7 +273,6 @@ class JobView:
 										new_operation = Operation.create_operation(user_address, new_job_payment,
 																				   new_job_payment.id, final_price_btc,
 																				   final_price_usd, paid_at, status)
-										messages.success(request, 'Заказ оплачен')
 										return render_payment_result_page(
 			 								new_job_payment,
 										   	new_operation, 
@@ -323,7 +318,6 @@ class JobView:
 										active_job_payment.expire_at = now + relativedelta(months=amount.amount)
 										operation.save()
 										active_job_payment.save()
-										messages.success(request, 'Заказ оплачен')
 										return render_payment_result_page(
 			 								active_job_payment,
 										   	operation, 
@@ -406,12 +400,11 @@ class JobView:
 									new_operation.save()
 									hold_operation.delete()
 									new_job_payment.save()
-									messages.success(request, f'Заказ №{new_job_payment.id} оплачен')
 									return render_payment_result_page(
 			 								new_job_payment,
 										   	new_operation, 
 										   	'Оплата тарифа',
-										   	"Успешная оплата!"
+										   	f'Заказ №{new_job_payment.id} оплачен'
 										   	)
 								else:
 									return render_payment_result_page(

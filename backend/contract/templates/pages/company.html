@@ -77,20 +77,22 @@ font-size: 14px;"></span>
             <template x-for="job in $store.main.jobs" :key="job.id + '_' + job.invite.id">
 
                 <div :class="['card', job.payment.job_tier_id == 3? 'hot-job-card ':'' ]">
+                    <div class="card-header">
+                        <div class="d-flex ">
+                            <a :href="'/jobs/' +job.id" class="card-title">
+                                <h4 class="title" x-text="job.title"></h4>
+                            </a>
+                            <template x-if="job.payment.job_tier_id == 3">
+                                <img src="{% static 'contract/img/icons/hot.svg' %}" height="22"
+                                    class="ml-5 company-logo-mini">
+                            </template>
 
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-10">
-                                <div class="d-flex card-section">
-                                    <a :href="'/jobs/' +job.id" class="card-title">
-                                        <h4 class="title" x-text="job.title"></h4>
-                                    </a>
-                                    <template x-if="job.payment.job_tier_id == 3">
-                                        <img src="{% static 'contract/img/icons/hot.svg' %}" height="22"
-                                            class="ml-5 company-logo-mini">
-                                    </template>
-
-                                </div>
+                               
                                 <div class=" card-section">
                                     <h3 class="card-subtitle salary" x-text="$store.main.getSalaryStr(job)"></h3>
                                 </div>
@@ -273,14 +275,15 @@ font-size: 14px;"></span>
         <div class="row mt-5">
             <h4>Оставьте отзыв о работодателе</h4>
             <div class="col-lg-4 col-md-6 col-sm-12">
-                <form method="post" action="/api/create_review" id="review_form" @submit.prevent="application.createReview"
+                <form method="post" action="/api/create_review" @submit.prevent="application.createReview"
                     id="reviewForm">
                     <p id="review-form-error-msg" class="form-error-msg"></p>
                     <p id="review-form-success-msg" class="form-success-msg"></p>
                     {% bootstrap_form review_form %}
-                    <div class="d-flex ">
-                        <template x-for="item in [0, 1, 2, 3, 4]">
-                            <label :class="'rating-star, star-fill" :key=''></label>
+                    <div class="d-flex mb-3 sca" id="company-rating-container" x-data="{'rating': 0, rates: [1, 2, 3, 4, 5]}">
+                        <template x-for="item in rates">
+                            <span class="rating-star star-fill" :value="item" ></span>
+
                         </template>
                     
                     </div>
@@ -305,6 +308,7 @@ font-size: 14px;"></span>
     $(document).ready(() => {
         const application = new app()
         application.initRating($('.star-rating .fa'), 'input.rating-value', false)
+        application.initFormRating($('#company-rating-container  .star-fill'), '[name="rating"]')
     })
 </script>
 {% endblock content %}

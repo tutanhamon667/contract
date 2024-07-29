@@ -12,9 +12,9 @@
 
                         <div class="mt-md-4 pb-5">
                             <div class="text-center mb-5">
-                                <img src="{% static "img/logo.png" %}" class="rounded" alt="...">
+                                <img src="{% static 'img/logo.png' %}" class="rounded" alt="...">
                             </div>
-                            <form method="POST">
+                            <form method="POST" >
                                 {% csrf_token %}
                                 {% bootstrap_form form %}
                                 <div class="captcha">

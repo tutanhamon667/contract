@@ -147,11 +147,13 @@ def company_view(request, company_id):
 def for_customers_view(request):
 	if request.method == 'GET':
 		banners = Banners.objects.all()
+		customers_count = Member.objects.filter(is_customer=True).count()
 		articles = Article.objects.all()
 		categories = ArticleCategory.objects.all()
 		return render(request, './pages/for_customers.html', {
 			'banners': banners,
 			'articles': articles,
+			'customers_count': customers_count,
 			'categories': categories})
 
 

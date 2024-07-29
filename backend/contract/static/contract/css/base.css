@@ -8,8 +8,39 @@
     height: 50px;
 }
 
+
+.card-body{
+    padding: 10px !important
+}
+
+.card-header{
+    padding: 10 10 0 !important;
+}
+::marker {
+    margin: 0  ;
+    padding: 0;
+}
+
+.mb-15 {
+    margin-bottom: 15px;
+}
+
+.card-header.no-bg{
+    background-color: transparent;
+}
+
 .mt-25 {
     margin-top: 0.25rem;
+}
+
+.sca {
+    scale: 2;
+    transform-origin: left;
+}
+
+.card h2.counter{
+    font-size: 36px !important;
+    font-weight: 500;
 }
 
 h1,
@@ -336,9 +367,15 @@ select {
 }
 
 .no-photo {
-    text-align: right;
+    text-align: center;
     height: 50px;
     width: 50px;
+    border-radius: 5px;
+    background-color: #c1c1c1;
+}
+
+.card{
+    overflow: hidden;
 }
 
 .favorite_job_checkbox {
@@ -373,8 +410,8 @@ select {
     padding: 0 0 0 0px;
     background: url("../img/icons/heart-empty.svg") no-repeat;
     background-position: center;
-    height: 50px;
-    width: 50px;
+    height: 45px;
+    width: 45px;
     border: 1px solid black;
     border-radius: 5px;
     background-size: 50%;
@@ -383,8 +420,8 @@ select {
 .favorite_job_checkbox:checked+.favorite-label {
     background: url("../img/icons/heart.svg") no-repeat;
     background-position: center;
-    height: 50px;
-    width: 50px;
+    height: 45px;
+    width: 45px;
     border: 1px solid black;
     border-radius: 5px;
     display: inline-block;
@@ -820,6 +857,8 @@ footer a.nav-link {
 }
 
 .company-logo-mini {
+    max-width: 50px;
+    max-height: 50px;
     border-radius: 10px;
     padding: 3px;
     background-color: #EDEDED;
@@ -1092,7 +1131,7 @@ section {
 }
 
 section>.row>div {
-    padding-top: 10px;
+   
 }
 
 .card {

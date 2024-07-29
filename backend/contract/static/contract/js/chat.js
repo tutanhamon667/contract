@@ -380,6 +380,10 @@ function Chat(user_id, chat_id) {
             return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear()
         },
         sendMessage: () => {
+            let chat = Alpine.store('chatsData').getActiveChat()
+            if (chat.other_user.is_moderator && chat.other_user.display_name === "System Notifications") {
+                return
+            }
             if (Alpine.store('chatsData').message || Alpine.store('chatsData').file_id) {
                 let chat = Alpine.store('chatsData').getActiveChat()
                 socket.chatSocket.send(JSON.stringify({
@@ -402,8 +406,11 @@ function Chat(user_id, chat_id) {
             console.log(e)
         },
         '@keypress'(event) {
-            if (event.key === 'Enter') {
-                Alpine.store('chatsData').sendMessage()
+            if(Alpine.store('chatsData').message.length < 255){
+        
+                if (event.key === 'Enter') {
+                    Alpine.store('chatsData').sendMessage()
+                }
             }
 
         }

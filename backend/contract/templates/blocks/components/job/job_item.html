@@ -7,17 +7,20 @@
     {% endif %}
 
     <div class="card {{ addition_card_class }}">
+    <div class="card-header">
+        <div class="card-title d-flex">
+            <a href="/jobs/{{ job.id }}" class="link-dark">
+                <h4>{{ job.title }}</h4>
+            </a>
+            {% if job.is_hot %}
+            <img src="{% static 'contract/img/icons/hot.svg' %}" height="22" class="ml-5 company-logo-mini">
+            {% endif %}
+        </div>
+    </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-9">
-                    <div class="card-title d-flex">
-                        <a href="/jobs/{{ job.id }}" class="link-dark">
-                            <h4>{{ job.title }}</h4>
-                        </a>
-                        {% if job.is_hot %}
-                        <img src="{% static 'contract/img/icons/hot.svg' %}" height="22" class="ml-5 company-logo-mini">
-                        {% endif %}
-                    </div>
+                  
                     <h3 class="card-subtitle salary">{{ job.final_salary }} ₽</h3>
                     <div class="d-flex card-content">
                         <a class="text-shadow" href="/company/{{ job.company.id }}">{{ job.company.name }}</a> <img src="{% static 'contract/img/icons/approved.svg' %}" height="12" class="ml-5 mt-15" />

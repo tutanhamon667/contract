@@ -49,7 +49,7 @@ class UserFile(models.Model):
 class Member(PermissionsMixin, AbstractBaseUser):
 	login = models.CharField(
 		verbose_name='Логин пользователя',
-		max_length=254,
+		max_length=20,
 		db_index=True,
 		unique=True,
 		null=True
@@ -57,21 +57,21 @@ class Member(PermissionsMixin, AbstractBaseUser):
 
 	display_name = models.CharField(
 		verbose_name='Отображаемое имя',
-		max_length=254,
+		max_length=30,
 		unique=True,
 		default='',
 		null=True
 	)
 
 	first_name = encrypt(models.CharField(
-		max_length=150,
+		max_length=20,
 		default='',
 		blank=True,
 		null=True
 	))
 
 	last_name = encrypt(models.CharField(
-		max_length=150,
+		max_length=20,
 		default='',
 		blank=True,
 		null=True
@@ -141,7 +141,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
 	
 
 	def make_random_password(self):
-		characters = string.ascii_letters + string.digits + string.punctuation
+		characters = string.ascii_letters + string.digits
 		password = ''.join(random.choice(characters) for i in range(12))
 		self.password =  make_password(password)
 		self.save()
@@ -179,10 +179,10 @@ class Contact(models.Model):
 	user = models.ForeignKey(to=Member, on_delete=models.CASCADE)
 	type = models.CharField(
 		choices=CONTACT_TYPE,
-		max_length=150,
+		max_length=15,
 	)
 	value = models.CharField(
-		max_length=150,
+		max_length=50,
 		verbose_name='Контакт'
 	)
 	preferred = models.BooleanField(
@@ -307,18 +307,19 @@ class Company(models.Model):
 
 	email = encrypt(models.EmailField(
 		verbose_name='публичный email для связи',
-		max_length=254,
+		max_length=50,
 		db_index=True,
 		null=True,
 		blank=True,
 		unique=True,
 	))
 	name = models.CharField(
-		max_length=150,
+		max_length=30,
 		verbose_name='Название компании или ваше имя'
 	)
 
 	about = CKEditor5Field(
+		
 		blank=True,
 		verbose_name='О себе', config_name='extends'
 	)
@@ -339,6 +340,16 @@ class Company(models.Model):
 
 	def __str__(self):
 		return self.name
+	
+	@property
+	def is_moderated(self):
+		if self.user.is_customer:
+			try:
+				company = Company.objects.get(user=self.user, moderated=True)
+				return True
+			except:
+				return False
+		return True
 
 	def get_different_fields_as_str(self,moderated_obj):
 		return  str({"name": self.name, "web": self.web, "logo": self.logo} ^ moderated_obj.__dict__.items())
@@ -551,7 +562,10 @@ class Resume(models.Model):
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
-
+	@classmethod
+	def can_user_create(cls, user):
+		active_resumes = cls.objects.filter(user=user, deleted=False).count()
+		return active_resumes  < 5
 
 	def set_deleted(self):
 		self.deleted_at = datetime.datetime.now()
@@ -697,13 +711,13 @@ class Job(models.Model):
 		default=0,
 		null=True,
 		blank=True,
-		verbose_name='Зарплата от'
+		verbose_name='Заработная плата, ₽'
 	)
 	salary_to = models.BigIntegerField(
 		default=0,
 		null=True,
 		blank=True,
-		verbose_name='Зарплата до'
+		verbose_name=''
 	)
 
 	work_experience = models.CharField(verbose_name='Опыт работы в месяцах', choices=CHOICES_WORK_EXPERIENCE,
@@ -728,6 +742,7 @@ class Job(models.Model):
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 	pseudo_tier_order = models.IntegerField(verbose_name='Порядок выдачи для тарифов', null=True, default=0, blank=True)
 
+
 	class Meta:
 		ordering = ('-id',)
 		verbose_name = 'Вакансия'
@@ -742,6 +757,22 @@ class Job(models.Model):
 		if 'description' in moderated_obj :
 			self.description = moderated_obj['description']['value']
 		self.save()
+
+	@property
+	def status_name(self):
+		if self.deleted:
+			return 'Удалена'
+		if self.moderated is False:
+			return 'На модерации'
+		if self.active_search is False:
+			return 'Не активна'
+		if self.company.is_moderated is False:
+			return 'Компания на модерации'
+		res = self.get_existing_payment()
+		if res is False:
+			return 'Не оплачен'
+		return 'Активна'
+
 
 	@property
 	def regions_name(self):
@@ -778,7 +809,7 @@ class Job(models.Model):
 
 	def get_existing_payment(self):
 		now = datetime.datetime.now()
-		payments = self.jobpayment_set.filter(expire_at__lte=now)
+		payments = self.jobpayment_set.filter(expire_at__gte=now)
 		if len(payments):
 			return payments[0]
 		else:
@@ -840,6 +871,21 @@ class Job(models.Model):
 	def get_new_jobs(cls, limit):
 		return cls.objects.filter( jobpayment__start_at__lte=timezone.now(), moderated=True, deleted=False, active_search=True,
 								  jobpayment__expire_at__gte=timezone.now()).order_by('-id')[:limit]
+	
+	@classmethod
+	def get_active_jobs(cls):
+		return cls.objects.filter(jobpayment__start_at__lte=timezone.now(), moderated=True, deleted=False, active_search=True,
+								  jobpayment__expire_at__gte=timezone.now()).order_by('-id')
+
+	@classmethod
+	def get_company_active_jobs(cls, company_id):
+		return cls.objects.filter(jobpayment__start_at__lte=timezone.now(), company=company_id, moderated=True, deleted=False, active_search=True,
+								  jobpayment__expire_at__gte=timezone.now()).order_by('-id')
+	
+	@classmethod
+	def check_company_active_job(cls, company_id, job_id):
+		return cls.objects.filter(jobpayment__start_at__lte=timezone.now(), company=company_id, id=job_id, moderated=True, deleted=False, active_search=True,
+								  jobpayment__expire_at__gte=timezone.now()).order_by('-id')
 
 	@classmethod
 	def get_active_job(cls, id):

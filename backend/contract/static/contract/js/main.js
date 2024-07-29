@@ -1,5 +1,28 @@
 const app = function() {
 
+    const successModal = (message, callback) => {
+        var modal = new bootstrap.Modal(document.getElementById('notificationModal'), {
+            keyboard: false
+        });
+        var modalContent = document.getElementById('notificationModal').querySelector('.modal-body')
+        var okBtn = document.getElementById('notificationModal').querySelector('#notofyModalOkButton')
+
+        okBtn.onclick = () => {
+            callback()
+            modal.hide();
+        }
+
+        modalContent.textContent = message
+
+        modal.show();
+        setTimeout(() => {
+            if (callback) callback()
+            modal.hide();
+        }, 3000)
+    }
+
+  
+
     const makeRequest = function(url, data, callback) {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         $.ajax({
@@ -17,6 +40,28 @@ const app = function() {
             }
         })
     }
+
+    const initFormRating = function( inputSelector, targetSelector) {
+
+       
+            $(inputSelector).on('click', function() {
+                let value = parseInt($(this).val());
+                $(inputSelector).each((index, item) => {
+                    $(item).removeClass('star-fill')
+                    $(item).removeClass('star-empty')
+                    if(index + 1 <= value) {
+                        $(item).addClass('star-fill')
+                    }else{
+                        $(item).addClass('star-empty')
+                    }
+                })
+
+                $(targetSelector).val(value)
+            });
+
+    }
+
+    // 8964
 
     const initRating = function(el, inputSelector, editable = true) {
 
@@ -120,6 +165,13 @@ const app = function() {
             }
             $(filterForm).submit()
         })
+    }
+
+    const positiveCheck = (event) =>     {
+        if (event.keyCode < 48 || event.keyCode > 57) {
+            event.preventDefault();
+        }
+
     }
 
     const deleteJobHandler = (id) => {
@@ -245,12 +297,15 @@ const app = function() {
             $(filterForm).submit()
         })
     }
+
+
     return {
         deleteJobHandler: deleteJobHandler,
         industrySpecInit: industrySpecInit,
         readURL: readURL,
         validateInput: validateInput,
         initRating: initRating,
+        initFormRating:initFormRating,
         profileResponseInvitesFilters: profileResponseInvitesFilters,
         radioInputChecker: radioInputChecker,
         profileJobsFilters: profileJobsFilters,

@@ -24,7 +24,7 @@
                                         </div>
                                         {% else %}
                                         <div class="shop_panel_img ">
-                                            <img src="{% static 'contract/img/icons/no-photo.svg' %}" loading="lazy" id="profilePhoto">
+                                            <img src="{% static 'contract/img/profile/acc.svg' %}" loading="lazy" id="profilePhoto">
                                         </div>
                                         {% endif %}
 
@@ -72,7 +72,7 @@
                                         </div>
                                         {% endfor %}
                                         {% if messages %}
-                                        <ul class="messages">
+                                        <ul class="messages-hide">
                                             {% for message in messages %}
                                             <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
                                                 {{ message }}</li>

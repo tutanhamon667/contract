@@ -58,10 +58,12 @@
                             <div class="col">
                                 <a href="/jobs?specialisation={{ category.id }}">
                                     <div class="card">
-                                        <div class="card-header d-flex">
+                                        <div class="card-header">
+                                            <div class="card-title d-flex">
                                             <img src="{% get_static_prefix %}contract/img/icons/{{ category.icon }}.svg"
                                                  class="h-icon"/>
                                             <h4>{{ category.name }}</h4>
+                                            </div>  
                                         </div>
                                         <div class="card-body padding-05">
                                             <h4 class="card-title">Минимальная зп: {{ category.get_min }} ₽</h4>
@@ -127,8 +129,8 @@
                 <img src="{% static 'contract/img/icons/hot.svg' %}" class="h-icon">
                 <h4>Горячие вакансии</h4>
             </div>
-            <div class="d-flex">
-                {% with addition_card_class=' hot-job-card horizontal-height' short=True show_company_logo=True jobs=hot_jobs col="mr-10" %}
+            <div class="row">
+                {% with addition_card_class=' hot-job-card horizontal-height' short=True show_company_logo=True jobs=hot_jobs col=" col-lg-4 col-md-4 col-sm-6" %}
                     {% include "../blocks/components/job/job_component.html" %}
                 {% endwith %}
             </div>
@@ -140,7 +142,7 @@
                 <h4>Новые вакансии</h4>
             </div>
             <div class="row">
-                {% with addition_card_class=' horizontal-height' short=True show_company_logo=True jobs=new_jobs col=' col-lg-4 col-md-6 col-sm-6 ' %}
+                {% with addition_card_class=' horizontal-height' short=True show_company_logo=True jobs=new_jobs col=' col-lg-4 col-md-4 col-sm-6 ' %}
                     {% include "../blocks/components/job/job_component.html" %}
                 {% endwith %}
             </div>

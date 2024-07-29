@@ -80,7 +80,6 @@ def create_ticket(request):
 			new_ticket.owner = request.user.get_member()
 			new_ticket.status = 0
 			new_ticket.save()
-			messages.success(request, 'Запрос был успешно создан')
 			return redirect(to='profile_main')
 		else:
 			return render(request, './moderate/ticket.html', {
@@ -93,6 +92,8 @@ def create_ticket(request):
 def profile_resume_create_view(request):
 	user = request.user
 	access = Access(user)
+	messages_success = None
+	messages_error = None
 	code = access.check_access("profile_resume_create")
 	if code != 200:
 		if code == 401:
@@ -122,15 +123,20 @@ def profile_resume_create_view(request):
 			initial = request.POST
 			initial._mutable = True
 			initial['region'] = request.POST.getlist('region')
-			if form.is_valid():
-				edited_form = form.save(commit=False)
-				edited_form.user = request.user
-				edited_form.save()
-				form.save_m2m()
-				return redirect(to='profile_resumes')
+			if Resume.can_user_create(user):
+				if form.is_valid():
+					edited_form = form.save(commit=False)
+					edited_form.user = request.user
+					edited_form.save()
+					form.save_m2m()
+					return redirect(to='profile_resumes')
+			else:
+				messages_error = "Вы не можете создать больше 5 резюме"
 			return render(request, './blocks/profile/profile_resume_edit.html', {
 				'form': form,
 				'categories': categories,
+				'messages_error': messages_error,
+				'messages_success': messages_success,
 				'articles': articles
 			})
 
@@ -146,7 +152,7 @@ def profile_resume_delete_view(request, resume_id):
 			return HttpResponse(status=code)
 	resume = Resume.objects.get(user=user.id, id=resume_id)
 	resume.set_deleted()
-	messages.success(request, 'Резюме удалено')
+
 	return redirect(to='profile_resumes')
 
 def profile_resume_edit_view(request, resume_id):
@@ -233,7 +239,7 @@ def profile_resumes_view(request):
 	articles = Article.objects.all()
 	categories = ArticleCategory.objects.all()
 
-	def resume_page(form, user):
+	def resume_page(form, user, messages_success=None, messages_error=None):
 		resumes = Resume.objects.filter(user=user.id)
 		if len(resumes) == 0:
 			return redirect('profile_resume_create')
@@ -241,6 +247,8 @@ def profile_resumes_view(request):
 					  {'resumes': resumes,
 					   'form': form,
 					   'categories': categories,
+					   'messages_success': messages_success,
+					   'messages_error': messages_error,
 					   'articles': articles
 					   })
 
@@ -256,11 +264,13 @@ def profile_resumes_view(request):
 		try:
 			resume_form = ResumeForm(request.POST)
 			resume_form.user = request.user
-			if resume_form.is_valid():
-				resume_form.save()
-				resume_form.clean()
-				messages.success(request, 'Резюме создано')
-			return resume_page(resume_form, user)
+			if Resume.can_user_create(request.user):
+				if resume_form.is_valid():
+					resume_form.save()
+					resume_form.clean()
+				return resume_page(resume_form, user)
+			else:
+				return resume_page(resume_form, user, None, 'Вы можете создать не больше пяти резюме')
 		except Exception as e:
 			messages.error(request, f'Внутренняя ошибка {e}')
 			return HttpResponse(status=500)
@@ -484,15 +494,13 @@ def profile_company_view(request):
 				review_request = ModerateRequest.create_request(Company,original_company.id, changes=changes, comment='Редактирование компании')
 				chat = Chat.get_user_system_chat(request.user)
 				chat.create_system_message(f' Создана заявка на редактирование компании: #{review_request.id}. Ждите проверки модератора')
-				messages.success(request, 'Информация о компании будет обновлена после проверки модератором')
-			
+
 			comp.name = original_company.name
 			if file_model is not None:
 				comp.logo = file_model
 			comp.save()
 			links = request.POST.getlist('link[]')
 			errs = Contact.update_company_contacts(user, links)
-			messages.success(request, 'Информация о компании была успешно обновлена')
 			if len(errs) > 0:
 				messages.error(request, 'При обновлении информации произошли следующие ошибки: ' + ', '.join(errs))
 			return redirect(to='profile_company_view')
@@ -596,7 +604,6 @@ def change_password(request):
 			if form.is_valid():
 				user = form.save()
 				update_session_auth_hash(request, user) 
-				messages.success(request, 'Пароль был успешно изменён')
 			else:
 				articles = Article.objects.all()
 				categories = ArticleCategory.objects.all()

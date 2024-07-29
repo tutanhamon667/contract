@@ -40,6 +40,7 @@
                         <th scope="col">Название вакансия</th>
                         <th scope="col">Тип занятости</th>
                         <th scope="col">Просмотры</th>
+                        <th scope="col">Статус</th>
                         <th scope="col">Отклики</th>
                         <th scope="col">Истекает</th>
                         <th scope="col"></th>
@@ -51,7 +52,7 @@
                     {% for job in jobs_paid %}
                     <tr>
                         <td>
-                            <p>{{ job.title }}</p>
+                            <p><a href="{% url 'profile_job_view_update' job.id %}">{{ job.title }}</a>   </p>
                             <p class="text-shadow">{{ job.tier_name }}</p>
                         </td>
                         <td>
@@ -62,6 +63,7 @@
                             {% endif %}
                         </td>
                         <td>{{ job.views }}</td>
+                        <td>{{ job.status_name }}</td>
                         <td>{{ job.responses_count }}</td>
                         <td>{{ job.payment_expire|date:"j.m.Y" }}</td>
                         <td><a href="{% url 'profile_job_view_pay_for_tier' job.id %}" class="btn-success">Сменить тариф </a></td>
@@ -82,6 +84,7 @@
                         <th scope="col">Тип занятости</th>
                         <th scope="col">Просмотры</th>
                         <th scope="col">Отклики</th>
+                        <th scope="col">Статус</th>
                         <th scope="col">Истекает</th>
                         <th scope="col"></th>
                         <th scope="col"></th>
@@ -104,6 +107,7 @@
                         </td>
                         <td>{{ job.views }}</td>
                         <td>{{ job.responses_count }}</td>
+                        <td>{{ job.status_name }}</td>
                         <td>{{ job.payment_expire|date:"j.m.Y"}}</td>
                         <td><a href="{% url 'profile_job_view_pay_for_tier' job.id %}" class="btn-success">Выбрать тариф и оплатить</a></td>
                         <td><a href="/profile/jobs/update/{{ job.id }}" class="btn-success">Редактировать</a></td>

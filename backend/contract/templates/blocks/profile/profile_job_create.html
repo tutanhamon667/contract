@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
     <section>
-        {% if resume %}
+        {% if job %}
         <h1 class="my_order_title">Редактировать Вакансию</h1>
         {% else %}
         <h1 class="my_order_title">Создание вакансию</h1>
@@ -45,13 +45,7 @@
                     {% endfor %}
 
                 </div>
-                {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
+               
                 <div class="row footer-btn-container">
 
                     <div class="col-lg-3 col-md-4 col-sm-6">
@@ -75,11 +69,24 @@
 
     </section>
 </div>
+
+{% if messages %}
+<ul class="messages-hide">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+
+
+    
+</ul>
+{% endif %}
 <script>
     $(document).ready(function() {
         const application = new app()
         application.radioMultiSelectChecker("[name='is_offline']", 'True', "button[for=\"region\"]", "#region")
         application.industrySpecInit()
+       
     });
 </script>
 {% endblock content %}

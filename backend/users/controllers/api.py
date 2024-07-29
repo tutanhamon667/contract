@@ -1,4 +1,5 @@
 import json
+from django.shortcuts import redirect
 from rest_framework import generics
 from django.core import serializers
 from django.forms import model_to_dict
@@ -876,20 +877,20 @@ def get_profile_jobs(request):
 				return redirect('signin')
 			else:
 				return HttpResponse(status=code)
-			if 'paid' in request.POST:
-				company = Company.objects.get(user_id=user.id)
-				jobs = Job.objects.filter(company=company.id)
-				now = datetime.datetime.now()
-				if request.POST["paid"] == "true":
-					jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
-					return JsonResponse({'success': True, "data": {'paid': list(jobs_paid.values()), 'not_paid': list(jobs_not_paid.values())}})
-				else:
-					jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
-					jobs_not_paid_ids = []
-					for job_paid in jobs_paid:
-						jobs_not_paid_ids.append(job_paid.id)
-					jobs_not_paid = jobs.filter().exclude(id__in=jobs_not_paid_ids)
-					return JsonResponse({'success': True, "data": {'paid': list(jobs_paid.values()), 'not_paid': list(jobs_not_paid.values())}})
+		if 'paid' in request.POST:
+			company = Company.objects.get(user_id=user.id)
+			jobs = Job.objects.filter(company=company.id)
+			now = datetime.datetime.now()
+			if request.POST["paid"] == "true":
+				jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
+				return JsonResponse({'success': True, "data": {'paid': list(jobs_paid.values()), 'not_paid': list(jobs_not_paid.values())}})
+			else:
+				jobs_paid = jobs.filter(jobpayment__start_at__lte=now, jobpayment__expire_at__gte=now)
+				jobs_not_paid_ids = []
+				for job_paid in jobs_paid:
+					jobs_not_paid_ids.append(job_paid.id)
+				jobs_not_paid = jobs.filter().exclude(id__in=jobs_not_paid_ids)
+				return JsonResponse({'success': True, "data": {'paid': list(jobs_paid.values()), 'not_paid': list(jobs_not_paid.values())}})
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 

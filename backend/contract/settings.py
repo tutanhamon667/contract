@@ -101,7 +101,8 @@ MIDDLEWARE = [
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	'users.middleware.captcha_check.captcha_check'
+	'users.middleware.captcha_check.captcha_check',
+
 ]
 
 ROOT_URLCONF = 'contract.urls'

@@ -46,19 +46,19 @@ def authenticate_view(request, template, redirect_to):
 					userr = Member.objects.get(login=recovery_form.cleaned_data.get('login') , recovery_code=recovery_form.cleaned_data.get('recovery_code'))\
 					#generate new password
 					password = userr.make_random_password()
-					messages.success(request, 'Ваш пароль был изменён на:' + password)
+					messages_success = 'Ваш пароль был изменён на:' + password
 					form = LoginForm()
 					recovery_form = RestorePasswordForm()
 					return render(request, f'pages/{template}.html',
 								{'form': form, 'recovery_form': recovery_form, 'articles': articles,
-								'categories': categories})
+								'categories': categories, 'messages_success': messages_success})
 				except Member.DoesNotExist:
 					form = LoginForm()
 					recovery_form = RestorePasswordForm()
-					messages.error(request,"Пользователь не найден")
+					messages_error = 'Пользователь не найден'
 					return render(request, f'pages/{template}.html',
 								{'form': form, 'recovery_form': recovery_form, 'articles': articles,
-								'categories': categories})
+								'categories':  categories, 'messages_error': messages_error})
 			else:
 				form = LoginForm()
 				return render(request, f'pages/{template}.html',
@@ -72,7 +72,6 @@ def authenticate_view(request, template, redirect_to):
 				password = form.cleaned_data.get('password')
 				user_core = UserCore(User)
 				res = user_core.login(username=login, password=password, request=request)
-
 				if res:
 					if 'redirect' in request.session and request.session.get('redirect'):
 						redirect_to = request.session.get('redirect')
@@ -155,7 +154,6 @@ def signup_user(request, is_customer, template, redirect_to):
 					review_request = ModerateRequest.create_request(Company, customer_company.id, changes=changes, comment='Создание компании')
 					chat = Chat.get_user_system_chat(request.user)
 					chat.create_system_message(f' Создана заявка на создание компании: #{review_request.id}. Ждите проверки модератора')
-					messages.success(request, 'Информация о компании будет отправлена на проверку модератором')
 				wallet = get_wallet()
 				addresses_count = get_addresses_count(wallet)
 				address = generate_address(addresses_count + 1, wallet.mnemonic)

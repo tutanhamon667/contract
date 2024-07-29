@@ -49,10 +49,36 @@ const alpineApp = function() {
         modalContent.textContent = message
         modalTitle.textContent = title
 
-        modal.show();
+        modal.show(  );
+        setTimeout(() => {
+            modal.hide();
+        }, 3000)
     }
 
     this.confirmationModal = confirmationModal
+
+    const successModal = (message, callback) => {
+        var modal = new bootstrap.Modal(document.getElementById('notificationModal'), {
+            keyboard: false
+        });
+        var modalContent = document.getElementById('notificationModal').querySelector('.modal-body')
+        var okBtn = document.getElementById('notificationModal').querySelector('#notofyModalOkButton')
+
+        okBtn.onclick = () => {
+            callback()
+            modal.hide();
+        }
+
+        modalContent.textContent = message
+
+        modal.show();
+        setTimeout(() => {
+            if (callback) callback()
+            modal.hide();
+        }, 3000)
+    }
+
+    this.successModal = successModal
 
     const alertModal = (message, callback) => {
         var modal = new bootstrap.Modal(document.getElementById('error-modal'), {
@@ -76,6 +102,15 @@ const alpineApp = function() {
         modal.show();
     }
     this.alertModal = alertModal
+    var messages = document.messages_success
+    if (messages) {
+        successModal(messages)
+    }
+
+    messages = document.messages_error
+    if (messages) {
+        successModal(messages)
+    }
 
     const makeRequest = async function(url, data) {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -232,6 +267,7 @@ const alpineApp = function() {
             if (typeof data.page === 'undefined')
                 data.page = Alpine.store('main').filters.page
             data.limit = Alpine.store('main').filters.limit
+            Alpine.store('main').filters = data
             return makeRequest('jobs', data)
         },
         getFavoriteJobs: async (data = {}) => {
@@ -731,6 +767,7 @@ const alpineApp = function() {
     }
 
     this.getJobs = async (filters) => {
+
         return Alpine.store('main').getJobs(filters)
     }
 
@@ -790,7 +827,7 @@ const alpineApp = function() {
 
     this.setResumes = (data) => {
         Alpine.store('main').setResumes(data)
-        if (data.length) {
+        if (data && data.length) {
             Alpine.store('main').selectedResume = data[0].id
         }
     }
@@ -809,6 +846,7 @@ const alpineApp = function() {
             this.setJobs([])
             const res = await this.getJobs()
             if (res.success) {
+                this.successModal('Сохранено')
                 this.setJobs(res.data)
             } else {
                 alertModal(res.msg)
@@ -819,6 +857,9 @@ const alpineApp = function() {
 
         const result = await Alpine.store('main').sendResponseInvite(action, id)
         if (result.success === true) {
+            confirmationModal('Ответ отправлен', 'Внимание', () => {
+                window.location.reload()
+            })
             await this.setRIFilters({})
             await this.getCounters()
         }
@@ -867,10 +908,6 @@ const alpineApp = function() {
                 alertModal(res.msg)
             }
         }
-    }
-
-    this.setFavorite = async (job_id) => {
-        const result = await Alpine.store('main').setFavorite(job_id)
     }
 
 
@@ -1284,7 +1321,9 @@ const alpineApp = function() {
         return `(${reviewsCount} ${word})`
     }
 
-    this.initJobs = async () => {
+    this.initJobs = async (filters={} ) => {
+        Alpine.store('main').filters = Object.assign( filters, Alpine.store('main').filters)
+        console.log(Alpine.store('main').filters)
         const user = await this.getUser()
         if (user.success) {
             this.setUser(user.data)
@@ -1296,7 +1335,7 @@ const alpineApp = function() {
             }
         }
 
-        await this.filterJobs()
+        await this.filterJobs( Alpine.store('main').filters)
     }
 
     this.initFavoriteJobsPage = async () => {
@@ -1430,7 +1469,13 @@ const alpineApp = function() {
         }
     }
 
-
+    this.initPositiveCheck = () => {
+        $('input[type="number"]').on('keyup', function(e) {
+            if (parseInt(e.target.value) < 0) {
+                e.target.value = 0
+            }
+        })
+    }
 
 
     this.initJobPayment = async (id) => {
@@ -1525,7 +1570,18 @@ const alpineApp = function() {
     const getOptionById = (name, value) =>
         document.querySelector(`#${name} > option[value="${value}"]`);
 
+    Alpine.bind('positive', {
+        type: 'input',
 
+        '@init'(e) {
+            console.log(e)
+        },
+        '@change'(e) {
+            if (e.target.value < 0) {
+                e.target.value = 0
+            }
+        }
+    })
 
     Alpine.bind('payTierBtn', {
         type: 'button',
@@ -1568,7 +1624,7 @@ const alpineApp = function() {
     customerAccessPay = async () => {
         const res = await makeRequest('access_payment', {})
         if (res.success && res.code === 200) {
-            confirmationModal('Подписка оплачена до: ' + this.formatShortDate(res.data.expire_at), 'Внимание', () => {
+            this.successModal('Подписка оплачена до: ' + this.formatShortDate(res.data.expire_at),  () => {
                 window.location.reload()
             })
         } else {

@@ -1,6 +1,6 @@
 from contract.settings import USER_ACTIONS
 from users.models.user import User, Resume, Job, Company, ResponseInvite
-from btc.models import CustomerAccessPayment
+from btc.models import CustomerAccessPayment, JobPayment
 import datetime
 
 from django.utils import timezone
@@ -8,8 +8,14 @@ class Access:
 	def __init__(self, user: User):
 		self.user = user
 
+	def user_access(self, entity, entity_id = None, action='get'):
+		pass
+
 	def check_access(self, entity: str, entity_id=None, action=USER_ACTIONS["get"]):
+
+
 		if entity == "customer_responses_invites_view":
+			
 			if not self.user.is_authenticated:
 				return 401
 			if self.user.is_customer:
@@ -47,8 +53,11 @@ class Access:
 				if action == "create":
 					try:
 						company = Company.objects.get(user=self.user)
-						job = Job.objects.get(company=company, id=int(entity_id))
-						return 200
+						job = Job.check_company_active_job(company, int(entity_id))
+						if len(job) > 0:
+							return 200
+						else:
+							return 403
 					except Exception as e:
 						return 403
 				if action == "update":
@@ -114,10 +123,11 @@ class Access:
 					company = Company.objects.get(user=self.user)
 					if company.moderated is False:
 						return 666
-					today = datetime.datetime.now()
-					customer_access = CustomerAccessPayment.objects.get(start_at__lte=timezone.now(),
-																		expire_at__gte=timezone.now(), user=self.user)
-					return 200
+					job = Job.check_company_active_job(company, int(entity_id))
+					if len(job) > 0:
+						return 200
+					else:
+						return 403
 				except Exception as e:
 					return 503
 		

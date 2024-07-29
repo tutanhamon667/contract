@@ -3,245 +3,292 @@
 {% load static %}
 {% block content %}
 
-    <div class="container">
-        <section>
-            <p>Как уже неоднократно упомянуто, сторонники тоталитаризма в науке, вне зависимости от их уровня, должны быть объективно рассмотрены соответствующими инстанциями. Лишь сделанные на базе интернет-аналитики выводы разоблачены! Для современного мира повышение уровня гражданского сознания позволяет оценить значение кластеризации усилий. Однозначно, многие известные личности формируют глобальную экономическую сеть.</p>
-        </section>
-        <section>
-            <div class="row">
-                <div class="col-lg-4">
-                    <img src="{% static 'contract/img/job1_1.svg' %}" style="width: 100%"/>
-                </div>
-                <div class="col-lg-4 text-center">
-                    <h2>Разместить вакансию на Contract</h2>
-                    <p>И находите сотрудников для вашего теневого бизнеса<br>Contract - первый проект по поиску
-                        сотрудников в darknet</p>
-                    <a href="/customer/signup" class="btn btn-primary">Разместить вакансию</a>
-                </div>
-                <div class="col-lg-4">
-                    <img src="{% static 'contract/img/job2_1.svg' %}" style="width: 100%"/>
-                </div>
+<div class="container">
+    <section>
+        <p>Как уже неоднократно упомянуто, сторонники тоталитаризма в науке, вне зависимости от их уровня, должны быть
+            объективно рассмотрены соответствующими инстанциями. Лишь сделанные на базе интернет-аналитики выводы
+            разоблачены! Для современного мира повышение уровня гражданского сознания позволяет оценить значение
+            кластеризации усилий. Однозначно, многие известные личности формируют глобальную экономическую сеть.</p>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-lg-4">
+                <img src="{% static 'contract/img/job1_1.svg' %}" style="width: 100%" />
             </div>
-        </section>
-        <section>
-            {% include "../blocks/components/slider_banners_header.html" %}
-        </section>
-        <section>
-            <div class="text-center">
-                <h2>Почему стоит разместить вакансию?</h2>
-            </div>
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="card border-none">
-                        <div class="card-body">
-                            <h5 class="card-title"> {% bs_icon 'alexa' %} Только активные и заинтересованные
-                                кандидаты</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card border-none">
-                        <div class="card-body">
-                            <h5 class="card-title"> {% bs_icon 'alexa' %} Доверие соискателей</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card border-none">
-                        <div class="card-body">
-                            <h5 class="card-title"> {% bs_icon 'alexa' %} Высокий уровень модерации</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Все резюме и вакансии проходят ручную
-                                модерацию</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card  border-none">
-                        <div class="card-body">
-                            <h5 class="card-title"> {% bs_icon 'alexa' %} Уникальность проекта</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center">
+            <div class="col-lg-4 text-center">
+                <h2>Разместить вакансию на Contract</h2>
+                <p>И находите сотрудников для вашего теневого бизнеса<br>Contract - первый проект по поиску
+                    сотрудников в darknet</p>
+                {% if user.is_authenticated %}
+                <a href="/profile/jobs" class="btn btn-primary">Разместить вакансию</a>
+                {% else %}
                 <a href="/customer/signup" class="btn btn-primary">Разместить вакансию</a>
+                {% endif %}
             </div>
-
-        </section>
-        <section>
-            <div class="text-center">
-                <h2>С чего начать подбор сотрудников?</h2>
+            <div class="col-lg-4">
+                <img src="{% static 'contract/img/job2_1.svg' %}" style="width: 100%" />
             </div>
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="row">
-                        <div class="col-lg-10">
-                            <div class="card border-none">
-                                <div class="card-body">
-                                    <h2 class="card-title">1</h2>
-                                    <h6 class="card-title">Зарегистрируйтесь</h6>
-                                    <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-2 arrow-step">
-                        </div>
+        </div>
+    </section>
+    <section>
+        {% include "../blocks/components/slider_banners_header.html" %}
+    </section>
+    <section>
+        <div class="text-center">
+            <h2>Почему стоит разместить вакансию?</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card border-none">
+                    <div class="card-header no-bg">
+                        <h5 class="card-title"> {% bs_icon 'alexa' %} Только активные и заинтересованные
+                            кандидаты</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="row">
-                        <div class="col-lg-10">
-                            <div class="card border-none">
-                                <div class="card-body">
-                                    <h2 class="card-title">2</h2>
-                                    <h6 class="card-title">Пройдите верификацию</h6>
-                                    <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-2 arrow-step">
-                        </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card border-none">
+                    <div class="card-header no-bg">
+                        <h5 class="card-title"> {% bs_icon 'alexa' %} Доверие соискателей</h5>
+                    </div>
+                    <div class="card-body">
+
+                        <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="row">
-                        <div class="col-lg-10">
-                            <div class="card border-none">
-                                <div class="card-body">
-                                    <h2 class="card-title">3</h2>
-                                    <h6 class="card-title">Разместить вакансию</h6>
-                                    <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-2 arrow-step">
-                        </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card border-none">
+                    <div class="card-header no-bg">
+                        <h5 class="card-title"> {% bs_icon 'alexa' %} Высокий уровень модерации</h5>
+                    </div>
+                    <div class="card-body">
+
+                        <h6 class="card-subtitle mb-2 text-muted">Все резюме и вакансии проходят ручную
+                            модерацию</h6>
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="card border-none">
-                                <div class="card-body">
-                                    <h2 class="card-title">4</h2>
-                                    <h6 class="card-title">Получайте отклики</h6>
-                                    <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
-                                </div>
-                            </div>
-                        </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card  border-none">
+                    <div class="card-header no-bg">
+                        <h5 class="card-title"> {% bs_icon 'alexa' %} Уникальность проекта</h5>
+                    </div>
+                    <div class="card-body">
 
+                        <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a href="/customer/signup" class="btn btn-primary" style="width: auto; min-width: 200px;">Разместить
+                вакансию</a>
+        </div>
 
-            </div>
-            <div class="text-center">
-                <a href="/profile/job" class="btn btn-primary">Начать подбор</a>
-            </div>
+    </section>
+    <section>
+        <div class="text-center">
+            <h2>С чего начать подбор сотрудников?</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="row">
+                    <div class="col-lg-10">
+                        <div class="card border-none">
+                            <div class="card-header no-bg">
+                                <h2 class="card-title counter">1</h2>
+                                <h6 class="card-title">Зарегистрируйтесь</h6>
+                            </div>
+                            <div class="card-body">
 
-        </section>
-          <section>
-            <div class="text-center">
-                <h2>Тарифы на размещение</h2>
-            </div>
-            <div class="row">
-                <div class="col-lg-3">
-                       <div class="card">
-                          <h5 class="card-header">Вакансия - Стандарт</h5>
-                          <div class="card-body">
-                              <div style="height: 150px;" class="card-p-margin-5">
-                                    <p class="card-text"> {% bs_icon 'check-circle' %} Размещение вакансии на 30 дней</p>
-                              </div>
-                              <h5 class="card-title">Стоимость: 60 $</h5>
-                            <a href="#" class="btn btn-primary">Разместить</a>
-                          </div>
+                                <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
+                            </div>
                         </div>
-                </div>
-                <div class="col-lg-3">
-                       <div class="card">
-                          <h5 class="card-header">Вакансия - Плюс</h5>
-                          <div class="card-body">
-                              <div style="height: 150px;" class="card-p-margin-5">
-                                  <p class="card-text"> {% bs_icon 'check-circle' %} Размещение вакансии на 30 дней</p>
-                                  <p class="card-text"> {% bs_icon 'check-circle' %} Поднятие в топ выдачи по должности раз в 3 дня</p>
-                              </div>
-                              <h5 class="card-title">Стоимость: 170 $</h5>
-                            <a href="#" class="btn btn-primary">Разместить</a>
-                          </div>
-                        </div>
-                </div>
-                <div class="col-lg-3">
-                       <div class="card">
-                          <h5 class="card-header">Вакансия - Премиум</h5>
-                          <div class="card-body">
-                              <div style="height: 150px;" class="card-p-margin-5">
-                                  <p class="card-text"> {% bs_icon 'check-circle' %} Размещение вакансии на 30 дней</p>
-                                  <p class="card-text"> {% bs_icon 'check-circle' %} Закрепление в топе выдачи по должности</p>
-                                  <p class="card-text"> {% bs_icon 'check-circle' %} Особый цвет значка</p>
-                                  <p class="card-text"> {% bs_icon 'check-circle' %} Отображение на главной</p>
-                              </div>
-                              <h5 class="card-title">Стоимость: 450 $</h5>
-                            <a href="#" class="btn btn-primary">Разместить</a>
-                          </div>
-                        </div>
-                </div>
-                <div class="col-lg-3">
-                       <div class="card">
-                          <h5 class="card-header">Доступ к базе резюме</h5>
-                          <div class="card-body">
-                              <div style="height: 150px;" class="card-p-margin-5">
-                                  <p class="card-text"> {% bs_icon 'check-circle' %} Доступ к базе и поиску по резюме на 30 дней</p>
-                                  <p class="card-text"> {% bs_icon 'check-circle' %} Возможность приглашать кандидатов на вакансию</p>
-                              </div>
-                              <h5 class="card-title">Стоимость: 0 $</h5>
-                            <a href="#" class="btn btn-primary">Разместить</a>
-                          </div>
-                        </div>
+                    </div>
+                    <div class="col-sm-2 arrow-step">
+                    </div>
                 </div>
             </div>
-          </section>
-     <section>
-            <div class="text-center">
-                <h2>Помощь и поддержка</h2>
-                <p>Техническая поддержка и помощь в подборе тарифов</p>
+            <div class="col-lg-3">
+                <div class="row">
+                    <div class="col-lg-10">
+                        <div class="card border-none">
+                            <div class="card-header no-bg">
+                                <h2 class="card-title counter">2</h2>
+                                <h6 class="card-title">Пройдите верификацию</h6>
+                            </div>
+                            <div class="card-body">
+
+                                <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 arrow-step">
+                    </div>
+                </div>
             </div>
-         <div class="row">
-             <div class="col-sm-2">
+            <div class="col-lg-3">
+                <div class="row">
+                    <div class="col-lg-10">
+                        <div class="card border-none">
+                            <div class="card-header no-bg">
+                                <h2 class="card-title counter">3</h2>
+                                <h6 class="card-title">Разместить вакансию</h6>
+                            </div>
+                            <div class="card-body">
 
-                 <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25" style="padding-right: 10px">Telegram</p>
+                                <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 arrow-step">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card border-none">
+                            <div class="card-header no-bg">
+                                <h2 class="card-title counter"> 4</h2>
+                                <h6 class="card-title">Получайте отклики</h6>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Сюда приходят для поиска работы</h6>
+                            </div>
+                        </div>
+                    </div>
 
-             </div>
-              <div class="col-sm-2">
+                </div>
+            </div>
 
-                 <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25" style="padding-right: 10px">Telegram</p>
+        </div>
+        <div class="text-center">
+            <a href="/profile/job" class="btn btn-primary mb-15" style="width: auto; min-width: 200px;">Начать
+                подбор</a>
+            <p>
+                <svg width="25" height="15" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="15" cy="10" r="10" fill="#00FF00"></circle>
+                </svg>
+                <b>{{customers_count}}</b> сервисов ищут сотрудников на Contract
+            </p>
+        </div>
 
-             </div>
-              <div class="col-sm-2">
+    </section>
+    <section>
+        <div class="text-center">
+            <h2>Тарифы на размещение</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card">
+                    <h5 class="card-header">Вакансия - Стандарт</h5>
+                    <div class="card-body">
+                        <div style="height: 150px;" class="card-p-margin-5">
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Размещение вакансии на 30 дней</p>
+                        </div>
+                        <h5 class="card-title  mb-15">Стоимость: 60 $</h5>
+                        <a href="#" class="btn btn-primary mt-15">Разместить</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card">
+                    <h5 class="card-header">Вакансия - Плюс</h5>
+                    <div class="card-body">
+                        <div style="height: 150px;" class="card-p-margin-5">
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Размещение вакансии на 30 дней</p>
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Поднятие в топ выдачи по должности раз в
+                                3 дня</p>
+                        </div>
+                        <h5 class="card-title mb-15">Стоимость: 170 $</h5>
+                        <a href="#" class="btn btn-primary mt-15">Разместить</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card">
+                    <h5 class="card-header">Вакансия - Премиум</h5>
+                    <div class="card-body">
+                        <div style="height: 150px;" class="card-p-margin-5">
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Размещение вакансии на 30 дней</p>
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Закрепление в топе выдачи по должности
+                            </p>
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Особый цвет значка</p>
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Отображение на главной</p>
+                        </div>
+                        <h5 class="card-title  mb-15">Стоимость: 450 $</h5>
+                        <a href="#" class="btn btn-primary mt-15">Разместить</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card">
+                    <h5 class="card-header">Доступ к базе резюме</h5>
+                    <div class="card-body">
+                        <div style="height: 150px;" class="card-p-margin-5">
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Доступ к базе и поиску по резюме на 30
+                                дней</p>
+                            <p class="card-text"> {% bs_icon 'check-circle' %} Возможность приглашать кандидатов на
+                                вакансию</p>
+                        </div>
+                        <h5 class="card-title ">Стоимость: 0 $</h5>
+                        <a href="#" class="btn btn-primary mt-15">Разместить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="text-center">
+            <h2>Помощь и поддержка</h2>
+            <p>Техническая поддержка и помощь в подборе тарифов</p>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
 
-                 <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25" style="padding-right: 10px">Telegram</p>
+                <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25"
+                        style="padding-right: 10px">Telegram</p>
 
-             </div>
-              <div class="col-sm-2">
+            </div>
+            <div class="col-sm-2">
 
-                 <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25" style="padding-right: 10px">Telegram</p>
+                <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25"
+                        style="padding-right: 10px">Telegram</p>
 
-             </div>
-              <div class="col-sm-2">
+            </div>
+            <div class="col-sm-2">
 
-                 <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25" style="padding-right: 10px">Telegram</p>
+                <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25"
+                        style="padding-right: 10px">Telegram</p>
 
-             </div>
-              <div class="col-sm-2">
+            </div>
+            <div class="col-sm-2">
 
-                 <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25" style="padding-right: 10px">Telegram</p>
+                <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25"
+                        style="padding-right: 10px">Telegram</p>
 
-             </div>
+            </div>
+            <div class="col-sm-2">
 
-         </div>
-     </section>
+                <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25"
+                        style="padding-right: 10px">Telegram</p>
+
+            </div>
+            <div class="col-sm-2">
+
+                <p style="font-size: 20px;"> <img src="{% static 'contract/img/icon-telegram.png' %}" height="25"
+                        style="padding-right: 10px">Telegram</p>
+
+            </div>
+
+        </div>
+    </section>
 
 
-    </div>
+</div>
 {% endblock content %}

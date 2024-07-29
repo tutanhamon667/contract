@@ -56,6 +56,19 @@
     </div>
   </div>
 
+  <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          Modal content
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="notofyModalOkButton" data-bs-dismiss="modal">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="сonfiremationModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -85,10 +98,16 @@
   <script src="{% static 'contract/js/app.js' %}"></script>
   <script src="{% static 'contract/js/chat.js' %}"></script>
   <script>
+    var messages_success = '{{messages_success}}'
+    document.messages_success = messages_success
+    var messages_error = '{{messages_error}}'
+    document.messages_error = messages_error
     document.addEventListener('alpine:init', async () => {
       application = new alpineApp()
       application.getCounters()
+      application.initPositiveCheck()
     })
+    
   </script>
 </body>
 

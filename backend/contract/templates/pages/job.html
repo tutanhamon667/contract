@@ -13,8 +13,7 @@
 
                             <div class="col-lg-9">
                                 <div :class="['card', 'no-hover', $store.main.job.payment.job_tier_id == 3? 'hot-job-card ':'' ]">
-                                    <div class="card-body">
-
+                                    <div class="card-header">
                                         <div class="card-title d-flex">
                                             <a :href="'/jobs/' +$store.main.job.id" class="title">
                                                 <h4 class="title" x-text="$store.main.job.title"></h4>
@@ -25,6 +24,10 @@
                                             </template>
 
                                         </div>
+                                    </div>
+                                    <div class="card-body">
+
+                                       
 
                                         <h3 class="card-subtitle salary"
                                             x-text="$store.main.getSalaryStr($store.main.job)"></h3>
@@ -69,34 +72,35 @@
                                                         отклика</a>
                                                 </template>
                                                 <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
-                                                    <div x-data="{res: $store.main.getResponseInviteElement($store.main.job.invite)}">
+                                                    <div x-data="{res: $store.main.job}">
+                                                    <div >
 
-                                                        <template x-if="res.element === 'link'">
-                                                            <a class="btn btn-white btn-large w-100" :href="res.link"
-                                                               x-text="res.text"></a>
+                                                        <template x-if="$store.main.getResponseInviteElement(res.invite).element === 'link'">
+                                                            <a class="btn btn-white btn-large w-100" :href="$store.main.getResponseInviteElement(res.invite).link"
+                                                               x-text="$store.main.getResponseInviteElement(res.invite).text"></a>
                                                         </template>
-                                                        <template x-if="res.element === 'status'">
+                                                        <template x-if="$store.main.getResponseInviteElement(res.invite).element === 'status'">
                                                             <div>
                                                                 <p class="response-invite-result"
                                                                    x-text="$store.main.job.invite.msg"></p>
-                                                                <p x-text="res.text"></p>
+                                                                <p x-text="$store.main.getResponseInviteElement(res.invite).text"></p>
                                                             </div>
 
                                                         </template>
-                                                        <template x-if="res.element === 'form'">
+                                                        <template x-if="$store.main.getResponseInviteElement(res.invite).element === 'form'">
 
-                                                            <template x-for="action in res.actions"
+                                                            <template x-for="action in $store.main.getResponseInviteElement(res.invite).actions"
                                                                       :key="action.action">
                                                                 <div>
                                                                     <template x-if="action.action !== 'create'">
-                                                                        <button x-on:click="application.sendResponse(action.action, res.id)"
+                                                                        <button x-on:click="application.sendResponse(action.action, $store.main.getResponseInviteElement(res.invite).id)"
                                                                                 x-text="action.text"></button>
                                                                     </template>
                                                                     <template x-if="action.action === 'create'">
                                                                         <div>
                                                                             <div class="flex">
                                                                                 <button class="btn btn-success mr-5"
-                                                                                        x-on:click="application.sendResponse(action.action, res.id, $store.main.job.id)"
+                                                                                        x-on:click="application.sendResponse(action.action, $store.main.getResponseInviteElement(res.invite).id, $store.main.job.id)"
                                                                                         x-text="action.text"></button>
                                                                                 <select name="resume"
                                                                                         x-model="$store.main.selectedResume"
@@ -119,6 +123,7 @@
 
                                                         </template>
                                                     </div>
+                                                </div>
                                                 </template>
                                             </div>
                                             <div class="col-5">
@@ -153,6 +158,10 @@
                                             <img :src="'/media/'+$store.main.job.company.logo" height="50" width="50"
                                                  class="company-logo-mini"
                                                  :alt="$store.main.job.company.name"/>
+                                        </template>
+                                        <template x-if="!$store.main.job.company.logo">
+                                            <img src="/staticfiles/contract/img/profile/acc.svg" height="50" class="company-logo-mini"
+                                            :alt="$store.main.job.company.name" />
                                         </template>
                                         <div class="d-flex ">
                                             <a :href="'/company/'+ $store.main.job.company_id "

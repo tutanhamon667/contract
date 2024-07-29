@@ -19,7 +19,7 @@
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                 <div class="text-center">
-                    <img src="{% static "contract/img/logo-mid.svg" %}" height="100" class="rounded" alt="...">
+                    <img src="{% static 'contract/img/logo-mid.svg' %}" height="100" class="rounded" alt="...">
                 </div>
 
                 <div class="card bg-white text-black" style="border-radius: 1rem;">
@@ -27,7 +27,7 @@
 
                         <div class="mt-md-4 pb-4">
 
-                            <form class="form-captcha text-center" action="/captcha" method="post" autocomplete="off">
+                            <form class="form-captcha text-center" action="/captcha" method="post" autocomplete="off" validate>
                                 {% csrf_token %}
                                 {% bootstrap_form form %}
                                 <button class="btn btn-primary btn-lg px-5 w-100" type="submit">Войти</button>

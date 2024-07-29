@@ -6,7 +6,7 @@ from django.forms import ModelForm
 from django_ckeditor_5.widgets import CKEditor5Widget
 from users.models.common import ModerateRequest
 from btc.models import JobTier, BuyPaymentPeriod
-from contract.settings import CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_WORK_EXPERIENCE, \
+from contract.settings import CHOICES_RAITING, CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_WORK_EXPERIENCE, \
 	CHOICES_WORK_EXPERIENCE_FILTER, CHOICES_WORK_DEPOSIT_FILTER, CHOICES_WORK_TIME_BUSY_FILTER, \
 	CHOICES_WORK_TYPE_FILTER, CHOICES_IS_ACTIVE
 from contract.widgets.captcha import CaptchaWidget
@@ -110,6 +110,7 @@ class JobForm(ModelForm):
 	work_experience = forms.ChoiceField(label="Опыт работы", widget=forms.RadioSelect, choices=CHOICES_WORK_EXPERIENCE,
 										initial=1)
 	industry = forms.ChoiceField(label="Специализация", widget=forms.RadioSelect, choices=Industry.objects.all().values_list('id', 'name'))
+	
 	specialisation = forms.ModelChoiceField(label="Должность", queryset=Specialisation.objects.all(), required=False)
 	class Meta:
 		model = Job
@@ -198,7 +199,7 @@ class CompanyReviewForm(forms.Form):
 		label='Комментарий', max_length=200, required=True
 	)
 	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
-	rating = forms.IntegerField(label='Оценка', max_value=5, initial=5)
+	rating = forms.IntegerField(label="Рейтинг", widget=forms.HiddenInput,initial=5)
 	company_id = forms.IntegerField(widget= forms.HiddenInput())
 	class Meta:
 		fields = ['company_id', 'comment', 'rating', 'reviewer', "captcha", "hashkey"]
@@ -221,6 +222,12 @@ class CompanyReviewForm(forms.Form):
 			raise ValidationError(res)
 		return data
 
+class CustomerReviewForm(ModelForm):
+	rating = forms.ChoiceField(label="Рейтинг", initial=5, required=False, choices=CHOICES_RAITING)
+	class Meta:
+		model = CustomerReview
+		fields = ['id', 'company', 'reviewer', 'comment', 'rating']
+		widgets = {'reviewer': forms.HiddenInput(), 'company': forms.HiddenInput(), 'id': forms.HiddenInput(), 'rating': forms.HiddenInput()}
 
 
 class WorkerReviewForm(forms.Form):
@@ -228,7 +235,7 @@ class WorkerReviewForm(forms.Form):
 		label='Комментарий', max_length=200, required=True
 	)
 	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
-	rating = forms.IntegerField(label='Оценка', max_value=5, initial=5)
+	rating = forms.IntegerField(label="Рейтинг", widget=forms.HiddenInput,initial=5)
 	resume_id = forms.IntegerField(widget= forms.HiddenInput())
 	class Meta:
 		fields = ['resume_id', 'comment', 'rating', 'reviewer', "captcha", "hashkey"]
@@ -261,7 +268,7 @@ class JobFilterForm(forms.Form):
 	region = forms.ModelMultipleChoiceField(label="Регион", queryset=Region.objects.all(), blank=True,
 											required=False)
 	salary_from = forms.IntegerField(
-		label='Уровень дохода, ₽', required=False
+		label='Уровень дохода, ₽', required=False, 
 	)
 
 	industry = forms.ChoiceField(label="Специализация", widget=forms.RadioSelect, choices=Industry.objects.all().values_list('id', 'name'))
@@ -403,15 +410,6 @@ class CompanyForm(ModelForm):
 
 		self.fields['about'].widget.attrs.update({'class': 'form-control django_ckeditor_5'})
 		
-
-
-class CustomerReviewForm(ModelForm):
-	rating = forms.ChoiceField(label="Рейтинг", initial=5, required=False, widget=forms.RadioSelect,  choices=CHOICES_RATING)
-	class Meta:
-		model = CustomerReview
-		fields = ['id', 'company', 'reviewer', 'comment', 'rating']
-		widgets = {'reviewer': forms.HiddenInput(), 'company': forms.HiddenInput(), 'id': forms.HiddenInput(), 'rating': forms.HiddenInput()}
-
 
 class ContactForm(ModelForm):
 	class Meta:
@@ -626,7 +624,13 @@ class RegisterWorkerForm(UserCreationForm):
 		self.fields["captcha"].widget = catcha_widget
   
 	def clean_login(self):
-		data = self.cleaned_data['captcha']
+		data = self.cleaned_data['login']
+		user = Member.objects.filter(login=self.cleaned_data["login"])
+		if len(user):
+			raise ValidationError(
+				'Логин %(value)s занят',
+				params={'value': self.cleaned_data["login"]}
+			)
 		if not re.match(r'^[a-zA-Z]+$', data):
 			res = "Логин должен содержать только английские буквы"
 			raise ValidationError(res)
