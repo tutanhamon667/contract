@@ -12,15 +12,6 @@ class MultiselectWidget(forms.Widget):
 		self.items = items
 		self.selected = selected
 
-	def validate(self, value, value2=None):
-		self.error = None
-		if value is None:
-			self.error = "Обязательное поле"
-			return self.error
-
-		if value2 and value2 != value:
-			self.error = "Пароли не совпадают"
-		return self.error
 
 	def build_attrs(self, base_attrs, extra_attrs=None):
 		"""Build an attribute dictionary."""

@@ -28,6 +28,8 @@ class SelectParentWidget(forms.Widget):
 			for item in items:
 				if int(self.selected) == item["id"]:
 					item["selected"] = True
+		else:
+			items.insert(0, {"id": '', "name": "Не выбрано", "selected": True})
 		return {'widget': {
 		'name': name,
 		'value': value,

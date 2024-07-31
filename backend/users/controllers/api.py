@@ -309,6 +309,7 @@ def response_invite(request):
 		status = 0
 		res = {}
 		response = None
+		chat = None
 		if action == 'create':
 			resume_id = request.POST["resume_id"]
 			job_id = request.POST["job_id"]
@@ -462,9 +463,9 @@ def filter_resumes(request):
 					resume["display_name"] = resume_db.user.display_name
 					item_regions = resume_db.region
 					if resume_db.user.photo:
-						resume["photo"] = '/media/' + resume_db.user.photo.photo
+						resume["photo"] = resume_db.user.photo.photo
 					else:
-						resume["photo"] = None
+						resume["photo"] = '/staticfiles/users/img/profile/acc.svg'
 			if item_regions:
 				resume["regions"] = list(item_regions.values())
 			else:

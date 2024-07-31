@@ -271,7 +271,7 @@ class JobFilterForm(forms.Form):
 		label='Уровень дохода, ₽', required=False, 
 	)
 
-	industry = forms.ChoiceField(label="Специализация", widget=forms.RadioSelect, choices=Industry.objects.all().values_list('id', 'name'))
+	industry = forms.ChoiceField(label="Специализация", widget=forms.RadioSelect,required=False, initial=None,  choices=Industry.objects.all().values_list('id', 'name'))
 	specialisation = forms.ModelChoiceField(label="Должность", queryset=Specialisation.objects.all(), required=False)
 
 	work_experience = forms.ChoiceField(label="Опыт работы", widget=forms.RadioSelect,
@@ -328,7 +328,7 @@ class ResumeFilterForm(forms.Form):
 	salary_to = forms.IntegerField(
 		label='Уровень дохода, ₽', required=False
 	)
-
+	industry = forms.ChoiceField(label="Специализация", widget=forms.RadioSelect, required=False, initial=None, choices=Industry.objects.all().values_list('id', 'name'))
 	specialisation = forms.ModelMultipleChoiceField(label="Специализация", queryset=Specialisation.objects.all(),
 													blank=True, required=False)
 
@@ -355,6 +355,8 @@ class ResumeFilterForm(forms.Form):
 				self.fields[field].widget.attrs.update({'class': 'form-radio-input', 'autocomplete': 'off'})
 			if field == 'region':
 				self.fields[field].widget.attrs.update({'class': 'subform-field', 'autocomplete': 'off'})
+			if field == 'industry':
+				self.fields[field].widget.attrs.update({'class': 'medium-height', 'autocomplete': 'off'})
 
 		if "region" in kwargs["initial"]:
 			multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all(),
@@ -364,11 +366,11 @@ class ResumeFilterForm(forms.Form):
 		if "name" in kwargs["initial"]:
 			self.fields["name"].initial = kwargs["initial"]["name"]
 		if "specialisation" in kwargs["initial"]:
-			multiselect_specialisation_widget = MultiselectWidget(label='Специализация', items=Industry.objects.all(),
-																  selected=kwargs["initial"]["specialisation"])
+			multiselect_specialisation_widget = SelectParentWidget(label='Должность', items=Specialisation.objects.all(), selected=kwargs["initial"]["specialisation"])
+			spec = Specialisation.objects.get(id=kwargs["initial"]["specialisation"])
+			self.fields["industry"].widget.initial = spec.industry.id
 		else:
-			multiselect_specialisation_widget = MultiselectWidget(label='Специализация', items=Industry.objects.all())
-
+			multiselect_specialisation_widget = SelectParentWidget(label='Специализация', items=Specialisation.objects.all())
 		self.fields["specialisation"].widget = multiselect_specialisation_widget
 		self.fields["region"].widget = multiselect_region_widget
 

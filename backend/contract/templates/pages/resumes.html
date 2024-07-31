@@ -48,15 +48,16 @@
                 <template x-for="resume in $store.main.filtered_resumes" :key="resume.id + '_' + resume.invite.id">
 
                     <div class="card">
-
+                        <div class="card-header"><div class="card-title d-flex">
+                            <a :href="'/resumes/' +resume.id" class="title">
+                                <h4 class="title" x-text="resume.name"></h4>
+                            </a>
+                        </div></div>
+                        
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-10">
-                                    <div class="card-title d-flex">
-                                        <a :href="'/resumes/' +resume.id" class="title">
-                                            <h4 class="title" x-text="resume.name"></h4>
-                                        </a>
-                                    </div>
+                                    
 
                                     <h3 class="card-subtitle salary" x-text="$store.main.getResumeSalaryStr(resume)">
                                     </h3>
@@ -232,6 +233,7 @@
            const application = new app()
         application.radioInputChecker("[name='work_deposit']", 1, "#id_deposit")
         application.radioMultiSelectChecker("[name='work_type']", '1', "button[for=\"region\"]", "#region")
+        application.industrySpecInit()
     });
 </script>
 {% endblock content %}

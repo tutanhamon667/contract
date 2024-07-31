@@ -125,8 +125,10 @@ const app = function() {
     }
 
     const industrySpecInit = () => {
-        if ($('#specialisation').val()) {
-            const ind_id = $('#specialisation>option[value="' + $('#specialisation').val() + '"]').attr('parent')
+        const e = document.getElementById("specialisation");
+        let value = e.options[e.selectedIndex].value;
+        if (value) {
+            const ind_id = $('#specialisation>option[value="' + value + '"]').attr('parent')
             $('[name="industry"][value="' + ind_id + '"]').click()
         }
         $('[name="industry"]').on("change", function() {
