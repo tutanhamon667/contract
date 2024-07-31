@@ -65,7 +65,7 @@
                 {% if show_company_logo is True %}
                 <div class="col-3 text-center">
                     {% if job.company.logo %}
-                    <img src="/media/{{ job.company.logo.logo }}" height="50" alt="{{ job.company.name }}" class="company-logo-mini" />
+                    <img src="{{ job.company.logo.logo }}" height="50" alt="{{ job.company.name }}" class="company-logo-mini" />
                     {% else %}
                     <div class="no-photo">
                         <span>{{ job.company.name|make_list|first }}</span>

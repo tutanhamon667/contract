@@ -28,6 +28,8 @@ class UserFile(models.Model):
 	name = models.CharField(max_length=255, null=True, blank=True)
 	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 	file_type = models.IntegerField(null=False, default=0,  choices=USER_FILE_TYPE)
+	extra_data = models.JSONField(null=True, blank=True)
+	is_owner = models.BooleanField(null=False, default=False)
  
 	class Meta:
 		verbose_name = 'Файл'
@@ -199,11 +201,12 @@ class Contact(models.Model):
 		errs = []
 		cls.objects.filter(user=user).delete()
 		for item in items:
-			res = validate_input(item)
-			if res is False:
-				errs.append(item + ' не является ссылкой или номером телефона')
-			if item != '' and res:
-				cls.objects.create(user=user, value=item, type='other')
+			if item != '':
+				res = validate_input(item)
+				if res is False:
+					errs.append(item + ' не является ссылкой или номером телефона')
+				if item != '' and res:
+					cls.objects.create(user=user, value=item, type='other')
 		return errs
 
 	@classmethod
@@ -619,10 +622,9 @@ class Resume(models.Model):
 		if "company_id" in _get and _get["company_id"] != '':
 			filters_exists = True
 			objs = objs.filter(company_id=_get["company_id"])
-		if "title" in _get and _get["title"] != '':
+		if "name" in _get and _get["name"] != '':
 			filters_exists = True
-			objs = objs.filter(Q(title__icontains=_get["title"]) | Q(specialisation__name__icontains=_get["title"]) | Q(
-				specialisation__industry__name__icontains=_get["title"]))
+			objs = objs.filter(name__icontains=_get["name"])
 		if "salary_to" in _get and _get["salary_to"] != '':
 			filters_exists = True
 			objs = objs.filter(salary__lte=_get["salary_to"])
@@ -990,10 +992,14 @@ class Job(models.Model):
 		limit = 1
 		page = 0
 		if "own" in _get:
-			count = len(Job.objects.filter(company__user=request.user))
-			res = Job.objects.filter(company__user=request.user)
 
-			return count, res
+			obj_count = len(Job.objects.filter(company__user=request.user, moderated=True,  deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
+							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
+																				   '-pub_date', '-id').distinct())
+			objs =  Job.objects.filter(company__user=request.user, moderated=True,  deleted=False, active_search=True, jobpayment__start_at__lte=timezone.now(),
+							   jobpayment__expire_at__gte=timezone.now()).order_by('-jobpayment__job_tier_id',
+																				   '-pub_date', '-id').distinct()
+			return obj_count, objs	
 
 		if "page" in _get:
 			page = int(_get["page"])

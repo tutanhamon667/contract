@@ -891,6 +891,9 @@ const alpineApp = function() {
         const selectedItem = Alpine.store('main').selectedJob || Alpine.store('main').customerJobs[0].id
         const result = await Alpine.store('main').sendInvite(action, id, resume_id, selectedItem)
         if (result.success === true) {
+            if (action === "accept") {
+                window.location.href = '/chat/' + result.data.chat_id
+            }
             let resume = Alpine.store('main').resume && Alpine.store('main').resume.id === resume_id ?
                 Alpine.store('main').resume : Alpine.store('main').filtered_resumes.find((i, index) => {
                     return i.id === resume_id
@@ -1051,7 +1054,8 @@ const alpineApp = function() {
                 }
             });
         }
-
+        object = Object.assign(object, filters)
+        Alpine.store('main').filters = object
         const res = await makeRequest('filter_resumes', object)
         if (res.success) {
             this.setFilterResumes(res.data)

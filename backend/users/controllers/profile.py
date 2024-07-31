@@ -411,7 +411,7 @@ def profile_main_view(request):
 					file_to_upload = request.FILES.get('photo')
 					new_file = FileSaver(file_to_upload, MEDIA_ROOT + '/profile/')
 					new_file.save_file()
-					file_model = UserFile(name=new_file.file.name, folder='profile', file_type=0)
+					file_model = UserFile(name=new_file.file.name, folder='/media/profile/', file_type=1)
 					file_model.save()
 				user_model = form.save(commit=False)
 				user_model.photo = file_model
@@ -481,10 +481,13 @@ def profile_company_view(request):
 			file_to_upload = request.FILES.get('logo')
 			new_file = FileSaver(file_to_upload, MEDIA_ROOT + '/company/')
 			new_file.save_file()
-			file_model = UserFile(name=new_file.file.name, folder='company', file_type=0)
+			file_model = UserFile(name=new_file.file.name, folder= '/media/company/', file_type=0)
 			file_model.save()
+			
 		company = Company.objects.filter(user_id=user.id)
 		company = company[0]
+		if file_model is not None:
+			company.logo = file_model
 		form = CompanyForm( request.POST, instance=company)
 		if form.is_valid():
 			original_company = Company.objects.get(user_id=user.id)

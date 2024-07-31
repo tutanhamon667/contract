@@ -318,7 +318,7 @@ class JobFilterForm(forms.Form):
 
 
 class ResumeFilterForm(forms.Form):
-	title = forms.CharField(
+	name = forms.CharField(
 		label='Название вакансии', max_length=200, required=False
 	)
 	work_type = forms.ChoiceField(label="Тип занятости", widget=forms.RadioSelect, choices=CHOICES_WORK_TYPE_FILTER,
@@ -361,8 +361,8 @@ class ResumeFilterForm(forms.Form):
 														  selected=kwargs["initial"]["region"])
 		else:
 			multiselect_region_widget = MultiselectWidget(label='Регион', items=Region.objects.all())
-		if "title" in kwargs["initial"]:
-			self.fields["title"].initial = kwargs["initial"]["title"]
+		if "name" in kwargs["initial"]:
+			self.fields["name"].initial = kwargs["initial"]["name"]
 		if "specialisation" in kwargs["initial"]:
 			multiselect_specialisation_widget = MultiselectWidget(label='Специализация', items=Industry.objects.all(),
 																  selected=kwargs["initial"]["specialisation"])

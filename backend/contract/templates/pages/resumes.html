@@ -6,6 +6,23 @@
 <div class="container" x-data>
     <section x-init="initResumes()">
         <div class="row">
+            <div class="col-lg-12">
+                <div class="d-flex" style="gap:10px;">
+                    <input type="text" name="name" form='filter_form' placeholder="Название вакансии" maxlength="200"
+                        class="form-control" autocomplete="off" id="id_name">
+                        <button id="filter_jobs_btn" @click="application.filterResumes()" class="btn btn-primary " style="width: min-content;">Найти</button>
+
+                </div>
+
+                <div class="d-flex " style="margin: 15px 0px;">
+                    <template x-if="$store.main.filters.name">
+                        <p class="bold" x-text="'Работа - ' + $store.main.filters.name + ',  '"></p>
+                    </template>
+                    <p class="bold" x-text="' '  + $store.main.resumesCount+ ' резюме' "></p>
+
+                </div>
+
+            </div>
             <div class="col-lg-3 col-md-4">
                 <h4>Фильтры поиска</h4>
                 <form action="" method="get" id="filter_form" @submit.prevent="application.filterResumes()" novalidate>
@@ -14,6 +31,7 @@
                     {{ hidden_field }}
                     {% endfor %}
                     {% for field in search_form.visible_fields %}
+                    {% if field.name != 'name' %}
                     <div class="form-field">
                         <p>{{ field.label_tag }}</p>
                         <div>
@@ -21,6 +39,7 @@
                             {{ field.help_text }}
                         </div>
                     </div>
+                    {% endif %}
                     {% endfor %}
                     <button id="filter_jobs_btn" class="btn btn-primary width-100">Применить</button>
                 </form>

@@ -36,7 +36,7 @@ class CaptchaWidget(forms.Widget):
 				image = SimpleCaptcha(width=280, height=120)
 				captcha_base64 = image.get_base64(key)
 				self.image = captcha_base64
-				self.hash = hash
+				self.hash = hash_key
 		else:
 			key, hash_key = captcha.generate_key()
 			image = SimpleCaptcha(width=280, height=120)

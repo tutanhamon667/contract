@@ -7,12 +7,21 @@
     <section x-init="initJobs()">
         <div class="row">
             <div class="col-lg-12">
-                <template x-if="$store.main.jobCount >= 0">
-                    <div>
-                        <template x-if="$store.main.filters >= 0"></template>
-                    </div>
-                    <p></p>
-                </template>
+                <div class="d-flex" style="gap:10px;">
+                    <input type="text" name="title" form='filter_form' placeholder="Название вакансии" maxlength="200"
+                        class="form-control" autocomplete="off" id="id_title1">
+                        <button id="filter_jobs_btn" @click="application.filterJobs()" class="btn btn-primary " style="width: min-content;">Найти</button>
+
+                </div>
+
+                <div class="d-flex " style="margin: 15px 0px;">
+                    <template x-if="$store.main.filters.title">
+                        <p class="bold" x-text="'Работа - ' + $store.main.filters.title + ',  '"></p>
+                    </template>
+                    <p class="bold" x-text="' '  + $store.main.jobCount + ' вакансий(я)' "></p>
+
+                </div>
+
             </div>
             <div class="col-lg-3 col-md-4">
                 <h4>Фильтры поиска</h4>
@@ -22,6 +31,7 @@
                     {{ hidden_field }}
                     {% endfor %}
                     {% for field in search_form.visible_fields %}
+                    {% if field.name != 'title' %}
                     <div class="form-field">
                         <p>{{ field.label_tag }}</p>
                         <div>
@@ -29,6 +39,7 @@
                             {{ field.help_text }}
                         </div>
                     </div>
+                    {% endif %}
                     {% endfor %}
                     <button id="filter_jobs_btn" class="btn btn-primary width-100">Применить</button>
                 </form>
@@ -52,7 +63,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-10">
-                                   
+
 
                                     <h3 class="card-subtitle salary" x-text="$store.main.getSalaryStr(job)"></h3>
 
@@ -76,7 +87,7 @@
                                                 <span class="work-experience"
                                                     x-text="$store.main.getWorkExpString(job.work_experience)"></span>
                                             </div>
-                                            
+
                                             <div class="d-flex">
                                                 <img src="/staticfiles/contract/img/icons/zalog.svg" height="16"
                                                     class="mt-1 mr-5">
@@ -95,8 +106,8 @@
                                             :alt="job.company.name" />
                                     </template>
                                     <template x-if="!job.company.logo">
-                                        <img src="/staticfiles/contract/img/profile/acc.svg" height="50" class="company-logo-mini"
-                                        :alt="job.company.name" />
+                                        <img src="/staticfiles/contract/img/profile/acc.svg" height="50"
+                                            class="company-logo-mini" :alt="job.company.name" />
                                     </template>
                                     <template x-if="$store.main.user.id>=0 && $store.main.user.is_worker ">
                                         <div class="mt-2">
@@ -237,7 +248,7 @@
         const application = new app()
         application.radioInputChecker("[name='work_deposit']", 1, "#id_deposit")
         application.radioMultiSelectChecker("[name='work_type']", '1', "button[for=\"region\"]", "#region")
-		application.industrySpecInit()
+        application.industrySpecInit()
     });
 </script>
 {% endblock content %}

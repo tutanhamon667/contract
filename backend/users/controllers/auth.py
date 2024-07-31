@@ -6,6 +6,7 @@ from chat.models import Chat
 from common.models import Article, ArticleCategory
 from contract.libs.captcha.SimpleCapcha import SimpleCaptcha
 from contract.settings import CHAT_TYPE
+from users.core.file_saver import FileSaver
 from users.core.user import UserCore
 from users.forms import RegisterWorkerForm, RegisterCustomerForm, LoginForm, RestorePasswordForm
 from users.models.common import Captcha
@@ -13,7 +14,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
-from users.models.user import Member, Company, User
+from users.models.user import Member, Company, User, UserFile
 from django.contrib.auth.forms import AuthenticationForm
 from btc.libs.btc_wallet import get_wallet, generate_address, get_addresses_count
 from btc.models import Address as WalletAddress
@@ -142,6 +143,12 @@ def signup_user(request, is_customer, template, redirect_to):
 					user.is_worker = True
 				recovery_code  = Mnemonic().generate(64)
 				user.recovery_code = recovery_code
+				
+				color = FileSaver.get_random_color()
+				image = FileSaver.get_random_image()
+				file = UserFile(folder='/staticfiles/users/img/profile/',name=image, extra_data={"color":color}, is_owner=False, file_type=1)
+				file.save()
+				user.photo = file
 				user.save()
 				login(request, user)
 			

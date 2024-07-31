@@ -11,7 +11,7 @@
                     <div>
                         <div class="d-flex">
                             <template x-if="$store.main.company.logo">
-                                <img :src="'/media/'+$store.main.company.logo" height="130" width="130"
+                                <img :src="$store.main.company.logo" height="130" width="130"
                                     class="company-logo-mini mr-5" :alt="$store.main.company.name" />
                             </template>
                             <div class="ml-5">
@@ -125,7 +125,7 @@ font-size: 14px;"></span>
                             </div>
                             <div class="col-2 text-center">
                                 <template x-if="job.company.logo">
-                                    <img :src="'/media/'+job.company.logo" height="50" class="company-logo-mini"
+                                    <img :src="job.company.logo" height="50" class="company-logo-mini"
                                         :alt="job.company.name" />
                                 </template>
                                 <template x-if="!job.company.logo">

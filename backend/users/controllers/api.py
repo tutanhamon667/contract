@@ -355,6 +355,8 @@ def response_invite(request):
 		res["job_id"] = int(response.job_id)
 		res["resume_id"] = int(response.resume_id)
 		res["status"] = response.status
+		if chat:
+			res['chat_id'] = chat.uuid
 		res["type"] = response.type
 		return JsonResponse({'success': True, "data": res})
 	except Exception as e:
@@ -911,7 +913,7 @@ def get_resume(request):
 		contacts = list(Contact.get_worker_contacts(resume[0].user.id))
 		resume_obj["contacts"] = contacts
 		if resume[0].user.photo:
-			resume_obj["photo"] = '/media/' + resume[0].user.photo.photo
+			resume_obj["photo"] =  resume[0].user.photo.photo
 		else:
 			resume_obj["photo"] = None
 		resume_obj["display_name"] = resume[0].user.display_name
