@@ -30,6 +30,7 @@ class ModerateView:
 		config.configure(table)
 		config.configure(table_all)
 		return render(request, "moderate/reviews.html", {"table": table, "table_all": table_all})
+
 	def companies(self, request):
 		if request.user.is_moderator is False:
 			return redirect('home')

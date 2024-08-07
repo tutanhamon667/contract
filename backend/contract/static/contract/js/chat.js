@@ -493,9 +493,7 @@ function Chat(user_id, chat_id) {
                 if (otherUser.display_name === "System Notifications") {
                     return
                 }
-            } else {
-
-            }
+            } 
             application.confirmationModal('Вы действительно хотите покинуть чат?', 'Покинуть чат с ' + Alpine.store('chatsData').getOtherUser().other_user.display_name, () => {
                 let chat = Alpine.store('chatsData').getActiveChat()
                 socket.chatSocket.send(JSON.stringify({

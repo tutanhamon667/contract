@@ -33,6 +33,31 @@
                                         {{ user.login }}
                                     </p>
                                 </div>
+                                {%  if user.is_worker %}
+                                    <div>
+                                        <h3>Контакты</h3>
+                                            <div class="row mb-2">
+                                                <div class="company-links ">
+                    
+                                                    {% for contact in contacts %}
+                                                    <div class="d-flex company-link-container  mb-2">
+                                                        <input type="text" name="link[]" id="contact_{{contact.id}}" class="form-control flex-1" value="{{contact.value}}">
+                                                        <div class="link-del-btn">
+                                                            <a onlick="deleteLink()"> x </a>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                   
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-lg-6 link-add-btn">
+                                                    <a onclick="addLink()"> + </a>
+                                                </div>
+                                            </div>
+                                    
+                                    </div>
+                                {% endif %}
                                 <div class="d-flex mt-3">
                                     <div style="flex:1;">
                                         <p>Статус поиска</p>
@@ -56,6 +81,7 @@
                                 <input type="file" name="photo" accept=".png,.jpg,.jpeg" class="vis-none" id="id_photo" onchange="readURL(this);">
                             </form>
                         </div>
+                        
                         <div class="form-md">
                             <form action="/profile/change_password" method="post" novalidate>
                                 {% csrf_token %}
@@ -71,14 +97,7 @@
                                             {{ field.help_text }}
                                         </div>
                                         {% endfor %}
-                                        {% if messages %}
-                                        <ul class="messages-hide">
-                                            {% for message in messages %}
-                                            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
-                                                {{ message }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                        {% endif %}
+                                       
                                     </div>
                                 </div>
                                 <div class="form-sm">
@@ -107,6 +126,21 @@
 
             reader.readAsDataURL(input.files[0]);
         }
+    }
+    
+    function deleteLink(e) {
+        const el = e.currentTarget.closest('.company-link-container')
+        el.remove()
+    }
+
+    function addLink(e) {
+        $('.company-links').append('<div class="d-flex company-link-container  mb-2">' +
+            ' <input type="text" name="link[]" id="" class="form-control flex-1">' +
+            '<div class="link-del-btn">' +
+            '    <a onlick="deleteLink()"> x </a>' +
+            ' </div>' +
+            ' </div>')
+        $('.company-links').find('.link-del-btn').last().click(deleteLink)
     }
 </script>
 

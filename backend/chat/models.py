@@ -92,7 +92,7 @@ class Chat(models.Model):
 		if user.is_moderator:
 			chat = cls.objects.filter(moderator=user, type=CHAT_TYPE["SYSTEM"])
 			if len(chat) == 0:
-				return cls.objects.create(moderator==user, type=CHAT_TYPE["SYSTEM"])
+				return cls.objects.create(moderator=user, type=CHAT_TYPE["SYSTEM"])
 			return chat[0]
 	@classmethod
 	def get_user_chats(cls, user):
@@ -126,6 +126,7 @@ class Chat(models.Model):
 				self.create_system_message(f"Пользователь {user.display_name} покинул чат")
 			if self.worker == user:
 				self.deleted_by_worker = True
+				self.create_system_message(f"Пользователь {user.display_name} покинул чат")
 			if self.deleted_by_customer and self.deleted_by_worker:
 				self.delete()
 

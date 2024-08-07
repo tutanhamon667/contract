@@ -4,6 +4,8 @@ from .controllers.api import *
 from .controllers.profile import *
 
 urlpatterns = [
+	path("profile_signup_worker", signup_worker, name="profile_signup_worker"),
+    path("profile_signup_customer", signup_customer, name="profile_signup_customer"),
 	path("favorite", favorite_job, name="favorite"),
 	path("jobs", get_jobs, name="jobs"),
 	path("job", get_job, name="job"),

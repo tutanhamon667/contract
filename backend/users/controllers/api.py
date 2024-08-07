@@ -17,7 +17,7 @@ from btc.libs.btc_wallet import get_wallet, get_addresses_count, generate_addres
 from btc.models import JobPayment
 from chat.models import Chat
 from common.models import ArticleCategory, Article
-from orders.models import JobSpecialisationStat
+from users.models.user import JobSpecialisationStat
 from btc.models import Address as WalletAddress, CustomerAccessPayment, Operation, Address
 from users.core.access import Access
 from users.forms import CompanyReviewForm, WorkerReviewForm
@@ -25,6 +25,8 @@ from users.models.advertise import Banners
 from users.models.user import FavoriteJob, Job, ResponseInvite, CustomerReview, Company, Resume, Contact
 from django.core.cache import cache
 from btc.models import JobPayment, BuyPaymentPeriod, JobTier, Address, Operation
+
+from users.core.user import UserCore
 
 from users.models.common import ModerateRequest
 from django.db import transaction
@@ -275,6 +277,26 @@ def get_new_jobs(request):
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+def signup_customer(request):
+	try:
+		res, entity = UserCore.signup_customer(request)
+		if res is False:
+			return JsonResponse({'success': False, 'data': entity.errors})
+		return JsonResponse({'success': True})
+	except Exception as e:
+		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+	
+	
+
+def signup_worker(request):
+	try:
+		res, entity = UserCore.signup_worker(request)
+		if res is False:
+			return JsonResponse({'success': False, 'data': entity.errors})
+		return JsonResponse({'success': True})
+	except Exception as e:
+		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
+
 
 @transaction.atomic
 def response_invite(request):
@@ -464,6 +486,11 @@ def filter_resumes(request):
 					item_regions = resume_db.region
 					if resume_db.user.photo:
 						resume["photo"] = resume_db.user.photo.photo
+
+						if resume_db.user.photo.extra_data:
+							resume["photo_color"] =  resume_db.user.photo.extra_data.get("color")
+						else:
+							resume["photo_color"] = None
 					else:
 						resume["photo"] = '/staticfiles/users/img/profile/acc.svg'
 			if item_regions:
@@ -913,11 +940,16 @@ def get_resume(request):
 		reviews = list(CustomerReview.objects.filter(worker_id=resume[0].user.id))
 		contacts = list(Contact.get_worker_contacts(resume[0].user.id))
 		resume_obj["contacts"] = contacts
-		if resume[0].user.photo:
-			resume_obj["photo"] =  resume[0].user.photo.photo
+		_resume = resume[0]
+		if _resume.user.photo:
+			resume_obj["photo"] =  _resume.user.photo.photo
+			if 'color' in  _resume.user.photo.extra_data:
+				resume_obj["photo_color"] =  _resume.user.photo.extra_data["color"]
+			else:
+				resume_obj["photo_color"] = None
 		else:
 			resume_obj["photo"] = None
-		resume_obj["display_name"] = resume[0].user.display_name
+		resume_obj["display_name"] = _resume.user.display_name
 		resume_obj["reviews"] = len(reviews)
 		invites = list(ResponseInvite.join_responses(objs=resume, user=request.user).values())
 		item_regions = resume[0].region

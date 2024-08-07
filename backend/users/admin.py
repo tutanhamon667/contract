@@ -7,6 +7,17 @@ from users.models.user import (Specialisation, Company, Member, Contact, Resume,
                                Industry, Job, ResponseInvite)
 
 
+from users.models.user import  JobSpecialisationStat
+
+
+@admin.register(JobSpecialisationStat)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    list_filter = ('name',)
+    empty_value_display = '-пусто-'
+
+
 @admin.register(Industry)
 class StackAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
@@ -79,7 +90,7 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('login','display_name')}),
         ('Personal info', {'fields': ('first_name', 'last_name')}),
-        ('Function', {'fields': ('is_customer', 'is_worker','is_admin', 'is_moderator', 'groups')})
+        ('Function', {'fields': ('is_customer', 'is_worker','is_admin', 'is_moderator', 'groups')}),
     )
     add_fieldsets = (
         (None, {

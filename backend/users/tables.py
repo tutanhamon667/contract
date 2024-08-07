@@ -6,6 +6,7 @@ from users.models.user import Region, Ticket
 
 
 class TicketTable(tables.Table):
+	
 	class Meta:
 		model = Ticket
 		template_name = "table.html"

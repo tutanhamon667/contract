@@ -1326,6 +1326,10 @@ const alpineApp = function() {
     }
 
     this.initJobs = async (filters={} ) => {
+        if ( filters.title) {
+            document.getElementById('id_title1').value = filters.title
+            delete filters.title
+        }
         Alpine.store('main').filters = Object.assign( filters, Alpine.store('main').filters)
         console.log(Alpine.store('main').filters)
         const user = await this.getUser()

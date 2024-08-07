@@ -365,7 +365,18 @@ select {
 .star-fill {
     background: url('../img/icons/star.svg');
 }
+.ri-nav-btn{
+    font-size: 20px !important;
+    padding: 0px 20px !important;
+    border-color: black !important;
+    border: 1px solid !important;
+}
 
+
+.ri-nav-btn span{
+    
+    font-size: 16px !important;
+}
 .no-photo {
     text-align: center;
     height: 50px;

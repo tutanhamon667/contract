@@ -16,7 +16,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CSRF_USE_SESSIONS = True
-ENABLE_CAPTCHA = False
+
 CACHES = {
 	"default": {
 		"BACKEND": "django_redis.cache.RedisCache",
@@ -52,7 +52,7 @@ ASGI_APPLICATION = "contract.asgi.application"
 SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4gGultuiot8hbxlguev@bh%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
 ALLOWED_HOSTS = ["51.210.73.174", '127.0.0.1', '[::1]']
 
@@ -71,12 +71,14 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
-
+	'rest_framework',
+	'rest_framework.authtoken',
 	'django_filters',
 	'django_bootstrap5',
 	'djoser',
 	'corsheaders',
 	'users',
+	'orders',
 	'chat',
 	'drf_yasg',
 	'drf_extra_fields',
@@ -128,14 +130,14 @@ TEMPLATES = [
 DATABASES = {
 	'default': {
 		'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-		'NAME': 'contract',
+		'NAME': 'contract_test',
 		'USER': 'contract',
 		'PASSWORD': 'uyfuy^6jji',
 		'HOST': 'localhost',
 		'PORT': 5433
 	}
 }
-
+ENABLE_CAPTCHA = False
 # DATABASES = {
 #	'default': {
 #		'ENGINE': 'django.db.backends.sqlite3',
@@ -186,7 +188,7 @@ USE_TZ = True
 
 
 STATIC_URL = '/staticfiles/'
-FIXTURE_DIRS =  BASE_DIR / "fixtures" 
+
 
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'static'),

@@ -5,22 +5,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load django_bootstrap5 %}
-    {% bootstrap_messages %}
 
     <script src="{% static 'contract/js/bootstrap.min.js' %}"></script>
+  
+    <link href="{% static 'contract/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'contract/css/base.css' %}" rel="stylesheet" />
 
-    <link href="{% static 'contract/css/bootstrap.min.css' %}" rel="stylesheet"/>
 </head>
 <body>
 <section>
-    <div class="container">
+    <div class="container mt-5" style="height: 100%; min-height: 100%;">
         <div class="row">
             <div class="col-md-6">
-                <img src="{% static 'contract/img/logo.png' %}" alt="" height="100"/>
+                <img src="{% static 'contract/img/favicon.svg' %}"  alt="test" height="100"  loading="lazy"/>
+                <h3 class="mt-15">Упс! Страница не найдена</h3>
+                <p class="mt-3">Ошибка 404</p>
+                <p>Возможно, в ссылке опечатка.</p>
                 <a class="btn btn-primary" href="/">На главную</a>
             </div>
             <div class="col-md-6">
-                <img src="{% static 'contract/img/404.png' %}" alt=""/>
+                <img src="{% static 'contract/img/404_image.svg' %}" alt="test"  height="" style="height: 100%;"  loading="lazy"/>
             </div>
         </div>
     </div>

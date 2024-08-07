@@ -20,7 +20,7 @@ from users.controllers.test_view import test
 from . import settings
 
 from users.views import captcha_view
-from orders.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
+from contract.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
 	favorite_view, worker_responses_invites_view, customer_responses_invites_view
 from django.views.generic.base import RedirectView
 
@@ -96,13 +96,7 @@ urlpatterns = [
 	path('activate', activate_view, name='activate_view'),
 
     path("ticket", create_ticket, name="ticket"),
-	path('admin', admin.site.urls),
-	path('swagger/',
-		 schema_view.with_ui('swagger', cache_timeout=0),
-		 name='schema-swagger-ui'),
-	path('redoc/',
-		 schema_view.with_ui('redoc', cache_timeout=0),
-		 name='schema-redoc'),
+	path('admin', admin.site.urls)
 ]
 
 handler404 = "contract.views.not_found_handler"

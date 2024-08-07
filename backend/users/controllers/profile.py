@@ -391,11 +391,13 @@ def profile_main_view(request):
 				recovery_code  = Mnemonic().generate(64)
 				member.recovery_code = recovery_code
 				member.save()
+			contacts = Contact.objects.filter(user=user.id)
 			profile_form = ProfileForm(instance=member)
 			change_pass_form = PasswordChange()
 			return render(request, './blocks/profile/profile_main.html', {
 				'profile_form': profile_form,
 				'change_pass_form': change_pass_form,
+				'contacts': contacts,
 				'categories': categories,
 				'recovery_code': member.recovery_code,
 				'articles': articles
@@ -416,6 +418,10 @@ def profile_main_view(request):
 				user_model = form.save(commit=False)
 				user_model.photo = file_model
 				user_model.save()
+				links = request.POST.getlist('link[]')
+				errs = Contact.update_company_contacts(user, links)
+				if len(errs) > 0:
+					messages.error(request, 'При обновлении информации произошли следующие ошибки: ' + ', '.join(errs))
 				return redirect(to='profile_main')
 			return render(request, './blocks/profile/profile_main.html', {
 				'form': form,

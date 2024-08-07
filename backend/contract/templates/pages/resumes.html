@@ -95,7 +95,7 @@
                                 </div>
                                 <div class="col-2 text-center">
                                     <template x-if="resume.photo">
-                                        <img :src="resume.photo" height="50" class="company-logo-mini" />
+                                        <img :src="resume.photo" height="50" class="company-logo-mini" :style="'background-color:' + resume.photo_color"/>
                                     </template>
                                 </div>
                             </div>

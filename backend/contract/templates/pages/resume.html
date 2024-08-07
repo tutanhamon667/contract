@@ -13,7 +13,7 @@
                             <template x-if="$store.main.resume.photo">
                                 <div class="col-xl-3 col-md-3 col-sm-4  col-4" style="">
                                     <img :src="$store.main.resume.photo" height="130" width="130"
-                                        class="company-logo-big" />
+                                        class="company-logo-big"  :style="'background-color:' + $store.main.resume.photo_color" />
                                 </div>
                             </template>
                             <div class="col-xl-5 col-md-4 col-sm-8  col-8">
@@ -274,6 +274,16 @@
                     </div>
                 </template>
             </template>
+            <div class="mt-5 d-flex">
+                <img src="{% static 'contract/img/eye.svg' %}" height="16" class="mr-15 filter-grey">
+                <p class="text-shadow mr-15" style="line-height: 1.2;"
+                   x-text="$store.main.resume.views + ' просмотров'"></p>
+                <template x-if="$store.main.resume.create_at">
+                    <p class="text-shadow ml-5" style="line-height: 1.2;"
+                    x-text="'Дата публикации '+ application.formatShortDate($store.main.resume.create_at)"></p>
+                </template>
+               
+            </div>
         </div>
 
     </section>

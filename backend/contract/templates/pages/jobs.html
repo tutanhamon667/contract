@@ -242,7 +242,8 @@
 </div>
 <script>
     const initJobs = () => {
-        application.initJobs()
+        const loc = new URL(window.location.href)
+        application.initJobs({title: loc.searchParams.get("title")})
     }
     $(document).ready(function () {
         const application = new app()

@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import make_password
 import random
 import string
 from django.forms import ModelForm
+from django.db import models as basic_models
 from django.utils import timezone
 from django.http import HttpResponse
 from django_ckeditor_5.fields import CKEditor5Field
@@ -22,7 +23,7 @@ from django_cryptography.fields import encrypt
 from contract.settings import USER_FILE_TYPE
 from os import path
 from django.db.models import Manager
-
+from django.contrib.auth.models import Group
 class UserFile(models.Model):
 	folder = models.CharField(max_length=255, null=True, blank=True)
 	name = models.CharField(max_length=255, null=True, blank=True)
@@ -64,14 +65,12 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		default='',
 		null=True
 	)
-
 	first_name = encrypt(models.CharField(
 		max_length=20,
 		default='',
 		blank=True,
 		null=True
 	))
-
 	last_name = encrypt(models.CharField(
 		max_length=20,
 		default='',
@@ -123,6 +122,25 @@ class Member(PermissionsMixin, AbstractBaseUser):
 
 	def has_module_perms(self, app_label):
 		return True
+	
+	def can_edit(self, user):
+		return self == user
+	
+	def check_group_exists(self):
+		try:
+			if self.is_customer:
+				if Company.objects.get(user=self).is_moderated:
+					self.groups.get_or_create(name='customer_moderated')
+				else: 
+					self.groups.get_or_create(name='customer_not_moderated')
+
+			if self.is_worker:
+				self.groups.get_or_create(name='worker')
+			if self.is_moderator:
+				self.groups.get_or_create(name='moderator')
+			self.save()
+		except:
+			pass
 
 	@property
 	def is_staff(self):
@@ -194,6 +212,9 @@ class Contact(models.Model):
 
 	def __str__(self):
 		return f'{self.type} {self.value} {self.preferred}'
+	
+	def can_edit(self, user: Member):
+		return self.user == user
 
 
 	@classmethod
@@ -366,7 +387,10 @@ class Company(models.Model):
 			self.save()
 		except Exception as e:
 			print(e)
-  
+	
+	def can_edit(self, user: Member):
+		return self.user == user
+
 	def get_owner(self):
 		return self.user
 
@@ -562,6 +586,7 @@ class Resume(models.Model):
 		verbose_name='Расскажите о себе', config_name='extends', null=True,
 		blank=True,
 	)
+	created_at = models.DateTimeField(default=timezone.now, verbose_name='Дата создания', null=True)
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
@@ -605,6 +630,9 @@ class Resume(models.Model):
 
 	def __str__(self):
 		return self.name
+	
+	def can_edit(self, user: Member):
+		return self.user == user
 
 	@classmethod
 	def search_filter(cls, request):
@@ -752,6 +780,9 @@ class Job(models.Model):
 
 	def __str__(self):
 		return self.title
+
+	def can_edit(self, user: Member):
+		return self.company.user == user
 
 	def updateModeratedFields(self, moderated_obj):
 		if 'title' in moderated_obj :
@@ -1135,7 +1166,9 @@ class ResponseInvite(models.Model):
 
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
- 
+
+	def can_edit(self, user: Member):
+		return self.job.company.user == user or self.resume.user == user
  
 	def delete_by_user(self, user):
 		if user.is_customer:
@@ -1259,5 +1292,50 @@ class FavoriteJob(models.Model):
 		for job in objs:
 			jobs_ids.append(job.id)
 		return cls.objects.filter(job_id__in=jobs_ids, user=user).values()
+	
+	def can_edit(self, user: Member):
+		return self.user == user
 
+
+
+
+class JobSpecialisationStat(basic_models.Model):
+
+	industry = basic_models.ForeignKey(to=Industry, verbose_name="Индустрия", on_delete=basic_models.PROTECT)
+
+	name = basic_models.CharField(
+		verbose_name='Название категории', max_length=50
+	)
+
+	icon = basic_models.CharField(
+		verbose_name='Icon', max_length=100
+	)
+
+	count = basic_models.BigIntegerField(
+		default=0,
+		verbose_name='Количество'
+	)
+
+	min_from = basic_models.BigIntegerField(
+		default=0,
+		verbose_name='минимальная зп 2'
+	)
+	min_to = basic_models.BigIntegerField(
+		default=0,
+		verbose_name='минимальная зп 2'
+	)
+	class Meta:
+		managed = False
+		db_table = 'job_categories_info'
+
+	@property
+	def get_min(self):
+		if self.min_from is None:
+			self.min_from = 0
+		if self.min_to is None:
+			self.min_to = 0
+		if self.min_from > self.min_to:
+			return self.min_to
+		else:
+			return self.min_from
 

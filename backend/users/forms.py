@@ -8,7 +8,7 @@ from users.models.common import ModerateRequest
 from btc.models import JobTier, BuyPaymentPeriod
 from contract.settings import CHOICES_RAITING, CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_WORK_EXPERIENCE, \
 	CHOICES_WORK_EXPERIENCE_FILTER, CHOICES_WORK_DEPOSIT_FILTER, CHOICES_WORK_TIME_BUSY_FILTER, \
-	CHOICES_WORK_TYPE_FILTER, CHOICES_IS_ACTIVE
+	CHOICES_WORK_TYPE_FILTER, CHOICES_IS_ACTIVE, ENABLE_CAPTCHA
 from contract.widgets.captcha import CaptchaWidget
 from contract.widgets.multiselect import MultiselectWidget
 from contract.widgets.select_with_parent import SelectParentWidget
@@ -527,8 +527,8 @@ class RestorePasswordForm(forms.Form):
 
 
 class RegisterCustomerForm(UserCreationForm):
-	login = forms.CharField(max_length=255, required=True, label="Логин")
-	company_name = forms.CharField(max_length=255, label="Название компании")
+	login = forms.CharField(max_length=20, required=True, label="Логин")
+	company_name = forms.CharField(max_length=20, label="Название компании")
 	password1 = forms.CharField(widget=PasswordWidget(), required=True)
 	password2 = forms.CharField(widget=PasswordWidget('Повторите пароль'), required=True)
 	captcha = forms.CharField(widget=CaptchaWidget(), required=True)
@@ -605,7 +605,7 @@ class RegisterCustomerForm(UserCreationForm):
 
 
 class RegisterWorkerForm(UserCreationForm):
-	login = forms.CharField(max_length=255, required=True, label="Логин")
+	login = forms.CharField(max_length=20, required=True, label="Логин")
 	password1 = forms.CharField(widget=PasswordWidget(), required=True)
 	password2 = forms.CharField(widget=PasswordWidget('Повторите пароль'), required=True)
 	captcha = forms.CharField(widget=CaptchaWidget(), required=True)

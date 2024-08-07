@@ -9,28 +9,38 @@
         <section x-init="initRI()">
             <div class="d-flex page-btn-container">
                   <div class="px-1">
-                      <a class="btn" :class="application.getRIToggleBtnClass(null, 1)" @click="application.setRIFilters({status: 1, type: null})">
-                          Собеседования</a>
-
-                    <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 1).length">
-                        <span class="counter-text"
-                              x-text="$store.main.counters.ri.filter(i => i.status === 1).length"></span>
-                    </template>
+                    <button class="btn ri-nav-btn" :class="application.getRIToggleBtnClass(null, 1)" @click="application.setRIFilters({status: 1, type: null})">
+                        <span>Собеседования</span>
+                   
+                        <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 1).length">
+                            <span class=""
+                                x-text="$store.main.counters.ri.filter(i => i.status === 1).length"></span>
+                        </template>
+                    </button>
+                  
                          
                 </div>
                 <div class="px-1">
-                    <a class="btn"  :class="application.getRIToggleBtnClass(1, 0)" @click="application.setRIFilters({status: 0, type: 1})">Приглашения</a>
-                    <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 0 && i.type === 1).length">
-                        <span class="counter-text"
-                              x-text="$store.main.counters.ri.filter(i => i.status === 0 && i.type === 1).length"></span>
-                    </template>
+                    <button class="btn ri-nav-btn" :class="application.getRIToggleBtnClass(1, 0)" @click="application.setRIFilters({status: 0, type: 1})">
+                        <span>Приглашения</span>
+                   
+                        <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 0 && i.type === 1).length">
+                            <span class="counter-text"
+                                  x-text="$store.main.counters.ri.filter(i => i.status === 0 && i.type === 1).length"></span>
+                        </template>
+                    </button>
+                 
                 </div>
                 <div class="px-1">
-                    <a class="btn"  :class="application.getRIToggleBtnClass(0, 0)" @click="application.setRIFilters({status: 0, type: 0})">Ваши отклики</a>
-                    <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 0 && i.type === 0).length">
-                        <span class="counter-text"
-                              x-text="$store.main.counters.ri.filter(i => i.status === 0 && i.type === 0).length"></span>
-                    </template>
+                    <button class="btn ri-nav-btn"  :class="application.getRIToggleBtnClass(0, 0)" @click="application.setRIFilters({status: 0, type: 0})">
+                        <span>Ваши отклики</span>
+                   
+                        <template x-if="$store.main.counters && $store.main.counters.ri.filter(i => i.status === 0 && i.type === 0).length">
+                            <span class="counter-text"
+                                  x-text="$store.main.counters.ri.filter(i => i.status === 0 && i.type === 0).length"></span>
+                        </template>
+                    </button>
+                 
                 </div>
 
             </div>
