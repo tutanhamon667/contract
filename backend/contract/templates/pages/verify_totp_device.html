@@ -1,0 +1,7 @@
+<h1>Verify TOTP Device</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="token" placeholder="Enter TOTP token">
+    <button type="submit">Submit</button>
+</form>

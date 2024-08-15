@@ -22,6 +22,9 @@ from btc.models import Address as WalletAddress
 from bitcoinlib.wallets import *
 from django.apps import apps
 from users.models.common import ModerateRequest
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from users.forms import TwoFactorAuthenticationForm
 
 def logout_view(request):
 	if request.user.is_authenticated:
@@ -173,7 +176,11 @@ def signup_user(request, is_customer, template, redirect_to):
 						chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
 						chat_with_moderator.save()
 
-				return redirect(to=redirect_to)
+				user = Member.objects.get(id=request.user.id)
+				if user.recovery_code is None:
+					return render(request, 'pages/recovery_code.html')
+				else:
+					return redirect(to=redirect_to)
 			else:
 
 				return render(request, f'pages/{template}.html',
@@ -181,6 +188,100 @@ def signup_user(request, is_customer, template, redirect_to):
 							   'articles': articles,
 							   'categories': categories
 							   })
+
+
+
+@login_required
+def generate_totp_qr_code(request):
+
+    """
+    Generates a TOTP QR code for the authenticated user and renders it on the 'generate_totp_qr_code.html' template.
+
+    Parameters:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered 'generate_totp_qr_code.html' template with the TOTP QR code URL.
+
+    """
+    user = request.user
+    totp_device = user.totp_device
+    qr_code_url = totp_device.get_qr_code_url()
+    return render(request, './pages/generate_totp_qr_code.html', {'qr_code_url': qr_code_url})
+
+
+@login_required
+def two_factor_authentication(request):
+
+    """
+    Handles two-factor authentication for a user.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        A redirect to the home page if the form is valid, otherwise a rendered HTML page with the authentication form.
+    """
+
+    if request.method == 'POST':
+        form = TwoFactorAuthenticationForm(request=request, data=request.POST)
+        if form.is_valid():
+            return redirect('home')
+    else:
+        form = TwoFactorAuthenticationForm(request=request)
+    return render(request, './pages/two_factor_authentication.html', {'form': form})
+
+
+@login_required
+def verify_totp_device(request):
+    """
+    Verify the TOTP device for the authenticated user.
+
+    This function is a view that handles the verification of the TOTP device for the authenticated user.
+    It requires the user to be authenticated.
+
+    Parameters:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponseRedirect: If the TOTP token is valid, redirects the user to the 'home' page.
+        HttpResponse: If the request method is not POST or the TOTP token is invalid, renders the 'verify_totp_device.html' template.
+
+    """
+    user = request.user
+    totp_device = user.totp_device
+    if request.method == 'POST':
+        token = request.POST.get('token')
+        if totp_device.verify_token(token):
+            return redirect('home')
+    return render(request, 'verify_totp_device.html')
+
+
+
+
+def recovery_code_view(request):
+
+	"""
+	View function to handle the recovery code for a user.
+
+	Parameters:
+		request (HttpRequest): The HTTP request object.
+
+	Returns:
+		HttpResponseRedirect: Redirects the user to the 'worker_signin' page if they are not authenticated.
+		HttpResponse: Renders the 'pages/recovery_code.html' template with the user's recovery code if it exists, otherwise redirects to the 'index' page.
+
+	"""
+
+	if (request.user.is_authenticated is False):
+		return redirect('worker_signin')
+	user = Member.objects.get(id=request.user.id)
+	if user.recovery_code is None:
+		recovery_code  = Mnemonic().generate(64)
+		user.recovery_code = recovery_code
+		user.save()
+		return render(request, 'pages/recovery_code.html', {'recovery_code': user.recovery_code})
+	return redirect('index')
 
 
 def registration_customer_view(request):

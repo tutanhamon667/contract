@@ -14,7 +14,10 @@ from django.db.models import Sum, Count, Avg
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import Q
-import random
+from django_otp.plugins.otp_static.models import StaticDevice
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from django_otp.plugins.otp_email.models import EmailDevice
+
 from contract.settings import CONTACT_TYPE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS, CHOICES_WORK_EXPERIENCE, \
 	CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_TICKET_STATUS
 from .common import Region
@@ -24,6 +27,33 @@ from contract.settings import USER_FILE_TYPE
 from os import path
 from django.db.models import Manager
 from django.contrib.auth.models import Group
+
+
+
+from django.contrib.auth.base_user import BaseUserManager
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('The Username field is required.')
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, username, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(username, password, **extra_fields)
+	
+	
+
 class UserFile(models.Model):
 	folder = models.CharField(max_length=255, null=True, blank=True)
 	name = models.CharField(max_length=255, null=True, blank=True)
@@ -50,6 +80,7 @@ class UserFile(models.Model):
 
 
 class Member(PermissionsMixin, AbstractBaseUser):
+	objects = CustomUserManager()
 	login = models.CharField(
 		verbose_name='Логин пользователя',
 		max_length=20,
@@ -84,7 +115,10 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		null=True,
 		on_delete=models.PROTECT
 	)
-
+	otp_devices = models.Manager()
+	totp_devices = models.Manager()
+	email_devices = models.Manager()
+	phone_devices = models.Manager()
 	recovery_code = models.CharField(max_length=255, blank=True, null=True, unique=True)
 	is_customer = models.BooleanField(default=False)
 	is_worker = models.BooleanField(default=False)
@@ -101,7 +135,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
 	deleted = models.BooleanField(default=False)
 	deleted_at = models.DateTimeField(auto_now=False, blank=True, null=True, default=None)
 
-	objects = UserManager()
+	
 	groups = models.ManyToManyField(
 		to='auth.Group',
 		blank=True,
@@ -141,7 +175,8 @@ class Member(PermissionsMixin, AbstractBaseUser):
 			self.save()
 		except:
 			pass
-
+	
+	
 	@property
 	def is_staff(self):
 		return self.is_admin
@@ -169,7 +204,9 @@ class Member(PermissionsMixin, AbstractBaseUser):
 
 
 
+
 User = get_user_model()
+
 #define new method get_member from user model
 User.get_member = lambda self: Member.objects.get(id=self.id)
 

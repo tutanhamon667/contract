@@ -14,8 +14,8 @@ from users.controllers.response_invite import response_invite_view
 from users.controllers.profile import profile_resumes_view, profile_resume_view, contact_view, contacts_view, \
 	profile_main_view, change_password,profile_resume_edit_view, profile_resume_create_view,profile_resume_delete_view,\
 	profile_company_view, jobs_profile_view, profile_response_invite_view, activate_view, profile_favorite_view, create_ticket,customer_access_pay
-from users.controllers.auth import registration_worker_view, registration_customer_view, logout_view, \
-	login_customer_view, login_worker_view
+from users.controllers.auth import generate_totp_qr_code, registration_worker_view, registration_customer_view, logout_view, \
+	login_customer_view, login_worker_view, verify_totp_device
 from users.controllers.test_view import test
 from . import settings
 
@@ -23,7 +23,8 @@ from users.views import captcha_view
 from contract.views import main_view, for_customers_view, jobs_view, job_view, company_view, resumes_view, resume_view, \
 	favorite_view, worker_responses_invites_view, customer_responses_invites_view
 from django.views.generic.base import RedirectView
-
+from django_otp.views import LoginView
+from two_factor.urls import urlpatterns as tf_urls
 
 from users.controllers.moderator import moderate
 
@@ -39,7 +40,9 @@ schema_view = get_schema_view(
 	public=True,
 	permission_classes=(permissions.AllowAny,),
 )
-
+otp_login_urlpatterns = [
+    path('', LoginView.as_view(), name='otp_login'),
+]
 urlpatterns = [
 
 	path('ckeditor5/', include('django_ckeditor_5.urls')),
@@ -94,7 +97,10 @@ urlpatterns = [
 	path('chat/', include("chat.urls")),
 	path('api/', include("users.urls")),
 	path('activate', activate_view, name='activate_view'),
-
+ 	path('generate-totp-qr-code/', generate_totp_qr_code, name='generate_totp_qr_code'),
+    path('otp/', include(otp_login_urlpatterns)),
+	path('verify-totp-device/', verify_totp_device, name='verify_totp_device'),
+    path('two_factor/', include(tf_urls), name='two_factor'),
     path("ticket", create_ticket, name="ticket"),
 	path('admin', admin.site.urls)
 ]

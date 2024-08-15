@@ -233,7 +233,12 @@ main {
 .padding-05 {
     padding: 0.5rem !important;
 }
-
+.text-sm{
+    font-size: smaller;
+}
+.text-s{
+    font-size: small;
+}
 .page-content {
     padding-bottom: 15px;
     padding-left: 5px;
@@ -497,7 +502,7 @@ select {
 }
 
 .response-invite-result {
-    color: #3af83a;
+    color: #4BB24E;
 }
 
 .favorite_job_checkbox+.favorite-label {
@@ -637,8 +642,8 @@ ul.head-right-row>li {
 }
 
 .password-input>button {
-    width: 50px;
-    height: 50px;
+    width: 46px;
+    height: 46px;
     background-color: white;
     background-repeat: no-repeat;
     background-position: center;

@@ -53,7 +53,9 @@ SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4gGultuiot8hbxlguev@bh%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+TWO_FACTOR_TOTP_EXPIRATION = 30  # in seconds
+TWO_FACTOR_TOTP_DIGITS = 6
+TWO_FACTOR_ENABLED = True
 ALLOWED_HOSTS = ["51.210.73.174", '127.0.0.1', '[::1]', 'mi7rtvoexcg5own5lrug35gszuk4l55njwp3tyuidn5gnsl4467qquid.onion']
 
 CHANNEL_LAYERS = {
@@ -71,7 +73,8 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
-
+	'django_otp',
+	'two_factor',
 	'django_filters',
 	'django_bootstrap5',
 	'djoser',
@@ -100,8 +103,12 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	'users.middleware.captcha_check.captcha_check',
-
+	'django_otp.middleware.OTPMiddleware',
 ]
+
+TWO_FACTOR_AUTHENTICATION_ENABLED = True
+
+TWO_FACTOR_REMEMBER_COOKIE_AGE = 60 * 60 * 24 * 365  # 1 year
 
 ROOT_URLCONF = 'contract.urls'
 

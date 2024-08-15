@@ -12,13 +12,13 @@
 
                             <div class="">
                             <p class="form-caption">Регистрация для поиска работы</p>
-                             <form method="POST" >
+                             <form method="POST"  novalidate>
                                  {% csrf_token %}
                                 {% bootstrap_form form %}
                                   <input type="submit" class="btn btn-primary btn-lg px-5 w-100" value="Зарегистрироваться">
                              </form>
-                             <div class="text-center">
-                                <a href="{% url 'worker_signin' %}">Войти</a>
+                             <div class="text-center mt-1">
+                                <a class="text-sm" href="{% url 'worker_signin' %}">Войти</a>
                             </div>
                             </div>
                         </div>

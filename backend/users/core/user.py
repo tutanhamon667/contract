@@ -31,7 +31,7 @@ class UserCore:
 	@classmethod
 	def login(cls, username: str, password: str, request):
 		cls.error = {}
-		user = authenticate(username=username, password=password)
+		user = authenticate(request=request, username=username, password=password)
 		if user is not None:
 			login(request, user)
 			member = Member.objects.get(id=user.id)

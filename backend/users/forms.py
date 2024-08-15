@@ -19,7 +19,20 @@ import re
 from users.models.user import Ticket
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
 	Company, CustomerReview, ResponseInvite, Industry
+from django_otp.forms import OTPAuthenticationForm
 
+class TwoFactorAuthenticationForm(forms.Form):
+    otp_token = forms.CharField(label='OTP Token', max_length=6)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super().__init__(*args, **kwargs)
+
+    def clean_otp_token(self):
+        otp_token = self.cleaned_data['otp_token']
+        if not self.request.user.totp_device.verify_token(otp_token):
+            raise forms.ValidationError('Invalid OTP token')
+        return otp_token
 
 class JobPaymentTarifForm(forms.Form):
 	tier = forms.IntegerField(label="Тариф размещения", required=True)

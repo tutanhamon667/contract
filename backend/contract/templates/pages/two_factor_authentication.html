@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% block content %}
+
+    <div class="container" x-init>
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-6 col-xl-4 auth-form">
+                <div class="card bg-white text-black" style="border-radius: 1rem;">
+                    <div class="card-body p-4">
+                        <div class="">
+                            <p class="form-caption">Two-Factor Authentication</p>
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <button type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
+
+    </div>
+
+
+           
+{% endblock content %}

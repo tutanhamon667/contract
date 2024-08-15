@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% load static %}
+{% block content %}
+
+    <div class="container" x-init>
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-6 col-xl-4 auth-form">
+                <div class="card bg-white text-black" style="border-radius: 1rem;">
+                    <div class="card-body p-4">
+                        <div class="">
+                            <p class="form-caption">Код восстановления аккаунта</p>
+                            <div class="pseodo-input">
+                                <div class="d-flex">
+                                    <input id="btc_address" class="flex-1" :value="$store.main.balance.address">
+                                    <button class="btn btn-primary ml-15"
+                                        @click="application.copyToClipboard({{recovery_code}})"></button>
+                                </div>
+                            </div>
+                            <p class="text-s">Сохраните или запишите код восстановления для решения вопросов с аккаунтом и восстановления пароля. Код отображается только один раз!</p>
+                            <div class="text-center">
+                                <a href="{% url 'main' %}">Продолжить</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
+
+    </div>
+
+
+           
+{% endblock content %}
