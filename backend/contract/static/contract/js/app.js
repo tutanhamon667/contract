@@ -1,3 +1,4 @@
+
 const alpineApp = function() {
 
     const showLoader = (show) => {
@@ -1628,6 +1629,7 @@ const alpineApp = function() {
         }
         window.getSelection().removeAllRanges();
     }
+
 
     customerAccessPay = async () => {
         const res = await makeRequest('access_payment', {})

@@ -12,7 +12,7 @@
 
                         <div class="">
                             <p class="form-caption">Поиск сотрудников</p>
-                            <form method="POST">
+                            <form method="POST" >
                                 <p class="form-error-msg">{{ form.error }}</p>
                                 {% csrf_token %}
                                 <input type="hidden" name="form_name" value="sign_in">

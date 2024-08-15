@@ -1,5 +1,6 @@
 import base64
 
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.db import transaction
 from chat.models import Chat
@@ -151,7 +152,7 @@ def signup_user(request, is_customer, template, redirect_to):
 				user.photo = file
 				user.save()
 				login(request, user)
-			
+
 				
 				if is_customer:
 					company_name = request.POST.get('company_name')

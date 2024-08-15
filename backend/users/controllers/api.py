@@ -8,6 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from decimal import Decimal
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
+from contract.settings import RESPONSE_INVITE_STATUS
 from users.models.user import Member, UserFile
 from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
@@ -30,6 +31,8 @@ from users.core.user import UserCore
 
 from users.models.common import ModerateRequest
 from django.db import transaction
+from django.contrib.auth.decorators import permission_required
+from django.http import HttpResponseForbidden
 
 def get_user(request):
 	try:
@@ -52,6 +55,9 @@ def get_user(request):
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
+
+@permission_required('chat.delete_chat')
+@permission_required('users.delete_responseinvite')
 @transaction.atomic
 def leave_chat(request):
 	try:
@@ -85,6 +91,8 @@ def get_counters(request):
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
+
+@permission_required('users.view_responseinvite')
 def get_responses_invites(request):
 	try:
 		if request.user.is_authenticated:
@@ -135,6 +143,7 @@ def get_responses_invites(request):
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
+@permission_required('users.change_favoritejob')
 def favorite_job(request):
 	try:
 		if request.user.is_authenticated:
@@ -154,7 +163,7 @@ def favorite_job(request):
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
-
+@permission_required('users.view_favoritejob')
 def get_favorite_jobs(request):
 	try:
 		if request.user.is_authenticated:
@@ -180,10 +189,10 @@ def get_hot_jobs(request):
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
-
+@permission_required('users.add_customerreview')
 def create_review(request):
 	if request.user.is_authenticated:
-		print(request.POST)
+
 		review_form = CompanyReviewForm(request.POST)
 		if review_form.is_valid():
 			review = CustomerReview(reviewer=request.user, moderated=False,
@@ -200,6 +209,8 @@ def create_review(request):
 	else:
 		return JsonResponse({'success': False, "data": {}, 'code': 403})
 
+
+@permission_required('users.add_customerreview')
 def create_worker_review(request):
 	user = request.user
 	if user.is_authenticated and user.is_customer:
@@ -220,6 +231,9 @@ def create_worker_review(request):
 		return JsonResponse({'success': False, "data": {}, 'code': 403})
 
 
+
+
+@permission_required('users.view_customerreview')
 def worker_reviews(request):
 	try:
 		id = request.POST["resume_id"]
@@ -298,6 +312,7 @@ def signup_worker(request):
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+@permission_required('users.add_responseinvite')
 @transaction.atomic
 def response_invite(request):
 	try:
@@ -386,6 +401,7 @@ def response_invite(request):
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+
 def get_user_resumes(request):
 	try:
 		user = request.user
@@ -414,6 +430,8 @@ def get_user_resumes(request):
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
 
+
+@permission_required('users.view_favoritejob')
 def favorite_jobs(request):
 	try:
 		if request.user.is_authenticated:
@@ -519,6 +537,7 @@ def filter_resumes(request):
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
+
 def get_jobs(request):
 	try:
 		jobs_count, jobs = Job.search_filter_new(request)
@@ -572,6 +591,9 @@ def get_jobs(request):
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
+
+
+@permission_required('users.add_jobpayment')
 def calc_tier_payment(request):
 	try:
 		user = request.user
@@ -732,7 +754,7 @@ def calc_tier_payment(request):
 	except Exception as e:
 		return JsonResponse({'success': False, "code": 500, "msg": str(e)})
 
-
+@permission_required('users.add_customeraccesspayment')
 @transaction.atomic	
 def access_payment(request):
 	try:
