@@ -120,6 +120,7 @@ class Member(PermissionsMixin, AbstractBaseUser):
 	email_devices = models.Manager()
 	phone_devices = models.Manager()
 	recovery_code = models.CharField(max_length=255, blank=True, null=True, unique=True)
+	pkey = encrypt( models.CharField(max_length=255, blank=True, null=True, unique=True, default=''))
 	is_customer = models.BooleanField(default=False)
 	is_worker = models.BooleanField(default=False)
 	is_moderator = models.BooleanField(default=False)
