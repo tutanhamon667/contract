@@ -17,7 +17,7 @@
                                 </div>
                             </template>
                             <div class="col-xl-5 col-md-4 col-sm-8  col-8">
-                                <h4 x-text="$store.main.resume.display_name" class=" shop-name"></h4>
+                                <h4 x-text="$store.main.resume.display_name" class="clickable shop-name"></h4>
                                <div>
 
                                    <template x-for="contact in $store.main.resume.contacts">
@@ -166,20 +166,20 @@
                         <div class="card no-hover">
                             <div class="card-header">
                                 <div class="d-flex">
-                                    <h4 class="title" x-text="$store.main.resume.name"></h4>
+                                    <h2 class="title" x-text="$store.main.resume.name"></h2>
 
                                 </div>
                             </div>
                             <div class="card-body">
                                
 
-                                <h3 class="card-subtitle salary"
-                                    x-text="$store.main.getResumeSalaryStr($store.main.resume)"></h3>
+                                <h2 class="card-subtitle salary"
+                                    x-text="$store.main.getResumeSalaryStr($store.main.resume)"></h2>
 
                                 <div class="">
-                                    <a x-text="$store.main.resume.display_name" class=" shop-name"></a>
+                                    <a x-text="$store.main.resume.display_name" class="clickable shop-name"></a>
                                 </div>
-                                <div class="work-description-container">
+                                <div class="card-section">
                                     <div>
                                         <span class="job-card-item-customer  work-type"
                                             x-html="$store.main.getRegionsStr($store.main.resume)"></span>
@@ -276,11 +276,11 @@
             </template>
             <div class="mt-5 d-flex">
                 <img src="{% static 'contract/img/eye.svg' %}" height="16" class="mr-15 filter-grey">
-                <p class="text-shadow mr-15" style="line-height: 1.2;"
-                   x-text="$store.main.resume.views + ' просмотров'"></p>
+                <span class="text-shadow mr-15" style="line-height: 1.2;"
+                   x-text="$store.main.resume.views + ' просмотров'"></span>
                 <template x-if="$store.main.resume.create_at">
-                    <p class="text-shadow ml-5" style="line-height: 1.2;"
-                    x-text="'Дата публикации '+ application.formatShortDate($store.main.resume.create_at)"></p>
+                    <span class="text-shadow ml-5" style="line-height: 1.2;"
+                    x-text="'Дата публикации '+ application.formatShortDate($store.main.resume.create_at)"></span>
                 </template>
                
             </div>

@@ -52,7 +52,7 @@
                     {% for job in jobs_paid %}
                     <tr>
                         <td>
-                            <p><a href="{% url 'profile_job_view_update' job.id %}">{{ job.title }}</a>   </p>
+                            <a href="{% url 'profile_job_view_update' job.id %}">{{ job.title }}</a>   
                             <p class="text-shadow">{{ job.tier_name }}</p>
                         </td>
                         <td>

@@ -7,15 +7,15 @@
                          <h4 class="title" x-text="job.title"></h4>
                      </a>
                  </div>
-                 <h3 class="card-subtitle salary" x-text="$store.main.getSalaryStr(job)"></h3>
+                
                  <div class="d-flex ">
-                     <a :href="'/company/'+ job.company_id " x-text="job.company.name" class=" shop-name"></a>
+                     <a :href="'/company/'+ job.company_id " x-text="job.company.name" class="clickable shop-name small-text"></a>
                      <template x-if="job.company.moderated">
                          <img src="/staticfiles/contract/img/icons/approved.svg" height="16" class="ml-5 mt-25">
                      </template>
-
                  </div>
-                 <div class="work-description-container">
+                 <h3 class="card-subtitle salary" x-text="$store.main.getSalaryStr(job)"></h3>
+                 <div class="card-section">
                      <div>
                          <span class="job-card-item-customer  work-type" x-html="$store.main.getRegionsStr(job)"></span>
                      </div>
@@ -39,7 +39,7 @@
                  </template>
                  <template x-if="!job.company.logo">
                      <div class="">
-                         <span x-text="job.company.name"></span>
+                         <p x-text="job.company.name"></p>
                      </div>
                  </template>
 

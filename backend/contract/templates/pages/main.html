@@ -147,7 +147,7 @@
                 <img src="{% static 'contract/img/icons/new.svg' %}" class="h-icon">
                 <h4>Новые вакансии</h4>
             </div>
-            <div class="row">
+            <div class="row resizable">
                 {% with addition_card_class=' horizontal-height' short=True show_company_logo=True jobs=new_jobs col=' col-lg-4 col-md-4 col-sm-6 ' %}
                     {% include "../blocks/components/job/job_component.html" %}
                 {% endwith %}

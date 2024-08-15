@@ -15,8 +15,8 @@
                                 <div :class="['card', 'no-hover', $store.main.job.payment.job_tier_id == 3? 'hot-job-card ':'' ]">
                                     <div class="card-header">
                                         <div class="card-title d-flex">
-                                            <a :href="'/jobs/' +$store.main.job.id" class="title">
-                                                <h4 class="title" x-text="$store.main.job.title"></h4>
+                                            <a :href="'/jobs/' +$store.main.job.id" class="title clickable">
+                                                <h2 class="title" x-text="$store.main.job.title"></h2>
                                             </a>
                                             <template x-if="$store.main.job.payment.job_tier_id == 3">
                                                 <img src="{% static 'contract/img/icons/hot.svg' %}" height="22"
@@ -33,11 +33,11 @@
                                             x-text="$store.main.getSalaryStr($store.main.job)"></h3>
                                         <div class="d-flex ">
                                             <a :href="'/company/'+ $store.main.job.company_id "
-                                               x-text="$store.main.job.company.name" class=" shop-name"></a> <img
+                                               x-text="$store.main.job.company.name" class="clickable shop-name"></a> <img
                                                 src="/staticfiles/contract/img/icons/approved.svg" height="16"
                                                 class="ml-5 mt-15">
                                         </div>
-                                        <div class="work-description-container">
+                                        <div class="card-section">
                                             <div>
                                                   <span class="job-card-item-customer  work-type"
                                                         x-html="$store.main.getRegionsStr($store.main.job)"></span>
@@ -165,7 +165,7 @@
                                         </template>
                                         <div class="d-flex ">
                                             <a :href="'/company/'+ $store.main.job.company_id "
-                                               x-text="$store.main.job.company.name" class=" shop-name"></a> <img
+                                               x-text="$store.main.job.company.name" class="clickable shop-name"></a> <img
                                                 src="/staticfiles/contract/img/icons/approved.svg" height="16"
                                                 class="ml-5" style="margin-top: 3px">
                                         </div>
@@ -206,11 +206,11 @@
 
                     </div>
                     <div class="mt-5 d-flex">
-                        <img src="{% static 'contract/img/eye.svg' %}" height="16" class="mr-15 filter-grey">
-                        <p class="text-shadow mr-15" style="line-height: 1.2;"
-                           x-text="$store.main.job.views + ' просмотров'"></p>
-                        <p class="text-shadow ml-5" style="line-height: 1.2;"
-                           x-text="'Дата публикации '+ application.formatShortDate($store.main.job.pub_date)"></p>
+                        <img src="{% static 'contract/img/eye.svg' %}" height="14" class="mr-15 filter-grey">
+                        <span class="text-shadow mr-15" style="line-height: 1.2;"
+                           x-text="$store.main.job.views + ' просмотров'"></span>
+                        <span class="text-shadow ml-5" style="line-height: 1.2;"
+                           x-text="'Дата публикации '+ application.formatShortDate($store.main.job.pub_date)"></span>
                     </div>
                 </div>
 

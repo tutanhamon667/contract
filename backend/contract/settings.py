@@ -54,7 +54,7 @@ SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4gGultuiot8hbxlguev@bh%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["51.210.73.174", '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ["51.210.73.174", '127.0.0.1', '[::1]', 'mi7rtvoexcg5own5lrug35gszuk4l55njwp3tyuidn5gnsl4467qquid.onion']
 
 CHANNEL_LAYERS = {
 	"default": {

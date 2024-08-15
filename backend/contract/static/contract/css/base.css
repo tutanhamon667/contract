@@ -1,4 +1,15 @@
 @charset "UTF-8";
+
+:root {
+  --bs-card-title-spacer-y: 0rem; /* set your desired value here */
+  --bs-card-cap-bg: none;
+  --bs-link-color: grey;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url('../fonts/inter.ttf') format("truetype");
+}
 /*! normalize.css v1.1.3 | MIT License | git.io/normalize */
 /* ==========================================================================
    HTML5 display definitions
@@ -48,44 +59,68 @@
    display: none;
  }
  
-@font-face {
-    font-family: "Inter", sans-serif;
-    src: url('../fonts/inter.ttf') format("truetype");
-}
+
 body> {
     font-size: medium;
   
 }
 
 h1 {
-    font-size: 48px;
-    font-size: calc(48px + 0.390625vw);
+    font-size: clamp(26px, 4vw, 36px);
 }
 h2 {
-    font-size: 32;
-    font-size: calc(32px + 0.390625vw);
+    font-size: clamp(22px, 4vw, 32px);
 }
-h3 {
-    font-size: 21;
-    font-size: calc(21px + 0.390625vw);
+h3, table th {
+    font-size: clamp(16px, 4vw, 21px);
 }
-p {
-    font-size: 14;
-    font-size: calc(14px + 0.390625vw);
+table td  *{
+    font-size: clamp(14px, 4vw, 18px);
 }
+
+p{
+    font-size: clamp(14px, 4vw, 20px);
+}
+
+
+a, li, .btn{
+    font-size: clamp(18px, 4vw, 24px);}
+
 span {
-    font-size: 8;
-    font-size: calc(8px + 0.390625vw);
+    font-size: clamp(12px, 4vw, 18px);
 }
 
 
+.card-content a{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
+article {
+    font-size: clamp(16px, 4vw, 24px);
+  }
+
+a:hover {
+    color: black !important;
+}
+
+.clickable {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.bold {
+    font-weight: 600;
+}
 
 .mobile-menu button.navbar-toggler {
     width: 50px;
     height: 50px;
 }
-
+.mt-1 {
+    margin-top: .5rem!important;
+}
 
 .card-body{
     padding: 10px !important
@@ -93,11 +128,18 @@ span {
 
 .card-header{
     padding: 10 10 0 !important;
+    background-color: none !important;
 }
+
+.small-text {
+    font-size: 0.75rem;
+}
+
 ::marker {
     margin: 0  ;
     padding: 0;
 }
+
 
 .mb-15 {
     margin-bottom: 15px;
@@ -116,10 +158,6 @@ span {
     transform-origin: left;
 }
 
-.card h2.counter{
-    font-size: 36px !important;
-    font-weight: 500;
-}
 
 h1,
 h2,
@@ -134,6 +172,8 @@ h6 {
 body {
     min-height: 100vh;
     margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
@@ -146,11 +186,6 @@ footer {
 
 
 /* The article fills all the space between header & footer */
-
-body {
-    display: flex;
-    flex-direction: column;
-}
 
 main {
     flex: 1;
@@ -173,13 +208,8 @@ main {
     background-color: red;
     border-radius: 7px;
     color: white !important;
-    font-size: 22px;
 }
 
-.font-p {
-    font-size: 14px;
-    font-weight: normal;
-}
 
 .tooltip-container {
     opacity: 0.5;
@@ -210,7 +240,6 @@ main {
 }
 
 .success-msg {
-    font-size: 24px;
     font-weight: 600;
     color: #2dcf2d;
 }
@@ -220,7 +249,6 @@ main {
     background-color: rgb(0, 0, 0);
     color: white !important;
     border-radius: 7px;
-    font-size: 22px;
 }
 
 .green {
@@ -230,7 +258,6 @@ main {
 .select-extended-item span {
     font-family: "Inter" !important;
     font-weight: normal !important;
-    font-size: 16px !important;
 }
 
 .select-extended-item:hover {
@@ -312,10 +339,6 @@ select {
     position: absolute;
 }
 
-.btn.btn-primary .log {
-    font-size: 14px;
-}
-
 .collapse.full-hide:not(.show) {
     display: none !important;
 }
@@ -324,16 +347,8 @@ select {
     min-height: 170px;
 }
 
-.services p.card-price {
-    font-size: 16px;
-}
-
 .form-item {
     padding-bottom: 15px;
-}
-
-.form-item .form-item-label {
-    font-weight: 600;
 }
 
 .filter-grey {
@@ -342,7 +357,6 @@ select {
 
 .profile-user-name {
     line-height: 3.5;
-    font-size: 24px;
     font-weight: 600;
 }
 
@@ -350,7 +364,7 @@ select {
     width: 450px;
     padding-left: 10px;
     border-radius: 10px;
-    font-size: 1rem;
+
     font-weight: 400;
     display: inline-block;
     color: #212529;
@@ -404,7 +418,6 @@ select {
 }
 
 .counter-text {
-    font-size: 14px;
     display: inline-block;
     /* margin-right: 10px; */
     position: relative;
@@ -427,9 +440,7 @@ select {
     height: 25px;
 }
 
-.bold {
-    font-weight: bold;
-}
+
 
 .star-empty {
     background: url('../img/icons/star_shape.svg');
@@ -443,17 +454,12 @@ select {
     background: url('../img/icons/star.svg');
 }
 .ri-nav-btn{
-    font-size: 20px !important;
     padding: 0px 20px !important;
     border-color: black !important;
     border: 1px solid !important;
 }
 
 
-.ri-nav-btn span{
-    
-    font-size: 16px !important;
-}
 .no-photo {
     text-align: center;
     height: 50px;
@@ -522,12 +528,12 @@ select {
     width: 100%;
     height: 100%;
     vertical-align: center;
-    font-size: 30px;
     font-weight: bold;
 }
 
 .card-title {
     white-space: nowrap;
+    margin-bottom: 0 !important;
 }
 
 .balance-header {
@@ -540,15 +546,14 @@ select {
 .card .title {
     text-decoration: none;
     color: black;
-    font-weight: 500;
-    font-size: 20px;
+    font-size: 1.7rem;
+    font-weight: 600;
 }
 
 .card .salary {
 
     color: black;
     font-weight: 500;
-    font-size: 22px;
 }
 
 .card .item-name {
@@ -565,23 +570,14 @@ select {
     color: grey;
     text-decoration: none;
     font-weight: normal;
-    font-size: 16px;
 }
-
-.card .work-description-container {}
-
 .card .work-description-container .work-experience {
     color: black;
-    text-decoration: none;
-    font-weight: normal;
-    font-size: 16px;
+    text-decoration: none;;
 }
 
 .card .work-description-container .work-deposit {
     color: black;
-    text-decoration: none;
-    font-weight: normal;
-    font-size: 16px;
 }
 
 .nowrap {
@@ -765,7 +761,6 @@ form p label {
 }
 
 .multiselect-item p {
-    font-size: 16px;
     margin-bottom: 3px;
 }
 
@@ -792,7 +787,6 @@ form p label {
 p.form-caption {
     font-family: "Inter";
     font-weight: 500;
-    font-size: 18px;
     padding-bottom: 20px;
 }
 
@@ -809,65 +803,18 @@ body {
     min-width: 460px;
 }
 
-h1 {
-    color: black;
-    font-size: 18px;
-    font-family: Inter;
-    font-weight: 500;
-    word-wrap: break-word;
-}
-
 table p {
     margin: 0px;
 }
 
-h2 {
-    font-family: "Inter";
-    font-weight: bold;
-    font-size: 32px;
-}
-
-h3 {
-    font-family: "Inter";
-    font-weight: bold;
-    font-size: 22px;
-}
-
-h3.f-20 {
-    font-family: "Inter";
-    font-weight: normal;
-    font-size: 20px;
-}
-
-h4 {
-    font-family: "Inter";
-    font-weight: 600;
-    font-size: 18px;
-}
-
-h5 {
-    font-family: "Inter";
-    font-weight: 600;
-    font-size: 16px;
-}
-
-p {
-    font-family: "Inter";
-    font-weight: normal;
-    font-size: 14px;
-}
 
 .vacancy-description span {
-    font-size: 12px;
     font-weight: 600;
-    white-space: nowrap;
 }
 
 ul.errorlist {
     padding-left: 0px;
-    font-family: "Inter";
-    font-weight: normal;
-    font-size: 14px;
+
 }
 
 p.form-error-msg {
@@ -895,7 +842,6 @@ a:has(.card):hover {
 header a {
     font-family: "Inter";
     font-weight: normal;
-    font-size: 16px;
     color: black;
 }
 
@@ -907,7 +853,6 @@ header a {
 a {
     font-family: "Inter";
     font-weight: normal;
-    font-size: 14px;
     color: black;
 }
 
@@ -919,7 +864,6 @@ a {
 footer a.nav-link {
     font-family: "Inter" !important;
     font-weight: normal !important;
-    font-size: 14px !important;
     color: black !important;
 }
 
@@ -973,11 +917,6 @@ a.nav-link {
     color: black !important;
 }
 
-span {
-    font-family: "Inter";
-    font-weight: normal;
-    font-size: 9px;
-}
 
 .btn-primary {
     --bs-btn-color: #fff;
@@ -1117,7 +1056,6 @@ input[type="text"]:active {
 .card {
     --bs-card-spacer-y: 1rem;
     --bs-card-spacer-x: 1rem;
-    --bs-card-title-spacer-y: 0.5rem;
     --bs-card-border-width: 1px;
     --bs-card-border-color: var(--bs-border-color-translucent);
     --bs-card-border-radius: 0.375rem;
@@ -1273,7 +1211,7 @@ a:has(.best-customers-card):hover {
 }
 
 .card-title a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .job-card-item-customer.customer-name {
@@ -1340,7 +1278,7 @@ ul.errorlist {
 
 .table th {
     color: #999999;
-    font-size: 14px;
+
     font-family: Inter;
     font-weight: 400;
     word-wrap: break-word;
@@ -1357,7 +1295,7 @@ ul.errorlist {
 
 .table th.link {
     color: #999999;
-    font-size: 14px;
+
     font-family: Inter;
     font-weight: 400;
     text-decoration: underline;
@@ -1366,7 +1304,7 @@ ul.errorlist {
 
 .table th.link button {
     color: #999999;
-    font-size: 14px;
+
     font-family: Inter;
     font-weight: 400;
     text-decoration: underline;
@@ -1376,7 +1314,6 @@ ul.errorlist {
 
 h1 {
     color: black;
-    font-size: 18px;
     font-family: Inter;
     font-weight: 500;
     word-wrap: break-word;
@@ -1384,7 +1321,7 @@ h1 {
 
 .table td.normal {
     color: black;
-    font-size: 14px;
+
     font-family: Inter;
     font-weight: 400;
     word-wrap: break-word;
@@ -1392,7 +1329,7 @@ h1 {
 
 .table td.link {
     color: black;
-    font-size: 14px;
+
     font-family: Inter;
     font-weight: 400;
     text-decoration: underline;
@@ -1411,20 +1348,9 @@ section .section-header {
 
 @media (max-width: 1400px) {
 
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-size: 1.1rem !important;
-    }
-
     .h-icon {
         height: 100%;
 
-    }
-
-    .products-category-container .card-title {
-        font-size: 1rem !important;
     }
 }
 
@@ -1488,9 +1414,16 @@ body {
     padding: 0%;
 }
 
+.dropdown-item.active, .dropdown-item:active {
+
+    text-decoration: none;
+    background-color: none !important;
+}
+
 .card-section {
     width: 100%;
-    margin-top: 5px;
+    
+    padding:  10px 0px;
 }
 
 .flex-align-baseline {
@@ -1513,183 +1446,57 @@ body {
         max-height: 15;
     }
 
-    .item-name {
-        font-size: 18px;
-    }
-
-    .form-title {
-        font-size: 18px;
-    }
-
-    .card-title {
-        font-size: 16px;
-    }
-
-    .page-title {
-        font-size: 26px;
-    }
-
-    .card-body * {
-        font-size: 14px;
-    }
-
-    .sub-text {
-        font-size: 16px;
-    }
-
-    .btn {
-        font-size: 18px;
-    }
-
+  
     .h-icon {
         height: 100%;
     }
 
-    .price {
-        font-size: 18px;
-    }
 }
 
-.btn,
-a,
-button {
-    font-size: 16px;
-}
+
 
 @media (max-width: 1400px) {
-    body {
-        font-size: 18px;
-        /* Adjust the font size for smaller screens */
+  
 
-    }
 
     .flex-align-baseline img {
         margin-top: 3px;
         max-height: 14;
     }
 
-    .item-name {
-        font-size: 16px;
-    }
-
-    .card-title {
-        font-size: 16px;
-    }
-
-    .page-title {
-        font-size: 24px;
-    }
-
-    .card-body {
-        font-size: 16px;
-    }
-
-    .sub-text {
-        font-size: 14px;
-    }
-
-    .btn {
-        font-size: 16px;
-    }
+ 
 
     .h-icon {
         height: 100%;
     }
 
-    .price {
-        font-size: 18px;
-    }
+
 }
 
 /* Add media queries to adjust the font size for different screen sizes */
 @media (max-width: 768px) {
-    body {
-        font-size: 14px;
-        /* Adjust the font size for smaller screens */
-    }
-
+ 
     .flex-align-baseline img {
         margin-top: 2px;
         max-height: 13;
     }
 
-    .item-name {
-        font-size: 14px;
-    }
-
-    .card-title {
-        font-size: 16px;
-    }
-
-    .page-title {
-        font-size: 20px;
-    }
-
-    .card-body {
-        font-size: 14px;
-    }
-
-    .sub-text {
-        font-size: 12px;
-    }
-
-    .btn {
-        font-size: 14px;
-    }
-
+   
     .h-icon {
         height: 100%;
     }
 
-    .price {
-        font-size: 16px;
-    }
+
 }
 
 
 
 @media (max-width: 480px) {
-    body {
-        font-size: 12px;
-        /* Adjust the font size for even smaller screens */
-    }
-
-    .flex-align-baseline img {
-        margin-top: 1px;
-        max-height: 11;
-    }
-
-    .item-name {
-        font-size: 12px;
-    }
-
-    .card-title {
-        font-size: 16px;
-    }
-
-    .page-title {
-        font-size: 20px;
-    }
-
-    .card-body {
-        font-size: 14px;
-    }
-
-    .sub-text {
-        font-size: 12px;
-    }
-
-    .btn {
-        font-size: 14px;
-    }
-
+ 
     .h-icon {
         height: 100%;
     }
 
-    .price {
-        font-size: 14px;
-    }
 }
 
 .mr-10 {
@@ -1698,21 +1505,17 @@ button {
 
 
 
+article {
+
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    line-height: 150%;
+}
 
 
-@media (max-width: 2560px) {
-    h1,h2,h3,p,span {font-size: 3em;}
-}
-@media (max-width: 1920px) {
-    h1,h2,h3,p,span {font-size: 2.5em;}
-}
-@media (max-width: 1536px) {
-    h1,h2,h3,p,span {font-size: 2em;}
-}
-@media (max-width: 768px) {
-    h1,h2,h3,p,span {font-size: 1.7em;}
-}
-@media (max-width: 480px) {
-    h1,h2,h3,p,span  {font-size: 1.5em;}
-}
+
+
+
+
 
