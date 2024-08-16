@@ -58,11 +58,12 @@ services:
         limits:
           cpus: '1'
           memory: 2G
+
   django:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 contract.asgi
     volumes:
       - .:/app
     ports:
@@ -93,7 +94,16 @@ services:
     environment:
       - REDIS_PORT=6379
       - REDIS_DATABASES=3
-
+#  openvpn:
+#    image: kylemanna/openvpn:latest
+#    container_name: openvpn
+#    command: openvpn --config ./openvpn.conf
+#    ports:
+#      - "1194:1194/udp"
+#    volumes:
+#     - ./openvpn.conf:/etc/openvpn/openvpn.conf
+#      - ./cert/users:/etc/openvpn/certs
+#    restart: always
 
 volumes:
   pg_contract_data:

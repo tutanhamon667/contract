@@ -44,7 +44,7 @@ otp_login_urlpatterns = [
     path('', LoginView.as_view(), name='otp_login'),
 ]
 urlpatterns = [
-
+	path('admin', admin.site.urls, ),
 	path('ckeditor5/', include('django_ckeditor_5.urls')),
 	path('', main_view, name='index'),
 	path('for_customers', for_customers_view, name='for_customers'),
@@ -102,7 +102,7 @@ urlpatterns = [
 	path('verify-totp-device/', verify_totp_device, name='verify_totp_device'),
     path('two_factor/', include(tf_urls), name='two_factor'),
     path("ticket", create_ticket, name="ticket"),
-	path('admin', admin.site.urls)
+
 ]
 
 handler404 = "contract.views.not_found_handler"

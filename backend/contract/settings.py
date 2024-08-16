@@ -52,7 +52,7 @@ ASGI_APPLICATION = "contract.asgi.application"
 SECRET_KEY = 'django-insecure-mziq8mo-wgp#urg02d(uaau4gGultuiot8hbxlguev@bh%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 TWO_FACTOR_TOTP_EXPIRATION = 30  # in seconds
 TWO_FACTOR_TOTP_DIGITS = 6
 TWO_FACTOR_ENABLED = True
@@ -74,6 +74,9 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_hotp',
+    'django_otp.plugins.otp_static',
 	'two_factor',
 	'django_filters',
 	'django_bootstrap5',
@@ -93,6 +96,12 @@ INSTALLED_APPS = [
  	'django_tables2'
 ]
 
+OTP_AUTH_ROLES = {
+    'admin': ['static'],
+    'user': ['totp', 'hotp'],
+    'guest': ['static'],
+}
+
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
@@ -106,7 +115,8 @@ MIDDLEWARE = [
 	'django_otp.middleware.OTPMiddleware',
 ]
 
-TWO_FACTOR_AUTHENTICATION_ENABLED = True
+TWO_FACTOR_AUTHENTICATION_ENABLED = False
+OTP_STATIC_THROTTLE_FACTOR = 0
 
 TWO_FACTOR_REMEMBER_COOKIE_AGE = 60 * 60 * 24 * 365  # 1 year
 

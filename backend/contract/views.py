@@ -227,7 +227,13 @@ def resume_view(request, resume_id):
 			'resume': resume})
 
 def not_found_handler(request, exception=None):
-	return render(request, './404.html', {})
+	response = HttpResponse()
+	
+	response = render(request, './404.html', {})
+	
+	response.set_cookie('my_cookie', 'value', samesite='none', secure=False)
+	response.set_headers({'X-Frame-Options': 'chordify.com'})
+	return response
 
 
 def internal_error_handler(request, exception=None):

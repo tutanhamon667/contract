@@ -107,6 +107,23 @@
                             <h3>Код восстановления, сохраните его для восстановления пароля</h3>
                             <textarea class="form-control" disabled>{{recovery_code}}</textarea>
                         </div>
+                        {% if user.is_customer: %}
+                        <div class="form-md">
+                            <form action="/profile/pgp/create" method="post">
+                                <div class="d-flex mt-3">
+                                    <div style="flex:1;">
+                                        <p class="bold">Изменить пароль</p>
+                                    </div>
+                                
+                                </div>
+                                <div class="form-sm">
+                                    <input type="submit" class="btn btn-primary w-100" value="Обновить" />
+                                </div>
+                            </form>
+                            <h3>Для подключения двухфакторной аутентификация вставьте ваш публичный PGP ключ.Затем нажмите на кнопку подключения и расшифруйте тестовый код.Ключ устанавливается один раз без возможности изменения.</h3>
+                            <textarea class="form-control" disabled>{{recovery_code}}</textarea>
+                        </div>
+                        {% endif %}
                     </div>
 
                 </div>

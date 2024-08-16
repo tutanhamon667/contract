@@ -17,14 +17,15 @@ from django.db.models import Q
 from django_otp.plugins.otp_static.models import StaticDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp.plugins.otp_email.models import EmailDevice
-
+from django_otp.models import Device, ThrottlingMixin, TimestampMixin
+from django.conf import settings
 from contract.settings import CONTACT_TYPE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS, CHOICES_WORK_EXPERIENCE, \
 	CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_TICKET_STATUS
 from .common import Region
 from users.usermanager import UserManager
 from django_cryptography.fields import encrypt
 from contract.settings import USER_FILE_TYPE
-from os import path
+from os import path, urandom
 from django.db.models import Manager
 from django.contrib.auth.models import Group
 
@@ -115,12 +116,8 @@ class Member(PermissionsMixin, AbstractBaseUser):
 		null=True,
 		on_delete=models.PROTECT
 	)
-	otp_devices = models.Manager()
-	totp_devices = models.Manager()
-	email_devices = models.Manager()
-	phone_devices = models.Manager()
-	recovery_code = models.CharField(max_length=255, blank=True, null=True, unique=True)
-	pkey = encrypt( models.CharField(max_length=255, blank=True, null=True, unique=True, default=''))
+	
+	
 	is_customer = models.BooleanField(default=False)
 	is_worker = models.BooleanField(default=False)
 	is_moderator = models.BooleanField(default=False)
@@ -211,6 +208,9 @@ User = get_user_model()
 #define new method get_member from user model
 User.get_member = lambda self: Member.objects.get(id=self.id)
 
+
+
+
 def validate_input(input_data):
 	link_pattern = re.compile(
 		r'^(?:http|ftp)s?://'  # http:// or https://
@@ -232,6 +232,75 @@ def validate_input(input_data):
 		return "Email"
 	else:
 		return False
+	
+class StaticDevice(TimestampMixin, ThrottlingMixin, Device):
+	user = models.ForeignKey(Member, related_name='users_staticdevice_set', on_delete=models.CASCADE)
+	def get_throttle_factor(self):
+		return getattr(settings, 'OTP_STATIC_THROTTLE_FACTOR', 1)
+	
+	def verify_token(self, token):
+		verify_allowed, _ = self.verify_is_allowed()
+		if verify_allowed:
+			match = self.token_set.filter(token=token).first()
+			if match is not None:
+				match.delete()
+				self.throttle_reset(commit=False)
+				self.set_last_used_timestamp(commit=False)
+				self.save()
+			else:
+				self.throttle_increment()
+		else:
+			match = None
+
+		return match is not None
+
+	
+class StaticToken(models.Model):
+	"""
+	A single token belonging to a :class:`StaticDevice`.
+
+	.. attribute:: device
+
+		*ForeignKey*: A foreign key to :class:`StaticDevice`.
+
+	.. attribute:: token
+
+		*CharField*: A random string up to 16 characters.
+	"""
+
+	device = models.ForeignKey(
+		StaticDevice, related_name='token_set', on_delete=models.CASCADE
+	)
+	token = models.CharField(max_length=16, db_index=True)
+	@staticmethod
+	def random_token():
+		"""
+		Returns a new random string that can be used as a static token.
+
+		:rtype: bytes
+
+		"""
+		return b32encode(urandom(5)).decode('utf-8').lower()
+
+
+class AuthUserSettings(models.Model):
+	otp_devices = StaticDevice( )
+	totp_devices = models.Manager()
+	email_devices = models.Manager()
+	phone_devices = models.Manager()
+	recovery_code = models.CharField(max_length=255, blank=True, null=True, unique=True)
+	
+	def __str__(self):
+		return self.user.display_name
+
+class PGPKey(models.Model):
+	user = models.ForeignKey(to=Member, on_delete=models.CASCADE)
+	key = models.TextField()
+	is_active = models.BooleanField(default=True)
+	created_at = models.DateTimeField(default=timezone.now)
+
+	def __str__(self):
+		return self.user.display_name
 
 class Contact(models.Model):
 	user = models.ForeignKey(to=Member, on_delete=models.CASCADE)

@@ -16,10 +16,17 @@ from contract.widgets.password import PasswordWidget
 from contract.widgets.selectExtended import SelectExtendedWidget
 from users.models.common import Region
 import re
-from users.models.user import Ticket
+from users.models.user import PGPKey, Ticket
 from users.models.user import Resume, Member, User, Contact, Job, Specialisation, \
 	Company, CustomerReview, ResponseInvite, Industry
 from django_otp.forms import OTPAuthenticationForm
+
+
+
+class PGPForm(ModelForm):
+	class Meta:
+		model = PGPKey
+		fields = [ 'key']
 
 class TwoFactorAuthenticationForm(forms.Form):
     otp_token = forms.CharField(label='OTP Token', max_length=6)

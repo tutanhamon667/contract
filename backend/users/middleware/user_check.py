@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
+
 from users.core.access import Access
 
 
@@ -26,7 +27,7 @@ def user_check(get_response):
             # return (entity, id, action)
 
 
-     
+          
             entity = request.path
             print(entity)
             print(request)
