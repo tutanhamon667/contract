@@ -36,11 +36,14 @@
   */
  audio,
  canvas,
- video {
+audio,
+canvas,
+video {
    display: inline-block;
-   *display: inline;
+   display: inline\9; /* IE7-8 support */
+   *display: inline; /* IE6-7 support */
    *zoom: 1;
- }
+}
  
  /**
   * Prevent modern browsers from displaying `audio` without controls.
@@ -84,7 +87,7 @@ p{
 
 
 a, li, .btn{
-    font-size: clamp(18px, 4vw, 24px);}
+    font-size: clamp(14px, 4vw, 20px);}
 
 span {
     font-size: clamp(12px, 4vw, 18px);
@@ -408,6 +411,9 @@ select {
 
 .vis-none {
     visibility: hidden;
+}
+.shop-name{
+    padding: 0px 0px 4px;
 }
 
 .shop_panel_img {
@@ -1150,7 +1156,9 @@ section {
 .border-none {
     border: none !important;
 }
-
+.section-title{
+    padding: 10px 0px;
+}
 .arrow-step {
     background-image: url("../img/arrow_1.png");
     background-repeat: no-repeat;
@@ -1162,9 +1170,6 @@ section {
     font-size: 14px;
 }
 
-section>.row>div {
-   
-}
 
 .card {
     padding: 3 15 5 15;

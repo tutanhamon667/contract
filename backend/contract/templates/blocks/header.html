@@ -60,10 +60,17 @@
 							<li class="nav-item">
 								<a class="nav-link {% if url_name == 'responses_invites_page' %}active{% endif %}"
 									href="{% url 'responses_invites_page' %}">
-									Приглашения
-									<template x-if="$store.main.counters && $store.main.counters.ri.length">
-										<span class="counter-text" x-text="$store.main.counters.ri.length"></span>
-									</template>
+									
+                                    <div class="invite-container">
+                                        <div class="invite-text">Приглашения</div>
+                                        <template x-if="$store.main.counters && $store.main.counters.ri.length">
+                                            <div class="invite-count">
+                                                <div class="circle-background"></div>
+                                                <div class="circle-text" x-text="$store.main.counters.ri.length"></div>
+                                            </div>
+                                        </template>
+                                      </div>
+									
 								</a>
 							</li>
                         {% endif %}

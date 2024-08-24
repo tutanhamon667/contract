@@ -4,161 +4,200 @@
 {% load static %}
 
 <div class="container">
-    <div class="shop_main user-profile profile-header">
-        <div class="shop_panel">
-            <h1 class="settings-title">Настройки профиля</h1>
-            <div class="settings-main">
-                <div class="settings-main__content">
-                    <div class="settings-main__info">
-                        <div class="form-sm">
+    <div class="section-title">
+        <h4>Настройки профиля</h4>
+    </div>
+    <div class="">
 
-                            <form action="" method="post" enctype="multipart/form-data" novalidate="">
-                                {% csrf_token %}
-                                <div class="d-flex mt-3">
+        <section class="row">
+
+            <div class="col-6">
+                <div class="">
+                    <form action="" method="post" enctype="multipart/form-data" novalidate="">
+                        {% csrf_token %}
+                        <div class="d-flex mt-3">
 
 
-                                    <label class="mr-5" for="id_photo">
-                                        {% if user.photo %}
-                                        <div class="shop_panel_img">
-                                            <img src="{{ user.photo.photo }}" loading="lazy" id="profilePhoto" style="background-color: {{ user.photo.extra_data.color }};">
-                                        </div>
-                                        {% else %}
-                                        <div class="shop_panel_img ">
-                                            <img src="{% static 'contract/img/profile/acc.svg' %}" loading="lazy" id="profilePhoto">
-                                        </div>
-                                        {% endif %}
-
-                                    </label>
-                                    <p class="profile-user-name">
-                                        {{ user.login }}
-                                    </p>
+                            <label class="mr-5" for="id_photo">
+                                {% if user.photo %}
+                                <div class="shop_panel_img">
+                                    <img src="{{ user.photo.photo }}" loading="lazy" id="profilePhoto"
+                                     {% if user.photo.extra_data.color %}
+                                        style="background-color: {{ user.photo.extra_data.color }};"
+                                 {% endif %}>
                                 </div>
-                                {%  if user.is_worker %}
-                                    <div>
-                                        <h3>Контакты</h3>
-                                            <div class="row mb-2">
-                                                <div class="company-links ">
-                    
-                                                    {% for contact in contacts %}
-                                                    <div class="d-flex company-link-container  mb-2">
-                                                        <input type="text" name="link[]" id="contact_{{contact.id}}" class="form-control flex-1" value="{{contact.value}}">
-                                                        <div class="link-del-btn">
-                                                            <a onlick="deleteLink()"> x </a>
-                                                        </div>
-                                                    </div>
-                                                    {% endfor %}
-                                                   
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col-lg-6 link-add-btn">
-                                                    <a onclick="addLink()"> + </a>
-                                                </div>
-                                            </div>
-                                    
-                                    </div>
+                                {% else %}
+                                <div class="shop_panel_img ">
+                                    <img src="{% static 'contract/img/profile/acc.svg' %}" loading="lazy"
+                                        id="profilePhoto">
+                                </div>
                                 {% endif %}
-                                <div class="d-flex mt-3">
-                                    <div style="flex:1;">
-                                        <p>Статус поиска</p>
-                                    </div>
-                                    <div>
-                                        <div>
-                                            <label class="form-label">Статус поиска</label>
-                                            <label class="form-check-label" for="id_is_active_0">
-                                                <input class="form-check-input" type="radio" name="is_active" id="id_is_active_0" value="False">
-                                                Пассивный</label>
-                                        </div>
-                                        <div>
 
-                                            <label class="form-check-label" for="id_is_active_1">
-                                                <input class="form-check-input" type="radio" name="is_active" id="id_is_active_1" value="True" checked="checked">
-                                                Активный</label>
+                            </label>
+                            <p class="profile-user-name">
+                                {{ user.login }}
+                            </p>
+                        </div>
+                        {% if user.is_worker %}
+                        <div>
+                            <div class="section-title">
+                                <h4>Контакты</h4>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="company-links ">
+
+                                    {% for contact in contacts %}
+                                    <div class="d-flex company-link-container  mb-2">
+                                        <input type="text" name="link[]" id="contact_{{contact.id}}"
+                                            class="form-control flex-1" value="{{contact.value}}">
+                                        <div class="link-del-btn">
+                                            <a onlick="deleteLink()"> x </a>
                                         </div>
                                     </div>
+                                    {% endfor %}
+
                                 </div>
-                                <input type="submit" class="btn btn-primary w-100 mt-3" value="Обновить">
-                                <input type="file" name="photo" accept=".png,.jpg,.jpeg" class="vis-none" id="id_photo" onchange="readURL(this);">
-                            </form>
-                        </div>
-                        
-                        <div class="form-md">
-                            <form action="/profile/change_password" method="post" novalidate>
-                                {% csrf_token %}
-                                <div class="d-flex mt-3">
-                                    <div style="flex:1;">
-                                        <p class="bold">Изменить пароль</p>
-                                    </div>
-                                    <div class="">
-                                        {% for field in change_pass_form.visible_fields %}
-                                        <div>
-                                            {{ field.errors }}
-                                            {{ field }}
-                                            {{ field.help_text }}
-                                        </div>
-                                        {% endfor %}
-                                       
-                                    </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-lg-6 link-add-btn">
+                                    <a onclick="addLink()"> + </a>
                                 </div>
-                                <div class="form-sm">
-                                    <input type="submit" class="btn btn-primary w-100" value="Обновить" />
-                                </div>
-                            </form>
-                            <h3>Код восстановления, сохраните его для восстановления пароля</h3>
-                            <textarea class="form-control" disabled>{{recovery_code}}</textarea>
-                        </div>
-                        {% if user.is_customer: %}
-                        <div class="form-md">
-                            <form action="/profile/pgp/create" method="post">
-                                <div class="d-flex mt-3">
-                                    <div style="flex:1;">
-                                        <p class="bold">Изменить пароль</p>
-                                    </div>
-                                
-                                </div>
-                                <div class="form-sm">
-                                    <input type="submit" class="btn btn-primary w-100" value="Обновить" />
-                                </div>
-                            </form>
-                            <h3>Для подключения двухфакторной аутентификация вставьте ваш публичный PGP ключ.Затем нажмите на кнопку подключения и расшифруйте тестовый код.Ключ устанавливается один раз без возможности изменения.</h3>
-                            <textarea class="form-control" disabled>{{recovery_code}}</textarea>
+                            </div>
+
                         </div>
                         {% endif %}
-                    </div>
+                        <div class="d-flex mt-3">
+                            <div style="flex:1;">
+                                <p>Статус поиска</p>
+                            </div>
+                            <div>
+                                <div>
+                                    <label class="form-label">Статус поиска</label>
+                                    <label class="form-check-label" for="id_is_active_0">
+                                        <input class="form-check-input" type="radio" name="is_active"
+                                            id="id_is_active_0" value="False">
+                                        Пассивный</label>
+                                </div>
+                                <div>
 
+                                    <label class="form-check-label" for="id_is_active_1">
+                                        <input class="form-check-input" type="radio" name="is_active"
+                                            id="id_is_active_1" value="True" checked="checked">
+                                        Активный</label>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="submit" class="btn btn-primary w-100 mt-3" value="Обновить">
+                        <input type="file" name="photo" accept=".png,.jpg,.jpeg" class="vis-none" id="id_photo"
+                            onchange="readURL(this);">
+                    </form>
                 </div>
             </div>
+            <div class="col-6">
+                <div class="section-title">
+                    <h4>Код восстановления</h4>
+                </div>
+                <p>Cохраните его для восстановления пароля</p>
+                <textarea class="form-control" disabled>{{recovery_code}}</textarea>
+                <br>
+            </div>
 
-        </div>
+        </section>
+
+        <section class="row">
+            <div class="col-6">
+
+
+                <div class="section-title">
+                    <h4>Изменить пароль</h4>
+                </div>
+                <form action="/profile/change_password" method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="d-flex mt-3">
+
+                        <div class="">
+                            {% for field in change_pass_form.visible_fields %}
+                            <div>
+                                {{ field.errors }}
+                                {{ field }}
+                                {{ field.help_text }}
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    <div class="">
+                        <input type="submit" class="btn btn-primary w-100" value="Обновить" />
+                    </div>
+                </form>
+            </div>
+            <div class="col-6">
+                <div class="section-title">
+                    <h4>PGP Ключ</h4>
+                </div>
+                {% if pgp %}
+                <span>
+                    Публичный PGP ключ не установлен.
+                </span>
+                {% else %}
+                <span>
+                    Для подключения двухфакторной аутентификация вставьте ваш публичный PGP ключ.Затем нажмите на кнопку
+                    подключения и расшифруйте тестовый код.Ключ устанавливается один раз без возможности изменения.
+                  </span>
+                {% endif %}
+                {% if user.is_customer and pgp is None %}
+                <div class="form-md">
+                    {% if verify_pgp == True %}
+                    <form action="/profile/pgp/verify" method="post">
+                    {% else %}
+                    <form action="/profile/pgp/create" method="post">
+                    {% endif %}
+                        {% csrf_token %}
+                        {{pgp_form}}
+                        {% if pgp %}
+                        <input type="submit" class="btn btn-primary w-100" value="Сохранить" disabled/>
+                        {% else %}
+                        <input type="submit" class="btn btn-primary w-100" value="Сохранить" />
+                        {% endif %}
+                        
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+
     </div>
-</div>
-<script>
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
 
-            reader.onload = function(e) {
-                $('#profilePhoto').attr('src', e.target.result).width(90).height(90);
-            };
 
-            reader.readAsDataURL(input.files[0]);
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#profilePhoto').attr('src', e.target.result).width(90).height(90);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
         }
-    }
-    
-    function deleteLink(e) {
-        const el = e.currentTarget.closest('.company-link-container')
-        el.remove()
-    }
 
-    function addLink(e) {
-        $('.company-links').append('<div class="d-flex company-link-container  mb-2">' +
-            ' <input type="text" name="link[]" id="" class="form-control flex-1">' +
-            '<div class="link-del-btn">' +
-            '    <a onlick="deleteLink()"> x </a>' +
-            ' </div>' +
-            ' </div>')
-        $('.company-links').find('.link-del-btn').last().click(deleteLink)
-    }
-</script>
+        function deleteLink(e) {
+            const el = e.currentTarget.closest('.company-link-container')
+            el.remove()
+        }
 
-{% endblock content %}
+        function addLink(e) {
+            $('.company-links').append('<div class="d-flex company-link-container  mb-2">' +
+                ' <input type="text" name="link[]" id="" class="form-control flex-1">' +
+                '<div class="link-del-btn">' +
+                '    <a onlick="deleteLink()"> x </a>' +
+                ' </div>' +
+                ' </div>')
+            $('.company-links').find('.link-del-btn').last().click(deleteLink)
+        }
+    </script>
+
+    {% endblock content %}

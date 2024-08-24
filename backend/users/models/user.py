@@ -1,6 +1,7 @@
 import datetime
 
 import re
+import secrets
 from django.contrib.auth.hashers import make_password
 import random
 import string
@@ -19,6 +20,8 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp.plugins.otp_email.models import EmailDevice
 from django_otp.models import Device, ThrottlingMixin, TimestampMixin
 from django.conf import settings
+from mnemonic import Mnemonic
+import pgpy
 from contract.settings import CONTACT_TYPE, RESPONSE_INVITE_TYPE, RESPONSE_INVITE_STATUS, CHOICES_WORK_EXPERIENCE, \
 	CHOICES_WORK_TYPE, CHOICES_WORK_TIMEWORK, CHOICES_TICKET_STATUS
 from .common import Region
@@ -148,6 +151,18 @@ class Member(PermissionsMixin, AbstractBaseUser):
 
 	def __str__(self):
 		return self.display_name
+	
+	@property
+	def role(self):
+		if self.is_customer:
+			return 'customer'
+		if self.is_worker:
+			return 'worker'
+		if self.is_moderator:
+			return 'moderator'
+		if self.is_admin:
+			return 'admin'
+		return 'anonymous'
 
 	def has_perm(self, perm, obj=None):
 		return True
@@ -173,6 +188,10 @@ class Member(PermissionsMixin, AbstractBaseUser):
 			self.save()
 		except:
 			pass
+
+	@property
+	def get_pgp_key(self):
+		return self.pgp_keys.first()
 	
 	
 	@property
@@ -232,72 +251,85 @@ def validate_input(input_data):
 		return "Email"
 	else:
 		return False
-	
-class StaticDevice(TimestampMixin, ThrottlingMixin, Device):
-	user = models.ForeignKey(Member, related_name='users_staticdevice_set', on_delete=models.CASCADE)
-	def get_throttle_factor(self):
-		return getattr(settings, 'OTP_STATIC_THROTTLE_FACTOR', 1)
-	
-	def verify_token(self, token):
-		verify_allowed, _ = self.verify_is_allowed()
-		if verify_allowed:
-			match = self.token_set.filter(token=token).first()
-			if match is not None:
-				match.delete()
-				self.throttle_reset(commit=False)
-				self.set_last_used_timestamp(commit=False)
-				self.save()
-			else:
-				self.throttle_increment()
-		else:
-			match = None
 
-		return match is not None
 
-	
-class StaticToken(models.Model):
-	"""
-	A single token belonging to a :class:`StaticDevice`.
-
-	.. attribute:: device
-
-		*ForeignKey*: A foreign key to :class:`StaticDevice`.
-
-	.. attribute:: token
-
-		*CharField*: A random string up to 16 characters.
-	"""
-
-	device = models.ForeignKey(
-		StaticDevice, related_name='token_set', on_delete=models.CASCADE
-	)
-	token = models.CharField(max_length=16, db_index=True)
-	@staticmethod
-	def random_token():
-		"""
-		Returns a new random string that can be used as a static token.
-
-		:rtype: bytes
-
-		"""
-		return b32encode(urandom(5)).decode('utf-8').lower()
 
 
 class AuthUserSettings(models.Model):
-	otp_devices = StaticDevice( )
-	totp_devices = models.Manager()
-	email_devices = models.Manager()
-	phone_devices = models.Manager()
+	user = models.OneToOneField(to=Member, on_delete=models.CASCADE, default=None, null=True)
 	recovery_code = models.CharField(max_length=255, blank=True, null=True, unique=True)
-	
-	def __str__(self):
-		return self.user.display_name
-
-class PGPKey(models.Model):
-	user = models.ForeignKey(to=Member, on_delete=models.CASCADE)
-	key = models.TextField()
-	is_active = models.BooleanField(default=True)
 	created_at = models.DateTimeField(default=timezone.now)
+
+	@classmethod
+	def get_recovery_code(cls, user):
+		try:
+			user = cls.objects.get(user=user)
+			if user.recovery_code is not None:
+				return user.recovery_code
+			recovery_code = Mnemonic().generate(128)
+			user.recovery_code = recovery_code
+			user.save()
+			return recovery_code
+		except:
+			recovery_code = Mnemonic().generate(128)
+			auth = AuthUserSettings(user=user, recovery_code=recovery_code)
+			auth.save()
+			return recovery_code
+	
+class PGPKey(models.Model):
+	user = models.ForeignKey(to=Member, on_delete=models.CASCADE, default=None, null=True, related_name='pgp_keys')
+	key = models.TextField(default=None, null=True)
+	validation_text = models.CharField(max_length=255, blank=True, null=True, unique=True)
+	is_active = models.BooleanField(default=False)
+	number_requests = models.IntegerField(default=0)
+	created_at = models.DateTimeField(default=timezone.now)
+
+
+	@classmethod
+	def get_key(cls, user):
+		try:
+			pgp_key = cls.objects.get(user=user)
+			return pgp_key
+		except:
+			pgp_key = cls(user=user)
+			pgp_key.save()
+			return pgp_key
+
+	@classmethod
+	def generate_and_sign_validation_text(cls, pgp_pub, user):
+
+		key_pub = pgp_pub.lstrip()
+		validation_text = secrets.token_urlsafe(32)
+		pgp = cls.objects.filter(user=user, is_active=False).first()
+		pgp.key = key_pub
+		pgp.validation_text = validation_text
+		pgp.save()
+		pub_key = pgpy.PGPKey()
+		pub_key.parse(key_pub)
+		text_message = pgpy.PGPMessage.new(validation_text)
+		return text_message
+	
+
+	@classmethod
+	def verify(cls, user, validation_text):
+		pgp = cls.objects.filter(user=user, is_active=False).first()
+		if pgp is None:
+			return False
+		pub_key = pgpy.PGPKey()
+		pub_key.parse(pgp.key)
+		text_message = pgpy.PGPMessage.new(validation_text)
+		if text_message == validation_text:
+			pgp.number_requests = 0
+			pgp.is_active = True
+			pgp.save()
+			return True
+		pgp.number_requests += 1
+		if pgp.number_requests >= 5:
+			pgp.is_active = False
+			pgp.key = None
+			pgp.validation_text = None
+			pgp.save()
+		return False
 
 	def __str__(self):
 		return self.user.display_name
@@ -1337,7 +1369,7 @@ class ResponseInvite(models.Model):
 			return cls.objects.filter(job__company__user_id=user.id, deleted_by_customer=False)
 
 	@classmethod
-	def create_invite(cls, user: User, job_id: int, resume_id: int) :
+	def create_invite(cls, user, job_id: int, resume_id: int) :
 		try:
 			user_job = Job.objects.get(company__user=user, id=job_id)
 			invite = ResponseInvite.objects.filter(resume_id=resume_id, job_id=job_id)
@@ -1354,7 +1386,7 @@ class ResponseInvite(models.Model):
 			return False
 
 	@classmethod
-	def create_response(cls, user: User, job_id: int, resume_id: int) :
+	def create_response(cls, user, job_id: int, resume_id: int) :
 		try:
 			user_resume = Resume.objects.get(user=user, id=resume_id)
 			invite = ResponseInvite.objects.filter(resume_id=resume_id, job_id=job_id)

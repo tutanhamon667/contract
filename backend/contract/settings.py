@@ -97,9 +97,10 @@ INSTALLED_APPS = [
 ]
 
 OTP_AUTH_ROLES = {
-    'admin': ['static'],
-    'user': ['totp', 'hotp'],
-    'guest': ['static'],
+    'moderator': ['static'],
+    'customer': ['totp', 'hotp'],
+    'worker': ['totp', 'hotp'],
+    'anonymous': ['static'],
 }
 
 MIDDLEWARE = [
@@ -112,7 +113,7 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	'users.middleware.captcha_check.captcha_check',
-	'django_otp.middleware.OTPMiddleware',
+
 ]
 
 TWO_FACTOR_AUTHENTICATION_ENABLED = False

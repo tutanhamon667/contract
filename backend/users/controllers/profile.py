@@ -2,8 +2,8 @@ import datetime
 
 
 from django.forms import model_to_dict
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseServerError
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 
 from chat.models import Chat
@@ -11,8 +11,8 @@ from common.models import Article, ArticleCategory
 from contract.settings import CHAT_TYPE, MEDIA_ROOT
 from users.core.access import Access
 from users.core.page_builder import PageBuilder
-from users.models.user import Company, Resume, Contact, Job, Member, ResponseInvite,CompanyHistory, Ticket, UserFile
-from users.forms import ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm as PasswordChange, TicketForm
+from users.models.user import AuthUserSettings, Company, PGPKey, Resume, Contact, Job, Member, ResponseInvite,CompanyHistory, Ticket, UserFile
+from users.forms import PGPForm, ResumeForm, ContactForm, CompanyForm, ProfileForm, JobForm, PasswordChangeForm as PasswordChange, TicketForm
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from users.models.common import  ModerateRequest
@@ -25,69 +25,62 @@ from bitcoinlib.wallets import *
 from users.tables import ReviewsOnModerationTable, CompanyOnModerationTable
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableMixin, SingleTableView
 from  users.tables import  TicketTable
-def activate_view(request):
-	user = request.user
-	access = Access(user)
-	code = access.check_access("acivate_account")
-	if code != 200:
-		if code == 403:
-			return redirect('profile_main')
-		else:
-			return HttpResponse(status=code)
-	try:
-		chat_with_moderator = Chat.objects.get(customer=user, type=CHAT_TYPE["VERIFICATION"])
-	except Exception as e:
-		moderator = Member.objects.filter(is_moderator=True)
-		chat_with_moderator = Chat(customer=user, moderator=moderator[0], type=CHAT_TYPE["VERIFICATION"])
-		chat_with_moderator.save()
-	articles = Article.objects.all()
-	categories = ArticleCategory.objects.all()
-	return render(request, './pages/activate.html', {
-				'chat_with_moderator': chat_with_moderator.uuid,
-				'categories': categories,
-				'articles': articles
-			})
 
-def create_ticket(request):
-	user = request.user
-	access = Access(user)
-	code = access.check_access("create_ticket")
-	if code != 200:
-		if code == 401:
-			return redirect('signin')
-		else:
-			return HttpResponse(status=code)
-	articles = Article.objects.all()
-	categories = ArticleCategory.objects.all()
-	
-	config = RequestConfig(request, paginate={"per_page": 5})
-	if request.user.is_moderator:
-		table = TicketTable(Ticket.objects.filter(status=0).order_by('-id'), prefix="new")
-	else:
-		table = TicketTable(Ticket.objects.filter(owner=user).order_by('-id'), prefix="new")
-	if request.method == "GET":
-		form = TicketForm( initial={'owner': request.user.get_member()})
-		return render(request, './moderate/ticket.html', {
-			'table': table,
-			'form': form,
-			'categories': categories,
-			'articles': articles
-		})
-	else:
-		form = TicketForm(request.POST)
-		if form.is_valid():
-			new_ticket = form.save(commit=False)
-			new_ticket.owner = request.user.get_member()
-			new_ticket.status = 0
-			new_ticket.save()
-			return redirect(to='profile_main')
-		else:
-			return render(request, './moderate/ticket.html', {
-				'table': table,
-				'form': form,
-				'categories': categories,
-				'articles': articles
-			})
+
+
+def activate_view(request):
+    user = request.user
+    access = Access(user)
+    code = access.check_access("activate_account")
+    if code != 200:
+        if code == 403:
+            return redirect('profile_main')
+        else:
+            return HttpResponse(status=code)
+    try:
+        chat_with_moderator = Chat.objects.get(customer=user, type=CHAT_TYPE["VERIFICATION"])
+    except Chat.DoesNotExist:
+        try:
+            moderator = Member.objects.filter(is_moderator=True).first()
+        except Member.DoesNotExist:
+            return HttpResponse(status=500)
+        if moderator is None:
+            return HttpResponse(status=500)
+        chat_with_moderator = Chat.objects.create(
+            customer=user, moderator=moderator, type=CHAT_TYPE["VERIFICATION"])
+    articles = Article.objects.all()
+    categories = ArticleCategory.objects.all()
+    return render(request, './pages/activate.html', {
+        'chat_with_moderator': chat_with_moderator.uuid,
+
+    })
+
+def create_ticket(request: HttpRequest) -> HttpResponse:
+    user: Member = request.user
+    if not user.is_authenticated:
+        return redirect('signin')
+    access = Access(user)
+    code = access.check_access("create_ticket")
+    if code != 200:
+        return HttpResponse(status=code)
+
+    ticket_filter = Ticket.objects.filter(status=0).order_by('-id')
+    if not user.is_moderator:
+        ticket_filter = ticket_filter.filter(owner=user)
+
+    if request.method == "GET":
+        form = TicketForm(initial={'owner': user.get_member()})
+        return render(request, './moderate/ticket.html', {'table': TicketTable(ticket_filter, prefix="new"), 'form': form})
+
+    form = TicketForm(request.POST)
+    if form.is_valid():
+        new_ticket = form.save(commit=False)
+        new_ticket.owner = user.get_member()
+        new_ticket.status = 0
+        new_ticket.save()
+        return redirect('profile_main')
+
+    return render(request, './moderate/ticket.html', {'table': TicketTable(ticket_filter, prefix="new"), 'form': form})
 
 def profile_resume_create_view(request):
 	user = request.user
@@ -100,16 +93,13 @@ def profile_resume_create_view(request):
 			return redirect('signin')
 		else:
 			return HttpResponse(status=code)
-	articles = Article.objects.all()
-	categories = ArticleCategory.objects.all()
+
 
 	if request.method == "GET":
 
 		form = ResumeForm( initial={})
 		return render(request, './blocks/profile/profile_resume_edit.html', {
 			'form': form,
-			'categories': categories,
-			'articles': articles
 		})
 
 
@@ -134,10 +124,10 @@ def profile_resume_create_view(request):
 				messages_error = "Вы не можете создать больше 5 резюме"
 			return render(request, './blocks/profile/profile_resume_edit.html', {
 				'form': form,
-				'categories': categories,
+
 				'messages_error': messages_error,
 				'messages_success': messages_success,
-				'articles': articles
+
 			})
 
 
@@ -377,56 +367,60 @@ def profile_favorite_view(request):
 			})
 	else:
 		return redirect(to="signin")
+	
 
 def profile_main_view(request):
-	articles = Article.objects.all()
-	categories = ArticleCategory.objects.all()
 	if request.user.is_authenticated:
-		user = request.user
-		print(user)
-		error = None
-		if request.method == "GET":
-			member = Member.objects.get(id=user.id)
-			if member.recovery_code is None:
-				recovery_code  = Mnemonic().generate(64)
-				member.recovery_code = recovery_code
-				member.save()
-			contacts = Contact.objects.filter(user=user.id)
-			profile_form = ProfileForm(instance=member)
-			change_pass_form = PasswordChange()
-			return render(request, './blocks/profile/profile_main.html', {
-				'profile_form': profile_form,
-				'change_pass_form': change_pass_form,
-				'contacts': contacts,
-				'categories': categories,
-				'recovery_code': member.recovery_code,
-				'articles': articles
-			})
+		try:
+			user = request.user
+			if request.method == "GET":
+				pgp_form = PGPForm()
+				recovery_code = AuthUserSettings.get_recovery_code(user)
+				contacts = Contact.objects.filter(user=user)
+				profile_form = ProfileForm(instance=request.user)
+				change_pass_form = PasswordChange()
+				if user.is_customer:
+					pgp = PGPKey.get_key(user)
+					pgp_form = PGPForm(instance=pgp)
+				template =  render(request, './blocks/profile/profile_main.html', {
+					'profile_form': profile_form,
+					'change_pass_form': change_pass_form,
+					'pgp_form': pgp_form,
+					'contacts': contacts,
 
+					'recovery_code': recovery_code,
+		
+				})
+				return template
+		except Exception as e:
+			logger.exception(f"Unexpected error: {str(e)}")
+			print(e)
+			return HttpResponseServerError("An unexpected error occurred. Please try again later.")
+
+			
 		if request.method == "POST":
-			member = Member.objects.get(id=user.id)
+			member = get_object_or_404(Member, id=user.id)
 			form = ProfileForm(request.POST, instance=member)
 			form.id = user.id
 			if form.is_valid():
 				file_model = None
-				if len(request.FILES) > 0:
-					file_to_upload = request.FILES.get('photo')
+				if 'photo' in request.FILES:
+					file_to_upload = request.FILES['photo']
 					new_file = FileSaver(file_to_upload, MEDIA_ROOT + '/profile/')
 					new_file.save_file()
-					file_model = UserFile(name=new_file.file.name, folder='/media/profile/', file_type=1)
-					file_model.save()
+					file_model = UserFile.objects.create(name=new_file.file.name, folder='/media/profile/', file_type=1)
 				user_model = form.save(commit=False)
 				user_model.photo = file_model
 				user_model.save()
 				links = request.POST.getlist('link[]')
 				errs = Contact.update_company_contacts(user, links)
-				if len(errs) > 0:
-					messages.error(request, 'При обновлении информации произошли следующие ошибки: ' + ', '.join(errs))
+				if errs:
+					error_message = 'При обновлении информации произошли следующие ошибки: ' + ', '.join(errs)
+					messages.error(request, error_message)
 				return redirect(to='profile_main')
 			return render(request, './blocks/profile/profile_main.html', {
 				'form': form,
-				'categories': categories,
-				'articles': articles
+
 			})
 	else:
 		return redirect(to="worker_signin")

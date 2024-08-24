@@ -107,6 +107,14 @@ def login_worker_view(request):
 def login_customer_view(request):
 	return authenticate_view(request, "login_customer", "for_customers")
 
+
+
+@login_required
+def f_two_a(request):
+	if request.method == "GET":
+		form = TwoFactorAuthenticationForm()
+		return render(request, 'pages/2fa.html', {})
+
 def get_changed_data(new_instance, instance):
 	changed_data = {}
 	model = apps.get_model('users', 'company')

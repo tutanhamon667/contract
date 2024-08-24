@@ -3,8 +3,9 @@
 {% load static %}
 {% load django_bootstrap5 %}
 {% block content %}
-<div class="container" x-data>
-    <section x-init="initCompany()">
+<div x-data>
+<div class="container"  x-init="initCompany()">
+    <section>
         <template x-if="$store.main.company">
             <div>
                 <div>
@@ -66,14 +67,21 @@ font-size: 14px;"></span>
                     </div>
                 </div>
                 <div class="mt-5">
-                    <h4>О нас</h4>
+                   
+                    <div class="section-title">
+                        <h4>О нас</h4>
+                    </div>
                     <div x-html="$store.main.company.about"></div>
                 </div>
             </div>
         </template>
-
-        <div class="row mt-5">
-            <h4>Наши вакансии</h4>
+    </section>
+    <section>
+        <div class="row">
+           
+            <div class="section-title">
+                <h4>Наши вакансии</h4>
+            </div>
             <template x-for="job in $store.main.jobs" :key="job.id + '_' + job.invite.id">
 
                 <div :class="['card', job.payment.job_tier_id == 3? 'hot-job-card ':'' ]">
@@ -92,11 +100,11 @@ font-size: 14px;"></span>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-10">
-                               
+
                                 <div class=" card-section">
                                     <h3 class="card-subtitle salary" x-text="$store.main.getSalaryStr(job)"></h3>
                                 </div>
-                              
+
 
 
                                 <div class="d-flex  card-section">
@@ -110,14 +118,14 @@ font-size: 14px;"></span>
                                             x-html="$store.main.getRegionsStr(job)"></span>
                                     </div>
                                     <div class="d-flex vacancy-description flex-align-baseline  card-section">
-                                        {% with icon='bag' class='flex-05 mr-5 flex-align-baseline' func='$store.main.getWorkExpString(job.work_experience)' %}
+                                        {% with icon='bag' class='flex-05 mr-5 flex-align-baseline'  func='$store.main.getWorkExpString(job.work_experience)' %}
                                             {% include "../blocks/components/property_icon_left.html" %}
                                         {% endwith %}
 
-                                        {% with icon='zalog'  class='flex-05 flex-align-baseline '  func='$store.main.getDepositStr(job)' %}
+                                        {% with icon='zalog' class='flex-05 flex-align-baseline '  func='$store.main.getDepositStr(job)' %}
                                             {% include "../blocks/components/property_icon_left.html" %}
                                         {% endwith %}
-                                        
+
                                     </div>
 
 
@@ -149,7 +157,8 @@ font-size: 14px;"></span>
                             <div class="col-10">
 
                                 <template x-if="$store.main.user.id<0">
-                                    <a href='/worker/signin?redirect=/company/{{company.id}}' class="btn btn-success">Войти для отклика</a>
+                                    <a href='/worker/signin?redirect=/company/{{company.id}}'
+                                        class="btn btn-success">Войти для отклика</a>
                                 </template>
                                 <template x-if="$store.main.user.id>=0  && $store.main.user.is_worker">
                                     <div x-data="{res: $store.main.getResponseInviteElement(job.id)}">
@@ -228,20 +237,22 @@ font-size: 14px;"></span>
             </template>
 
         </div>
-        <div class="row mt-5 bs">
-            <div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="section-title">
                 <h4>Отзывы о работодателе</h4>
             </div>
-           
+
             <template x-if="$store.main.reviews">
                 <template x-for="review in $store.main.reviews" :key="'review_'+ review.id">
                     <div class="card">
                         <div class="card-header">
-                                <h4 class="card-title" x-text="review.reviewer"></h4>
+                            <h4 class="card-title" x-text="review.reviewer"></h4>
                         </div>
                         <div class="card-body">
-                          
-                            
+
+
                             <div class="d-flex card-section">
                                 <template x-for="item in application.getJobRatingArray(review.rating)">
                                     <label
@@ -272,37 +283,45 @@ font-size: 14px;"></span>
                 </template>
             </template>
         </div>
-        <div class="row mt-5">
-            <h4>Оставьте отзыв о работодателе</h4>
+    </section>
+    <section>
+        <div class="row">
+            <div class="section-title">
+                <h4>Оставьте отзыв о работодателе</h4>
+            </div>
+            
             <div class="col-lg-4 col-md-6 col-sm-12">
                 <form method="post" action="/api/create_review" @submit.prevent="application.createReview"
                     id="reviewForm">
                     <p id="review-form-error-msg" class="form-error-msg"></p>
                     <p id="review-form-success-msg" class="form-success-msg"></p>
                     {% bootstrap_form review_form %}
-                    <div class="d-flex mb-3 sca" id="company-rating-container" x-data="{'rating': 0, rates: [1, 2, 3, 4, 5]}">
+                    <div class="d-flex mb-3 sca" id="company-rating-container"
+                        x-data="{'rating': 0, rates: [1, 2, 3, 4, 5]}">
                         <template x-for="item in rates">
-                            <span class="rating-star star-fill" :value="item" ></span>
+                            <span class="rating-star star-fill" :value="item"></span>
 
                         </template>
-                    
+
                     </div>
-                    {% if  user.is_authenticated  %}
+                    {% if user.is_authenticated %}
                     <button class="btn btn-primary">Отправить</button>
                     {% else %}
                     <a class="btn btn-primary" href="/worker/signin?redirect=/company/{{company.id}}">Войти</a>
                     {% endif %}
-                    
+
                 </form>
             </div>
         </div>
     </section>
+
+</div>
 </div>
 <script>
     const initCompany = () => {
-        application.initCompany({{company.id}})
+        application.initCompany({{ company.id }})
         application.initJobs({
-            company_id: {{company.id}}
+            company_id: {{ company.id }}
         })
     }
     $(document).ready(() => {
@@ -311,4 +330,5 @@ font-size: 14px;"></span>
         application.initFormRating($('#company-rating-container  .star-fill'), '[name="rating"]')
     })
 </script>
+
 {% endblock content %}

@@ -24,22 +24,46 @@ from django_otp.forms import OTPAuthenticationForm
 
 
 class PGPForm(ModelForm):
+	key = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}), required=True)
+	auth_key = forms.CharField( required=False, label="Авторизационный ключ")
+	is_active = forms.BooleanField(required=False, label="status", widget=forms.HiddenInput())
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		for field in self.fields:
+			self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+			if field == 'key' and  'instance' in kwargs:
+				key = kwargs['instance'].key
+				if key is not None:
+					if self.fields['is_active'] == False:
+						self.fields['key'].initial = 'Расшифруйте своим приватным ключём это сообщение: ' + self.fields['auth_key']
+					else:
+						self.fields['key'].initial = 'Ключ задан'
+						self.fields['key'].widget.attrs.update({'disabled': 'disabled', 'rows': 4})
+					is_active = kwargs['instance'].is_active
+					if not is_active:
+						self.fields['auth_key'].widget.attrs.update({'disabled': 'disabled', 'rows': 4})
+			if field == 'is_active'  and  'instance' in kwargs:
+				is_active = kwargs['instance'].is_active
+				if not is_active:
+					self.fields['auth_key'].widget.attrs.update({'disabled': 'disabled', 'rows': 4})
+			
 	class Meta:
 		model = PGPKey
-		fields = [ 'key']
+		fields = [ 'key', 'auth_key']
+		exclude = ['is_active']
+
 
 class TwoFactorAuthenticationForm(forms.Form):
-    otp_token = forms.CharField(label='OTP Token', max_length=6)
+	encrypted_message = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}), required=True)
+	decrypted_message = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}), required=True)
 
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request')
-        super().__init__(*args, **kwargs)
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		for field in self.fields:
+			self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
 
-    def clean_otp_token(self):
-        otp_token = self.cleaned_data['otp_token']
-        if not self.request.user.totp_device.verify_token(otp_token):
-            raise forms.ValidationError('Invalid OTP token')
-        return otp_token
+
+
 
 class JobPaymentTarifForm(forms.Form):
 	tier = forms.IntegerField(label="Тариф размещения", required=True)

@@ -1,0 +1,192 @@
+/* testimonial-card.css */
+
+.testimonial-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .testimonial-text {
+    margin-bottom: 24px;
+  }
+  
+  .quote {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 28.8px;
+    margin-bottom: 12px;
+  }
+  
+  .TextHeading {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 28.8px;
+    margin-bottom: 12px;
+  }
+  
+  .AvatarBlock {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .Avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 12px;
+  }
+  
+  .Info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .Title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22.4px;
+    margin-bottom: 4px;
+  }
+  
+  .Description {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22.4px;
+  }
+
+
+  .invite-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+  
+    height: 43px;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .invite-text {
+    font-size: 16px;
+    font-weight: 400;
+    color: black;
+  }
+  
+  .invite-count {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .circle-background {
+    width: 20px;
+    height: 20px;
+    background-color: #D6001C;
+    border-radius: 50%;
+    position: absolute;
+  }
+  
+  .circle-text {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  
+  /* Дополнительные стили для поддержки старого кода */
+  .Invite {
+    width: 130px;
+    height: 43px;
+    position: relative;
+  }
+  
+  .InviteCount {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  
+  .Ellipse26 {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background: #D6001C;
+    border-radius: 9999px;
+  }
+  
+  /* Медиа-запросы для адаптивности */
+  
+  @media (max-width: 768px) {
+    .testimonial-card {
+      padding: 16px;
+    }
+    .testimonial-text {
+      margin-bottom: 16px;
+    }
+    .quote {
+      font-size: 20px;
+      line-height: 24px;
+    }
+    .TextHeading {
+      font-size: 20px;
+      line-height: 24px;
+    }
+    .AvatarBlock {
+      margin-bottom: 16px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .testimonial-card {
+      padding: 12px;
+    }
+    .testimonial-text {
+      margin-bottom: 12px;
+    }
+    .quote {
+      font-size: 18px;
+      line-height: 20px;
+    }
+    .TextHeading {
+      font-size: 18px;
+      line-height: 20px;
+    }
+    .AvatarBlock {
+      margin-bottom: 12px;
+    }
+  }
+  
+  @media (max-width: 320px) {
+    .testimonial-card {
+      padding: 8px;
+    }
+    .testimonial-text {
+      margin-bottom: 8px;
+    }
+    .quote {
+      font-size: 16px;
+      line-height: 18px;
+    }
+    .TextHeading {
+      font-size: 16px;
+      line-height: 18px;
+    }
+    .AvatarBlock {
+      margin-bottom: 8px;
+    }
+  }

@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 
 
+from contract import settings
 from users.core.access import Access
 
 
@@ -12,7 +13,7 @@ def user_check(get_response):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
 
-        response = get_response(request)
+       
         if request.method == 'GET':
             # simple parse url  like '/entity/action/id'
             # return (entity, action, id)
@@ -29,8 +30,6 @@ def user_check(get_response):
 
           
             entity = request.path
-            print(entity)
-            print(request)
             access = Access(request.user)
             code = access.user_access(entity)
             print(code)
@@ -43,6 +42,7 @@ def user_check(get_response):
                     return HttpResponse(status=code)
                     
           
-        return response
+   
+        return get_response(request)
 
     return middleware

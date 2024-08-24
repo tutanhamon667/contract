@@ -1,8 +1,8 @@
 {% load static %}
-
+{% with articles=Article.objects.all categories=ArticleCategory.objects.all %}
     <footer class=" mt-5 border-top">
         <div class="container d-flex mt-5">
-        <div class="flex-1  d-lg-block d-md-none d-sm-none  mb-3 text-center"><img src="{% static "contract/img/logo-mid.svg" %}" height="85" class="rounded" alt="..."></div>
+        <div class="flex-1  d-lg-block d-md-none d-sm-none  mb-3 text-center"><img src="{% static 'contract/img/logo-mid.svg' %}" height="85" class="rounded" alt="..."></div>
         {% for category in categories %}
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 mb-3" style="    margin-right: 30px;">
                 <h5>{{ category.title }}</h5>
@@ -30,5 +30,5 @@
         {% endfor %}
     </div>
     </footer>
-
+{% endwith %}
 
