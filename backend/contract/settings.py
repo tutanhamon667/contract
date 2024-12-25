@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
-CELERY_BROKER_URL = 'amqp://contract:U789*(Y*(g@localhost:5673'
+CELERY_BROKER_URL = 'amqp://contract:passg@localhost:5673'
 
 
 CELERY_ACCEPT_CONTENT = ['json']
@@ -148,7 +148,7 @@ DATABASES = {
 		'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
 		'NAME': 'contract',
 		'USER': 'contract',
-		'PASSWORD': 'uyfuy^6jji',
+		'PASSWORD': 'pass',
 		'HOST': 'localhost',
 		'PORT': 5433
 	}
