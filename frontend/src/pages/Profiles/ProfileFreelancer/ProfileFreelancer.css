@@ -1,9 +1,0 @@
-.form-profile__dates {
-  display: flex;
-  justify-content: space-between;
-  column-gap: 12px;
-}
-
-.form-profile__dates > div {
-  flex-grow: 1;
-}
