@@ -59,18 +59,18 @@ services:
           cpus: '1'
           memory: 2G
 
-  django:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: daphne -b 0.0.0.0 -p 8000 contract.asgi
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    networks:
-      - main
-    restart: unless-stopped
+  # django:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   command: daphne -b 0.0.0.0 -p 8000 contract.asgi
+  #   volumes:
+  #     - .:/app
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - main
+  #   restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:3.10.7-management
@@ -110,5 +110,4 @@ volumes:
 
 networks:
   main:
-    external:
-      name: external-contract-main
+    name: external-contract-main
